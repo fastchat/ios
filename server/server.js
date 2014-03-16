@@ -3,6 +3,8 @@ var passport = require('passport');
 var LocalStrategy = require('passport-local').Strategy;
 var bcrypt = require('bcrypt');
 var mongoose = require('mongoose');
+var http = require('http');
+var io = require('socket.io');
 // better logging... https://github.com/LearnBoost/console-trace/pull/17/files
 require('console-trace')({
   always: true,
@@ -78,6 +80,10 @@ passport.use(new LocalStrategy({
 }));
 
 var app = express();
+// Create HTTP server on port 3000 and register socket.io as listener
+server = http.createServer(app)
+server.listen(3000);
+io = io.listen(server);
 
 app.set('port', process.env.PORT || 3000);
 //app.set('views', path.join(__dirname, 'views'));
@@ -146,10 +152,6 @@ app.get('/secret', ensureAuthenticated, function(req, res) {
 });
 
 
-var server = app.listen(3000, function() {
-    console.log('Listening on port %d', server.address().port);
-});
-
 // Simple route middleware to ensure user is authenticated.
 //   Use this route middleware on any resource that needs to be protected.  If
 //   the request is authenticated (typically via a persistent login session),
@@ -180,3 +182,33 @@ function ensureAuthenticated(req, res, next) {
   }
 }
 
+
+///
+/// Setup Socket IO
+///
+io.configure(function (){
+  io.set('authorization', function (handshakeData, callback) {
+    // findDatabyip is an async example function
+    var token = handshakeData.token;
+
+    User.findOne( { accessToken: token }, function (err, usr) {
+      if (err) return callback(err);
+
+      if (usr) {
+	console.log('SUCCESSFUL SOCKET AUTH');
+	callback(null, true);
+      } else {
+        callback(null, false);
+      }
+    });
+  });
+});
+
+io.on('connection', function (socket) {
+  console.log('Connection');
+  socket.emit('data', 'LOGGED IN');
+
+  socket.on('disconnect', function() {
+  })
+  
+});
