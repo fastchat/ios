@@ -7,7 +7,8 @@
 //
 
 #import <UIKit/UIKit.h>
+#import "SocketIO.h"
 
-@interface CHViewController : UIViewController
+@interface CHViewController : UIViewController <SocketIODelegate>
 
 @end
