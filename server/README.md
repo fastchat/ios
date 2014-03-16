@@ -12,4 +12,20 @@ This is the server. It's written in Node.js for fast concurrency. It can handle 
 
 # Development
 
-run 'npm install' in this directory to get the dependencies. Then run 'node server.js'
+Install MongoDB:
+
+Need Homebrew? Copy and paste the following line into the Terminal:
+ruby -e "$(curl -fsSL https://raw.github.com/Homebrew/homebrew/go/install)"
+
+Then run:
+brew update
+brew install mongodb
+
+Once installed, run:
+mongod
+
+In a new Terminal Window:
+run 'npm install' in this directory to get the dependencies.
+
+Then run:
+node server.js
