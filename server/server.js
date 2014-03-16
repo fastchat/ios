@@ -188,10 +188,16 @@ function ensureAuthenticated(req, res, next) {
 ///
 io.configure(function (){
   io.set('authorization', function (handshakeData, callback) {
+    console.log('AUTHORIZED ACTIVATED: ' + JSON.stringify(handshakeData, null, 4));
     // findDatabyip is an async example function
-    var token = handshakeData.token;
+    var token = handshakeData.query.token;
 
+    if (!token) return callback(new Error('You must have a session token!'));
+    
+    console.log('TokeN???? ' + token);
     User.findOne( { accessToken: token }, function (err, usr) {
+    console.log('Found: ' + err + ' Usr: ' + usr);
+      
       if (err) return callback(err);
 
       if (usr) {

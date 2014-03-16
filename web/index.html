@@ -1,0 +1,27 @@
+<html>
+  <head>
+    <script src="socket.io.js"></script>
+    <script type="text/javascript">
+      io.configure(function () { 
+      io.set("transports", ["xhr-polling"]); 
+      io.set("polling duration", 10); 
+      });
+      
+      server = io.connect('http://localhost:3000/');
+      server.on('data', function (data) {
+      console.log(data);
+      });
+
+      server.on('error', function (reason){
+      console.error('Unable to connect Socket.IO', reason);
+      });
+
+      server.on('connect', function (){
+      console.info('successfully established a working and authorized connection');
+      });
+    </script>
+  </head>
+  <body>
+    Open the browser console to see tick-tocks!
+  </body>
+</html>
