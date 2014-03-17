@@ -5,18 +5,27 @@ var bcrypt = require('bcrypt');
 var mongoose = require('mongoose');
 var http = require('http');
 var io = require('socket.io');
+
 // better logging... https://github.com/LearnBoost/console-trace/pull/17/files
 require('console-trace')({
   always: true,
 })
 
-var User = require('./user');
+///
+/// Models
+///
+var User = require('./model/user');
+var Group = require('./model/group');
+var Message = require('./model/message');
 
+///
+/// Database Setup
+///
 mongoose.connect( 'mongodb://localhost/dev' );
 var db = mongoose.connection;
-db.on('error', console.error.bind(console, 'connection error:'));
+db.on('error', console.error.bind(console, 'Connection Error (Connecting to Mongo). Did you run "mongod"?:'));
 db.once('open', function callback() {
-  console.log('Connected to DB');
+  console.log('Successfully connected to Mongo.');
 });
 
 // Passport session setup.
@@ -26,30 +35,14 @@ db.once('open', function callback() {
 //   the user by ID when deserializing.
 //
 //   Both serializer and deserializer edited for Remember Me functionality
-passport.serializeUser(function(user, done) {
-  var createAccessToken = function () {
-    var token = user.generateRandomToken();
-    User.findOne( { accessToken: token }, function (err, existingUser) {
-      if (err) { return done( err ); }
-      if (existingUser) {
-        createAccessToken(); // Run the function again - the token has to be unique!
-      } else {
-        user.set('accessToken', token);
-        user.save( function (err) {
-          if (err) return done(err);
-          return done(null, user.get('accessToken'));
-        })
-      }
-    });
-  };
 
-  if ( user._id ) {
-    createAccessToken();
-  }
+passport.serializeUser(function(user, done) {
+  if (user._id) return done(null, user._id);
 });
 
-passport.deserializeUser(function(token, done) {
-  User.findOne( {accessToken: token } , function (err, user) {
+
+passport.deserializeUser(function(id, done) {
+  User.findOne( {_id: id} , function (err, user) {
     done(err, user);
   });
 });
@@ -79,11 +72,13 @@ passport.use(new LocalStrategy({
   });
 }));
 
-var app = express();
+
 // Create HTTP server on port 3000 and register socket.io as listener
+var app = express();
 server = http.createServer(app)
 server.listen(3000);
 io = io.listen(server);
+
 
 app.set('port', process.env.PORT || 3000);
 //app.set('views', path.join(__dirname, 'views'));
@@ -100,51 +95,27 @@ app.use(passport.initialize());
 app.use(passport.session());
 app.use(app.router);
 
+/**
+ * Update how these are set to use app.set('development', stuff);
+ */
 // development only
 if ('development' == app.get('env')) {
   app.use(express.errorHandler());
 }
 
 
-// POST /login
-// This is an alternative implementation that uses a custom callback to
-// acheive the same functionality.
-app.post('/login', function(req, res, next) {
-  console.log('Logging in user');
-  console.log('Info: ' + JSON.stringify(req.body, null, 4));
-  passport.authenticate('local', function(err, user, info) {
-    console.log('Error: ' + err);
-    console.log('user: ' + user);
-    console.log('INFO: ' + info);
-    if (err) { return next(err) }
-    if (!user) {
-      req.session.messages = [info.message];
-      //return error
-//      return res.redirect('/login')
-    }
-    req.logIn(user, function(err) {
-      if (err) { return next(err); }
-      res.send( {'session-token': user.get('accessToken')} );
-      
-//      return res.redirect('/admin');
-    });
-  })(req, res, next);
-});
+var userRoutes = require('./routes/user');
+var groupRoutes = require('./routes/group');
+var messageRoutes = require('./routes/message');
 
-// POST Register
-app.post('/register', function(req, res) {
-  console.log('Body: ' + JSON.stringify(req.body, null, 4));
-  User.newUser(req.body.email, req.body.password, function(err, user) {
-    if(err) {
-      console.log(err);
-      req.session.messages = [err.message];
-      return res.redirect('/register');
-    } else {
-      console.log('user: ' + user.email + " saved.");
-      res.send({'user':user.email});
-    }
-  });
-});
+
+app.post('/login', userRoutes.loginPOST);
+app.get('/logout', userRoutes.logout); //delete?
+app.post('/register', userRoutes.register);
+app.get('/group', ensureAuthenticated, groupRoutes.getGroups);
+
+app.post('/group', ensureAuthenticated, groupRoutes.createGroup);
+app.get('/group/:id/messages', ensureAuthenticated, messageRoutes.getMessages);
 
 app.get('/secret', ensureAuthenticated, function(req, res) {
   console.log('Get Secret');
@@ -158,9 +129,9 @@ app.get('/secret', ensureAuthenticated, function(req, res) {
 //   the request will proceed.  Otherwise, the user will be redirected to the
 //   login page.
 function ensureAuthenticated(req, res, next) {
-  if ( req.isAuthenticated() ) {
-    return next();
-  } else {
+//  if ( req.isAuthenticated() ) {
+//    return next();
+//  } else {
     console.log('Checking ' + JSON.stringify(req.headers, null, 4));
     if (req.headers['session-token'] !== undefined) {
       console.log('Found header!');
@@ -175,10 +146,10 @@ function ensureAuthenticated(req, res, next) {
 	  res.send(401);
 	}
       });
-    } else {
+//    } else {
       //401
-      res.send(401);
-    }
+//      res.send(401);
+//    }
   }
 }
 
@@ -202,6 +173,7 @@ io.configure(function (){
 
       if (usr) {
 	console.log('SUCCESSFUL SOCKET AUTH');
+	handshakeData.user = usr;
 	callback(null, true);
       } else {
         callback(null, false);
@@ -210,11 +182,37 @@ io.configure(function (){
   });
 });
 
+
 io.on('connection', function (socket) {
-  console.log('Connection');
-  socket.emit('data', 'LOGGED IN');
+
+  var socketUser = socket.handshake.user;
+  for (var i = 0; i < socketUser.groups.length; i++) {
+    socket.join(socketUser.groups[i]); //Group ID
+  }
+  socket.emit('ready', 'To go');
+
+
+  socket.on('message', function(message) {
+    var room = message.groupId;
+
+    socket.broadcast.to(room).emit('message', message) //emit to 'room' except this socket
+
+    ///
+    /// Make a new message and add it to the group
+    ///
+/*
+    var aMessage = new Message(message);
+    aMessage.save(function(err) {
+      //saved
+    });
+*/
+
+  });
+
+  
 
   socket.on('disconnect', function() {
+    // do something with notifications?
   })
   
 });

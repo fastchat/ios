@@ -25,6 +25,8 @@
     "connect-mongo": "0.4.0",
     "body-parser": "1.0.0",
     "cookie-parser": "1.0.1",
-    "express-session": "1.0.2"
+    "express-session": "1.0.2",
+    "hashish": "0.0.4",
+    "passport-localapikey": "0.0.3"
   }
 }
