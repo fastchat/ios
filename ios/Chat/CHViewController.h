@@ -11,4 +11,6 @@
 
 @interface CHViewController : UIViewController <SocketIODelegate>
 
+@property (weak, nonatomic) IBOutlet UITextView *textView;
+
 @end
