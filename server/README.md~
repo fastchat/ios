@@ -84,6 +84,7 @@ DELETE /group/:id
 Only deletes if user has permission to do so.
 
 
+
 ## Change Settings for Group
 PATCH /group/:id
 {

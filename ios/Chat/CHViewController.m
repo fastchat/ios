@@ -9,8 +9,10 @@
 #import "CHViewController.h"
 #import "SocketIOPacket.h"
 #import "AFNetworking.h"
+#import "CHRegisterViewController.h"
+#import "CHGroupListTableViewController.h"
 
-#define URL @"129.21.40.209" //localhost
+#define URL @"localhost" //localhost
 
 @interface CHViewController ()
 
@@ -24,6 +26,8 @@
 {
     [super viewDidLoad];
     
+    self.errorLabel.text = @"";
+    
     ///
     /// Connect to server!
     ///
@@ -31,21 +35,24 @@
 //    [_socket connectToHost:@"localhost" onPort:3000]; //localhost
     
     
-    NSDictionary *params = @{@"email": @"3ethanmski@gmail.com",
-                             @"password": @"test"};
+//    NSDictionary *params = @{@"email": @"3ethanmski@gmail.com",
+//                             @"password": @"test"};
     
-    [[AFHTTPRequestOperationManager manager] POST:[NSString stringWithFormat:@"http://%@:3000/login", URL] parameters:params success:^(AFHTTPRequestOperation *operation, id responseObject) {
+/*    NSDictionary *params = @{@"email": @"test@test.com",
+                             @"password": @"test"};
+*/
+/*    [[AFHTTPRequestOperationManager manager] POST:[NSString stringWithFormat:@"http://%@:3000/login", URL] parameters:params success:^(AFHTTPRequestOperation *operation, id responseObject) {
         DLog(@"JSON: %@", responseObject);
         [_socket connectToHost:URL onPort:3000 withParams:@{@"token": responseObject[@"session-token"]}];
     } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
         DLog(@"Error: %@", error);
     }];
-    
+*/
 }
 
 
 #pragma mark - Socket IO
-
+/*
 - (void) socketIODidConnect:(SocketIO *)socket;
 {
     DLog(@"Connected! %@", socket);
@@ -93,6 +100,31 @@
     }
     
 }
+*/
 
+- (IBAction)registerWasTouched:(id)sender {
+    DLog(@"Register new user");
+    CHRegisterViewController *registerViewController = [self.storyboard instantiateViewControllerWithIdentifier:@"CHRegisterViewController"];
+    DLog(@"navigationController: %@",self.navigationController);
 
+    [[self navigationController] pushViewController:registerViewController animated:YES];
+
+}
+
+- (IBAction)loginWasTouched:(id)sender {
+    DLog(@"Attempting to login with user %@ and password %@", self.emailTextField.text, self.passwordTextField.text);
+    NSDictionary *params = @{@"email": self.emailTextField.text,
+     @"password": self.passwordTextField.text};
+    
+    [[AFHTTPRequestOperationManager manager] POST:[NSString stringWithFormat:@"http://%@:3000/login", URL] parameters:params success:^(AFHTTPRequestOperation *operation, id responseObject) {
+            DLog(@"JSON: %@", responseObject);
+        
+            [_socket connectToHost:URL onPort:3000 withParams:@{@"token": responseObject[@"session-token"]}];
+            CHGroupListTableViewController *vc = [self.storyboard instantiateViewControllerWithIdentifier:@"CHGroupListTableViewController"];
+            [[self navigationController] pushViewController:vc animated:YES];
+     } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+         DLog(@"Error: %@", error);
+         self.errorLabel.text = @"Oops! Something went wrong!";
+     }];
+}
 @end
