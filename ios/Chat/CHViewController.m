@@ -112,6 +112,7 @@
 }
 
 - (IBAction)loginWasTouched:(id)sender {
+    self.errorLabel.text = @"";
     DLog(@"Attempting to login with user %@ and password %@", self.emailTextField.text, self.passwordTextField.text);
     NSDictionary *params = @{@"email": self.emailTextField.text,
      @"password": self.passwordTextField.text};
@@ -124,7 +125,8 @@
             [[self navigationController] pushViewController:vc animated:YES];
      } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
          DLog(@"Error: %@", error);
-         self.errorLabel.text = @"Oops! Something went wrong!";
+         //DLog(@"responseObject message: %@",responseObject.error);
+         self.errorLabel.text = error.localizedDescription;//@"Oops! Something went wrong!";
      }];
 }
 @end
