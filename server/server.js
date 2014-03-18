@@ -60,13 +60,13 @@ passport.use(new LocalStrategy({
   User.findOne({ 'email': email }, function(err, user) {
     console.log("User: " + user);
     if (err) { return done(err); }
-    if (!user) { return done(null, false, { message: 'Unknown user ' + email }); }
+    if (!user) { return done(null, false, { error: 'Unknown user ' + email }); }
     user.comparePassword(password, function(err, isMatch) {
       if (err) return done(err);
       if(isMatch) {
         return done(null, user);
       } else {
-        return done(null, false, { message: 'Invalid password' });
+        return done(null, false, { error: 'Invalid password' });
       }
     });
   });
@@ -94,7 +94,7 @@ app.use(express.session());
 app.use(passport.initialize());
 app.use(passport.session());
 app.use(app.router);
-
+app.use(express.static(__dirname + '/'));
 /**
  * Update how these are set to use app.set('development', stuff);
  */
