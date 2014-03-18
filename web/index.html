@@ -2,23 +2,24 @@
   <head>
     <script src="socket.io.js"></script>
     <script type="text/javascript">
-      io.configure(function () { 
-      io.set("transports", ["xhr-polling"]); 
-      io.set("polling duration", 10); 
-      });
+      var socket = io('http://localhost:3000');
+      socket.on('connect', function(){
       
-      server = io.connect('http://localhost:3000/');
-      server.on('data', function (data) {
-      console.log(data);
-      });
+      console.log('Connected!');
 
-      server.on('error', function (reason){
+        socket.on('event', function(data){
+          console.log('Data: ' + JSON.stringify(data));
+        });
+
+      socket.on('disconnect', function(){});
+
+      socket.on('error', function (reason){
       console.error('Unable to connect Socket.IO', reason);
       });
 
-      server.on('connect', function (){
-      console.info('successfully established a working and authorized connection');
+
       });
+
     </script>
   </head>
   <body>

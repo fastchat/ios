@@ -14,9 +14,7 @@ exports.loginPOST = function(req, res, next) {
     console.log('INFO: ' + info);
     if (err) { return next(err) }
     if (!user) {
-      req.session.messages = [info.message];
-      //return error
-//      return res.redirect('/login')
+      return res.send(401, {'error' : 'Unknown user'});
     }
     req.logIn(user, function(err) {
       if (err) { return next(err); }

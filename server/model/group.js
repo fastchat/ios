@@ -5,7 +5,8 @@ var mongoose = require('mongoose')
 var Group = new Schema({
   members : [{ type: Schema.Types.ObjectId, ref: 'User' }],
   messages : [{type: Schema.Types.ObjectId, ref: 'Message'}],
-  name : String
+  name : String,
+  invites : [{type: Schema.Types.ObjectId, ref: 'User'}]
 });
 
 // cb(err, group)

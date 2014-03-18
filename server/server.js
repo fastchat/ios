@@ -60,13 +60,13 @@ passport.use(new LocalStrategy({
   User.findOne({ 'email': email }, function(err, user) {
     console.log("User: " + user);
     if (err) { return done(err); }
-    if (!user) { return done(null, false, { message: 'Unknown user ' + email }); }
+    if (!user) { return done(null, false, { error: 'Unknown user ' + email }); }
     user.comparePassword(password, function(err, isMatch) {
       if (err) return done(err);
       if(isMatch) {
         return done(null, user);
       } else {
-        return done(null, false, { message: 'Invalid password' });
+        return done(null, false, { error: 'Invalid password' });
       }
     });
   });
@@ -77,7 +77,7 @@ passport.use(new LocalStrategy({
 var app = express();
 server = http.createServer(app)
 server.listen(3000);
-io = io.listen(server);
+io = io.listen(server, {origins: '*:*'});
 
 
 app.set('port', process.env.PORT || 3000);
@@ -94,7 +94,7 @@ app.use(express.session());
 app.use(passport.initialize());
 app.use(passport.session());
 app.use(app.router);
-
+app.use(express.static(__dirname + '/'));
 /**
  * Update how these are set to use app.set('development', stuff);
  */
@@ -116,11 +116,8 @@ app.get('/group', ensureAuthenticated, groupRoutes.getGroups);
 
 app.post('/group', ensureAuthenticated, groupRoutes.createGroup);
 app.get('/group/:id/messages', ensureAuthenticated, messageRoutes.getMessages);
-
-app.get('/secret', ensureAuthenticated, function(req, res) {
-  console.log('Get Secret');
-  res.send({'ok':'you win.'});
-});
+app.put('/group/:id/invite', ensureAuthenticated, groupRoutes.invite);
+app.put('/group/:id/uninvite', ensureAuthenticated, groupRoutes.uninvite);
 
 
 // Simple route middleware to ensure user is authenticated.

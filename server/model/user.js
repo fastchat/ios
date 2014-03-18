@@ -10,7 +10,8 @@ var User = new Schema({
   email: {type: String, required: true, unique: true},
   password: {type: String, required: true},
   accessToken: {type: String}, //Session Token
-  groups: [{type: Schema.Types.ObjectId, ref: 'Group'}]
+  groups: [{type: Schema.Types.ObjectId, ref: 'Group'}],
+  invites: [{type: Schema.Types.ObjectId, ref: 'Group'}],
 });
 
 // Bcrypt middleware
@@ -66,9 +67,10 @@ User.methods.comparePassword = function(candidatePassword, cb) {
 
 // Session Token implementation helper method
 // This should probably be re-implemented as a secure method
+// http://stackoverflow.com/questions/8855687/secure-random-token-in-node-js
 User.methods.generateRandomToken = function () {
   var user = this,
-  chars = "_!abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890",
+  chars = "_abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890",
   token = new Date().getTime() + '_';
   for ( var x = 0; x < 16; x++ ) {
     var i = Math.floor( Math.random() * 62 );

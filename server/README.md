@@ -59,12 +59,62 @@ Next:
 
 # End Points
 
-register
+## Register
+POST /register
 
-login
+{
+	"email" : "youremail",
+	"password" : "your password"
+}
+
+Returns:
+
+{
+	"user": "youremail"
+}
+
+## Login
+POST /login
+{
+	"email" : "youremail",
+	"password" : "your password"
+}
+
+Returns:
+
+{
+	"session-token": "4582359082592875"
+}
 
 ## Get Groups
 GET /group
+
+Returns:
+
+[
+  {
+    "__v": 0,
+    "_id": "5325e046c68db1c326000001",
+    "name": "Coolest Group",
+    "invites": [],
+    "messages": [],
+    "members": [
+      "532505565fbd8abe15000001",
+      "53250530271351af15000001"
+    ]
+  },
+  {
+    "__v": 0,
+    "_id": "5325e090f82381db26000001",
+    "name": "Coolest Group",
+    "invites": [],
+    "messages": [],
+    "members": [
+      "532505565fbd8abe15000001",
+      "53250530271351af15000001"
+    ]
+  }
+]
 
 returns an array of all the groups you're in (and their settings?)
 
@@ -77,14 +127,18 @@ POST /group
 
 Automatically adds the creator to the group.
 
+Returns:
+200 OK
 
-## Delete Group
+
+## Delete Group NOT IMPLEMENTED YET
 DELETE /group/:id
 
 Only deletes if user has permission to do so.
 
 
-## Change Settings for Group
+
+## Change Settings for Group NOT IMPLEMENTED YET
 PATCH /group/:id
 {
 	"name": "newName",
@@ -99,7 +153,23 @@ silencing notifications for that group. It updates your settings for the group. 
 people to the group (by adjusting the invitees array.)
 
 ## Invite Person to Group
+PUT /group/:id/invite
 
+{
+	"invitees": [email, email]
+}
+
+returns 200 OK
+
+
+## Remove invite/person from Group
+PUT /group/:id/uninvite
+
+{
+	"uninvites": [email, email]
+}
+
+returns 200
 
 
 ## Messages
