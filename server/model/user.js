@@ -10,7 +10,8 @@ var User = new Schema({
   email: {type: String, required: true, unique: true},
   password: {type: String, required: true},
   accessToken: {type: String}, //Session Token
-  groups: [{type: Schema.Types.ObjectId, ref: 'Group'}]
+  groups: [{type: Schema.Types.ObjectId, ref: 'Group'}],
+  invites: [{type: Schema.Types.ObjectId, ref: 'Group'}],
 });
 
 // Bcrypt middleware

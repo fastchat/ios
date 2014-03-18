@@ -77,7 +77,7 @@ passport.use(new LocalStrategy({
 var app = express();
 server = http.createServer(app)
 server.listen(3000);
-io = io.listen(server);
+io = io.listen(server, {origins: '*:*'});
 
 
 app.set('port', process.env.PORT || 3000);
@@ -116,11 +116,8 @@ app.get('/group', ensureAuthenticated, groupRoutes.getGroups);
 
 app.post('/group', ensureAuthenticated, groupRoutes.createGroup);
 app.get('/group/:id/messages', ensureAuthenticated, messageRoutes.getMessages);
-
-app.get('/secret', ensureAuthenticated, function(req, res) {
-  console.log('Get Secret');
-  res.send({'ok':'you win.'});
-});
+app.put('/group/:id/invite', ensureAuthenticated, groupRoutes.invite);
+app.put('/group/:id/uninvite', ensureAuthenticated, groupRoutes.uninvite);
 
 
 // Simple route middleware to ensure user is authenticated.
