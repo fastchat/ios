@@ -49,6 +49,7 @@
     
     [[CHNetworkManager sharedManager] getGroups:^(NSArray *groups) {
         self.groups = groups;
+        
         DLog(@"groups: %@",groups);
         [self.tableView reloadData];
         [spinner stopAnimating];

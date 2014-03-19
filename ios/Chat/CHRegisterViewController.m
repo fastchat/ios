@@ -9,6 +9,7 @@
 #import "CHRegisterViewController.h"
 #import "SocketIOPacket.h"
 #import "AFNetworking.h"
+#import "CHNetworkManager.h"
 
 #define URL @"localhost" //localhost
 
@@ -41,7 +42,11 @@
 -(void)finishRegistration {
     DLog(@"Attempting to register user %@ with password %@ and email %@", self.usernameTextField.text, self.passwordTextField.text, self.emailTextField.text);
     
-    self.socket = [[SocketIO alloc] initWithDelegate:self];
+    [[CHNetworkManager sharedManager] registerWithEmail:self.emailTextField.text password:self.passwordTextField.text callback:^(NSArray *userData) {
+        DLog(@"Registered user: %@",userData);
+    }];
+    
+   /* self.socket = [[SocketIO alloc] initWithDelegate:self];
     //    [_socket connectToHost:@"localhost" onPort:3000]; //localhost
     
     
@@ -54,12 +59,7 @@
     } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
         DLog(@"Error: %@", error);
     }];
-}
-
-- (void)didReceiveMemoryWarning
-{
-    [super didReceiveMemoryWarning];
-    // Dispose of any resources that can be recreated.
+    */
 }
 
 -(BOOL)textFieldShouldReturn:(UITextField *)textField
