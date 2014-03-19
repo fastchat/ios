@@ -7,21 +7,26 @@
 //
 
 #import "CHGroupListTableViewController.h"
+#import "CHNetworkManager.h"
+#import "CHAddGroupViewController.h"
+#import "CHGroupTableViewCell.h"
 
 @interface CHGroupListTableViewController ()
+
+@property NSArray *groups;
 
 @end
 
 @implementation CHGroupListTableViewController
 
-- (id)initWithStyle:(UITableViewStyle)style
-{
-    self = [super initWithStyle:style];
-    if (self) {
-        // Custom initialization
-    }
-    return self;
-}
+//- (id)initWithStyle:(UITableViewStyle)style
+//{
+//    self = [super initWithStyle:style];
+//    if (self) {
+//        // Custom initialization
+//    }
+//    return self;
+//}
 
 - (void)viewDidLoad
 {
@@ -32,6 +37,24 @@
     
     // Uncomment the following line to display an Edit button in the navigation bar for this view controller.
     // self.navigationItem.rightBarButtonItem = self.editButtonItem;
+   
+    UIBarButtonItem *addButton = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemAdd target:self action:@selector(showAddView)];
+    self.navigationItem.rightBarButtonItem = addButton;
+
+    
+    [[CHNetworkManager sharedManager] getGroups:^(NSArray *groups) {
+        self.groups = groups;
+        DLog(@"groups: %@",groups);
+        [self.tableView reloadData];
+    }];
+    [[CHNetworkManager sharedManager] getGroups:nil];
+}
+
+- (void)showAddView {
+    CHAddGroupViewController *controller = [self.storyboard instantiateViewControllerWithIdentifier:@"CHAddGroupViewController"];   //[[WineAddViewController alloc] initWithNibName:@"WineAddViewController" bundle:Nil];
+    //controller.delegate = self;
+    //[self performSegueWithIdentifier:@"addWineSegue" sender:self];
+    [[self navigationController] pushViewController:controller animated:YES];
 }
 
 - (void)didReceiveMemoryWarning
@@ -46,26 +69,27 @@
 {
 #warning Potentially incomplete method implementation.
     // Return the number of sections.
-    return 0;
+    return 1;
 }
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
-#warning Incomplete method implementation.
     // Return the number of rows in the section.
-    return 0;
+    return self.groups.count;
 }
 
-/*
-- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
+
+- (CHGroupTableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:<#@"reuseIdentifier"#> forIndexPath:indexPath];
-    
+    CHGroupTableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"CHGroupTableViewCell" forIndexPath:indexPath];
+
     // Configure the cell...
+    cell.textLabel.text = [self.groups[indexPath.row] objectForKey:@"name"];
+    DLog(@"group: %@", [self.groups[indexPath.row] objectForKey:@"name"]);
     
     return cell;
 }
-*/
+
 
 /*
 // Override to support conditional editing of the table view.

@@ -11,6 +11,7 @@
 #import "AFNetworking.h"
 #import "CHRegisterViewController.h"
 #import "CHGroupListTableViewController.h"
+#import "CHNetworkManager.h"
 
 #define URL @"localhost" //localhost
 
@@ -32,6 +33,23 @@
     /// Connect to server!
     ///
     self.socket = [[SocketIO alloc] initWithDelegate:self];
+    
+    // Auto login if session token is found
+    if( [[CHNetworkManager sharedManager] hasStoredSessionToken] ) {
+        DLog(@"We should auto login!");
+        CHGroupListTableViewController *vc = [self.storyboard instantiateViewControllerWithIdentifier:@"CHGroupListTableViewController"];
+        vc.navigationItem.hidesBackButton = YES;
+        [[self navigationController] pushViewController:vc animated:YES];
+        
+    }
+    else {
+        DLog(@"No session token found. Displaying login screen");
+    }
+    
+    
+    
+    
+    
 //    [_socket connectToHost:@"localhost" onPort:3000]; //localhost
     
     
@@ -117,16 +135,28 @@
     NSDictionary *params = @{@"email": self.emailTextField.text,
      @"password": self.passwordTextField.text};
     
-    [[AFHTTPRequestOperationManager manager] POST:[NSString stringWithFormat:@"http://%@:3000/login", URL] parameters:params success:^(AFHTTPRequestOperation *operation, id responseObject) {
-            DLog(@"JSON: %@", responseObject);
-        
-            [_socket connectToHost:URL onPort:3000 withParams:@{@"token": responseObject[@"session-token"]}];
-            CHGroupListTableViewController *vc = [self.storyboard instantiateViewControllerWithIdentifier:@"CHGroupListTableViewController"];
-            [[self navigationController] pushViewController:vc animated:YES];
-     } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
-         DLog(@"Error: %@", error);
-         //DLog(@"responseObject message: %@",responseObject.error);
-         self.errorLabel.text = error.localizedDescription;//@"Oops! Something went wrong!";
-     }];
+
+    [[CHNetworkManager sharedManager] postLoginWithEmail:self.emailTextField.text password:self.passwordTextField.text
+        callback:^(bool successful, NSError *error) {
+            if( successful ) {
+                // Save the session token
+                
+                //NSString *valueToSave = @"someValue";
+                //[[NSUserDefaults standardUserDefaults]
+                //setObject:valueToSave forKey:@"preferenceName"];
+                
+                CHGroupListTableViewController *vc = [self.storyboard instantiateViewControllerWithIdentifier:@"CHGroupListTableViewController"];
+                
+                vc.navigationItem.hidesBackButton = YES;
+                [[self navigationController] pushViewController:vc animated:YES];
+            }
+            else {
+                self.errorLabel.text = error.localizedDescription;
+            }
+        }];
+    
+    
+    
+
 }
 @end

@@ -9,6 +9,10 @@
 /* Begin PBXBuildFile section */
 		2768EA9F18D87059006D14BB /* CHRegisterViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2768EA9E18D87059006D14BB /* CHRegisterViewController.m */; };
 		2768EAA218D888B6006D14BB /* CHGroupListTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2768EAA118D888B6006D14BB /* CHGroupListTableViewController.m */; };
+		2768EAA518D8C270006D14BB /* CHGroupTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 2768EAA418D8C270006D14BB /* CHGroupTableViewCell.m */; };
+		2768EAA818D8C90B006D14BB /* CHNetworkManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 2768EAA718D8C90B006D14BB /* CHNetworkManager.m */; };
+		2768EAAB18D8E02B006D14BB /* CHAddGroupViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2768EAAA18D8E02B006D14BB /* CHAddGroupViewController.m */; };
+		2768EAAE18D9138D006D14BB /* CHMessageViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2768EAAD18D9138D006D14BB /* CHMessageViewController.m */; };
 		2C7FD1E6FB44435B8A225753 /* libPods-Chat.a in Frameworks */ = {isa = PBXBuildFile; fileRef = ED86F54EC1C64B14950512A1 /* libPods-Chat.a */; };
 		AA7759DA18D54D3000E4E7AB /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = AA7759D918D54D3000E4E7AB /* Foundation.framework */; };
 		AA7759DC18D54D3000E4E7AB /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = AA7759DB18D54D3000E4E7AB /* CoreGraphics.framework */; };
@@ -42,6 +46,14 @@
 		2768EA9E18D87059006D14BB /* CHRegisterViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CHRegisterViewController.m; sourceTree = "<group>"; };
 		2768EAA018D888B6006D14BB /* CHGroupListTableViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CHGroupListTableViewController.h; sourceTree = "<group>"; };
 		2768EAA118D888B6006D14BB /* CHGroupListTableViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CHGroupListTableViewController.m; sourceTree = "<group>"; };
+		2768EAA318D8C270006D14BB /* CHGroupTableViewCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CHGroupTableViewCell.h; sourceTree = "<group>"; };
+		2768EAA418D8C270006D14BB /* CHGroupTableViewCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CHGroupTableViewCell.m; sourceTree = "<group>"; };
+		2768EAA618D8C90B006D14BB /* CHNetworkManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CHNetworkManager.h; sourceTree = "<group>"; };
+		2768EAA718D8C90B006D14BB /* CHNetworkManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CHNetworkManager.m; sourceTree = "<group>"; };
+		2768EAA918D8E02B006D14BB /* CHAddGroupViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CHAddGroupViewController.h; sourceTree = "<group>"; };
+		2768EAAA18D8E02B006D14BB /* CHAddGroupViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CHAddGroupViewController.m; sourceTree = "<group>"; };
+		2768EAAC18D9138D006D14BB /* CHMessageViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CHMessageViewController.h; sourceTree = "<group>"; };
+		2768EAAD18D9138D006D14BB /* CHMessageViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CHMessageViewController.m; sourceTree = "<group>"; };
 		7EC6EF7B5FC54E4BA2B855D4 /* Pods-Chat.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Chat.xcconfig"; path = "Pods/Pods-Chat.xcconfig"; sourceTree = "<group>"; };
 		AA7759D618D54D3000E4E7AB /* Chat.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Chat.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		AA7759D918D54D3000E4E7AB /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
@@ -91,6 +103,26 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		2768EAAF18D9151A006D14BB /* Networking */ = {
+			isa = PBXGroup;
+			children = (
+				2768EAA618D8C90B006D14BB /* CHNetworkManager.h */,
+				2768EAA718D8C90B006D14BB /* CHNetworkManager.m */,
+			);
+			name = Networking;
+			sourceTree = "<group>";
+		};
+		2768EAB018D91538006D14BB /* Authentication */ = {
+			isa = PBXGroup;
+			children = (
+				AA7759F118D54D3000E4E7AB /* CHViewController.h */,
+				AA7759F218D54D3000E4E7AB /* CHViewController.m */,
+				2768EA9D18D87059006D14BB /* CHRegisterViewController.h */,
+				2768EA9E18D87059006D14BB /* CHRegisterViewController.m */,
+			);
+			name = Authentication;
+			sourceTree = "<group>";
+		};
 		AA7759CD18D54D3000E4E7AB = {
 			isa = PBXGroup;
 			children = (
@@ -126,18 +158,22 @@
 		AA7759DF18D54D3000E4E7AB /* Chat */ = {
 			isa = PBXGroup;
 			children = (
+				2768EAB018D91538006D14BB /* Authentication */,
 				AA7759E818D54D3000E4E7AB /* CHAppDelegate.h */,
 				AA7759E918D54D3000E4E7AB /* CHAppDelegate.m */,
 				AA7759EB18D54D3000E4E7AB /* Main_iPhone.storyboard */,
 				AA7759EE18D54D3000E4E7AB /* Main_iPad.storyboard */,
-				AA7759F118D54D3000E4E7AB /* CHViewController.h */,
-				AA7759F218D54D3000E4E7AB /* CHViewController.m */,
 				AA7759F418D54D3000E4E7AB /* Images.xcassets */,
 				AA7759E018D54D3000E4E7AB /* Supporting Files */,
-				2768EA9D18D87059006D14BB /* CHRegisterViewController.h */,
-				2768EA9E18D87059006D14BB /* CHRegisterViewController.m */,
 				2768EAA018D888B6006D14BB /* CHGroupListTableViewController.h */,
 				2768EAA118D888B6006D14BB /* CHGroupListTableViewController.m */,
+				2768EAA318D8C270006D14BB /* CHGroupTableViewCell.h */,
+				2768EAA418D8C270006D14BB /* CHGroupTableViewCell.m */,
+				2768EAAF18D9151A006D14BB /* Networking */,
+				2768EAA918D8E02B006D14BB /* CHAddGroupViewController.h */,
+				2768EAAA18D8E02B006D14BB /* CHAddGroupViewController.m */,
+				2768EAAC18D9138D006D14BB /* CHMessageViewController.h */,
+				2768EAAD18D9138D006D14BB /* CHMessageViewController.m */,
 			);
 			path = Chat;
 			sourceTree = "<group>";
@@ -305,9 +341,13 @@
 			buildActionMask = 2147483647;
 			files = (
 				2768EA9F18D87059006D14BB /* CHRegisterViewController.m in Sources */,
+				2768EAAE18D9138D006D14BB /* CHMessageViewController.m in Sources */,
 				2768EAA218D888B6006D14BB /* CHGroupListTableViewController.m in Sources */,
 				AA7759E618D54D3000E4E7AB /* main.m in Sources */,
 				AA7759EA18D54D3000E4E7AB /* CHAppDelegate.m in Sources */,
+				2768EAA518D8C270006D14BB /* CHGroupTableViewCell.m in Sources */,
+				2768EAAB18D8E02B006D14BB /* CHAddGroupViewController.m in Sources */,
+				2768EAA818D8C90B006D14BB /* CHNetworkManager.m in Sources */,
 				AA7759F318D54D3000E4E7AB /* CHViewController.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
