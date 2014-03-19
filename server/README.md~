@@ -137,8 +137,11 @@ DELETE /group/:id
 Only deletes if user has permission to do so.
 
 
-
+<<<<<<< HEAD
+## Change Settings for Group
+=======
 ## Change Settings for Group NOT IMPLEMENTED YET
+>>>>>>> c37a6da6665c378852ff690baf5e4be2edf11e5d
 PATCH /group/:id
 {
 	"name": "newName",
