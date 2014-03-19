@@ -94,7 +94,16 @@ app.use(express.session());
 app.use(passport.initialize());
 app.use(passport.session());
 app.use(app.router);
-app.use(express.static(__dirname + '/'));
+app.use(express.static(__dirname + '/client'));
+
+/*
+app.all('/', function(req,res,next) {
+  res.header("Access-Control-Allow-Origin","*");
+  res.header("Access-Control-Allow-Headers","X-Requested-With");
+  next();
+});
+*/
+
 /**
  * Update how these are set to use app.set('development', stuff);
  */
@@ -126,29 +135,28 @@ app.put('/group/:id/uninvite', ensureAuthenticated, groupRoutes.uninvite);
 //   the request will proceed.  Otherwise, the user will be redirected to the
 //   login page.
 function ensureAuthenticated(req, res, next) {
-//  if ( req.isAuthenticated() ) {
-//    return next();
-//  } else {
-    console.log('Checking ' + JSON.stringify(req.headers, null, 4));
-    if (req.headers['session-token'] !== undefined) {
-      console.log('Found header!');
-      var token = req.headers['session-token'];
-      console.log('Found token: ' + token);
-      User.findOne( { accessToken: token }, function (err, usr) {
-	console.log('User: ' + usr);
-	if (usr && !err) {
-	  return next();
-	} else {
-	  //401
-	  res.send(401);
-	}
-      });
-//    } else {
-      //401
-//      res.send(401);
-//    }
+  //  if ( req.isAuthenticated() ) {
+  //    return next();
+  //  } else {
+  console.log('Checking ' + JSON.stringify(req.headers, null, 4));
+  if (req.headers['session-token'] !== undefined) {
+    console.log('Found header!');
+    var token = req.headers['session-token'];
+    console.log('Found token: ' + token);
+    User.findOne( { accessToken: token }, function (err, usr) {
+      console.log('User: ' + usr);
+      if (usr && !err) {
+	return next();
+      } else {
+	//401
+	res.send(401);
+      }
+    });
+  } else {
+    res.send(401, {'error' : 'You must have a session token!'});
   }
 }
+
 
 
 ///
