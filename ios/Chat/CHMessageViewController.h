@@ -7,8 +7,9 @@
 //
 
 #import <UIKit/UIKit.h>
+#import "SocketIO.h"
 
-@interface CHMessageViewController : UIViewController <UITextFieldDelegate>
+@interface CHMessageViewController : UIViewController <UITextFieldDelegate, SocketIODelegate>
 @property (weak, nonatomic) IBOutlet UITextField *messageTextField;
 @property (weak, nonatomic) IBOutlet UIButton *sendButton;
 @property (weak, nonatomic) IBOutlet UIScrollView *chatScrollView;

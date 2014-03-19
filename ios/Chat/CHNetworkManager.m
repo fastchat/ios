@@ -8,7 +8,7 @@
 
 #import "CHNetworkManager.h"
 
-#define BASE_URL @"http://10.0.1.5:3000" //@"http://localhost:3000"
+#define BASE_URL @"http://129.21.120.30:3000"
 
 @interface CHNetworkManager()
 
@@ -52,6 +52,27 @@
     } failure:^(NSURLSessionDataTask *task, NSError *error) {
         DLog(@"Error: %@", error);
         callback(NO, error);
+    }];
+}
+
+- (void)registerWithEmail: (NSString *)email password:(NSString *)password callback:(void (^)(NSArray *userData))callback;
+{
+    DLog(@"email: %@, password: %@", email, password);
+    [self POST:@"/register" parameters:@{@"email" : email, @"password" : password} success:^(NSURLSessionDataTask *task, id responseObject) {
+        if( callback ) {
+            //self.sessiontoken = responseObject[@"session-token"];
+            //[self.requestSerializer setValue:self.sessiontoken forHTTPHeaderField:@"session-token"];
+            
+            // Save the session token to avoid future login
+            //[[NSUserDefaults standardUserDefaults]
+             //setObject:self.sessiontoken forKey:@"session-token"];
+            
+            
+            callback(responseObject);
+        }
+    } failure:^(NSURLSessionDataTask *task, NSError *error) {
+        DLog(@"Error: %@", error);
+        //callback(error);
     }];
 }
 

@@ -17,7 +17,7 @@
 
 @interface CHViewController ()
 
-@property (nonatomic, strong) SocketIO *socket;
+//@property (nonatomic, strong) SocketIO *socket;
 
 @end
 
@@ -32,10 +32,10 @@
     ///
     /// Connect to server!
     ///
-    self.socket = [[SocketIO alloc] initWithDelegate:self];
+    //self.socket = [[SocketIO alloc] initWithDelegate:self];
     
     // Auto login if session token is found
-    if( [[CHNetworkManager sharedManager] hasStoredSessionToken] ) {
+    /*if( [[CHNetworkManager sharedManager] hasStoredSessionToken] ) {
         DLog(@"We should auto login!");
         CHGroupListTableViewController *vc = [self.storyboard instantiateViewControllerWithIdentifier:@"CHGroupListTableViewController"];
         vc.navigationItem.hidesBackButton = YES;
@@ -44,7 +44,7 @@
     }
     else {
         DLog(@"No session token found. Displaying login screen");
-    }
+    }*/
     
     
     

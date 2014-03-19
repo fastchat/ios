@@ -184,6 +184,7 @@ io.on('connection', function (socket) {
 
   var socketUser = socket.handshake.user;
   for (var i = 0; i < socketUser.groups.length; i++) {
+    console.log("Joining group " + socketUser.groups[i]);
     socket.join(socketUser.groups[i]); //Group ID
   }
   socket.emit('ready', 'To go');
@@ -191,7 +192,7 @@ io.on('connection', function (socket) {
 
   socket.on('message', function(message) {
     var room = message.groupId;
-
+    console.log("Message: " + JSON.stringify(message, null, 4));
     socket.broadcast.to(room).emit('message', message) //emit to 'room' except this socket
 
     ///
