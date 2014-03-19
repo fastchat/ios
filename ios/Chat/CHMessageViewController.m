@@ -8,10 +8,12 @@
 
 #import "CHMessageViewController.h"
 #import "CHNetworkManager.h"
+#import "SocketIOPacket.h"
+#import "CHNetworkManager.h"
 
 @interface CHMessageViewController ()
     @property NSString *messages;
-
+    @property (nonatomic, strong) SocketIO *socket;
 @end
 
 @implementation CHMessageViewController
@@ -31,6 +33,13 @@
     [super viewDidLoad];
     // Do any additional setup after loading the view.
     
+    ///
+    /// Connect to server!
+    ///
+    self.socket = [[SocketIO alloc] initWithDelegate:self];
+    
+    [_socket connectToHost:@"129.21.120.30" onPort:3000 withParams:@{@"token": [CHNetworkManager sharedManager].sessiontoken}];
+    
     // Load previous messages
 
     /*[[CHNetworkManager sharedManager] getMessagesFromDate:[[NSDate alloc] initWithTimeIntervalSinceNow:0] group:nil  callback:^(NSArray *messages) {
@@ -41,6 +50,42 @@
     
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(keyboardWillHide:) name:UIKeyboardWillHideNotification object:nil];
 }
+
+- (void) socketIODidConnect:(SocketIO *)socket;
+{
+    DLog(@"Connected! %@", socket);
+    NSString *text = self.messageDisplayTextView.text;
+    text = [text stringByAppendingString:@"\nConnected\n"];
+    self.messageDisplayTextView.text = text;
+}
+
+- (void) socketIODidDisconnect:(SocketIO *)socket disconnectedWithError:(NSError *)error;
+{
+    DLog(@"Disconnected! %@ %@", socket, error);
+}
+
+- (void) socketIO:(SocketIO *)socket didReceiveMessage:(SocketIOPacket *)packet;
+{
+    DLog(@"Messsage: %@", packet.data);
+}
+
+- (void) socketIO:(SocketIO *)socket didReceiveJSON:(SocketIOPacket *)packet;
+{
+    DLog(@"JSON: %@", packet.data);
+}
+
+- (void) socketIO:(SocketIO *)socket didReceiveEvent:(SocketIOPacket *)packet;
+{
+    DLog(@"Event: %@", packet.dataAsJSON);
+    if ([packet.dataAsJSON[@"name"] isEqualToString:@"message"]) {
+        NSDictionary *data = [packet.dataAsJSON[@"args"] firstObject];
+        
+            self.messageDisplayTextView.text = [NSString stringWithFormat:@"%@ %@\n%@: %@\n\n", self.messageDisplayTextView.text, [[NSDate alloc] initWithTimeIntervalSinceNow:0], data[@"from"], data[@"text"]];
+        
+    }
+
+}
+
 
 /*
 #pragma mark - Navigation
@@ -57,6 +102,10 @@
     DLog(@"Sending message: %@",self.messageTextField.text);
     //self.messages = [self.messages stringByAppendingString:self.messageTextField.text];
     self.messageDisplayTextView.text = [NSString stringWithFormat:@"%@ %@\n%@\n\n", self.messageDisplayTextView.text, [[NSDate alloc] initWithTimeIntervalSinceNow:0], self.messageTextField.text];
+    //self.messageTextField.text = @"";
+    NSString *msg = self.messageTextField.text;
+    [_socket sendEvent:@"message" withData:@{@"from": @"Test", @"text" : msg, @"groupId": @"5328d87af8d3d3af7b000003"}];
+
     self.messageTextField.text = @"";
 }
 
