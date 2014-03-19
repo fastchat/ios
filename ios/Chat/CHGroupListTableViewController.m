@@ -41,13 +41,19 @@
     UIBarButtonItem *addButton = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemAdd target:self action:@selector(showAddView)];
     self.navigationItem.rightBarButtonItem = addButton;
 
+    UIActivityIndicatorView *spinner = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleGray];
+    spinner.center = CGPointMake(160, 240);
+    spinner.tag = 12;
+    [self.view addSubview:spinner];
+    [spinner startAnimating];
     
     [[CHNetworkManager sharedManager] getGroups:^(NSArray *groups) {
         self.groups = groups;
         DLog(@"groups: %@",groups);
         [self.tableView reloadData];
+        [spinner stopAnimating];
     }];
-    [[CHNetworkManager sharedManager] getGroups:nil];
+    
 }
 
 - (void)showAddView {
