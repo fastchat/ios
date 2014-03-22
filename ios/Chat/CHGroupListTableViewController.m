@@ -10,6 +10,8 @@
 #import "CHNetworkManager.h"
 #import "CHAddGroupViewController.h"
 #import "CHGroupTableViewCell.h"
+#import "CHAppDelegate.h"
+#import "CHSideNavigationTableViewController.h"
 
 @interface CHGroupListTableViewController ()
 
@@ -40,6 +42,11 @@
    
     UIBarButtonItem *addButton = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemAdd target:self action:@selector(showAddView)];
     self.navigationItem.rightBarButtonItem = addButton;
+    
+
+    UIBarButtonItem *test = [[UIBarButtonItem alloc] initWithTitle:@"Menu" style:UIBarButtonItemStylePlain target:self action:@selector(displaySideMenu)];
+//    UIBarButtonItem *menuButton = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemOrganize target:self action:@selector(displaySideMenu)];
+    self.navigationItem.leftBarButtonItem = test;
 
     UIActivityIndicatorView *spinner = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleGray];
     spinner.center = CGPointMake(160, 240);
@@ -57,24 +64,22 @@
     
 }
 
-- (void)showAddView {
-    CHAddGroupViewController *controller = [self.storyboard instantiateViewControllerWithIdentifier:@"CHAddGroupViewController"];   //[[WineAddViewController alloc] initWithNibName:@"WineAddViewController" bundle:Nil];
-    //controller.delegate = self;
-    //[self performSegueWithIdentifier:@"addWineSegue" sender:self];
+- (void)displaySideMenu {
+    CHSideNavigationTableViewController *controller = [self.storyboard instantiateViewControllerWithIdentifier:@"CHSideNavigationTableViewController"];
     [[self navigationController] pushViewController:controller animated:YES];
 }
 
-- (void)didReceiveMemoryWarning
-{
-    [super didReceiveMemoryWarning];
-    // Dispose of any resources that can be recreated.
+- (void)showAddView {
+    CHAddGroupViewController *controller = [self.storyboard instantiateViewControllerWithIdentifier:@"CHAddGroupViewController"];
+    
+    [[self navigationController] pushViewController:controller animated:YES];
 }
 
 #pragma mark - Table view data source
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
 {
-#warning Potentially incomplete method implementation.
+
     // Return the number of sections.
     return 1;
 }

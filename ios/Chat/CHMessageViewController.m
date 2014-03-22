@@ -85,33 +85,7 @@
             self.messageDisplayTextView.text = [NSString stringWithFormat:@"%@ %@\n%@: %@\n\n", self.messageDisplayTextView.text, [[NSDate alloc] initWithTimeIntervalSinceNow:0], data[@"from"], data[@"text"]];
         
     }
-    //dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(3 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-    //    DLog(@"DISPATCHING");
-    //    [_socket sendEvent:@"message" withData:@{@"from": @"Ethan", @"text" : @"ping", @"groupId": @"5328d87af8d3d3af7b000003"}];
-    //});
-    
-//    if ([packet.dataAsJSON[@"name"] isEqualToString:@"message"]) {
-/*        NSDictionary *data = [packet.dataAsJSON[@"args"] firstObject];
-    if( data != nil ) {
-        DLog(@"data: %@", data);
-        NSString *show = [NSString stringWithFormat:@"%@: %@\n", data[@"from"], data[@"text"]];
-        
-        NSString *text = self.messageDisplayTextView.text;
-        text = [text stringByAppendingString:show];
-        self.messageDisplayTextView.text = text;
-        
-        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(3 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-            DLog(@"DISPATCHING");
-            [_socket sendEvent:@"message" withData:@{@"from": @"Ethan", @"text" : @"ping", @"groupId": @"5328d87af8d3d3af7b000003"}];
-        });
-    }*/
-  //  } else {
-/*        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(3 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-            DLog(@"DISPATCHING");
-            [_socket sendEvent:@"message" withData:@{@"from": @"simulator", @"text" : self.messageTextField.text, @"groupId": @"5328d87af8d3d3af7b000003"}];
-        });
-    }
-*/
+
 }
 
 
