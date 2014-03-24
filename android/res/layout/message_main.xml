@@ -10,8 +10,8 @@
         android:layout_height="0dp"
         android:layout_weight="1.0"
         android:orientation="vertical"
-        android:paddingLeft="50dp"
-        android:paddingRight="50dp" >
+        android:paddingLeft="10dp"
+        android:paddingRight="10dp" >
 
     </LinearLayout>   
     <LinearLayout 
