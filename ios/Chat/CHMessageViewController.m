@@ -10,6 +10,8 @@
 #import "CHNetworkManager.h"
 #import "SocketIOPacket.h"
 #import "CHNetworkManager.h"
+#import "CHInviteUserViewController.h"
+#import "CHUser.h"
 
 @interface CHMessageViewController ()
     @property NSString *messages;
@@ -38,7 +40,7 @@
     ///
     self.socket = [[SocketIO alloc] initWithDelegate:self];
     
-    [_socket connectToHost:@"129.21.120.30" onPort:3000 withParams:@{@"token": [CHNetworkManager sharedManager].sessiontoken}];
+    [_socket connectToHost:@"192.168.1.78" onPort:3888 withParams:@{@"token": [CHNetworkManager sharedManager].sessiontoken}];
     
     // Load previous messages
 
@@ -49,6 +51,31 @@
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(keyboardWillShow:) name:UIKeyboardWillShowNotification object:nil];
     
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(keyboardWillHide:) name:UIKeyboardWillHideNotification object:nil];
+    
+    [self.messageDisplayTextView setScrollsToTop:NO];
+    
+    UIBarButtonItem *inviteButton = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemAdd target:self action:@selector(inviteUser)];
+    self.navigationItem.rightBarButtonItem = inviteButton;
+}
+
+- (void) inviteUser;
+{
+    DLog(@"Displaying invite screen");
+    CHInviteUserViewController *inviteViewController = [self.storyboard instantiateViewControllerWithIdentifier:@"CHInviteUserViewController"];
+    [self.navigationController pushViewController:inviteViewController animated:YES];
+    
+/*    [self addChildViewController:inviteViewController];
+    inviteViewController.view.frame = self.view.frame;
+    [self.view addSubview:inviteViewController.view];
+    inviteViewController.view.alpha = 0;
+    [inviteViewController didMoveToParentViewController:self];
+    
+    [UIView animateWithDuration:0.25 delay:0.0 options:UIViewAnimationOptionCurveLinear animations:^
+     {
+         inviteViewController.view.alpha = 1;
+     }
+                     completion:nil];
+ */
 }
 
 - (void) socketIODidConnect:(SocketIO *)socket;
@@ -57,6 +84,7 @@
     NSString *text = self.messageDisplayTextView.text;
     text = [text stringByAppendingString:@"\nConnected\n"];
     self.messageDisplayTextView.text = text;
+    
 }
 
 - (void) socketIODidDisconnect:(SocketIO *)socket disconnectedWithError:(NSError *)error;
@@ -81,7 +109,8 @@
         NSDictionary *data = [packet.dataAsJSON[@"args"] firstObject];
         
             self.messageDisplayTextView.text = [NSString stringWithFormat:@"%@ %@\n%@: %@\n\n", self.messageDisplayTextView.text, [[NSDate alloc] initWithTimeIntervalSinceNow:0], data[@"from"], data[@"text"]];
-        
+
+        [self.messageDisplayTextView scrollRangeToVisible:NSMakeRange([self.messageDisplayTextView.text length], 0)];
     }
 
 }
@@ -104,9 +133,14 @@
     self.messageDisplayTextView.text = [NSString stringWithFormat:@"%@ %@\n%@\n\n", self.messageDisplayTextView.text, [[NSDate alloc] initWithTimeIntervalSinceNow:0], self.messageTextField.text];
     //self.messageTextField.text = @"";
     NSString *msg = self.messageTextField.text;
-    [_socket sendEvent:@"message" withData:@{@"from": @"Test", @"text" : msg, @"groupId": @"5328d87af8d3d3af7b000003"}];
+    CHUser *currUser = [[CHNetworkManager sharedManager] currentUser];
+    DLog(@"Curr user: %@", currUser);
+    [_socket sendEvent:@"message" withData:@{@"from": currUser.username, @"text" : msg, @"groupId": @"532f9eea78fed3e206000001"}];
 
     self.messageTextField.text = @"";
+    
+    [self.messageDisplayTextView scrollRangeToVisible:NSMakeRange([self.messageDisplayTextView.text length], 0)];
+
 }
 
 -(BOOL)textFieldShouldReturn:(UITextField *)textField

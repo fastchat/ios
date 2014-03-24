@@ -14,6 +14,10 @@
 @property (weak, nonatomic) IBOutlet UIButton *sendButton;
 @property (weak, nonatomic) IBOutlet UIScrollView *chatScrollView;
 @property (weak, nonatomic) IBOutlet UITextView *messageDisplayTextView;
+@property (weak, nonatomic) NSString *groupId;
+
+@property (strong, nonatomic) IBOutlet UIImageView *screenShotImageView;
+@property (strong, nonatomic) UIImage *screenShotImage;
 
 - (IBAction)sendButtonTouched:(id)sender;
 @end

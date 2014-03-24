@@ -12,6 +12,7 @@
 #import "CHRegisterViewController.h"
 #import "CHGroupListTableViewController.h"
 #import "CHNetworkManager.h"
+#import "CHUser.h"
 
 #define URL @"localhost" //localhost
 
@@ -136,7 +137,7 @@
      @"password": self.passwordTextField.text};
     
 
-    [[CHNetworkManager sharedManager] postLoginWithEmail:self.emailTextField.text password:self.passwordTextField.text
+    [[CHNetworkManager sharedManager] postLoginWithUsername:self.emailTextField.text password:self.passwordTextField.text
         callback:^(bool successful, NSError *error) {
             if( successful ) {
                 // Save the session token
@@ -146,6 +147,9 @@
                 //setObject:valueToSave forKey:@"preferenceName"];
                 
                 CHGroupListTableViewController *vc = [self.storyboard instantiateViewControllerWithIdentifier:@"CHGroupListTableViewController"];
+                
+                //CHUser *currUser = [[CHUser alloc] init];
+                //[currUser setUsername:<#(NSString *)#>]
                 
                 vc.navigationItem.hidesBackButton = YES;
                 [[self navigationController] pushViewController:vc animated:YES];

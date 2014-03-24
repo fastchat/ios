@@ -10,6 +10,8 @@
 #import "SocketIOPacket.h"
 #import "AFNetworking.h"
 #import "CHNetworkManager.h"
+#import "CHGroupListTableViewController.h"
+#import "CHUser.h"
 
 #define URL @"localhost" //localhost
 
@@ -42,9 +44,14 @@
 -(void)finishRegistration {
     DLog(@"Attempting to register user %@ with password %@ and email %@", self.usernameTextField.text, self.passwordTextField.text, self.emailTextField.text);
     
-    [[CHNetworkManager sharedManager] registerWithEmail:self.emailTextField.text password:self.passwordTextField.text callback:^(NSArray *userData) {
+    [[CHNetworkManager sharedManager] registerWithUsername:self.usernameTextField.text password:self.passwordTextField.text callback:^(NSArray *userData) {
         DLog(@"Registered user: %@",userData);
         [self.navigationController popViewControllerAnimated:YES];
+        
+        
+        
+        CHGroupListTableViewController *controller = [self.storyboard instantiateViewControllerWithIdentifier:@"CHGroupListTableViewController"];
+        [self.navigationController pushViewController:controller animated:YES];
     }];
     
    /* self.socket = [[SocketIO alloc] initWithDelegate:self];
