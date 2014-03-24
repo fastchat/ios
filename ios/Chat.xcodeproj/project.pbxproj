@@ -155,10 +155,30 @@
 			name = Model;
 			sourceTree = "<group>";
 		};
+		AA71AE8118E0ECA900CDE1E2 /* App Delegate */ = {
+			isa = PBXGroup;
+			children = (
+				AA7759E818D54D3000E4E7AB /* CHAppDelegate.h */,
+				AA7759E918D54D3000E4E7AB /* CHAppDelegate.m */,
+			);
+			name = "App Delegate";
+			sourceTree = "<group>";
+		};
+		AA71AE8218E0ECB200CDE1E2 /* User Interface */ = {
+			isa = PBXGroup;
+			children = (
+				AA7759EB18D54D3000E4E7AB /* Main_iPhone.storyboard */,
+				AA7759EE18D54D3000E4E7AB /* Main_iPad.storyboard */,
+				2768EAB018D91538006D14BB /* Authentication */,
+			);
+			name = "User Interface";
+			sourceTree = "<group>";
+		};
 		AA7759CD18D54D3000E4E7AB = {
 			isa = PBXGroup;
 			children = (
 				AA7759DF18D54D3000E4E7AB /* Chat */,
+				AA7759E018D54D3000E4E7AB /* Supporting Files */,
 				AA775A0118D54D3000E4E7AB /* ChatTests */,
 				AA7759D818D54D3000E4E7AB /* Frameworks */,
 				AA7759D718D54D3000E4E7AB /* Products */,
@@ -190,13 +210,8 @@
 		AA7759DF18D54D3000E4E7AB /* Chat */ = {
 			isa = PBXGroup;
 			children = (
-				2768EAB018D91538006D14BB /* Authentication */,
-				AA7759E818D54D3000E4E7AB /* CHAppDelegate.h */,
-				AA7759E918D54D3000E4E7AB /* CHAppDelegate.m */,
-				AA7759EB18D54D3000E4E7AB /* Main_iPhone.storyboard */,
-				AA7759EE18D54D3000E4E7AB /* Main_iPad.storyboard */,
-				AA7759F418D54D3000E4E7AB /* Images.xcassets */,
-				AA7759E018D54D3000E4E7AB /* Supporting Files */,
+				AA71AE8118E0ECA900CDE1E2 /* App Delegate */,
+				AA71AE8218E0ECB200CDE1E2 /* User Interface */,
 				2768EAA018D888B6006D14BB /* CHGroupListTableViewController.h */,
 				2768EAA118D888B6006D14BB /* CHGroupListTableViewController.m */,
 				2768EAA318D8C270006D14BB /* CHGroupTableViewCell.h */,
@@ -224,12 +239,14 @@
 		AA7759E018D54D3000E4E7AB /* Supporting Files */ = {
 			isa = PBXGroup;
 			children = (
+				AA7759F418D54D3000E4E7AB /* Images.xcassets */,
 				AA7759E118D54D3000E4E7AB /* Chat-Info.plist */,
 				AA7759E218D54D3000E4E7AB /* InfoPlist.strings */,
 				AA7759E518D54D3000E4E7AB /* main.m */,
 				AA7759E718D54D3000E4E7AB /* Chat-Prefix.pch */,
 			);
 			name = "Supporting Files";
+			path = Chat;
 			sourceTree = "<group>";
 		};
 		AA775A0118D54D3000E4E7AB /* ChatTests */ = {
