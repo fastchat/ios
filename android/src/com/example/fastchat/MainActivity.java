@@ -7,10 +7,12 @@ import android.app.Activity;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.WindowManager;
+import android.view.inputmethod.InputMethodManager;
 
 public class MainActivity extends ActionBarActivity {
 
-	public static Activity activity;
+	public static MainActivity activity;
 	public static FragmentManager manager;
 	
 	@Override
@@ -51,5 +53,8 @@ public class MainActivity extends ActionBarActivity {
 		.replace(R.id.container, f).commit();
 	}
 	
+	public void hideKeyboard(){
+		this.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
+	}
 
 }

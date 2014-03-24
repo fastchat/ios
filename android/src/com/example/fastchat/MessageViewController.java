@@ -30,7 +30,7 @@ public class MessageViewController {
 		            Utils.makeToast(ex);
 		            return;
 		        }
-		        MessageViewController.client=client;
+		        
 		        client.setStringCallback(new StringCallback() {
 
 					@Override
@@ -39,12 +39,21 @@ public class MessageViewController {
 						
 					}
 		        });
-		        client.on("someEvent", new EventCallback() {
+		        client.on("message", new EventCallback() {
 
 					@Override
 					public void onEvent(JSONArray argument,
 							Acknowledge acknowledge) {
 						System.out.println("onEvent:"+argument);
+						try {
+							JSONObject messageObject = argument.getJSONObject(0);
+							String message = messageObject.getString("text");
+							System.out.println("Message: "+message);
+							MessageFragment.addMessage(message, false);
+						} catch (JSONException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
 						
 					}
 		        });
@@ -56,7 +65,7 @@ public class MessageViewController {
 						
 					}
 		        });
-		        MessageViewController.sendMessage("Hello World");
+		        MessageViewController.client=client;
 		    }
 		});
 	}
@@ -66,6 +75,7 @@ public class MessageViewController {
 		JSONArray array = new JSONArray();
 		try {
 			message.put("text", text);
+			message.put("groupId", NetworkManager.getCurrentRoom().get("_id"));
 			array.put(message);
 			client.emit("message",array);
 		} catch (JSONException e) {

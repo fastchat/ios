@@ -33,6 +33,7 @@ public class RoomsFragment extends Fragment {
 			Bundle savedInstanceState) {
 		rootView = inflater.inflate(R.layout.rooms_main, container,
 				false);
+		rootView.requestFocus();
 		
 		 adapter=new ArrayAdapter<String>(getActivity(),
 		            android.R.layout.simple_list_item_1,
