@@ -3,6 +3,8 @@ package com.example.fastchat;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import android.support.v4.app.Fragment;
+
 import com.koushikdutta.async.future.Future;
 import com.koushikdutta.async.http.AsyncHttpClient;
 import com.koushikdutta.async.http.AsyncHttpClient.JSONObjectCallback;
@@ -16,7 +18,7 @@ public class NetworkManager {
 	private static String session_token = "";
 	
 	
-	private static JSONObjectCallback loginCallback = new AsyncHttpClient.JSONObjectCallback() {
+	private static final JSONObjectCallback loginCallback = new AsyncHttpClient.JSONObjectCallback() {
 	    // Callback is invoked with any exceptions/errors, and the result, if available.
 	    public void onCompleted(Exception e, AsyncHttpResponse response, JSONObject result) {
 	        if (e != null) {
@@ -27,12 +29,34 @@ public class NetworkManager {
 	        try {
 				session_token = result.getString("session-token");
 				 System.out.println("I got a JSONObject: " + result);
-			     
+			        Fragment fragment = new RoomsFragment();
+			        MainActivity.switchView(fragment);
+			} catch (JSONException e1) {
+				Utils.makeToast("Invalid Username and/or Password");
+				e1.printStackTrace();
+			}
+
+	  
+	       
+	    }
+	};
+	
+	private static final JSONObjectCallback roomsCallback = new AsyncHttpClient.JSONObjectCallback() {
+	    // Callback is invoked with any exceptions/errors, and the result, if available.
+	    public void onCompleted(Exception e, AsyncHttpResponse response, JSONObject result) {
+	        if (e != null) {
+	        	e.printStackTrace();
+	        	Utils.makeToast(e);
+	            return;
+	        }
+	        try {
+				String resultJSON= result.getString("session-token");
 			} catch (JSONException e1) {
 				Utils.makeToast(e1);
 				e1.printStackTrace();
 			}
-	        MessageViewController.connect();
+
+	  
 	       
 	    }
 	};

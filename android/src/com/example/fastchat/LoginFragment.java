@@ -1,4 +1,9 @@
 package com.example.fastchat;
+import java.util.concurrent.ExecutionException;
+
+import org.json.JSONObject;
+
+import com.koushikdutta.async.future.Future;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -28,12 +33,34 @@ public class LoginFragment extends Fragment implements OnClickListener {
 
 	@Override
 	public void onClick(View arg0) {
-		// TODO Auto-generated method stub
 		EditText username = (EditText) rootView.findViewById(R.id.text_username);
 		EditText password = (EditText) rootView.findViewById(R.id.text_password);
 		String usernameText = username.getText().toString();
 		String passwordText = password.getText().toString();
-		NetworkManager.postLogin(usernameText, passwordText);
 		System.out.println("Login Clicked!"+usernameText+":"+passwordText);
+		if(usernameText.length()<1){
+			Utils.makeToast("Please Enter a username");
+		}
+		else if(passwordText.length()<1){
+			Utils.makeToast("Please Enter a password");
+		}else{
+			Future<JSONObject> jsonFuture = NetworkManager.postLogin(usernameText, passwordText);
+			try {
+				JSONObject json = jsonFuture.get();
+				if(json!=null){
+					
+				}
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+				Utils.makeToast(e);
+			} catch (ExecutionException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+				Utils.makeToast(e);
+			}
+			
+			
+		}
 	}
 }
