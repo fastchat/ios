@@ -12,28 +12,40 @@ import com.koushikdutta.async.http.body.JSONObjectBody;
 
 public class NetworkManager {
 	
-	private static final String url ="http://powerful-cliffs-9562.herokuapp.com/login";
+	private static final String url ="http://minty.shawnsthompson.com:3000";
+	private static String session_token = "";
 	
-	private static JSONObjectCallback callback = new AsyncHttpClient.JSONObjectCallback() {
+	
+	private static JSONObjectCallback loginCallback = new AsyncHttpClient.JSONObjectCallback() {
 	    // Callback is invoked with any exceptions/errors, and the result, if available.
 	    public void onCompleted(Exception e, AsyncHttpResponse response, JSONObject result) {
 	        if (e != null) {
-	            e.printStackTrace();
+	        	e.printStackTrace();
+	        	Utils.makeToast(e);
 	            return;
 	        }
-	        System.out.println("I got a JSONObject: " + result);
+	        try {
+				session_token = result.getString("session-token");
+				 System.out.println("I got a JSONObject: " + result);
+			     
+			} catch (JSONException e1) {
+				Utils.makeToast(e1);
+				e1.printStackTrace();
+			}
+	        MessageViewController.connect();
+	       
 	    }
 	};
 	
 	
 	public static Future<JSONObject> postLogin(String username, String password){
 		
-		return postLogin(username,password,callback);
+		return postLogin(username,password,loginCallback);
 	}
 	
 	public static Future<JSONObject> postLogin(String username, String password,JSONObjectCallback callback){
 		
-		AsyncHttpPost post = new AsyncHttpPost(url);
+		AsyncHttpPost post = new AsyncHttpPost(url+"/login");
 		JSONObject object = new JSONObject();
 		try {
 			object.put("username", username);
@@ -44,9 +56,14 @@ public class NetworkManager {
 		}
 		JSONObjectBody body = new JSONObjectBody(object);
 		post.setBody(body);
-		System.out.println(body);
 		return AsyncHttpClient.getDefaultInstance().executeJSONObject(post, callback);
 	}
 	
-	
+	public static String getURL(){
+		return url;
+	}
+
+	public static String getToken() {
+		return session_token;
+	}
 }

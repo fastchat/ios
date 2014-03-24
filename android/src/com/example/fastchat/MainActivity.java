@@ -1,12 +1,16 @@
 package com.example.fastchat;
 
 import android.support.v7.app.ActionBarActivity;
+import android.app.Activity;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 
 public class MainActivity extends ActionBarActivity {
 
+	public static Activity activity;
+	public static NetworkManager manager;
+	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -16,6 +20,8 @@ public class MainActivity extends ActionBarActivity {
 			getSupportFragmentManager().beginTransaction()
 					.add(R.id.container, new LoginFragment()).commit();
 		}
+		activity = this;
+		manager = new NetworkManager();
 		
 	}
 
@@ -38,7 +44,6 @@ public class MainActivity extends ActionBarActivity {
 		}
 		return super.onOptionsItemSelected(item);
 	}
-
 	
 
 }
