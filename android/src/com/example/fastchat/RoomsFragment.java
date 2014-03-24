@@ -63,6 +63,7 @@ public class RoomsFragment extends Fragment {
 	
 	public static void addRoom(JSONArray array){
 		rooms.clear();
+		roomNames.clear();
 		for(int i=0;i<array.length();i++){
 			try {
 				JSONObject o = array.getJSONObject(i);

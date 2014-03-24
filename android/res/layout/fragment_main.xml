@@ -11,10 +11,6 @@
 		android:layout_alignBottom="@+id/text_username"
 		android:layout_alignParentLeft="true" android:text="Username"
 		android:textAppearance="?android:attr/textAppearanceMedium" />
-	<EditText android:id="@+id/text_username"
-		android:layout_width="wrap_content" android:layout_height="wrap_content"
-		android:layout_above="@+id/text_password" android:layout_alignLeft="@+id/text_password"
-		android:layout_marginBottom="30dp" android:ems="10" />
 
 
 	<TextView android:id="@+id/label_password"
@@ -22,19 +18,43 @@
 		android:layout_alignBottom="@+id/text_password"
 		android:layout_alignLeft="@+id/label_username" android:text="Password"
 		android:textAppearance="?android:attr/textAppearanceMedium" />
-	<EditText android:id="@+id/text_password"
-		android:layout_width="wrap_content" android:layout_height="wrap_content"
-		android:layout_above="@+id/login_button" android:layout_alignLeft="@+id/login_button"
-		android:layout_alignParentRight="true" android:layout_marginBottom="40dp"
-		android:ems="10" android:inputType="textPassword" />
 
+	<EditText
+	    android:id="@+id/text_password"
+	    android:layout_width="wrap_content"
+	    android:layout_height="wrap_content"
+	    android:layout_alignLeft="@+id/login_button"
+	    android:layout_below="@+id/text_username"
+	    android:layout_marginTop="18dp"
+	    android:ems="10"
+	    android:inputType="textPassword" />
 
+	<Button
+	    android:id="@+id/registration_button"
+	    android:layout_width="wrap_content"
+	    android:layout_height="wrap_content"
+	    android:layout_alignBaseline="@+id/login_button"
+	    android:layout_alignBottom="@+id/login_button"
+	    android:text="Register" />
 
+	<EditText
+	    android:id="@+id/text_username"
+	    android:layout_width="wrap_content"
+	    android:layout_height="wrap_content"
+	    android:layout_alignLeft="@+id/text_password"
+	    android:layout_alignParentTop="true"
+	    android:layout_alignRight="@+id/text_password"
+	    android:layout_marginTop="46dp"
+	    android:ems="10" />
 
+	<Button
+	    android:id="@+id/login_button"
+	    android:layout_width="wrap_content"
+	    android:layout_height="wrap_content"
+	    android:layout_below="@+id/text_password"
+	    android:layout_marginLeft="40dp"
+	    android:layout_marginTop="23dp"
+	    android:layout_toRightOf="@+id/registration_button"
+	    android:text="@string/login" />
 
-
-	<Button android:id="@+id/login_button" android:layout_width="wrap_content"
-		android:layout_height="wrap_content" android:layout_alignParentBottom="true"
-		android:layout_centerHorizontal="true" android:layout_marginBottom="186dp"
-		android:text="@string/login" />
 </RelativeLayout>

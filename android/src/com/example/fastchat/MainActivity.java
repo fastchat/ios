@@ -50,7 +50,7 @@ public class MainActivity extends ActionBarActivity {
 	
 	public static void switchView(Fragment f){
 		manager.beginTransaction()
-		.replace(R.id.container, f).commit();
+		.replace(R.id.container, f).addToBackStack(f.getClass().getName()).commit();
 	}
 	
 	public void hideKeyboard(){
