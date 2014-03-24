@@ -44,23 +44,7 @@ public class LoginFragment extends Fragment implements OnClickListener {
 		else if(passwordText.length()<1){
 			Utils.makeToast("Please Enter a password");
 		}else{
-			Future<JSONObject> jsonFuture = NetworkManager.postLogin(usernameText, passwordText);
-			try {
-				JSONObject json = jsonFuture.get();
-				if(json!=null){
-					
-				}
-			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-				Utils.makeToast(e);
-			} catch (ExecutionException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-				Utils.makeToast(e);
-			}
-			
-			
+			NetworkManager.postLogin(usernameText, passwordText);
 		}
 	}
 }
