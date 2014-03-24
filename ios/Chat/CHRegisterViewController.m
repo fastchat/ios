@@ -46,7 +46,6 @@
     
     [[CHNetworkManager sharedManager] registerWithUsername:self.usernameTextField.text password:self.passwordTextField.text callback:^(NSArray *userData) {
         DLog(@"Registered user: %@",userData);
-        [self.navigationController popViewControllerAnimated:YES];
         
         
         
