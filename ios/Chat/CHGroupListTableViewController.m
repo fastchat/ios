@@ -12,6 +12,7 @@
 #import "CHGroupTableViewCell.h"
 #import "CHAppDelegate.h"
 #import "CHSideNavigationTableViewController.h"
+#import "CHMessageViewController.h"
 
 @interface CHGroupListTableViewController ()
 
@@ -43,9 +44,9 @@
     UIBarButtonItem *addButton = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemAdd target:self action:@selector(showAddView)];
     self.navigationItem.rightBarButtonItem = addButton;
     
-
+    
     UIBarButtonItem *test = [[UIBarButtonItem alloc] initWithTitle:@"Menu" style:UIBarButtonItemStylePlain target:self action:@selector(displaySideMenu)];
-//    UIBarButtonItem *menuButton = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemOrganize target:self action:@selector(displaySideMenu)];
+
     self.navigationItem.leftBarButtonItem = test;
 
     UIActivityIndicatorView *spinner = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleGray];
@@ -102,6 +103,13 @@
     return cell;
 }
 
+- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
+    // Open messageViewController with proper group id
+    
+    CHMessageViewController *controller = [self.storyboard instantiateViewControllerWithIdentifier:@"CHMessageViewController"];
+    [controller setGroupId:[self.groups[indexPath.row] objectForKey:@"name"]];
+//    [self.navigationController pushViewController:controller animated:YES];
+}
 
 /*
 // Override to support conditional editing of the table view.

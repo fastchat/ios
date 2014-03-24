@@ -7,8 +7,11 @@
 //
 
 #import "CHInvitationsTableViewController.h"
+#import "CHNetworkManager.h"
+#import "CHUser.h"
 
 @interface CHInvitationsTableViewController ()
+    @property NSArray *pendingInvites;
 
 @end
 
@@ -34,13 +37,17 @@
     // self.navigationItem.rightBarButtonItem = self.editButtonItem;
     
     self.title = @"Pending Invitations";
+    
+    [[CHNetworkManager sharedManager] getProfile:^(CHUser *userProfile) {
+        DLog(@"Got user profile: %@", userProfile.invites);
+        self.pendingInvites = userProfile.invites;
+        [self.tableView reloadData];
+    }];
+    
+
 }
 
-- (void)didReceiveMemoryWarning
-{
-    [super didReceiveMemoryWarning];
-    // Dispose of any resources that can be recreated.
-}
+
 
 #pragma mark - Table view data source
 
@@ -48,26 +55,34 @@
 {
 #warning Potentially incomplete method implementation.
     // Return the number of sections.
-    return 0;
+    return 1;
 }
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
 #warning Incomplete method implementation.
     // Return the number of rows in the section.
-    return 0;
+    return self.pendingInvites.count;
 }
 
-/*
+
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:<#@"reuseIdentifier"#> forIndexPath:indexPath];
+    UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"InviteCell" forIndexPath:indexPath];
     
     // Configure the cell...
+    cell.textLabel.text = self.pendingInvites[indexPath.row];
     
     return cell;
 }
-*/
+
+- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
+    // Accept invite
+    [[CHNetworkManager sharedManager] acceptInviteAtIndex:[[NSNumber alloc] initWithInt:indexPath.row] callback:^(bool successful, NSError *error) {
+        //Do Stuff
+    }];
+}
+
 
 /*
 // Override to support conditional editing of the table view.

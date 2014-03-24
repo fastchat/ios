@@ -18,6 +18,8 @@
 		2768EAB918DB1F57006D14BB /* CHSideNavigationTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2768EAB818DB1F57006D14BB /* CHSideNavigationTableViewController.m */; };
 		2768EABC18DE4030006D14BB /* CHMenuCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 2768EABB18DE4030006D14BB /* CHMenuCell.m */; };
 		2768EABF18DE43F2006D14BB /* CHInvitationsTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2768EABE18DE43F2006D14BB /* CHInvitationsTableViewController.m */; };
+		279CF21D18DF777500C82399 /* CHUser.m in Sources */ = {isa = PBXBuildFile; fileRef = 279CF21C18DF777400C82399 /* CHUser.m */; };
+		279CF22118DFD74D00C82399 /* CHInviteUserViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 279CF22018DFD74D00C82399 /* CHInviteUserViewController.m */; };
 		2C7FD1E6FB44435B8A225753 /* libPods-Chat.a in Frameworks */ = {isa = PBXBuildFile; fileRef = ED86F54EC1C64B14950512A1 /* libPods-Chat.a */; };
 		AA7759DA18D54D3000E4E7AB /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = AA7759D918D54D3000E4E7AB /* Foundation.framework */; };
 		AA7759DC18D54D3000E4E7AB /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = AA7759DB18D54D3000E4E7AB /* CoreGraphics.framework */; };
@@ -69,6 +71,10 @@
 		2768EABB18DE4030006D14BB /* CHMenuCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CHMenuCell.m; sourceTree = "<group>"; };
 		2768EABD18DE43F2006D14BB /* CHInvitationsTableViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CHInvitationsTableViewController.h; sourceTree = "<group>"; };
 		2768EABE18DE43F2006D14BB /* CHInvitationsTableViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CHInvitationsTableViewController.m; sourceTree = "<group>"; };
+		279CF21B18DF777400C82399 /* CHUser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CHUser.h; sourceTree = "<group>"; };
+		279CF21C18DF777400C82399 /* CHUser.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CHUser.m; sourceTree = "<group>"; };
+		279CF21F18DFD74D00C82399 /* CHInviteUserViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CHInviteUserViewController.h; sourceTree = "<group>"; };
+		279CF22018DFD74D00C82399 /* CHInviteUserViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CHInviteUserViewController.m; sourceTree = "<group>"; };
 		7EC6EF7B5FC54E4BA2B855D4 /* Pods-Chat.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Chat.xcconfig"; path = "Pods/Pods-Chat.xcconfig"; sourceTree = "<group>"; };
 		AA7759D618D54D3000E4E7AB /* Chat.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Chat.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		AA7759D918D54D3000E4E7AB /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
@@ -140,6 +146,15 @@
 			name = Authentication;
 			sourceTree = "<group>";
 		};
+		279CF21E18DF777E00C82399 /* Model */ = {
+			isa = PBXGroup;
+			children = (
+				279CF21B18DF777400C82399 /* CHUser.h */,
+				279CF21C18DF777400C82399 /* CHUser.m */,
+			);
+			name = Model;
+			sourceTree = "<group>";
+		};
 		AA7759CD18D54D3000E4E7AB = {
 			isa = PBXGroup;
 			children = (
@@ -199,6 +214,9 @@
 				2768EABB18DE4030006D14BB /* CHMenuCell.m */,
 				2768EABD18DE43F2006D14BB /* CHInvitationsTableViewController.h */,
 				2768EABE18DE43F2006D14BB /* CHInvitationsTableViewController.m */,
+				279CF21E18DF777E00C82399 /* Model */,
+				279CF21F18DFD74D00C82399 /* CHInviteUserViewController.h */,
+				279CF22018DFD74D00C82399 /* CHInviteUserViewController.m */,
 			);
 			path = Chat;
 			sourceTree = "<group>";
@@ -369,6 +387,7 @@
 				2768EABF18DE43F2006D14BB /* CHInvitationsTableViewController.m in Sources */,
 				2768EAB618DB1965006D14BB /* CHMenuViewController.m in Sources */,
 				2768EAB318DB119A006D14BB /* CHSocketManager.m in Sources */,
+				279CF21D18DF777500C82399 /* CHUser.m in Sources */,
 				2768EAB918DB1F57006D14BB /* CHSideNavigationTableViewController.m in Sources */,
 				2768EAAE18D9138D006D14BB /* CHMessageViewController.m in Sources */,
 				2768EAA218D888B6006D14BB /* CHGroupListTableViewController.m in Sources */,
@@ -379,6 +398,7 @@
 				2768EAAB18D8E02B006D14BB /* CHAddGroupViewController.m in Sources */,
 				2768EAA818D8C90B006D14BB /* CHNetworkManager.m in Sources */,
 				AA7759F318D54D3000E4E7AB /* CHViewController.m in Sources */,
+				279CF22118DFD74D00C82399 /* CHInviteUserViewController.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
