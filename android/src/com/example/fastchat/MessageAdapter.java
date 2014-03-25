@@ -4,6 +4,7 @@ import java.util.ArrayList;
 
 import android.content.Context;
 import android.graphics.Color;
+import android.text.Html;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -47,7 +48,8 @@ public class MessageAdapter extends BaseAdapter {
 		else
 			holder = (ViewHolder) convertView.getTag();
 
-		holder.message.setText(message.getText());
+		holder.message.setText(Html.fromHtml("<b>" + message.getText() + "</b>" +  "<br />" + 
+	            "<small>" + message.getFrom() + "</small>"));
 
 		LayoutParams lp = (LayoutParams) holder.message.getLayoutParams();	
 		//Check whether message is mine to show green background and align to right

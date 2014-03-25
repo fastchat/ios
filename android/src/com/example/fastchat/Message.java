@@ -10,6 +10,9 @@ public class Message {
 		this.text=text;
 		this.mine=mine;
 		this.from=from;
+		if(from==null){
+			this.from="";
+		}
 	}
 	
 	public String getText(){
