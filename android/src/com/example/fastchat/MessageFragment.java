@@ -1,8 +1,9 @@
 package com.example.fastchat;
 
+import java.util.ArrayList;
+
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -10,12 +11,16 @@ import android.view.inputmethod.InputMethodManager;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.LinearLayout;
-import android.widget.TextView;
+import android.widget.ListView;
 
 public class MessageFragment extends Fragment implements OnClickListener {
 
 	private static View rootView;
+	
+	private static ArrayList<Message> messages=new ArrayList<Message>();
+
+    //DEFINING A STRING ADAPTER WHICH WILL HANDLE THE DATA OF THE LISTVIEW
+    private static MessageAdapter adapter;
 	
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
@@ -23,26 +28,32 @@ public class MessageFragment extends Fragment implements OnClickListener {
 				false);
 		Button button = (Button) rootView.findViewById(R.id.send_button);
 	     button.setOnClickListener(this);
+	     adapter=new MessageAdapter(getActivity(), messages);
+	     final ListView lv = (ListView) rootView.findViewById(R.id.messages_container);
+	     MainActivity.activity.runOnUiThread(new Runnable(){
+			 public void run(){
+				 
+				 lv.setAdapter(adapter);
+				 
+			 }
+		 });
 	     if(!MessageViewController.isConnected()){
 	    	 MessageViewController.connect();
 	     }
 		return rootView;
 	}
 	
-	public static void addMessage(String message, boolean is_own_message){
-		final TextView tv = new TextView(MainActivity.activity);
-		tv.setText(message);
+	public static void addMessage(String message, boolean is_own_message,String from){
+		
+		messages.add(new Message(message,is_own_message,from));
 		if(is_own_message){
-			tv.setGravity(Gravity.RIGHT);
 			MessageViewController.sendMessage(message);
-		}else{
-			tv.setGravity(Gravity.LEFT);
 		}
-		tv.setVisibility(View.VISIBLE);
-		final LinearLayout container = (LinearLayout) rootView.findViewById(R.id.messages_container);
+		final ListView lv = (ListView) rootView.findViewById(R.id.messages_container);
 		MainActivity.activity.runOnUiThread(new Runnable(){
 			public void run(){
-				container.addView(tv);
+				adapter.notifyDataSetChanged();
+				lv.setSelection(adapter.getCount() - 1);
 			}
 		});
 		
@@ -57,6 +68,6 @@ public class MessageFragment extends Fragment implements OnClickListener {
 		messageBox.clearFocus();
 		InputMethodManager in = (InputMethodManager) MainActivity.activity.getSystemService(MainActivity.INPUT_METHOD_SERVICE);
         in.hideSoftInputFromWindow(messageBox.getApplicationWindowToken(),InputMethodManager.HIDE_NOT_ALWAYS);
-		addMessage(messsage,true);
+		addMessage(messsage,true,null);
 	}
 }

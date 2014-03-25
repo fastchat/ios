@@ -54,9 +54,10 @@ public class RoomsFragment extends Fragment {
 			 public void run(){
 				 
 				 lv.setAdapter(adapter);
-				 NetworkManager.getGroups();
+				 
 			 }
 		 });
+		 NetworkManager.getGroups();
 		 
 		return rootView;
 	}

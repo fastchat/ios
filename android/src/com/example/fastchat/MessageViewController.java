@@ -51,7 +51,7 @@ public class MessageViewController {
 							String from = messageObject.getString("from");
 							String finalMessage = from+":"+message;
 							System.out.println("Message: "+finalMessage);
-							MessageFragment.addMessage(finalMessage, false);
+							MessageFragment.addMessage(message, false,from);
 						} catch (JSONException e) {
 							// TODO Auto-generated catch block
 							e.printStackTrace();
