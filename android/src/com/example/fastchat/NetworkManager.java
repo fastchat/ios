@@ -19,6 +19,7 @@ public class NetworkManager {
 	
 	private static final String url ="http://minty.shawnsthompson.com:3000";
 	private static String session_token = "";
+	private static String username ="";
 	private static JSONObject currentRoom;
 	
 	
@@ -70,7 +71,7 @@ public class NetworkManager {
 	
 	
 	public static Future<JSONObject> postLogin(String username, String password){
-		
+		NetworkManager.username=username;
 		AsyncHttpPost post = new AsyncHttpPost(url+"/login");
 		JSONObject object = new JSONObject();
 		try {
@@ -100,5 +101,9 @@ public class NetworkManager {
 	
 	public static void setCurrentRoom(JSONObject room){
 		currentRoom = room;
+	}
+	
+	public static String getUsername(){
+		return username;
 	}
 }

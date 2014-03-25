@@ -48,8 +48,10 @@ public class MessageViewController {
 						try {
 							JSONObject messageObject = argument.getJSONObject(0);
 							String message = messageObject.getString("text");
-							System.out.println("Message: "+message);
-							MessageFragment.addMessage(message, false);
+							String from = messageObject.getString("from");
+							String finalMessage = from+":"+message;
+							System.out.println("Message: "+finalMessage);
+							MessageFragment.addMessage(finalMessage, false);
 						} catch (JSONException e) {
 							// TODO Auto-generated catch block
 							e.printStackTrace();
@@ -75,6 +77,7 @@ public class MessageViewController {
 		JSONArray array = new JSONArray();
 		try {
 			message.put("text", text);
+			message.put("from", NetworkManager.getUsername());
 			message.put("groupId", NetworkManager.getCurrentRoom().get("_id"));
 			array.put(message);
 			client.emit("message",array);
@@ -84,5 +87,12 @@ public class MessageViewController {
 			Utils.makeToast(e);
 		}
 		
+	}
+
+	public static boolean isConnected() {
+		if(client==null){
+			return false;
+		}
+		return client.isConnected();
 	}
 }

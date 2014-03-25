@@ -6,6 +6,7 @@ import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.inputmethod.InputMethodManager;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
@@ -22,7 +23,9 @@ public class MessageFragment extends Fragment implements OnClickListener {
 				false);
 		Button button = (Button) rootView.findViewById(R.id.send_button);
 	     button.setOnClickListener(this);
-	     MessageViewController.connect();
+	     if(!MessageViewController.isConnected()){
+	    	 MessageViewController.connect();
+	     }
 		return rootView;
 	}
 	
@@ -50,6 +53,10 @@ public class MessageFragment extends Fragment implements OnClickListener {
 		
 		EditText messageBox = (EditText) rootView.findViewById(R.id.my_message);
 		String messsage = messageBox.getText().toString();
+		messageBox.setText("");
+		messageBox.clearFocus();
+		InputMethodManager in = (InputMethodManager) MainActivity.activity.getSystemService(MainActivity.INPUT_METHOD_SERVICE);
+        in.hideSoftInputFromWindow(messageBox.getApplicationWindowToken(),InputMethodManager.HIDE_NOT_ALWAYS);
 		addMessage(messsage,true);
 	}
 }
