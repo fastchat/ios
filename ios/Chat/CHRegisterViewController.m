@@ -47,12 +47,14 @@
     [[CHNetworkManager sharedManager] registerWithUsername:self.usernameTextField.text password:self.passwordTextField.text callback:^(NSArray *userData) {
         DLog(@"Registered user: %@",userData);
         
-        
-        
-        CHGroupListTableViewController *controller = [self.storyboard instantiateViewControllerWithIdentifier:@"CHGroupListTableViewController"];
+        [self.navigationController popToRootViewControllerAnimated:YES];
+    }];
+     
+/*        CHGroupListTableViewController *controller = [self.storyboard instantiateViewControllerWithIdentifier:@"CHGroupListTableViewController"];
         [self.navigationController pushViewController:controller animated:YES];
     }];
-    
+ */
+        
    /* self.socket = [[SocketIO alloc] initWithDelegate:self];
     //    [_socket connectToHost:@"localhost" onPort:3000]; //localhost
     

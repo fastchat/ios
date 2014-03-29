@@ -9,7 +9,7 @@
 #import "CHNetworkManager.h"
 #import "CHUser.h"
 
-#define BASE_URL @"http://192.168.1.78:3888"
+#define BASE_URL @"http://localhost:3000"
 
 @interface CHNetworkManager()
 
@@ -47,7 +47,7 @@
             [[NSUserDefaults standardUserDefaults]
              setObject:self.sessiontoken forKey:@"session-token"];
 
-            [self GET:@"/profile" parameters:nil success:^(NSURLSessionDataTask *task, id responseObject) {
+            [self GET:@"/user" parameters:nil success:^(NSURLSessionDataTask *task, id responseObject) {
                 if( callback ) {
                     CHUser *user = [[CHUser alloc] init];
                     DLog(@"Invites: %@", responseObject[@"profile"][@"invites"]);
@@ -74,7 +74,7 @@
 - (void)registerWithUsername: (NSString *)username password:(NSString *)password callback:(void (^)(NSArray *userData))callback;
 {
     DLog(@"username: %@, password: %@", username, password);
-    [self POST:@"/register" parameters:@{@"username" : username, @"password" : password} success:^(NSURLSessionDataTask *task, id responseObject) {
+    [self POST:@"/user" parameters:@{@"username" : username, @"password" : password} success:^(NSURLSessionDataTask *task, id responseObject) {
         if( callback ) {
             //self.sessiontoken = responseObject[@"session-token"];
             //[self.requestSerializer setValue:self.sessiontoken forHTTPHeaderField:@"session-token"];
@@ -129,7 +129,7 @@
 
 - (void)getProfile: (void (^)(CHUser *userProfile))callback;
 {
-    [self GET:@"/profile" parameters:nil success:^(NSURLSessionDataTask *task, id responseObject) {
+    [self GET:@"/user" parameters:nil success:^(NSURLSessionDataTask *task, id responseObject) {
         if( callback ) {
             CHUser *user = [[CHUser alloc] init];
             DLog(@"Invites: %@", responseObject[@"profile"][@"invites"]);
@@ -199,6 +199,7 @@
                             stringForKey:@"session-token"];
     
     if( savedValue != nil ) {
+        DLog(@"Setting session token to %@", savedValue);
         self.sessiontoken = savedValue;
         [self.requestSerializer setValue:self.sessiontoken forHTTPHeaderField:@"session-token"];
     }

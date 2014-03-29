@@ -19,6 +19,7 @@
 @interface CHViewController ()
 
 //@property (nonatomic, strong) SocketIO *socket;
+@property (nonatomic, strong) UIView *view;
 
 @end
 
@@ -29,6 +30,8 @@
     [super viewDidLoad];
     
     self.errorLabel.text = @"";
+    DLog(@"Login controller");
+    self.navigationItem.hidesBackButton = YES;
     
     ///
     /// Connect to server!
@@ -130,6 +133,7 @@
 
 }
 
+
 - (IBAction)loginWasTouched:(id)sender {
     self.errorLabel.text = @"";
     DLog(@"Attempting to login with user %@ and password %@", self.emailTextField.text, self.passwordTextField.text);
@@ -145,14 +149,22 @@
                 //NSString *valueToSave = @"someValue";
                 //[[NSUserDefaults standardUserDefaults]
                 //setObject:valueToSave forKey:@"preferenceName"];
+           
+                DLog(@"Successful login");
+//                CHGroupListTableViewController *vc = [self.storyboard instantiateViewControllerWithIdentifier:@"CHGroupListTableViewController"];
+
+//                vc.navigationItem.hidesBackButton = YES;
+//                [[self navigationController] popToViewController:vc animated:YES];
+                [[self navigationController] popViewControllerAnimated:YES];
+
                 
-                CHGroupListTableViewController *vc = [self.storyboard instantiateViewControllerWithIdentifier:@"CHGroupListTableViewController"];
+//                [[self navigationController] pushViewController:vc animated:YES];
+                //[[self navigationController] presentViewController:vc animated:YES completion:^{
+                    
+                //}];
                 
-                //CHUser *currUser = [[CHUser alloc] init];
-                //[currUser setUsername:<#(NSString *)#>]
-                
-                vc.navigationItem.hidesBackButton = YES;
-                [[self navigationController] pushViewController:vc animated:YES];
+               // CHGroupListTableViewController *controller = [self.storyboard instantiateViewControllerWithIdentifier:@"CHGroupListTableViewController"];
+                //[self.navigationController pushViewController:controller animated:YES];
             }
             else {
                 self.errorLabel.text = error.localizedDescription;

@@ -7,14 +7,18 @@
 //
 
 #import "CHAppDelegate.h"
+#import "CHNetworkManager.h"
 
 @implementation CHAppDelegate
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
     // Override point for customization after application launch.
+    [[CHNetworkManager sharedManager] hasStoredSessionToken];
     return YES;
 }
+
+
 							
 - (void)applicationWillResignActive:(UIApplication *)application
 {
