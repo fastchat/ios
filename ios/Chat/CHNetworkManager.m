@@ -119,7 +119,7 @@
 
 - (void)getMessagesFromDate: (NSDate *)date group:(NSString *)group callback:(void (^)(NSArray *messages))callback;
 {
-    [self GET:[NSString stringWithFormat:@"/group/5328d87af8d3d3af7b000003/messages?20140101"/*, group, date*/] parameters:nil success:^(NSURLSessionDataTask *task, id responseObject) {
+    [self GET:[NSString stringWithFormat:@"/group/%@/messages?20140101", group/*, date*/] parameters:nil success:^(NSURLSessionDataTask *task, id responseObject) {
         if( callback ) {
             DLog(@"Received response from messages: %@", responseObject[@"messages"]);
         }
@@ -152,7 +152,7 @@
     //Return the users profile
 }
 
-- (void)sendInviteToUsers: (NSArray *)invitees callback: (void (^)(bool successful, NSError *error))callback;
+- (void)sendInviteToUsers: (NSArray *)invitees groupId: (NSString *) groupId callback: (void (^)(bool successful, NSError *error))callback;
 {
     /*[self POST:@"/group" parameters:@{@"name" : groupName} success:^(NSURLSessionDataTask *task, id responseObject) {
         
@@ -165,11 +165,13 @@
     }];*/
     
     // Add id
-    [self PUT:@"/group/532f9eea78fed3e206000001/invite" parameters:@{@"invitees" : invitees} success:^(NSURLSessionDataTask *task, NSError *error) {
+    NSString *url =[[NSString alloc] initWithFormat:@"/group/%@/invite",groupId];
+   
+    [self PUT:url parameters:@{@"invitees" : invitees} success:^(NSURLSessionDataTask *task, NSError *error) {
         
         callback(YES, nil);
     }failure:^(NSURLSessionDataTask *task, NSError *error) {
-        DLog(@"Error sending invite");
+        DLog(@"Error sending invite %@", error);
         callback(NO, error);
     }];
 

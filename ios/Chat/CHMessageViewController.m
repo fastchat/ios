@@ -61,8 +61,9 @@
 
 - (void) inviteUser;
 {
-    DLog(@"Displaying invite screen");
+    DLog(@"Displaying invite screen %@", self.groupId);
     CHInviteUserViewController *inviteViewController = [self.storyboard instantiateViewControllerWithIdentifier:@"CHInviteUserViewController"];
+    [inviteViewController setGroupId:self.groupId];
     [self.navigationController pushViewController:inviteViewController animated:YES];
     
 /*    [self addChildViewController:inviteViewController];
@@ -163,6 +164,8 @@
     CGRect br = [bv CGRectValue];
     
     _textViewSpaceToBottomConstraint.constant = br.size.height;
+
+    self.messageTextField.text = @"";
 }
 
 - (void) keyboardWillHide: (NSNotification*) n
