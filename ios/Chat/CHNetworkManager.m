@@ -72,6 +72,19 @@
     }];
 }
 
+-(void)logoutWithCallback: (void (^)(bool successful, NSError *error))callback;
+{
+    [self DELETE:@"/logout" parameters:nil success:^(NSURLSessionDataTask *task, id responseObject) {
+        DLog(@"Logged out successfully");
+        self.sessiontoken = nil;
+        self.currentUser = nil;
+        callback(YES, nil);
+    } failure:^(NSURLSessionDataTask *task, NSError *error) {
+        DLog(@"Error logging out: %@", error);
+        callback(NO, error);
+    }];
+}
+
 - (void)registerWithUsername: (NSString *)username password:(NSString *)password callback:(void (^)(NSArray *userData))callback;
 {
     DLog(@"username: %@, password: %@", username, password);

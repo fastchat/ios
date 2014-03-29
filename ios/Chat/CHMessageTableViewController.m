@@ -1,21 +1,18 @@
 //
-//  CHSideNavigationTableViewController.m
+//  CHMessageTableViewController.m
 //  Chat
 //
-//  Created by Michael Caputo on 3/20/14.
+//  Created by Michael Caputo on 3/29/14.
 //
 //
 
-#import "CHSideNavigationTableViewController.h"
-#import "CHInvitationsTableViewController.h"
-#import "CHNetworkManager.h"
-#import "CHViewController.h"
+#import "CHMessageTableViewController.h"
 
-@interface CHSideNavigationTableViewController ()
-@property NSArray *menuLabels;
+@interface CHMessageTableViewController ()
+
 @end
 
-@implementation CHSideNavigationTableViewController
+@implementation CHMessageTableViewController
 
 - (id)initWithStyle:(UITableViewStyle)style
 {
@@ -35,8 +32,12 @@
     
     // Uncomment the following line to display an Edit button in the navigation bar for this view controller.
     // self.navigationItem.rightBarButtonItem = self.editButtonItem;
-    
-    self.menuLabels = @[@"Profile", @"Invitations", @"Sign Out"];
+}
+
+- (void)didReceiveMemoryWarning
+{
+    [super didReceiveMemoryWarning];
+    // Dispose of any resources that can be recreated.
 }
 
 #pragma mark - Table view data source
@@ -45,48 +46,26 @@
 {
 #warning Potentially incomplete method implementation.
     // Return the number of sections.
-    return 1;
+    return 0;
 }
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
 #warning Incomplete method implementation.
     // Return the number of rows in the section.
-    return 3;
+    return 0;
 }
 
-
+/*
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"menuCell" forIndexPath:indexPath];
+    UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:<#@"reuseIdentifier"#> forIndexPath:indexPath];
     
     // Configure the cell...
-    cell.textLabel.text = self.menuLabels[indexPath.row];
     
-
     return cell;
 }
-
-- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
-    if( indexPath.row == 1 ) {
-        DLog(@"Navigate to invitations screen.");
-        CHInvitationsTableViewController *controller = [self.storyboard instantiateViewControllerWithIdentifier:@"CHInvitationsTableViewController"];
-        [self.navigationController pushViewController:controller animated:YES];
-    }
-    
-    else if( indexPath.row == 2 ) {
-        [[CHNetworkManager sharedManager] logoutWithCallback:^(bool successful, NSError *error) {
-            //[self.navigationController popViewControllerAnimated:YES];
-            [self.navigationController popViewControllerAnimated:YES];
-            //[self presentViewController:loginController animated:NO completion:nil];
-            CHViewController *loginController = [self.storyboard instantiateViewControllerWithIdentifier:@"CHViewController"];
-            [self presentViewController:loginController animated:NO completion:nil];
-        }];
-    }
-}
-
-
-
+*/
 
 /*
 // Override to support conditional editing of the table view.

@@ -18,6 +18,7 @@
     @property (strong, nonatomic) CHUser *currentUser;
 
 -(void)postLoginWithUsername: (NSString *)username password:(NSString *)password callback:(void (^)(bool successful, NSError *error))callback;
+-(void)logoutWithCallback: (void (^)(bool successful, NSError *error))callback;
 - (void)registerWithUsername: (NSString *)username password:(NSString *)password callback:(void (^)(NSArray *userData))callback;
 - (void)getGroups: (void (^)(NSArray *groups))callback;
 - (void)createGroupWithName: (NSString *)groupName callback: (void (^)(bool successful, NSError *error))callback;

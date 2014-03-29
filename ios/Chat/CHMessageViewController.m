@@ -48,6 +48,9 @@
     /*[[CHNetworkManager sharedManager] getMessagesFromDate:[[NSDate alloc] initWithTimeIntervalSinceNow:0] group:nil  callback:^(NSArray *messages) {
         DLog(@"Returned: %@", messages);
     }];*/
+    
+    UITableView *messageTable = [[UITableView alloc]initWithFrame:CGRectMake(0, 0, 400, 400)];
+    [self.view addSubview:messageTable];
     self.messages = @"";
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(keyboardWillShow:) name:UIKeyboardWillShowNotification object:nil];
     
