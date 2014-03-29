@@ -7,12 +7,14 @@
 //
 
 #import "CHAppDelegate.h"
+#import "CHNetworkManager.h"
 
 @implementation CHAppDelegate
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
-    // Override point for customization after application launch.
+
+    
     return YES;
 }
 							
@@ -42,6 +44,26 @@
 {
     // Called when the application is about to terminate. Save data if appropriate. See also applicationDidEnterBackground:.
 }
+
+#pragma mark - Push Notifications
+
+- (void)application:(UIApplication*)application didRegisterForRemoteNotificationsWithDeviceToken:(NSData*)deviceToken
+{
+	NSLog(@"My token is: %@", deviceToken);
+    [[CHNetworkManager sharedManager] postDeviceToken:deviceToken callback:^(BOOL success, NSError *error) {
+        DLog(@"Success? %@", success ? @"YES" : @"NO");
+        DLog(@"ERror: %@", error);
+    }];
+    
+    
+}
+
+- (void)application:(UIApplication*)application didFailToRegisterForRemoteNotificationsWithError:(NSError*)error
+{
+	NSLog(@"Failed to get token, error: %@", error);
+}
+
+#pragma mark - Side Menu
 
 -(void)showSideMenu;
 {

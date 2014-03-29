@@ -9,7 +9,7 @@
 #import "CHNetworkManager.h"
 #import "CHUser.h"
 
-#define BASE_URL @"http://192.168.1.78:3888"
+#define BASE_URL @"http://10.0.0.10:3000"
 
 @interface CHNetworkManager()
 
@@ -74,7 +74,7 @@
 - (void)registerWithUsername: (NSString *)username password:(NSString *)password callback:(void (^)(NSArray *userData))callback;
 {
     DLog(@"username: %@, password: %@", username, password);
-    [self POST:@"/register" parameters:@{@"username" : username, @"password" : password} success:^(NSURLSessionDataTask *task, id responseObject) {
+    [self POST:@"/user" parameters:@{@"username" : username, @"password" : password} success:^(NSURLSessionDataTask *task, id responseObject) {
         if( callback ) {
             //self.sessiontoken = responseObject[@"session-token"];
             //[self.requestSerializer setValue:self.sessiontoken forHTTPHeaderField:@"session-token"];
@@ -129,7 +129,7 @@
 
 - (void)getProfile: (void (^)(CHUser *userProfile))callback;
 {
-    [self GET:@"/profile" parameters:nil success:^(NSURLSessionDataTask *task, id responseObject) {
+    [self GET:@"/user" parameters:nil success:^(NSURLSessionDataTask *task, id responseObject) {
         if( callback ) {
             CHUser *user = [[CHUser alloc] init];
             DLog(@"Invites: %@", responseObject[@"profile"][@"invites"]);
@@ -189,6 +189,27 @@
 {
 #warning @"Not yet implemented!!"
 //    [self ]
+}
+
+- (void)postDeviceToken:(NSData *)token callback:(void (^)(BOOL success, NSError *error))callback;
+{
+    NSString *tokenString = [NSString stringWithFormat:@"%@", token];
+    NSRegularExpression *regex = [NSRegularExpression regularExpressionWithPattern:@"(<|\\s|>)" options:NSRegularExpressionCaseInsensitive error:nil];
+    tokenString = [regex stringByReplacingMatchesInString:tokenString options:0 range:NSMakeRange(0, [tokenString length]) withTemplate:@""];
+    
+    [self POST:@"/user/device" parameters:@{@"token": token, @"type" : @"ios"} success:^(NSURLSessionDataTask *task, id responseObject) {
+        
+        DLog(@"Response: %@", responseObject);
+        
+        if (callback) {
+            callback(YES, nil);
+        }
+        
+    } failure:^(NSURLSessionDataTask *task, NSError *error) {
+        if (callback) {
+            callback(NO, error);
+        }
+    }];
 }
 
 

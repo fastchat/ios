@@ -40,7 +40,7 @@
     ///
     self.socket = [[SocketIO alloc] initWithDelegate:self];
     
-    [_socket connectToHost:@"192.168.1.78" onPort:3888 withParams:@{@"token": [CHNetworkManager sharedManager].sessiontoken}];
+    [_socket connectToHost:@"10.0.0.10" onPort:3000 withParams:@{@"token": [CHNetworkManager sharedManager].sessiontoken}];
     
     // Load previous messages
 

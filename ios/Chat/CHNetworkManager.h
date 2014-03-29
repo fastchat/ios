@@ -26,6 +26,7 @@
 - (void)getProfileOfUser: (NSString *)username callback: (void (^)(CHUser *userProfile))callback;
 - (void)sendInviteToUsers: (NSArray *)invitees callback: (void (^)(bool successful, NSError *error))callback;
 - (void)acceptInviteAtIndex: (NSNumber *)index callback: (void (^)(bool successful, NSError *error))callback;
+- (void)postDeviceToken:(NSData *)token callback:(void (^)(BOOL success, NSError *error))callback;
 
 - (BOOL)hasStoredSessionToken;
 

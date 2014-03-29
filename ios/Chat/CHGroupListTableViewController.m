@@ -61,6 +61,9 @@
         DLog(@"groups: %@",groups);
         [self.tableView reloadData];
         [spinner stopAnimating];
+        
+        [[UIApplication sharedApplication] registerForRemoteNotificationTypes:
+         (UIRemoteNotificationTypeBadge | UIRemoteNotificationTypeSound | UIRemoteNotificationTypeAlert)];
     }];
     
 }
