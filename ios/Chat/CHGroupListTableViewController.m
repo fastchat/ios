@@ -72,6 +72,7 @@
 
     self.navigationItem.leftBarButtonItem = test;
 
+    
 
 
     
@@ -95,6 +96,10 @@
         DLog(@"groups: %@",groups);
         [self.tableView reloadData];
         [spinner stopAnimating];
+    }];
+    
+    [[CHNetworkManager sharedManager] getProfile:^(CHUser *userProfile) {
+        
     }];
 }
 

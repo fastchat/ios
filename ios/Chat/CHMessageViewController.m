@@ -40,7 +40,7 @@
     ///
     self.socket = [[SocketIO alloc] initWithDelegate:self];
     
-    [_socket connectToHost:@"192.168.1.78" onPort:3888 withParams:@{@"token": [CHNetworkManager sharedManager].sessiontoken}];
+    [_socket connectToHost:@"192.168.1.78" onPort:3000 withParams:@{@"token": [CHNetworkManager sharedManager].sessiontoken}];
     
     // Load previous messages
 
@@ -133,6 +133,7 @@
     self.messageDisplayTextView.text = [NSString stringWithFormat:@"%@ %@\n%@\n\n", self.messageDisplayTextView.text, [[NSDate alloc] initWithTimeIntervalSinceNow:0], self.messageTextField.text];
     //self.messageTextField.text = @"";
     NSString *msg = self.messageTextField.text;
+
     CHUser *currUser = [[CHNetworkManager sharedManager] currentUser];
     DLog(@"Curr user: %@", currUser);
     [_socket sendEvent:@"message" withData:@{@"from": currUser.username, @"text" : msg, @"groupId": @"532f9eea78fed3e206000001"}];

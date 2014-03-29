@@ -9,7 +9,7 @@
 #import "CHNetworkManager.h"
 #import "CHUser.h"
 
-#define BASE_URL @"http://localhost:3000"
+#define BASE_URL @"http://192.168.1.78:3000"
 
 @interface CHNetworkManager()
 
