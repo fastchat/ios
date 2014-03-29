@@ -51,9 +51,10 @@
         DLog(@"Session token not found. We need to login");
 
         CHViewController *loginController = [self.storyboard instantiateViewControllerWithIdentifier:@"CHViewController"];
+        [self presentViewController:loginController animated:NO completion:nil];
 //        [self.navigationController presentModalViewController:loginController animated:NO];
 
-        [self.navigationController pushViewController:loginController animated:NO];
+//        [self.navigationController pushViewController:loginController animated:NO];
 //        [self.navigationController presentViewController:loginController animated:NO completion:^{
 //            DLog(@"Finished logging in");
 //            [self.navigationController popViewControllerAnimated:YES];

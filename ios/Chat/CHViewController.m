@@ -155,7 +155,7 @@
 
 //                vc.navigationItem.hidesBackButton = YES;
 //                [[self navigationController] popToViewController:vc animated:YES];
-                [[self navigationController] popViewControllerAnimated:YES];
+                [self dismissViewControllerAnimated:YES completion:nil];
 
                 
 //                [[self navigationController] pushViewController:vc animated:YES];
