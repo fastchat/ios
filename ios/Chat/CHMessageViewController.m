@@ -16,6 +16,7 @@
 @interface CHMessageViewController ()
     @property NSString *messages;
     @property (nonatomic, strong) SocketIO *socket;
+
 @end
 
 @implementation CHMessageViewController
@@ -40,7 +41,7 @@
     ///
     self.socket = [[SocketIO alloc] initWithDelegate:self];
     
-    [_socket connectToHost:@"192.168.1.78" onPort:3000 withParams:@{@"token": [CHNetworkManager sharedManager].sessiontoken}];
+    [_socket connectToHost:@"powerful-cliffs-9562.herokuapp.com" onPort:80 withParams:@{@"token": [CHNetworkManager sharedManager].sessiontoken}];
     
     // Load previous messages
 
@@ -136,7 +137,8 @@
 
     CHUser *currUser = [[CHNetworkManager sharedManager] currentUser];
     DLog(@"Curr user: %@", currUser);
-    [_socket sendEvent:@"message" withData:@{@"from": currUser.username, @"text" : msg, @"groupId": @"532f9eea78fed3e206000001"}];
+    DLog(@"group: %@", self.groupId);
+    [_socket sendEvent:@"message" withData:@{@"from": currUser.username, @"text" : msg, @"groupId": self.groupId}];
 
     self.messageTextField.text = @"";
     

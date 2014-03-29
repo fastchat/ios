@@ -143,10 +143,15 @@
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
     // Open messageViewController with proper group id
+    DLog(@"Opening group id: %@", [self.groups[indexPath.row] objectForKey:@"_id"]);
+    [self.tableView setDelaysContentTouches:NO];
+    CHMessageViewController *vc = [self.storyboard instantiateViewControllerWithIdentifier:@"CHMessageViewController"];
+    //[controller setGroupId:[self.groups[indexPath.row] objectForKey:@"_id"]];
+    [vc setGroupId:@"5336f917f2b3a00200000002"];
     
-    CHMessageViewController *controller = [self.storyboard instantiateViewControllerWithIdentifier:@"CHMessageViewController"];
-    [controller setGroupId:[self.groups[indexPath.row] objectForKey:@"name"]];
-//    [self.navigationController pushViewController:controller animated:YES];
+    vc.title = [self.groups[indexPath.row] objectForKey:@"name"];
+
+    [self.navigationController pushViewController:vc animated:YES];
 }
 
 /*

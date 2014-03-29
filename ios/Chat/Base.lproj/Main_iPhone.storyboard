@@ -109,9 +109,6 @@
                                         </label>
                                     </subviews>
                                 </tableViewCellContentView>
-                                <connections>
-                                    <segue destination="Ve0-ai-wJa" kind="push" id="yu8-Ss-nCm"/>
-                                </connections>
                             </tableViewCell>
                         </prototypes>
                         <connections>
