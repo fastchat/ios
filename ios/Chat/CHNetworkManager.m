@@ -9,7 +9,8 @@
 #import "CHNetworkManager.h"
 #import "CHUser.h"
 
-#define BASE_URL @"http://10.0.0.10:3000"
+//#define BASE_URL @"http://192.168.1.78:3000"
+#define BASE_URL @"http://powerful-cliffs-9562.herokuapp.com:80"
 
 @interface CHNetworkManager()
 
@@ -47,7 +48,7 @@
             [[NSUserDefaults standardUserDefaults]
              setObject:self.sessiontoken forKey:@"session-token"];
 
-            [self GET:@"/profile" parameters:nil success:^(NSURLSessionDataTask *task, id responseObject) {
+            [self GET:@"/user" parameters:nil success:^(NSURLSessionDataTask *task, id responseObject) {
                 if( callback ) {
                     CHUser *user = [[CHUser alloc] init];
                     DLog(@"Invites: %@", responseObject[@"profile"][@"invites"]);
@@ -220,6 +221,7 @@
                             stringForKey:@"session-token"];
     
     if( savedValue != nil ) {
+        DLog(@"Setting session token to %@", savedValue);
         self.sessiontoken = savedValue;
         [self.requestSerializer setValue:self.sessiontoken forHTTPHeaderField:@"session-token"];
     }

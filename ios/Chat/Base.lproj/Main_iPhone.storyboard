@@ -7,7 +7,7 @@
         <!--View Controller-->
         <scene sceneID="ufC-wZ-h7g">
             <objects>
-                <viewController id="vXZ-lx-hvc" customClass="CHViewController" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="CHViewController" id="vXZ-lx-hvc" customClass="CHViewController" sceneMemberID="viewController">
                     <layoutGuides>
                         <viewControllerLayoutGuide type="top" id="jyV-Pf-zRb"/>
                         <viewControllerLayoutGuide type="bottom" id="2fi-mo-0CV"/>
@@ -82,7 +82,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="x5A-6p-PRh" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="819" y="42"/>
+            <point key="canvasLocation" x="800" y="42"/>
         </scene>
         <!--Group List Table View Controller-->
         <scene sceneID="pPb-Ll-dyZ">
@@ -94,7 +94,7 @@
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                         <prototypes>
                             <tableViewCell contentMode="scaleToFill" restorationIdentifier="CHGroupTableViewCell" selectionStyle="blue" accessoryType="disclosureIndicator" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" reuseIdentifier="CHGroupTableViewCell" textLabel="Wjm-9v-MsJ" style="IBUITableViewCellStyleDefault" id="kM9-Rh-zLl" customClass="CHGroupTableViewCell">
-                                <rect key="frame" x="0.0" y="22" width="320" height="44"/>
+                                <rect key="frame" x="0.0" y="86" width="320" height="44"/>
                                 <autoresizingMask key="autoresizingMask"/>
                                 <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="kM9-Rh-zLl" id="1Ju-Bs-r04">
                                     <rect key="frame" x="0.0" y="0.0" width="287" height="43"/>
@@ -109,9 +109,6 @@
                                         </label>
                                     </subviews>
                                 </tableViewCellContentView>
-                                <connections>
-                                    <segue destination="Ve0-ai-wJa" kind="push" id="yu8-Ss-nCm"/>
-                                </connections>
                             </tableViewCell>
                         </prototypes>
                         <connections>
@@ -119,6 +116,7 @@
                             <outlet property="delegate" destination="XBv-ZM-NJH" id="l8z-VS-XXN"/>
                         </connections>
                     </tableView>
+                    <navigationItem key="navigationItem" id="ecR-oG-DDs"/>
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="QlX-OV-zLX" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
@@ -401,12 +399,12 @@
                     </navigationBar>
                     <nil name="viewControllers"/>
                     <connections>
-                        <segue destination="vXZ-lx-hvc" kind="relationship" relationship="rootViewController" id="GRF-JO-E1M"/>
+                        <segue destination="XBv-ZM-NJH" kind="relationship" relationship="rootViewController" id="MaK-1O-ncU"/>
                     </connections>
                 </navigationController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="ubU-ot-tCP" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="291" y="42"/>
+            <point key="canvasLocation" x="303" y="42"/>
         </scene>
     </scenes>
     <simulatedMetricsContainer key="defaultSimulatedMetrics">
