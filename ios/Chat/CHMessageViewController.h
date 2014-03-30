@@ -15,6 +15,7 @@
 //@property (weak, nonatomic) IBOutlet UIScrollView *chatScrollView;
 //@property (weak, nonatomic) IBOutlet UITextView *messageDisplayTextView;
 @property (strong, nonatomic) NSString *groupId;
+@property (nonatomic, strong) NSDictionary *group;
 @property (weak, nonatomic) IBOutlet UITextField *messageField;
 @property (weak, nonatomic) IBOutlet UITableView *messageTable;
 

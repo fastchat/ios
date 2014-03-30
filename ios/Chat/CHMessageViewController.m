@@ -16,12 +16,14 @@
 #import "CHMessageTableViewCell.h"
 
 @interface CHMessageViewController ()
-    @property NSString *messages;
-    @property NSMutableArray *messageArray;
-    @property (nonatomic, strong) SocketIO *socket;
+
+@property NSString *messages;
+@property NSMutableArray *messageArray;
+@property (nonatomic, strong) SocketIO *socket;
 
 
-    @property NSMutableArray *messageAuthorsArray;
+@property NSMutableArray *messageAuthorsArray;
+@property (nonatomic, strong) NSMutableDictionary *members;
 
 @end
 
@@ -100,6 +102,32 @@
     
     UIBarButtonItem *inviteButton = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemAdd target:self action:@selector(inviteUser)];
     self.navigationItem.rightBarButtonItem = inviteButton;
+    
+    //
+    // make a memebrs hash
+    //
+    self.members = [NSMutableDictionary dictionary];
+    for (NSDictionary *aMember in self.group[@"members"]) {
+        /// Map them together
+        /// "_id": "532f38fd53664a0200000001",
+        /// "username": "ethan"
+        self.members[aMember[@"_id"]] = aMember[@"username"];
+    }
+    
+    
+    ///
+    /// Load up old messages
+    ///
+    [[CHNetworkManager sharedManager] getMessagesForGroup:self.groupId callback:^(NSArray *messages) {
+        
+        for ( NSDictionary *message in messages) {
+            [self.messageArray addObject:message[@"text"]];
+            [self.messageAuthorsArray addObject:self.members[message[@"from"]]];
+        }
+
+        [self.messageTable setContentOffset:CGPointMake(0, CGFLOAT_MAX)];
+        [self.messageTable reloadData];
+    }];
 }
 
 - (void) inviteUser;

@@ -148,7 +148,8 @@
     CHMessageViewController *vc = [self.storyboard instantiateViewControllerWithIdentifier:@"CHMessageViewController"];
 //    CHMessageTableViewController *vc = [self.storyboard instantiateViewControllerWithIdentifier:@"CHMessageTableViewController"];
     //[controller setGroupId:[self.groups[indexPath.row] objectForKey:@"_id"]];
-    [vc setGroupId:@"5336f917f2b3a00200000002"];
+    [vc setGroupId:_groups[indexPath.row][@"_id"]];
+    [vc setGroup:_groups[indexPath.row]];
     
     vc.title = [self.groups[indexPath.row] objectForKey:@"name"];
 

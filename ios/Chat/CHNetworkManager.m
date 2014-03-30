@@ -141,6 +141,20 @@
     }];
 }
 
+- (void)getMessagesForGroup:(NSString *)group callback:(void (^)(NSArray *messages))callback;
+{
+    [self GET:[NSString stringWithFormat:@"/group/%@/messages", group] parameters:nil success:^(NSURLSessionDataTask *task, id responseObject) {
+        if( callback ) {
+            callback(responseObject);
+        }
+    } failure:^(NSURLSessionDataTask *task, NSError *error) {
+        DLog(@"Error retrieving messages: %@", error);
+        if (callback) {
+            callback(nil);
+        }
+    }];
+}
+
 - (void)getProfile: (void (^)(CHUser *userProfile))callback;
 {
     [self GET:@"/user" parameters:nil success:^(NSURLSessionDataTask *task, id responseObject) {
