@@ -9,7 +9,7 @@
 #import "CHNetworkManager.h"
 #import "CHUser.h"
 
-//#define BASE_URL @"http://192.168.1.78:3000"
+//#define BASE_URL @"http://10.0.0.10:3000"
 #define BASE_URL @"http://powerful-cliffs-9562.herokuapp.com:80"
 
 @interface CHNetworkManager()
@@ -198,7 +198,9 @@
     NSRegularExpression *regex = [NSRegularExpression regularExpressionWithPattern:@"(<|\\s|>)" options:NSRegularExpressionCaseInsensitive error:nil];
     tokenString = [regex stringByReplacingMatchesInString:tokenString options:0 range:NSMakeRange(0, [tokenString length]) withTemplate:@""];
     
-    [self POST:@"/user/device" parameters:@{@"token": token, @"type" : @"ios"} success:^(NSURLSessionDataTask *task, id responseObject) {
+    DLog(@"MADE TOKEN: %@", tokenString);
+    
+    [self POST:@"/user/device" parameters:@{@"token": tokenString, @"type" : @"ios"} success:^(NSURLSessionDataTask *task, id responseObject) {
         
         DLog(@"Response: %@", responseObject);
         
