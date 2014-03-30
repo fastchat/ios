@@ -9,7 +9,11 @@
 #import "CHGroupListTableViewController.h"
 #import "CHNetworkManager.h"
 #import "CHAddGroupViewController.h"
-#import "CHGroupTableViewCell.h"
+#import "CHAppDelegate.h"
+#import "CHSideNavigationTableViewController.h"
+#import "CHMessageViewController.h"
+#import "CHViewController.h"
+#import "CHMessageTableViewController.h"
 
 @interface CHGroupListTableViewController ()
 
@@ -37,10 +41,46 @@
     
     // Uncomment the following line to display an Edit button in the navigation bar for this view controller.
     // self.navigationItem.rightBarButtonItem = self.editButtonItem;
-   
+    
+    self.navigationItem.title = @"My Groups";
+    
+
+    
+    
+    // Check to see if we are logged in
+    if( ![[CHNetworkManager sharedManager] hasStoredSessionToken] ) {
+        DLog(@"Session token not found. We need to login");
+
+        UIViewController *loginController = [self.storyboard instantiateViewControllerWithIdentifier:@"CHViewNavController"];
+        [self presentViewController:loginController animated:NO completion:nil];
+//        [self.navigationController presentModalViewController:loginController animated:NO];
+
+//        [self.navigationController pushViewController:loginController animated:NO];
+//        [self.navigationController presentViewController:loginController animated:NO completion:^{
+//            DLog(@"Finished logging in");
+//            [self.navigationController popViewControllerAnimated:YES];
+//        }];
+        
+    }
+    
+    else {
+    
+    }
+    
     UIBarButtonItem *addButton = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemAdd target:self action:@selector(showAddView)];
     self.navigationItem.rightBarButtonItem = addButton;
+    
+    
+    UIBarButtonItem *menuButton = [[UIBarButtonItem alloc] initWithTitle:@"Menu" style:UIBarButtonItemStylePlain target:self action:@selector(displaySideMenu)];
+    
+    self.navigationItem.leftBarButtonItem = menuButton;
+}
 
+-(void) viewWillAppear:(BOOL)animated
+{
+    [super viewWillAppear:animated];
+    //set initial values here
+    
     UIActivityIndicatorView *spinner = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleGray];
     spinner.center = CGPointMake(160, 240);
     spinner.tag = 12;
@@ -53,28 +93,32 @@
         DLog(@"groups: %@",groups);
         [self.tableView reloadData];
         [spinner stopAnimating];
+        
+        [[UIApplication sharedApplication] registerForRemoteNotificationTypes:
+         (UIRemoteNotificationTypeBadge | UIRemoteNotificationTypeSound | UIRemoteNotificationTypeAlert)];
     }];
     
+    [[CHNetworkManager sharedManager] getProfile:^(CHUser *userProfile) {
+        
+    }];
 }
 
-- (void)showAddView {
-    CHAddGroupViewController *controller = [self.storyboard instantiateViewControllerWithIdentifier:@"CHAddGroupViewController"];   //[[WineAddViewController alloc] initWithNibName:@"WineAddViewController" bundle:Nil];
-    //controller.delegate = self;
-    //[self performSegueWithIdentifier:@"addWineSegue" sender:self];
+- (void)displaySideMenu {
+    CHSideNavigationTableViewController *controller = [self.storyboard instantiateViewControllerWithIdentifier:@"CHSideNavigationTableViewController"];
     [[self navigationController] pushViewController:controller animated:YES];
 }
 
-- (void)didReceiveMemoryWarning
-{
-    [super didReceiveMemoryWarning];
-    // Dispose of any resources that can be recreated.
+- (void)showAddView {
+    CHAddGroupViewController *controller = [self.storyboard instantiateViewControllerWithIdentifier:@"CHAddGroupViewController"];
+    
+    [[self navigationController] pushViewController:controller animated:YES];
 }
 
 #pragma mark - Table view data source
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
 {
-#warning Potentially incomplete method implementation.
+
     // Return the number of sections.
     return 1;
 }
@@ -86,9 +130,9 @@
 }
 
 
-- (CHGroupTableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
+- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    CHGroupTableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"CHGroupTableViewCell" forIndexPath:indexPath];
+    UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"CHGroupTableViewCell" forIndexPath:indexPath];
 
     // Configure the cell...
     cell.textLabel.text = [self.groups[indexPath.row] objectForKey:@"name"];
@@ -97,6 +141,20 @@
     return cell;
 }
 
+- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
+    // Open messageViewController with proper group id
+    DLog(@"Opening group id: %@", [self.groups[indexPath.row] objectForKey:@"_id"]);
+    [self.tableView setDelaysContentTouches:NO];
+    CHMessageViewController *vc = [self.storyboard instantiateViewControllerWithIdentifier:@"CHMessageViewController"];
+//    CHMessageTableViewController *vc = [self.storyboard instantiateViewControllerWithIdentifier:@"CHMessageTableViewController"];
+    //[controller setGroupId:[self.groups[indexPath.row] objectForKey:@"_id"]];
+    [vc setGroupId:_groups[indexPath.row][@"_id"]];
+    [vc setGroup:_groups[indexPath.row]];
+    
+    vc.title = [self.groups[indexPath.row] objectForKey:@"name"];
+
+    [self.navigationController pushViewController:vc animated:YES];
+}
 
 /*
 // Override to support conditional editing of the table view.

@@ -7,8 +7,10 @@
 //
 
 #import "CHNetworkManager.h"
+#import "CHUser.h"
 
-#define BASE_URL @"http://129.21.120.30:3000"
+//#define BASE_URL @"http://10.0.0.10:3000"
+#define BASE_URL @"http://powerful-cliffs-9562.herokuapp.com:80"
 
 @interface CHNetworkManager()
 
@@ -35,9 +37,9 @@
     return self;
 }
 
--(void)postLoginWithEmail: (NSString *)email password:(NSString *)password callback:(void (^)(bool successful, NSError *error))callback;
+-(void)postLoginWithUsername: (NSString *)username password:(NSString *)password callback:(void (^)(bool successful, NSError *error))callback;
 {
-    [self POST:@"/login" parameters:@{@"email" : email, @"password" : password} success:^(NSURLSessionDataTask *task, id responseObject) {
+    [self POST:@"/login" parameters:@{@"username" : username, @"password" : password} success:^(NSURLSessionDataTask *task, id responseObject) {
         if( callback ) {
             self.sessiontoken = responseObject[@"session-token"];
             [self.requestSerializer setValue:self.sessiontoken forHTTPHeaderField:@"session-token"];
@@ -45,6 +47,21 @@
             // Save the session token to avoid future login
             [[NSUserDefaults standardUserDefaults]
              setObject:self.sessiontoken forKey:@"session-token"];
+
+            [self GET:@"/user" parameters:nil success:^(NSURLSessionDataTask *task, id responseObject) {
+                if( callback ) {
+                    CHUser *user = [[CHUser alloc] init];
+                    DLog(@"Invites: %@", responseObject[@"profile"][@"invites"]);
+                    [user setUsername:responseObject[@"profile"][@"username"]];
+                    [user setGroups:responseObject[@"profile"][@"groups"]];
+                    [user setInvites:responseObject[@"profile"][@"invites"]];
+                    self.currentUser = user;
+                    
+                }
+            } failure:^(NSURLSessionDataTask *task, NSError *error) {
+                DLog(@"Error: %@", error);
+
+            }];
 
             
             callback(YES,nil);
@@ -55,10 +72,23 @@
     }];
 }
 
-- (void)registerWithEmail: (NSString *)email password:(NSString *)password callback:(void (^)(NSArray *userData))callback;
+-(void)logoutWithCallback: (void (^)(bool successful, NSError *error))callback;
 {
-    DLog(@"email: %@, password: %@", email, password);
-    [self POST:@"/register" parameters:@{@"email" : email, @"password" : password} success:^(NSURLSessionDataTask *task, id responseObject) {
+    [self DELETE:@"/logout" parameters:nil success:^(NSURLSessionDataTask *task, id responseObject) {
+        DLog(@"Logged out successfully");
+        self.sessiontoken = nil;
+        self.currentUser = nil;
+        callback(YES, nil);
+    } failure:^(NSURLSessionDataTask *task, NSError *error) {
+        DLog(@"Error logging out: %@", error);
+        callback(NO, error);
+    }];
+}
+
+- (void)registerWithUsername: (NSString *)username password:(NSString *)password callback:(void (^)(NSArray *userData))callback;
+{
+    DLog(@"username: %@, password: %@", username, password);
+    [self POST:@"/user" parameters:@{@"username" : username, @"password" : password} success:^(NSURLSessionDataTask *task, id responseObject) {
         if( callback ) {
             //self.sessiontoken = responseObject[@"session-token"];
             //[self.requestSerializer setValue:self.sessiontoken forHTTPHeaderField:@"session-token"];
@@ -102,12 +132,86 @@
 
 - (void)getMessagesFromDate: (NSDate *)date group:(NSString *)group callback:(void (^)(NSArray *messages))callback;
 {
-    [self GET:[NSString stringWithFormat:@"/group/5328d87af8d3d3af7b000003/messages?20140101"/*, group, date*/] parameters:nil success:^(NSURLSessionDataTask *task, id responseObject) {
+    [self GET:[NSString stringWithFormat:@"/group/%@/messages?20140101", group/*, date*/] parameters:nil success:^(NSURLSessionDataTask *task, id responseObject) {
         if( callback ) {
             DLog(@"Received response from messages: %@", responseObject[@"messages"]);
         }
     } failure:^(NSURLSessionDataTask *task, NSError *error) {
         DLog(@"Error retrieving messages: %@", error);
+    }];
+}
+
+- (void)getMessagesForGroup:(NSString *)group callback:(void (^)(NSArray *messages))callback;
+{
+    [self GET:[NSString stringWithFormat:@"/group/%@/messages", group] parameters:nil success:^(NSURLSessionDataTask *task, id responseObject) {
+        if( callback ) {
+            callback(responseObject);
+        }
+    } failure:^(NSURLSessionDataTask *task, NSError *error) {
+        DLog(@"Error retrieving messages: %@", error);
+        if (callback) {
+            callback(nil);
+        }
+    }];
+}
+
+- (void)getProfile: (void (^)(CHUser *userProfile))callback;
+{
+    [self GET:@"/user" parameters:nil success:^(NSURLSessionDataTask *task, id responseObject) {
+        if( callback ) {
+            CHUser *user = [[CHUser alloc] init];
+            DLog(@"Invites: %@", responseObject[@"profile"][@"invites"]);
+            [user setUsername:responseObject[@"profile"][@"username"]];
+            [user setGroups:responseObject[@"profile"][@"groups"]];
+            [user setInvites:responseObject[@"profile"][@"invites"]];
+            self.currentUser = user;
+            callback(user);
+        }
+    } failure:^(NSURLSessionDataTask *task, NSError *error) {
+        DLog(@"Error: %@", error);
+        callback(nil);
+    }];
+
+}
+
+- (void)getProfileOfUser: (NSString *)username callback: (void (^)(CHUser *userProfile))callback;
+{
+    //Return the users profile
+}
+
+- (void)sendInviteToUsers: (NSArray *)invitees groupId: (NSString *) groupId callback: (void (^)(bool successful, NSError *error))callback;
+{
+    /*[self POST:@"/group" parameters:@{@"name" : groupName} success:^(NSURLSessionDataTask *task, id responseObject) {
+        
+        if( callback ) {
+            callback(YES,nil);
+        }
+    } failure:^(NSURLSessionDataTask *task, NSError *error) {
+        DLog(@"Error: %@", error);
+        callback(NO, error);
+    }];*/
+    
+    // Add id
+    NSString *url =[[NSString alloc] initWithFormat:@"/group/%@/invite",groupId];
+   
+    [self PUT:url parameters:@{@"invitees" : invitees} success:^(NSURLSessionDataTask *task, NSError *error) {
+        
+        callback(YES, nil);
+    }failure:^(NSURLSessionDataTask *task, NSError *error) {
+        DLog(@"Error sending invite %@", error);
+        callback(NO, error);
+    }];
+
+}
+
+- (void)acceptInviteAtIndex: (NSNumber *)index callback: (void (^)(bool successful, NSError *error))callback;
+{
+    [self POST:@"/user/accept" parameters:@{@"invite" : index} success:^(NSURLSessionDataTask *task, id responseObject) {
+        DLog(@"Accepted!");
+        callback(YES, nil);
+    } failure:^(NSURLSessionDataTask *task, NSError *error) {
+        DLog(@"Invite not accepted");
+        callback(NO, error);
     }];
 }
 
@@ -117,6 +221,30 @@
 //    [self ]
 }
 
+- (void)postDeviceToken:(NSData *)token callback:(void (^)(BOOL success, NSError *error))callback;
+{
+    NSString *tokenString = [NSString stringWithFormat:@"%@", token];
+    NSRegularExpression *regex = [NSRegularExpression regularExpressionWithPattern:@"(<|\\s|>)" options:NSRegularExpressionCaseInsensitive error:nil];
+    tokenString = [regex stringByReplacingMatchesInString:tokenString options:0 range:NSMakeRange(0, [tokenString length]) withTemplate:@""];
+    
+    DLog(@"MADE TOKEN: %@", tokenString);
+    
+    [self POST:@"/user/device" parameters:@{@"token": tokenString, @"type" : @"ios"} success:^(NSURLSessionDataTask *task, id responseObject) {
+        
+        DLog(@"Response: %@", responseObject);
+        
+        if (callback) {
+            callback(YES, nil);
+        }
+        
+    } failure:^(NSURLSessionDataTask *task, NSError *error) {
+        if (callback) {
+            callback(NO, error);
+        }
+    }];
+}
+
+
 - (BOOL)hasStoredSessionToken;
 {
     
@@ -124,6 +252,7 @@
                             stringForKey:@"session-token"];
     
     if( savedValue != nil ) {
+        DLog(@"Setting session token to %@", savedValue);
         self.sessiontoken = savedValue;
         [self.requestSerializer setValue:self.sessiontoken forHTTPHeaderField:@"session-token"];
     }

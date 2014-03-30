@@ -12,12 +12,14 @@
 #import "CHRegisterViewController.h"
 #import "CHGroupListTableViewController.h"
 #import "CHNetworkManager.h"
+#import "CHUser.h"
 
 #define URL @"localhost" //localhost
 
 @interface CHViewController ()
 
 //@property (nonatomic, strong) SocketIO *socket;
+@property (nonatomic, strong) UIView *view;
 
 @end
 
@@ -28,6 +30,8 @@
     [super viewDidLoad];
     
     self.errorLabel.text = @"";
+    DLog(@"Login controller");
+    //self.navigationItem.hidesBackButton = YES;
     
     ///
     /// Connect to server!
@@ -129,6 +133,7 @@
 
 }
 
+
 - (IBAction)loginWasTouched:(id)sender {
     self.errorLabel.text = @"";
     DLog(@"Attempting to login with user %@ and password %@", self.emailTextField.text, self.passwordTextField.text);
@@ -136,7 +141,7 @@
      @"password": self.passwordTextField.text};
     
 
-    [[CHNetworkManager sharedManager] postLoginWithEmail:self.emailTextField.text password:self.passwordTextField.text
+    [[CHNetworkManager sharedManager] postLoginWithUsername:self.emailTextField.text password:self.passwordTextField.text
         callback:^(bool successful, NSError *error) {
             if( successful ) {
                 // Save the session token
@@ -144,11 +149,22 @@
                 //NSString *valueToSave = @"someValue";
                 //[[NSUserDefaults standardUserDefaults]
                 //setObject:valueToSave forKey:@"preferenceName"];
+           
+                DLog(@"Successful login");
+//                CHGroupListTableViewController *vc = [self.storyboard instantiateViewControllerWithIdentifier:@"CHGroupListTableViewController"];
+
+//                vc.navigationItem.hidesBackButton = YES;
+//                [[self navigationController] popToViewController:vc animated:YES];
+                [self dismissViewControllerAnimated:YES completion:nil];
+
                 
-                CHGroupListTableViewController *vc = [self.storyboard instantiateViewControllerWithIdentifier:@"CHGroupListTableViewController"];
+//                [[self navigationController] pushViewController:vc animated:YES];
+                //[[self navigationController] presentViewController:vc animated:YES completion:^{
+                    
+                //}];
                 
-                vc.navigationItem.hidesBackButton = YES;
-                [[self navigationController] pushViewController:vc animated:YES];
+               // CHGroupListTableViewController *controller = [self.storyboard instantiateViewControllerWithIdentifier:@"CHGroupListTableViewController"];
+                //[self.navigationController pushViewController:controller animated:YES];
             }
             else {
                 self.errorLabel.text = error.localizedDescription;

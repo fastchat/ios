@@ -1,22 +1,23 @@
 //
-//  CHAddGroupViewController.m
+//  CHMenuViewController.m
 //  Chat
 //
-//  Created by Michael Caputo on 3/18/14.
+//  Created by Michael Caputo on 3/20/14.
 //
 //
 
-#import "CHAddGroupViewController.h"
-#import "CHNetworkManager.h"
-#include "CHAppDelegate.h"
-#include "CHSideNavigationTableViewController.h"
+#import "CHMenuViewController.h"
+#import "CHGroupListTableViewController.h"
+#import "CHAppDelegate.h"
 
-@interface CHAddGroupViewController ()
+@interface CHMenuViewController ()
+
+
 
 @end
 
-@implementation CHAddGroupViewController
 
+@implementation CHMenuViewController
 UITapGestureRecognizer* tapGesture;
 UIPanGestureRecognizer* panGesture;
 
@@ -34,20 +35,20 @@ UIPanGestureRecognizer* panGesture;
     [super viewDidLoad];
     // Do any additional setup after loading the view.
     
-    UIBarButtonItem *saveButton = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemSave target:self action:@selector(createGroup)];
-    self.navigationItem.rightBarButtonItem = saveButton;
+    tapGesture = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(singleTapScreenShot:)];
+    [self.screenShotImageView addGestureRecognizer:tapGesture];
+    
+    // create a UIPanGestureRecognizer to detect when the screenshot is touched and dragged
+    panGesture = [[UIPanGestureRecognizer alloc] initWithTarget:self action:@selector(panGestureMoveAround:)];
+    [panGesture setMaximumNumberOfTouches:2];
+    [panGesture setDelegate:self];
+    [self.screenShotImageView addGestureRecognizer:panGesture];
 }
 
 - (void)didReceiveMemoryWarning
 {
     [super didReceiveMemoryWarning];
     // Dispose of any resources that can be recreated.
-}
-
-- (void)createGroup {
-    [[CHNetworkManager sharedManager] createGroupWithName:self.groupNameTextField.text callback:^(bool successful, NSError *error) {
-        [self.navigationController popViewControllerAnimated:YES];
-    }];
 }
 
 /*
@@ -61,16 +62,33 @@ UIPanGestureRecognizer* panGesture;
 }
 */
 
+-(void)viewDidAppear:(BOOL)animated
+{
+    [super viewWillAppear:animated];
+    
+    // when the menu view appears, it will create the illusion that the other view has slide to the side
+    // what its actually doing is sliding the screenShotImage passed in off to the side
+    // to start this, we always want the image to be the entire screen, so set it there
+    [self.screenShotImageView setImage:self.screenShotImage];
+    [self.screenShotImageView setFrame:CGRectMake(0, 0, self.view.frame.size.width, self.view.frame.size.height)];
+    
+    // now we'll animate it across to the right over 0.2 seconds with an Ease In and Out curve
+    // this uses blocks to do the animation. Inside the block the frame of the UIImageView has its
+    // x value changed to where it will end up with the animation is complete.
+    // this animation doesn't require any action when completed so the block is left empty
+    [UIView animateWithDuration:0.2 delay:0 options:UIViewAnimationOptionCurveEaseInOut animations:^{
+        [self.screenShotImageView setFrame:CGRectMake(265, 0, self.view.frame.size.width, self.view.frame.size.height)];
+    }
+                     completion:^(BOOL finished){  }];
+}
 
-
-// Side nav
 -(IBAction)showLogoExpandingViewController
 {
     // this sets the currentViewController on the app_delegate to the expanding view controller
     // then slides the screenshot back over
-    
-    
-    [(CHAppDelegate *)[[UIApplication sharedApplication] delegate] setContentViewControllerWithController:[[CHSideNavigationTableViewController alloc] initWithNibName:@"CHSideNavigationTableViewController" bundle:nil]];
+
+
+    [(CHAppDelegate *)[[UIApplication sharedApplication] delegate] setContentViewControllerWithController:[[CHMenuViewController alloc] initWithNibName:@"CHMenuViewController" bundle:nil]];
     [self slideThenHide];
 }
 
@@ -128,6 +146,14 @@ UIPanGestureRecognizer* panGesture;
         piece.center = locationInSuperview;
     }
 }
+
+
+- (void)showSideMenu;
+{
+    DLog(@"Side menu display");
+    
+}
+
 
 
 @end
