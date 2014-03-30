@@ -168,10 +168,6 @@
     if ([packet.dataAsJSON[@"name"] isEqualToString:@"message"]) {
         NSDictionary *data = [packet.dataAsJSON[@"args"] firstObject];
         
-<<<<<<< HEAD
-            self.messageDisplayTextView.text = [NSString stringWithFormat:@"%@ %@\n%@: %@\n\n", self.messageDisplayTextView.text, [[NSDate alloc] initWithTimeIntervalSinceNow:0], data[@"from"], data[@"text"]];
-        
-=======
 //            self.messageDisplayTextView.text = [NSString stringWithFormat:@"%@ %@\n%@: %@\n\n", self.messageDisplayTextView.text, [[NSDate alloc] initWithTimeIntervalSinceNow:0], data[@"from"], data[@"text"]];
 
         [self.messageArray addObject:data[@"text"]];
@@ -183,7 +179,6 @@
         [self.messageTable setContentOffset:CGPointMake(0, CGFLOAT_MAX)];
         
         [self.messageTable reloadData];
->>>>>>> ethan_dev
     }
 
 }
