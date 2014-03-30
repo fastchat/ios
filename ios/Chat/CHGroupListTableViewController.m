@@ -50,7 +50,7 @@
     if( ![[CHNetworkManager sharedManager] hasStoredSessionToken] ) {
         DLog(@"Session token not found. We need to login");
 
-        CHViewController *loginController = [self.storyboard instantiateViewControllerWithIdentifier:@"CHViewController"];
+        UIViewController *loginController = [self.storyboard instantiateViewControllerWithIdentifier:@"CHViewNavController"];
         [self presentViewController:loginController animated:NO completion:nil];
 //        [self.navigationController presentModalViewController:loginController animated:NO];
 
