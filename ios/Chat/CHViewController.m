@@ -31,7 +31,7 @@
     
     self.errorLabel.text = @"";
     DLog(@"Login controller");
-    self.navigationItem.hidesBackButton = YES;
+    //self.navigationItem.hidesBackButton = YES;
     
     ///
     /// Connect to server!

@@ -13,6 +13,7 @@
 #import "CHSideNavigationTableViewController.h"
 #import "CHMessageViewController.h"
 #import "CHViewController.h"
+#import "CHMessageTableViewController.h"
 
 @interface CHGroupListTableViewController ()
 
@@ -63,21 +64,16 @@
     }
     
     else {
-   
+    
+    }
     
     UIBarButtonItem *addButton = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemAdd target:self action:@selector(showAddView)];
     self.navigationItem.rightBarButtonItem = addButton;
     
     
-    UIBarButtonItem *test = [[UIBarButtonItem alloc] initWithTitle:@"Menu" style:UIBarButtonItemStylePlain target:self action:@selector(displaySideMenu)];
-
-    self.navigationItem.leftBarButtonItem = test;
-
+    UIBarButtonItem *menuButton = [[UIBarButtonItem alloc] initWithTitle:@"Menu" style:UIBarButtonItemStylePlain target:self action:@selector(displaySideMenu)];
     
-
-
-    
-    }
+    self.navigationItem.leftBarButtonItem = menuButton;
 }
 
 -(void) viewWillAppear:(BOOL)animated
@@ -150,6 +146,7 @@
     DLog(@"Opening group id: %@", [self.groups[indexPath.row] objectForKey:@"_id"]);
     [self.tableView setDelaysContentTouches:NO];
     CHMessageViewController *vc = [self.storyboard instantiateViewControllerWithIdentifier:@"CHMessageViewController"];
+//    CHMessageTableViewController *vc = [self.storyboard instantiateViewControllerWithIdentifier:@"CHMessageTableViewController"];
     //[controller setGroupId:[self.groups[indexPath.row] objectForKey:@"_id"]];
     [vc setGroupId:@"5336f917f2b3a00200000002"];
     

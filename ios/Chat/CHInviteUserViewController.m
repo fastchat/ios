@@ -47,9 +47,10 @@
 
     NSArray *invitees = @[self.usernameTextField.text];
     
-    [[CHNetworkManager sharedManager] sendInviteToUsers:invitees callback:^(bool successful, NSError *error) {
-        DLog(@"Inviting finished");
+    [[CHNetworkManager sharedManager] sendInviteToUsers:invitees groupId:self.groupId callback:^(bool successful, NSError *error) {
+        DLog(@"Inviting finished!");
         [self.navigationController popViewControllerAnimated:YES];
     }];
+
 }
 @end

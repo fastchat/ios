@@ -12,10 +12,16 @@
 #import "CHNetworkManager.h"
 #import "CHInviteUserViewController.h"
 #import "CHUser.h"
+#import "CHMessageTableViewController.h"
+#import "CHMessageTableViewCell.h"
 
 @interface CHMessageViewController ()
     @property NSString *messages;
+    @property NSMutableArray *messageArray;
     @property (nonatomic, strong) SocketIO *socket;
+
+
+    @property NSMutableArray *messageAuthorsArray;
 
 @end
 
@@ -48,12 +54,49 @@
     /*[[CHNetworkManager sharedManager] getMessagesFromDate:[[NSDate alloc] initWithTimeIntervalSinceNow:0] group:nil  callback:^(NSArray *messages) {
         DLog(@"Returned: %@", messages);
     }];*/
+    
+    _messageArray = [[NSMutableArray alloc] init];
+    _messageAuthorsArray = [[NSMutableArray alloc] init];
+    [self.messageTable setDelegate:self];
+    [self.messageTable setDataSource:self];
+    /* _messageTable = [[UITableView alloc]initWithFrame:CGRectMake(0, 50, 300, 200)];
+    [self.messageTable registerClass:[CHMessageTableViewCell class] forCellReuseIdentifier:@"CHMessageTableViewCell"];
+    
+    [_messageTable setDelegate:self];
+    [_messageTable setDataSource:self];
+    
+    
+    
+    [self.view addSubview:_messageTable];
+     */
+    
+
+    
+    /*
+    _messageField = [[UITextField alloc] initWithFrame:CGRectMake(35, 275, 250, 35)];
+    
+    _messageField.textColor = [UIColor colorWithRed:0/256.0 green:84/256.0 blue:129/256.0 alpha:1.0];
+    _messageField.font = [UIFont fontWithName:@"Helvetica-Bold" size:16];
+    _messageField.backgroundColor=[UIColor blueColor];
+    _messageField.text=@"Hello World";
+    [_messageField setDelegate:self];
+    [self.view addSubview:_messageField];
+    */
+    
+    UIButton *button = [UIButton buttonWithType:UIButtonTypeRoundedRect];
+    [button addTarget:self
+               action:@selector(sendButtonTouched:)
+     forControlEvents:UIControlEventTouchUpInside];
+    [button setTitle:@"Send Message" forState:UIControlStateNormal];
+    button.frame = CGRectMake(80.0, 320.0, 160.0, 40.0);
+    [self.view addSubview:button];
+    
     self.messages = @"";
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(keyboardWillShow:) name:UIKeyboardWillShowNotification object:nil];
     
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(keyboardWillHide:) name:UIKeyboardWillHideNotification object:nil];
     
-    [self.messageDisplayTextView setScrollsToTop:NO];
+    //[self.messageDisplayTextView setScrollsToTop:NO];
     
     UIBarButtonItem *inviteButton = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemAdd target:self action:@selector(inviteUser)];
     self.navigationItem.rightBarButtonItem = inviteButton;
@@ -61,30 +104,18 @@
 
 - (void) inviteUser;
 {
-    DLog(@"Displaying invite screen");
+    DLog(@"Displaying invite screen %@", self.groupId);
     CHInviteUserViewController *inviteViewController = [self.storyboard instantiateViewControllerWithIdentifier:@"CHInviteUserViewController"];
+    [inviteViewController setGroupId:self.groupId];
     [self.navigationController pushViewController:inviteViewController animated:YES];
-    
-/*    [self addChildViewController:inviteViewController];
-    inviteViewController.view.frame = self.view.frame;
-    [self.view addSubview:inviteViewController.view];
-    inviteViewController.view.alpha = 0;
-    [inviteViewController didMoveToParentViewController:self];
-    
-    [UIView animateWithDuration:0.25 delay:0.0 options:UIViewAnimationOptionCurveLinear animations:^
-     {
-         inviteViewController.view.alpha = 1;
-     }
-                     completion:nil];
- */
 }
 
 - (void) socketIODidConnect:(SocketIO *)socket;
 {
     DLog(@"Connected! %@", socket);
-    NSString *text = self.messageDisplayTextView.text;
-    text = [text stringByAppendingString:@"\nConnected\n"];
-    self.messageDisplayTextView.text = text;
+   // NSString *text = self.messageDisplayTextView.text;
+//    text = [text stringByAppendingString:@"\nConnected\n"];
+//    self.messageDisplayTextView.text = text;
     
 }
 
@@ -109,9 +140,17 @@
     if ([packet.dataAsJSON[@"name"] isEqualToString:@"message"]) {
         NSDictionary *data = [packet.dataAsJSON[@"args"] firstObject];
         
-            self.messageDisplayTextView.text = [NSString stringWithFormat:@"%@ %@\n%@: %@\n\n", self.messageDisplayTextView.text, [[NSDate alloc] initWithTimeIntervalSinceNow:0], data[@"from"], data[@"text"]];
+//            self.messageDisplayTextView.text = [NSString stringWithFormat:@"%@ %@\n%@: %@\n\n", self.messageDisplayTextView.text, [[NSDate alloc] initWithTimeIntervalSinceNow:0], data[@"from"], data[@"text"]];
 
-        [self.messageDisplayTextView scrollRangeToVisible:NSMakeRange([self.messageDisplayTextView.text length], 0)];
+        [self.messageArray addObject:data[@"text"]];
+      //  [_messageTable setContentOffset:CGPointMake(0, CGFLOAT_MAX)];
+        
+        [self.messageAuthorsArray addObject:data[@"from"]];
+
+//        [self.messageDisplayTextView scrollRangeToVisible:NSMakeRange([self.messageDisplayTextView.text length], 0)];
+        [self.messageTable setContentOffset:CGPointMake(0, CGFLOAT_MAX)];
+        
+        [self.messageTable reloadData];
     }
 
 }
@@ -129,20 +168,21 @@
 */
 
 - (IBAction)sendButtonTouched:(id)sender {
-    DLog(@"Sending message: %@",self.messageTextField.text);
-    //self.messages = [self.messages stringByAppendingString:self.messageTextField.text];
-    self.messageDisplayTextView.text = [NSString stringWithFormat:@"%@ %@\n%@\n\n", self.messageDisplayTextView.text, [[NSDate alloc] initWithTimeIntervalSinceNow:0], self.messageTextField.text];
-    //self.messageTextField.text = @"";
-    NSString *msg = self.messageTextField.text;
-
+    NSString *msg = self.messageField.text;
+    
     CHUser *currUser = [[CHNetworkManager sharedManager] currentUser];
-    DLog(@"Curr user: %@", currUser);
+    DLog(@"Curr user: %@", currUser.username);
     DLog(@"group: %@", self.groupId);
     [_socket sendEvent:@"message" withData:@{@"from": currUser.username, @"text" : msg, @"groupId": self.groupId}];
 
-    self.messageTextField.text = @"";
+    self.messageField.text = @"";
     
-    [self.messageDisplayTextView scrollRangeToVisible:NSMakeRange([self.messageDisplayTextView.text length], 0)];
+//    [self.messageTable setContentOffset:CGPointMake(0, CGFLOAT_MAX)];
+    [self.messageTable setContentOffset:CGPointMake(0, CGFLOAT_MAX)];
+    [_messageArray addObject:msg];
+    [_messageAuthorsArray addObject:currUser.username];
+
+    [self.messageTable reloadData];
 
 }
 
@@ -163,11 +203,94 @@
     CGRect br = [bv CGRectValue];
     
     _textViewSpaceToBottomConstraint.constant = br.size.height;
+
+//    self.messageTextField.text = @"";
+    self.messageField.text = @"";
 }
 
 - (void) keyboardWillHide: (NSNotification*) n
 {
     _textViewSpaceToBottomConstraint.constant = 0;
+}
+
+#pragma mark - TableView DataSource Implementation
+
+- (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
+    return _messageArray.count;
+}
+
+- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
+    DLog(@"Cell row: %i", indexPath.row);
+    static NSString *cellIdentifier = @"CHMessageTableViewCell";
+    
+    CHMessageTableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:cellIdentifier forIndexPath:indexPath];
+
+    //cell.authorLabel.text = _messageAuthorsArray[indexPath.row];
+    //cell.messageLabel.text = _messageArray[indexPath.row];
+    
+     CHUser *currUser = [[CHNetworkManager sharedManager] currentUser];
+    
+    
+    
+    if( _messageAuthorsArray[indexPath.row] == currUser.username ) {
+//    if( [cell.authorLabel.text])
+        cell.authorLabel.text = @"";
+        cell.messageLabel.text = [self.messageArray objectAtIndex:indexPath.row];
+        cell.messageLabel.textAlignment = UITextLayoutDirectionRight;
+       // CGRectMake(boundsX+50 ,20, 300, 25);
+        //self.messageLabel.frame = frame;
+//        cell.frame
+        
+        
+       /* UILabel *lisnerMessage=[[UILabel alloc] init];
+        lisnerMessage.backgroundColor = [UIColor clearColor];
+        [lisnerMessage setFrame:cell.frame];
+        lisnerMessage.numberOfLines=0;
+        lisnerMessage.textAlignment=UITextLayoutDirectionRight;
+        lisnerMessage.text=[self.messageArray objectAtIndex:indexPath.row];
+        [cell.contentView addSubview:lisnerMessage];
+        */
+        
+        
+        
+        
+       // cell.messageLabel.frame = CGRectMake(;
+//        cell.messageLabel.textAlignment = UITextLayoutDirectionRight;
+    }
+    
+    else {
+        cell.authorLabel.text = [[NSString alloc] initWithFormat:@"%@:",[self.messageAuthorsArray objectAtIndex:indexPath.row]];
+        cell.messageLabel.text = [self.messageArray objectAtIndex:indexPath.row];
+        /*
+        UILabel *authMessage = [[UILabel alloc] init];
+        authMessage.backgroundColor = [UIColor redColor];
+        [authMessage setFrame:cell.frame];
+        authMessage.numberOfLines = 0;
+        authMessage.textAlignment = UITextLayoutDirectionLeft;
+        authMessage.text = [[NSString alloc] initWithFormat:@"%@:", [self.messageAuthorsArray objectAtIndex:indexPath.row] ];
+        [cell.contentView addSubview:authMessage];
+
+        UILabel *lisnerMessage=[[UILabel alloc] init];
+        lisnerMessage.backgroundColor = [UIColor clearColor];
+        [lisnerMessage setFrame:cell.frame];
+        lisnerMessage.numberOfLines=0;
+        lisnerMessage.textAlignment=UITextLayoutDirectionRight;
+        lisnerMessage.text=[self.messageArray objectAtIndex:indexPath.row];
+        [cell.contentView addSubview:lisnerMessage];
+         */
+    }
+
+    return cell;
+}
+
+-(CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath;
+{
+    CGSize renderedSize = [[self.messageArray objectAtIndex:indexPath.row] sizeWithFont: [UIFont fontWithName:@"Times New Roman" size:17] constrainedToSize:CGSizeMake(300, CGFLOAT_MAX) lineBreakMode:NSLineBreakByWordWrapping];
+    
+    if (renderedSize.height < 50.0) {
+        return 50.0;
+    }
+    return renderedSize.height;
 }
 
 @end
