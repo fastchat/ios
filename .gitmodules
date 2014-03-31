@@ -1,0 +1,3 @@
+[submodule "android/androidAsync"]
+	path = android/androidAsync
+	url = https://github.com/koush/AndroidAsync.git
