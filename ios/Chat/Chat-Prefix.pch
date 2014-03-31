@@ -20,4 +20,6 @@
 #   define DLog(...)
 #endif
 
+#define IPAD UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad
+
 #endif

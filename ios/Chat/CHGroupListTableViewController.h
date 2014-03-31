@@ -8,6 +8,6 @@
 
 #import <UIKit/UIKit.h>
 
-@interface CHGroupListTableViewController : UITableViewController
+@interface CHGroupListTableViewController : UITableViewController <UISplitViewControllerDelegate>
 
 @end

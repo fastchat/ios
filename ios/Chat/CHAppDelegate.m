@@ -8,6 +8,7 @@
 
 #import "CHAppDelegate.h"
 #import "CHNetworkManager.h"
+#import "CHGroupListTableViewController.h"
 
 @implementation CHAppDelegate
 
@@ -15,6 +16,13 @@
 {
     // Override point for customization after application launch.
     [[CHNetworkManager sharedManager] hasStoredSessionToken];
+    
+    if (IPAD) {
+        UISplitViewController *split = (UISplitViewController *)self.window.rootViewController;
+        UINavigationController *master = split.viewControllers[0];
+        CHGroupListTableViewController *group = master.viewControllers[0];
+        split.delegate = group;
+    }
     
     return YES;
 }

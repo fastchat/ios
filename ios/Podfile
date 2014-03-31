@@ -5,6 +5,7 @@ inhibit_all_warnings!
 target "Chat" do
   pod 'socket.IO', '~> 0.5'
   pod 'AFNetworking', '~> 2.2'
+  pod 'NSDate+TimeAgo', '~> 1.0'
 end
 
 target "ChatTests" do
