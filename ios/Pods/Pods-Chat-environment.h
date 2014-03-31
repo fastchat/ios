@@ -48,6 +48,12 @@
 #define COCOAPODS_VERSION_MINOR_AFNetworking_UIKit 2
 #define COCOAPODS_VERSION_PATCH_AFNetworking_UIKit 1
 
+// NSDate+TimeAgo
+#define COCOAPODS_POD_AVAILABLE_NSDate_TimeAgo
+#define COCOAPODS_VERSION_MAJOR_NSDate_TimeAgo 1
+#define COCOAPODS_VERSION_MINOR_NSDate_TimeAgo 0
+#define COCOAPODS_VERSION_PATCH_NSDate_TimeAgo 3
+
 // SocketRocket
 #define COCOAPODS_POD_AVAILABLE_SocketRocket
 #define COCOAPODS_VERSION_MAJOR_SocketRocket 0
@@ -58,5 +64,5 @@
 #define COCOAPODS_POD_AVAILABLE_socket_IO
 #define COCOAPODS_VERSION_MAJOR_socket_IO 0
 #define COCOAPODS_VERSION_MINOR_socket_IO 5
-#define COCOAPODS_VERSION_PATCH_socket_IO 0
+#define COCOAPODS_VERSION_PATCH_socket_IO 2
 
