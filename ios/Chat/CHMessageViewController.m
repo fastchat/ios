@@ -85,14 +85,6 @@
     [self.view addSubview:_messageField];
     */
     
-    UIButton *button = [UIButton buttonWithType:UIButtonTypeRoundedRect];
-    [button addTarget:self
-               action:@selector(sendButtonTouched:)
-     forControlEvents:UIControlEventTouchUpInside];
-    [button setTitle:@"Send Message" forState:UIControlStateNormal];
-    button.frame = CGRectMake(80.0, 320.0, 160.0, 40.0);
-    [self.view addSubview:button];
-    
     self.messages = @"";
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(keyboardWillShow:) name:UIKeyboardWillShowNotification object:nil];
     
@@ -128,6 +120,8 @@
         [self.messageTable setContentOffset:CGPointMake(0, CGFLOAT_MAX)];
         [self.messageTable reloadData];
     }];
+    
+    [self.messageField becomeFirstResponder];
 }
 
 - (void) inviteUser;
