@@ -17,7 +17,7 @@ import com.koushikdutta.async.http.body.JSONObjectBody;
 
 public class NetworkManager {
 	
-	private static final String url ="http://minty.shawnsthompson.com:3000";
+	private static final String url ="http://powerful-cliffs-9562.herokuapp.com:80";
 	private static String session_token = "";
 	private static String username ="";
 	private static JSONObject currentRoom;
@@ -35,6 +35,7 @@ public class NetworkManager {
 				session_token = result.getString("session-token");
 				 System.out.println("I got a JSONObject: " + result);
 			        Fragment fragment = new RoomsFragment();
+			        postDeviceId(MainActivity.regid);
 			        MainActivity.switchView(fragment);
 			} catch (JSONException e1) {
 				Utils.makeToast("Invalid Username and/or Password");
@@ -61,6 +62,19 @@ public class NetworkManager {
 	};
 	
 	
+	private static final JSONObjectCallback deviceRegCallback = new AsyncHttpClient.JSONObjectCallback() {
+	    // Callback is invoked with any exceptions/errors, and the result, if available.
+	    public void onCompleted(Exception e, AsyncHttpResponse response, JSONObject result) {
+	        if (e != null) {
+	        	e.printStackTrace();
+	        	Utils.makeToast(e);
+	            return;
+	        }
+	        	
+			System.out.println(result);
+	    }
+	};
+	
 	public static Future<JSONArray> getGroups(){
 		
 		AsyncHttpGet get = new AsyncHttpGet(url+"/group");
@@ -85,6 +99,26 @@ public class NetworkManager {
 		JSONObjectBody body = new JSONObjectBody(object);
 		post.setBody(body);
 		return AsyncHttpClient.getDefaultInstance().executeJSONObject(post, loginCallback);
+	}
+	
+	public static Future<JSONObject> postDeviceId(String reg_id){
+		if(reg_id==null || reg_id.equals("")){
+			return null;
+		}
+		AsyncHttpPost post = new AsyncHttpPost(url+"/user/device");
+		post.setHeader("session-token", session_token);
+		JSONObject object = new JSONObject();
+		try {
+			object.put("token", reg_id);
+			object.put("type", "android");
+		} catch (JSONException e) {
+			// TODO Auto-generated catch block
+			Utils.makeToast(e);
+			e.printStackTrace();
+		}
+		JSONObjectBody body = new JSONObjectBody(object);
+		post.setBody(body);
+		return AsyncHttpClient.getDefaultInstance().executeJSONObject(post, deviceRegCallback);
 	}
 	
 	public static String getURL(){

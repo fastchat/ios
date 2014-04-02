@@ -2,6 +2,8 @@ package com.example.fastchat;
 
 import java.util.ArrayList;
 
+import org.json.JSONException;
+
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -24,6 +26,13 @@ public class MessageFragment extends Fragment implements OnClickListener {
 	
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
+		try {
+			MainActivity.activity.getActionBar().setTitle(NetworkManager.getCurrentRoom().getString("name"));
+		} catch (JSONException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			Utils.makeToast(e);
+		}
 		rootView = inflater.inflate(R.layout.message_main, container,
 				false);
 		Button button = (Button) rootView.findViewById(R.id.send_button);

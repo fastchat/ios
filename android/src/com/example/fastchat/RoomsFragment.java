@@ -31,6 +31,7 @@ public class RoomsFragment extends Fragment {
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
+		MainActivity.activity.getActionBar().setTitle("Groups");
 		rootView = inflater.inflate(R.layout.rooms_main, container,
 				false);
 		rootView.requestFocus();
