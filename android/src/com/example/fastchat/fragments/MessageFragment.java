@@ -1,8 +1,17 @@
-package com.example.fastchat;
+package com.example.fastchat.fragments;
 
 import java.util.ArrayList;
 
 import org.json.JSONException;
+
+import com.example.fastchat.MainActivity;
+import com.example.fastchat.R;
+import com.example.fastchat.Utils;
+import com.example.fastchat.R.id;
+import com.example.fastchat.R.layout;
+import com.example.fastchat.networking.Message;
+import com.example.fastchat.networking.SocketIoController;
+import com.example.fastchat.networking.NetworkManager;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -48,8 +57,8 @@ public class MessageFragment extends Fragment implements OnClickListener {
 				 
 			 }
 		 });
-	     if(!MessageViewController.isConnected()){
-	    	 MessageViewController.connect();
+	     if(!SocketIoController.isConnected()){
+	    	 SocketIoController.connect();
 	     }
 		return rootView;
 	}
@@ -88,6 +97,6 @@ public class MessageFragment extends Fragment implements OnClickListener {
 		InputMethodManager in = (InputMethodManager) MainActivity.activity.getSystemService(MainActivity.INPUT_METHOD_SERVICE);
         in.hideSoftInputFromWindow(messageBox.getApplicationWindowToken(),InputMethodManager.HIDE_NOT_ALWAYS);
 		addMessage(message,true,NetworkManager.getUsername());
-		MessageViewController.sendMessage(message);
+		SocketIoController.sendMessage(message);
 	}
 }

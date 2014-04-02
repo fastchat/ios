@@ -1,5 +1,12 @@
-package com.example.fastchat;
+package com.example.fastchat.fragments;
 
+
+import com.example.fastchat.MainActivity;
+import com.example.fastchat.R;
+import com.example.fastchat.Utils;
+import com.example.fastchat.R.id;
+import com.example.fastchat.R.layout;
+import com.example.fastchat.networking.NetworkManager;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -21,7 +28,7 @@ public class LoginFragment extends Fragment implements OnClickListener {
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
 		MainActivity.activity.getActionBar().setTitle("Login");
-		rootView = inflater.inflate(R.layout.fragment_main, container,
+		rootView = inflater.inflate(R.layout.home_main, container,
 				false);
 		Button button = (Button) rootView.findViewById(R.id.login_button);
 	     button.setOnClickListener(this);

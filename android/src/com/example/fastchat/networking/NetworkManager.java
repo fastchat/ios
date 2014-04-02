@@ -1,4 +1,4 @@
-package com.example.fastchat;
+package com.example.fastchat.networking;
 
 import java.util.HashMap;
 
@@ -8,6 +8,10 @@ import org.json.JSONObject;
 
 import android.support.v4.app.Fragment;
 
+import com.example.fastchat.MainActivity;
+import com.example.fastchat.Utils;
+import com.example.fastchat.fragments.MessageFragment;
+import com.example.fastchat.fragments.GroupsFragment;
 import com.koushikdutta.async.future.Future;
 import com.koushikdutta.async.http.AsyncHttpClient;
 import com.koushikdutta.async.http.AsyncHttpClient.JSONArrayCallback;
@@ -38,7 +42,7 @@ public class NetworkManager {
 			try {
 				session_token = result.getString("session-token");
 				System.out.println("I got a JSONObject: " + result);
-				Fragment fragment = new RoomsFragment();
+				Fragment fragment = new GroupsFragment();
 				postDeviceId(MainActivity.regid);
 				MainActivity.saveLoginCredentials(username, session_token);
 				MainActivity.switchView(fragment);
@@ -62,7 +66,7 @@ public class NetworkManager {
 			}
 
 			System.out.println(result);
-			RoomsFragment.addRoom(result);
+			GroupsFragment.addGroups(result);
 		}
 	};
 

@@ -1,4 +1,4 @@
-package com.example.fastchat;
+package com.example.fastchat.networking;
 
 public class Message {
 

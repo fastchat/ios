@@ -4,6 +4,11 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import com.example.fastchat.fragments.LoginFragment;
+import com.example.fastchat.fragments.GroupsFragment;
+import com.example.fastchat.networking.SocketIoController;
+import com.example.fastchat.networking.NetworkManager;
+
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.google.android.gms.gcm.GoogleCloudMessaging;
@@ -11,24 +16,17 @@ import com.google.android.gms.gcm.GoogleCloudMessaging;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.ActionBarActivity;
-import android.annotation.SuppressLint;
-import android.annotation.TargetApi;
-import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager.NameNotFoundException;
-import android.os.AsyncTask;
-import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.WindowManager;
-import android.view.inputmethod.InputMethodManager;
 
-@SuppressLint("NewApi")
-@TargetApi(Build.VERSION_CODES.HONEYCOMB)
+
 public class MainActivity extends ActionBarActivity {
 
 	public static MainActivity activity;
@@ -69,7 +67,7 @@ public class MainActivity extends ActionBarActivity {
 				NetworkManager.setUsername(credentials.get(0));
 				NetworkManager.setToken(credentials.get(1));
 				getSupportFragmentManager().beginTransaction()
-				.add(R.id.container, new RoomsFragment()).commit();
+				.add(R.id.container, new GroupsFragment()).commit();
 			}
 		}
 		
@@ -144,7 +142,7 @@ public class MainActivity extends ActionBarActivity {
 	}
 	
 	protected void onStop(){
-		MessageViewController.disconnect();
+		SocketIoController.disconnect();
 		super.onStop();
 	}
 

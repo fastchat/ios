@@ -1,6 +1,12 @@
-package com.example.fastchat;
+package com.example.fastchat.fragments;
 
 import java.util.ArrayList;
+
+import com.example.fastchat.R;
+import com.example.fastchat.R.drawable;
+import com.example.fastchat.R.id;
+import com.example.fastchat.R.layout;
+import com.example.fastchat.networking.Message;
 
 import android.content.Context;
 import android.graphics.Color;

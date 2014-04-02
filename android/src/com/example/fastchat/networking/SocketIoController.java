@@ -1,9 +1,11 @@
-package com.example.fastchat;
+package com.example.fastchat.networking;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import com.example.fastchat.Utils;
+import com.example.fastchat.fragments.MessageFragment;
 import com.koushikdutta.async.http.AsyncHttpClient;
 import com.koushikdutta.async.http.socketio.Acknowledge;
 import com.koushikdutta.async.http.socketio.ConnectCallback;
@@ -13,7 +15,7 @@ import com.koushikdutta.async.http.socketio.SocketIOClient;
 import com.koushikdutta.async.http.socketio.SocketIORequest;
 import com.koushikdutta.async.http.socketio.StringCallback;
 
-public class MessageViewController {
+public class SocketIoController {
 
 	private static SocketIOClient client;
 	
@@ -70,7 +72,7 @@ public class MessageViewController {
 						
 					}
 		        });
-		        MessageViewController.client=client;
+		        SocketIoController.client=client;
 		    }
 		});
 	}

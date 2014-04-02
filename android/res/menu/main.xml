@@ -5,17 +5,17 @@
 
     <item
         android:id="@+id/profile"
-        android:orderInCategory="100"
+        android:orderInCategory="25"
         android:title="Profile"
         app:showAsAction="never"/>
     <item
         android:id="@+id/invitations"
-        android:orderInCategory="100"
+        android:orderInCategory="50"
         android:title="Invitations"
         app:showAsAction="never"/>
     <item
         android:id="@+id/sign_out"
-        android:orderInCategory="100"
+        android:orderInCategory="75"
         android:title="Sign Out"
         app:showAsAction="never"/>
 

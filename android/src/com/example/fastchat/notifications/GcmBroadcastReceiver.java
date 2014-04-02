@@ -1,4 +1,4 @@
-package com.example.fastchat;
+package com.example.fastchat.notifications;
 
 import android.app.Activity;
 import android.content.ComponentName;
