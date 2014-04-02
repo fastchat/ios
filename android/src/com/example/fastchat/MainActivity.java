@@ -142,6 +142,11 @@ public class MainActivity extends ActionBarActivity {
 		super.onResume();
 		checkPlayServices();
 	}
+	
+	protected void onStop(){
+		MessageViewController.disconnect();
+		super.onStop();
+	}
 
 	/**
 	 * Check the device to make sure it has the Google Play Services APK. If

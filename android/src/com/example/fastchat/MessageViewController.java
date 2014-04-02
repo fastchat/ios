@@ -75,6 +75,12 @@ public class MessageViewController {
 		});
 	}
 	
+	public static void disconnect(){
+		if(client!=null){
+			client.disconnect();
+		}
+	}
+	
 	public static void sendMessage(String text){
 		JSONObject message = new JSONObject();
 		JSONArray array = new JSONArray();

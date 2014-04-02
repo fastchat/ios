@@ -3,10 +3,12 @@ package com.example.fastchat;
 import com.google.android.gms.gcm.GoogleCloudMessaging;
 
 import android.app.IntentService;
+import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.os.SystemClock;
 import android.support.v4.app.NotificationCompat;
@@ -65,7 +67,10 @@ public class GcmIntentService extends IntentService {
                 new NotificationCompat.Builder(this)  
                 .setSmallIcon(R.drawable.ic_launcher)  
                 .setContentTitle("Fast Chat Message")  
-                .setContentText(msg);  
+                .setContentText(msg)
+                .setDefaults(Notification.DEFAULT_VIBRATE | Notification.DEFAULT_SOUND | Notification.FLAG_SHOW_LIGHTS)
+                .setLights(Color.MAGENTA, 500, 500)
+                .setPriority(Notification.PRIORITY_HIGH);  
 
         Intent notificationIntent = new Intent(this, MainActivity.class);  
         PendingIntent contentIntent = PendingIntent.getActivity(this, 0, notificationIntent,   
