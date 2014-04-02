@@ -93,7 +93,7 @@ public class MainActivity extends ActionBarActivity {
 
 		// Inflate the menu; this adds items to the action bar if it is present.
 		getMenuInflater().inflate(R.menu.main, menu);
-		getActionBar().setDisplayHomeAsUpEnabled(true);
+		getActionBar().setDisplayHomeAsUpEnabled(false);
 		return true;
 	}
 
@@ -104,6 +104,14 @@ public class MainActivity extends ActionBarActivity {
 		// as you specify a parent activity in AndroidManifest.xml.
 		int id = item.getItemId();
 		switch(id){
+		case  android.R.id.home:
+			if(manager.getBackStackEntryCount()>0){
+		          manager.popBackStack();
+		    }
+			if(manager.getBackStackEntryCount()==1){
+				MainActivity.activity.getActionBar().setDisplayHomeAsUpEnabled(false);
+			}
+			break;
 		case R.id.sign_out:
 			clearLoginCredentials();
 			 manager.popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
@@ -119,6 +127,7 @@ public class MainActivity extends ActionBarActivity {
 	}
 
 	public static void switchView(Fragment f){
+		MainActivity.activity.getActionBar().setDisplayHomeAsUpEnabled(true);
 		manager.beginTransaction()
 		.replace(R.id.container, f).addToBackStack(f.getClass().getName()).commit();
 	}
