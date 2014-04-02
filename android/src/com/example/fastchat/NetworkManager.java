@@ -18,6 +18,7 @@ import com.koushikdutta.async.http.body.JSONObjectBody;
 public class NetworkManager {
 	
 	private static final String url ="http://powerful-cliffs-9562.herokuapp.com:80";
+	//private static final String url ="http://minty.shawnsthompson.com:3000";
 	private static String session_token = "";
 	private static String username ="";
 	private static JSONObject currentRoom;

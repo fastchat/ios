@@ -41,7 +41,7 @@ public class MainActivity extends ActionBarActivity {
 	 * Substitute you own sender ID here. This is the project number you got
 	 * from the API Console, as described in "Getting Started."
 	 */
-	String SENDER_ID = "55009757923";
+	String SENDER_ID = "466998629506";
 
 	GoogleCloudMessaging gcm;
 	AtomicInteger msgId = new AtomicInteger();
