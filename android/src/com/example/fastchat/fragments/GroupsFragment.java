@@ -8,8 +8,6 @@ import org.json.JSONObject;
 
 import com.example.fastchat.MainActivity;
 import com.example.fastchat.R;
-import com.example.fastchat.R.id;
-import com.example.fastchat.R.layout;
 import com.example.fastchat.networking.NetworkManager;
 
 import android.os.Bundle;

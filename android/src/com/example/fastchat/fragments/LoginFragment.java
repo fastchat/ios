@@ -4,8 +4,6 @@ package com.example.fastchat.fragments;
 import com.example.fastchat.MainActivity;
 import com.example.fastchat.R;
 import com.example.fastchat.Utils;
-import com.example.fastchat.R.id;
-import com.example.fastchat.R.layout;
 import com.example.fastchat.networking.NetworkManager;
 
 import android.os.Bundle;

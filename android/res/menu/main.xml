@@ -6,17 +6,17 @@
     <item
         android:id="@+id/profile"
         android:orderInCategory="25"
-        android:title="Profile"
+        android:title="@string/profile"
         app:showAsAction="never"/>
     <item
         android:id="@+id/invitations"
         android:orderInCategory="50"
-        android:title="Invitations"
+        android:title="@string/invitations"
         app:showAsAction="never"/>
     <item
         android:id="@+id/sign_out"
         android:orderInCategory="75"
-        android:title="Sign Out"
+        android:title="@string/sign_out"
         app:showAsAction="never"/>
 
 </menu>
