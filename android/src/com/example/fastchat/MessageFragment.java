@@ -27,6 +27,8 @@ public class MessageFragment extends Fragment implements OnClickListener {
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
 		try {
+			messages.clear();
+			NetworkManager.getCurrentGroupMessages();
 			MainActivity.activity.getActionBar().setTitle(NetworkManager.getCurrentRoom().getString("name"));
 		} catch (JSONException e) {
 			// TODO Auto-generated catch block
@@ -55,9 +57,6 @@ public class MessageFragment extends Fragment implements OnClickListener {
 	public static void addMessage(String message, boolean is_own_message,String from){
 		
 		messages.add(new Message(message,is_own_message,from));
-		if(is_own_message){
-			MessageViewController.sendMessage(message);
-		}
 		final ListView lv = (ListView) rootView.findViewById(R.id.messages_container);
 		MainActivity.activity.runOnUiThread(new Runnable(){
 			public void run(){
@@ -67,16 +66,28 @@ public class MessageFragment extends Fragment implements OnClickListener {
 		});
 		
 	}
+	
+	public static void clearAllMessages(){
+		messages.clear();
+		final ListView lv = (ListView) rootView.findViewById(R.id.messages_container);
+		MainActivity.activity.runOnUiThread(new Runnable(){
+			public void run(){
+				adapter.notifyDataSetChanged();
+				lv.setSelection(adapter.getCount() - 1);
+			}
+		});
+	}
 
 	@Override
 	public void onClick(View arg0) {
 		
 		EditText messageBox = (EditText) rootView.findViewById(R.id.my_message);
-		String messsage = messageBox.getText().toString();
+		String message = messageBox.getText().toString();
 		messageBox.setText("");
 		messageBox.clearFocus();
 		InputMethodManager in = (InputMethodManager) MainActivity.activity.getSystemService(MainActivity.INPUT_METHOD_SERVICE);
         in.hideSoftInputFromWindow(messageBox.getApplicationWindowToken(),InputMethodManager.HIDE_NOT_ALWAYS);
-		addMessage(messsage,true,null);
+		addMessage(message,true,NetworkManager.getUsername());
+		MessageViewController.sendMessage(message);
 	}
 }

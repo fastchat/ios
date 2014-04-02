@@ -1,6 +1,7 @@
 package com.example.fastchat;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import com.google.android.gms.common.ConnectionResult;
@@ -35,6 +36,8 @@ public class MainActivity extends ActionBarActivity {
 	public static final String EXTRA_MESSAGE = "message";
 	public static final String PROPERTY_REG_ID = "registration_id";
 	private static final String PROPERTY_APP_VERSION = "appVersion";
+	private static final String USERNAME = "username";
+	private static final String SESSION_TOKEN="session_token";
 	private final static int PLAY_SERVICES_RESOLUTION_REQUEST = 9000;
 
 	/**
@@ -53,13 +56,23 @@ public class MainActivity extends ActionBarActivity {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		activity = this;
 		setContentView(R.layout.activity_main);
 		manager = getSupportFragmentManager();
 		if (savedInstanceState == null) {
-			getSupportFragmentManager().beginTransaction()
-			.add(R.id.container, new LoginFragment()).commit();
+			ArrayList<String> credentials = getLoginCredentials();
+			if(credentials.size()<2){
+				getSupportFragmentManager().beginTransaction()
+				.add(R.id.container, new LoginFragment()).commit();
+			}
+			else{
+				NetworkManager.setUsername(credentials.get(0));
+				NetworkManager.setToken(credentials.get(1));
+				getSupportFragmentManager().beginTransaction()
+				.add(R.id.container, new RoomsFragment()).commit();
+			}
 		}
-		activity = this;
+		
 		// Check device for Play Services APK.
 		if (checkPlayServices()) {
 			// If this check succeeds, proceed with normal processing.
@@ -90,7 +103,18 @@ public class MainActivity extends ActionBarActivity {
 		// automatically handle clicks on the Home/Up button, so long
 		// as you specify a parent activity in AndroidManifest.xml.
 		int id = item.getItemId();
-
+		switch(id){
+		case R.id.sign_out:
+			clearLoginCredentials();
+			 manager.popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
+			break;
+		case R.id.profile:
+			break;
+		case R.id.invitations:
+			break;
+		default:
+			break;
+		}
 		return super.onOptionsItemSelected(item);
 	}
 
@@ -156,13 +180,45 @@ public class MainActivity extends ActionBarActivity {
 		}
 		return registrationId;
 	}
+	
+	private ArrayList<String> getLoginCredentials(){
+		final SharedPreferences prefs = getGCMPreferences(getApplicationContext());
+		String username = prefs.getString(USERNAME, "");
+		if (username.isEmpty()) {
+			Log.i(this.getClass().getName(), "User not logged in.");
+			return new ArrayList<String>(0);
+		}
+		else{
+			Log.i(this.getClass().getName(), "User information found.");
+			ArrayList<String> credentials = new ArrayList<String>(0);
+			credentials.add(username);
+			String token = prefs.getString(SESSION_TOKEN, "");
+			credentials.add(token);
+			return credentials;
+		}
+	}
+	
+	public static void saveLoginCredentials(String username,String token){
+		final SharedPreferences prefs = getGCMPreferences(MainActivity.activity.getApplicationContext());
+		SharedPreferences.Editor editor = prefs.edit();
+		editor.putString(USERNAME, username);
+		editor.putString(SESSION_TOKEN, token);
+		editor.commit();
+	}
+	
+	public static void clearLoginCredentials(){
+		final SharedPreferences prefs = getGCMPreferences(MainActivity.activity.getApplicationContext());
+		SharedPreferences.Editor editor = prefs.edit();
+		editor.remove(USERNAME);
+		editor.remove(SESSION_TOKEN);
+		editor.commit();
+	}
+	
 	/**
 	 * @return Application's {@code SharedPreferences}.
 	 */
-	private SharedPreferences getGCMPreferences(Context context) {
-		// This sample app persists the registration ID in shared preferences, but
-		// how you store the regID in your app is up to you.
-		return getSharedPreferences(MainActivity.class.getSimpleName(),
+	private static SharedPreferences getGCMPreferences(Context context) {
+		return MainActivity.activity.getSharedPreferences(MainActivity.class.getSimpleName(),
 				Context.MODE_PRIVATE);
 	}
 

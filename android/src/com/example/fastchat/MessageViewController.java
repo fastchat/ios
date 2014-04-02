@@ -47,11 +47,14 @@ public class MessageViewController {
 						System.out.println("onEvent:"+argument);
 						try {
 							JSONObject messageObject = argument.getJSONObject(0);
-							String message = messageObject.getString("text");
-							String from = messageObject.getString("from");
-							String finalMessage = from+":"+message;
-							System.out.println("Message: "+finalMessage);
-							MessageFragment.addMessage(message, false,from);
+							String groupId = messageObject.getString("groupId");
+							if(NetworkManager.getCurrentRoom().getString("_id").equals(groupId)){
+								String message = messageObject.getString("text");
+								String from = messageObject.getString("from");
+								String finalMessage = from+":"+message;
+								System.out.println("Message: "+finalMessage);
+								MessageFragment.addMessage(message, false,from);
+							}
 						} catch (JSONException e) {
 							// TODO Auto-generated catch block
 							e.printStackTrace();
