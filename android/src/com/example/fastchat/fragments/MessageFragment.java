@@ -10,6 +10,7 @@ import com.example.fastchat.Utils;
 import com.example.fastchat.networking.Message;
 import com.example.fastchat.networking.SocketIoController;
 import com.example.fastchat.networking.NetworkManager;
+import com.example.fastchat.notifications.GcmIntentService;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -34,6 +35,7 @@ public class MessageFragment extends Fragment implements OnClickListener {
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
 		try {
+			GcmIntentService.clearNotifications();
 			messages.clear();
 			NetworkManager.getCurrentGroupMessages();
 			MainActivity.activity.getActionBar().setTitle(NetworkManager.getCurrentRoom().getString("name"));
