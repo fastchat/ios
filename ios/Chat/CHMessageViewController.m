@@ -46,6 +46,10 @@
     [super viewDidLoad];
     // Do any additional setup after loading the view.
     
+    //Reload message table when app returns to foreground
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(reloadTableViewData) name:@"ReloadAppDelegateTable" object:nil];
+    
+    
     [[CHSocketManager sharedManager] setDelegate:self];
     
     NSArray *members = _group[@"members"];
@@ -93,8 +97,12 @@
         self.messageArray = [[[self.messageArray reverseObjectEnumerator] allObjects] mutableCopy];
         self.messageAuthorsArray = [[[self.messageAuthorsArray reverseObjectEnumerator] allObjects] mutableCopy];
         
-        [self.messageTable setContentOffset:CGPointMake(0, CGFLOAT_MAX)];
+        
+        
+        //[self.messageTable setContentOffset:CGPointMake(0, CGFLOAT_MAX)];
         [self.messageTable reloadData];
+        
+        [self.messageTable scrollToRowAtIndexPath:[NSIndexPath indexPathForRow:_messageArray.count - 1 inSection:0] atScrollPosition:UITableViewScrollPositionBottom animated:NO];
     }];
     
     [self.messageField becomeFirstResponder];
@@ -172,16 +180,26 @@
     DLog(@"group: %@", self.groupId);
 //    [_socket sendEvent:@"message" withData:@{@"from": currUser.userId, @"text" : msg, @"groupId": self.groupId}];
 
-    [[CHSocketManager sharedManager] sendMessageWithEvent:@"message" data:@{@"from": currUser.userId, @"text" : msg, @"groupId": self.groupId}];
+    [[CHSocketManager sharedManager] sendMessageWithEvent:@"message" data:@{@"from": currUser.userId, @"text" : msg, @"group": self.groupId}];
     
     self.messageField.text = @"";
     
 //    [self.messageTable setContentOffset:CGPointMake(0, CGFLOAT_MAX)];
-    [self.messageTable setContentOffset:CGPointMake(0, CGFLOAT_MAX)];
+    //[self.messageTable setContentOffset:CGPointMake(0, CGFLOAT_MAX)];
+    [self.messageTable beginUpdates];
+    
     [_messageArray addObject:msg];
     [_messageAuthorsArray addObject:_members[currUser.userId]];
 
-    [self.messageTable reloadData];
+    // Magically add rows to table view
+    [self.messageTable insertRowsAtIndexPaths:@[[NSIndexPath indexPathForRow:_messageArray.count - 1 inSection:0]] withRowAnimation:UITableViewRowAnimationAutomatic];
+    
+    [self.messageTable endUpdates];
+    
+    [self.messageTable scrollToRowAtIndexPath:[NSIndexPath indexPathForRow:_messageArray.count - 1 inSection:0] atScrollPosition:UITableViewScrollPositionBottom animated:YES];
+    
+    
+    //[self.messageTable reloadData];
 
 }
 
@@ -253,18 +271,62 @@
 -(BOOL)manager:(CHSocketManager *)manager doesCareAboutMessage:(NSDictionary *)message;
 {
     if( [message[@"group"] isEqualToString:_groupId]) {
-        [_messageArray addObject:message[@"text"]];
-
-        [self.messageAuthorsArray addObject:self.members[message[@"from"]]];
-        DLog(@"Author: %@", self.members[message[@"from"]]);
-        //        [self.messageDisplayTextView scrollRangeToVisible:NSMakeRange([self.messageDisplayTextView.text length], 0)];
-        [self.messageTable setContentOffset:CGPointMake(0, CGFLOAT_MAX)];
         
-        [self.messageTable reloadData];
-
+        
+        [self.messageTable beginUpdates];
+        CHUser *currUser = [[CHNetworkManager sharedManager] currentUser];
+        
+        [_messageArray addObject:message[@"text"]];
+        [_messageAuthorsArray addObject:_members[message[@"from"]]];
+        
+        // Magically add rows to table view
+        [self.messageTable insertRowsAtIndexPaths:@[[NSIndexPath indexPathForRow:_messageArray.count - 1 inSection:0]] withRowAnimation:UITableViewRowAnimationAutomatic];
+        
+        [self.messageTable endUpdates];
+        
+        [self.messageTable scrollToRowAtIndexPath:[NSIndexPath indexPathForRow:_messageArray.count - 1 inSection:0] atScrollPosition:UITableViewScrollPositionBottom animated:YES];
+    
         return YES;
     }
     return NO;
+}
+
+- (void)reloadTableViewData{
+    //[self.messageTable reloadData];
+    ///
+    /// Load up old messages
+    ///
+    [[CHNetworkManager sharedManager] getMessagesForGroup:self.groupId callback:^(NSArray *messages) {
+        //[self.messageArray removeAllObjects];
+        //[self.messageAuthorsArray removeAllObjects];
+        self.messageArray =nil;
+        self.messageAuthorsArray = nil;
+        
+        self.messageArray = [[NSMutableArray alloc] init];
+        self.messageAuthorsArray = [[NSMutableArray alloc] init];
+        
+        
+        DLog(@"MEssages from server: %@", messages);
+        
+        for ( NSDictionary *message in messages) {
+            [self.messageArray addObject:message[@"text"]];
+            [self.messageAuthorsArray addObject:self.members[message[@"from"]]];
+        }
+        
+        self.messageArray = [[[self.messageArray reverseObjectEnumerator] allObjects] mutableCopy];
+        self.messageAuthorsArray = [[[self.messageAuthorsArray reverseObjectEnumerator] allObjects] mutableCopy];
+        DLog(@"Main thread? %d", [NSThread isMainThread]);
+        
+        //[self.messageTable setContentOffset:CGPointMake(0, CGFLOAT_MAX)];
+        [self.messageTable reloadData];
+    }];
+
+}
+
+-(void)viewDidDisappear:(BOOL)animated;
+{
+    [super viewDidDisappear:animated];
+    [[NSNotificationCenter defaultCenter] removeObserver:self];
 }
 
 @end

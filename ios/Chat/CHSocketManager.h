@@ -23,6 +23,7 @@
 -(SocketIO *)getSocket;
 -(void)openSocket;
 -(void) sendMessageWithEvent: (NSString *)message data: (NSDictionary *)data;
+-(void) closeSocket;
 
 @end
 

@@ -38,7 +38,9 @@
     if( !_socket ) {
         _socket = [[SocketIO alloc] initWithDelegate:self];
     }
-    [_socket connectToHost:@"powerful-cliffs-9562.herokuapp.com" onPort:80 withParams:@{@"token": [CHNetworkManager sharedManager].sessiontoken}];
+    if( [[CHNetworkManager sharedManager] hasStoredSessionToken]) {
+        [_socket connectToHost:@"powerful-cliffs-9562.herokuapp.com" onPort:80 withParams:@{@"token": [CHNetworkManager sharedManager].sessiontoken}];
+    }
     DLog(@"CONNECTED!");
 }
 
@@ -99,6 +101,12 @@
     DLog(@"Sending message: %@", _socket);
     [_socket sendEvent:message withData: data];
 //    [_socket sendEvent:@"message" withData:@{@"from": currUser.userId, @"text" : msg, @"groupId": self.groupId}];
+}
+
+-(void) closeSocket;
+{
+    [_socket disconnect];
+    _socket = nil;
 }
 
 @end

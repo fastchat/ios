@@ -13,6 +13,7 @@
 #import "CHGroupListTableViewController.h"
 #import "CHNetworkManager.h"
 #import "CHUser.h"
+#import "CHSocketManager.h"
 
 #define URL @"localhost" //localhost
 
@@ -57,7 +58,7 @@
     [[CHNetworkManager sharedManager] postLoginWithUsername:self.emailTextField.text password:self.passwordTextField.text
         callback:^(bool successful, NSError *error) {
             if( successful ) {
-              
+                [[CHSocketManager sharedManager] openSocket];
                 [self dismissViewControllerAnimated:YES completion:nil];
 
             }
