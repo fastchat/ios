@@ -217,6 +217,10 @@ public class NetworkManager {
 		return username;
 	}
 	
+	public static String getUsernameFromId(String id){
+		return currentRoomUsers.get(id);
+	}
+	
 	public static void setUsername(String user){
 		username=user;
 	}

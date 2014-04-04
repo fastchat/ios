@@ -9,7 +9,6 @@ import org.json.JSONObject;
 import com.example.fastchat.MainActivity;
 import com.example.fastchat.R;
 import com.example.fastchat.networking.NetworkManager;
-import com.example.fastchat.notifications.GcmIntentService;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;

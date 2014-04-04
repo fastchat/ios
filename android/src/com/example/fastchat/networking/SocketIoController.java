@@ -49,13 +49,13 @@ public class SocketIoController {
 						System.out.println("onEvent:"+argument);
 						try {
 							JSONObject messageObject = argument.getJSONObject(0);
-							String groupId = messageObject.getString("groupId");
+							String groupId = messageObject.getString("group");
 							if(NetworkManager.getCurrentRoom().getString("_id").equals(groupId)){
 								String message = messageObject.getString("text");
 								String from = messageObject.getString("from");
 								String finalMessage = from+":"+message;
 								System.out.println("Message: "+finalMessage);
-								MessageFragment.addMessage(message, false,from);
+								MessageFragment.addMessage(message, false,NetworkManager.getUsernameFromId(from));
 							}
 						} catch (JSONException e) {
 							// TODO Auto-generated catch block
@@ -89,7 +89,7 @@ public class SocketIoController {
 		try {
 			message.put("text", text);
 			message.put("from", NetworkManager.getUsername());
-			message.put("groupId", NetworkManager.getCurrentRoom().get("_id"));
+			message.put("group", NetworkManager.getCurrentRoom().get("_id"));
 			array.put(message);
 			client.emit("message",array);
 		} catch (JSONException e) {
