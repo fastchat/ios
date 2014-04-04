@@ -7,7 +7,11 @@ import com.example.fastchat.networking.Message;
 
 import android.content.Context;
 import android.graphics.Color;
-import android.text.Html;
+import android.graphics.Typeface;
+import android.text.Spannable;
+import android.text.SpannableString;
+import android.text.style.RelativeSizeSpan;
+import android.text.style.StyleSpan;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -50,9 +54,12 @@ public class MessageAdapter extends BaseAdapter {
 		}
 		else
 			holder = (ViewHolder) convertView.getTag();
-
-		holder.message.setText(Html.fromHtml("<b>" + message.getText() + "</b>" +  "<br />" + 
-	            "<small>" + message.getFrom() + "</small>"));
+		final SpannableString out0 = new SpannableString(message.getText()+"\n"+message.getFrom());
+        StyleSpan boldSpan = new StyleSpan(Typeface.BOLD);
+        RelativeSizeSpan smallSpan = new RelativeSizeSpan(0.5f);
+        out0.setSpan(boldSpan, 0, message.getText().length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+        out0.setSpan(smallSpan, message.getText().length(), out0.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+        holder.message.setText(out0);
 
 		LayoutParams lp = (LayoutParams) holder.message.getLayoutParams();	
 		//Check whether message is mine to show green background and align to right
