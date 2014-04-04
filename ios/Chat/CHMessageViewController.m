@@ -14,6 +14,7 @@
 #import "CHUser.h"
 #import "CHMessageTableViewController.h"
 #import "CHMessageTableViewCell.h"
+#import "CHOwnMessageTableViewCell.h"
 
 @interface CHMessageViewController ()
 
@@ -57,33 +58,18 @@
         DLog(@"Returned: %@", messages);
     }];*/
     
+    NSArray *members = _group[@"members"];
+    NSMutableDictionary *tempIds = [NSMutableDictionary dictionary];
+    [members enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
+        NSDictionary *dict = obj;
+        tempIds[dict[@"_id"]] = dict[@"username"];
+    }];
+    self.userIds = tempIds;
+    
     _messageArray = [[NSMutableArray alloc] init];
     _messageAuthorsArray = [[NSMutableArray alloc] init];
     [self.messageTable setDelegate:self];
     [self.messageTable setDataSource:self];
-    /* _messageTable = [[UITableView alloc]initWithFrame:CGRectMake(0, 50, 300, 200)];
-    [self.messageTable registerClass:[CHMessageTableViewCell class] forCellReuseIdentifier:@"CHMessageTableViewCell"];
-    
-    [_messageTable setDelegate:self];
-    [_messageTable setDataSource:self];
-    
-    
-    
-    [self.view addSubview:_messageTable];
-     */
-    
-
-    
-    /*
-    _messageField = [[UITextField alloc] initWithFrame:CGRectMake(35, 275, 250, 35)];
-    
-    _messageField.textColor = [UIColor colorWithRed:0/256.0 green:84/256.0 blue:129/256.0 alpha:1.0];
-    _messageField.font = [UIFont fontWithName:@"Helvetica-Bold" size:16];
-    _messageField.backgroundColor=[UIColor blueColor];
-    _messageField.text=@"Hello World";
-    [_messageField setDelegate:self];
-    [self.view addSubview:_messageField];
-    */
     
     self.messages = @"";
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(keyboardWillShow:) name:UIKeyboardWillShowNotification object:nil];
@@ -100,9 +86,6 @@
     //
     self.members = [NSMutableDictionary dictionary];
     for (NSDictionary *aMember in self.group[@"members"]) {
-        /// Map them together
-        /// "_id": "532f38fd53664a0200000001",
-        /// "username": "ethan"
         self.members[aMember[@"_id"]] = aMember[@"username"];
     }
     
@@ -116,7 +99,10 @@
             [self.messageArray addObject:message[@"text"]];
             [self.messageAuthorsArray addObject:self.members[message[@"from"]]];
         }
-
+        
+        self.messageArray = [[[self.messageArray reverseObjectEnumerator] allObjects] mutableCopy];
+        self.messageAuthorsArray = [[[self.messageAuthorsArray reverseObjectEnumerator] allObjects] mutableCopy];
+        
         [self.messageTable setContentOffset:CGPointMake(0, CGFLOAT_MAX)];
         [self.messageTable reloadData];
     }];
@@ -135,10 +121,6 @@
 - (void) socketIODidConnect:(SocketIO *)socket;
 {
     DLog(@"Connected! %@", socket);
-   // NSString *text = self.messageDisplayTextView.text;
-//    text = [text stringByAppendingString:@"\nConnected\n"];
-//    self.messageDisplayTextView.text = text;
-    
 }
 
 - (void) socketIODidDisconnect:(SocketIO *)socket disconnectedWithError:(NSError *)error;
@@ -164,15 +146,17 @@
         
 //            self.messageDisplayTextView.text = [NSString stringWithFormat:@"%@ %@\n%@: %@\n\n", self.messageDisplayTextView.text, [[NSDate alloc] initWithTimeIntervalSinceNow:0], data[@"from"], data[@"text"]];
 
-        [self.messageArray addObject:data[@"text"]];
+        // Ensure only messages from the current group are used
+//        if (self.groupId isEqualToString:packet.dataAsJSON[@"groupId"]) {
+            [self.messageArray addObject:data[@"text"]];
       //  [_messageTable setContentOffset:CGPointMake(0, CGFLOAT_MAX)];
         
-        [self.messageAuthorsArray addObject:data[@"from"]];
+            [self.messageAuthorsArray addObject:data[@"from"]];
 
 //        [self.messageDisplayTextView scrollRangeToVisible:NSMakeRange([self.messageDisplayTextView.text length], 0)];
-        [self.messageTable setContentOffset:CGPointMake(0, CGFLOAT_MAX)];
+            [self.messageTable setContentOffset:CGPointMake(0, CGFLOAT_MAX)];
         
-        [self.messageTable reloadData];
+            [self.messageTable reloadData];
     }
 
 }
@@ -195,14 +179,14 @@
     CHUser *currUser = [[CHNetworkManager sharedManager] currentUser];
     DLog(@"Curr user: %@", currUser.username);
     DLog(@"group: %@", self.groupId);
-    [_socket sendEvent:@"message" withData:@{@"from": currUser.username, @"text" : msg, @"groupId": self.groupId}];
+    [_socket sendEvent:@"message" withData:@{@"from": currUser.userId, @"text" : msg, @"groupId": self.groupId}];
 
     self.messageField.text = @"";
     
 //    [self.messageTable setContentOffset:CGPointMake(0, CGFLOAT_MAX)];
     [self.messageTable setContentOffset:CGPointMake(0, CGFLOAT_MAX)];
     [_messageArray addObject:msg];
-    [_messageAuthorsArray addObject:currUser.username];
+    [_messageAuthorsArray addObject:currUser.userId];
 
     [self.messageTable reloadData];
 
@@ -242,64 +226,25 @@
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
-    DLog(@"Cell row: %i", indexPath.row);
-    static NSString *cellIdentifier = @"CHMessageTableViewCell";
+    static NSString *cHMessageTableViewCell = @"CHMessageTableViewCell";
     
-    CHMessageTableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:cellIdentifier forIndexPath:indexPath];
+    CHMessageTableViewCell *cell = nil;
 
-    //cell.authorLabel.text = _messageAuthorsArray[indexPath.row];
-    //cell.messageLabel.text = _messageArray[indexPath.row];
-    
      CHUser *currUser = [[CHNetworkManager sharedManager] currentUser];
     
     
-    
-    if( _messageAuthorsArray[indexPath.row] == currUser.username ) {
-//    if( [cell.authorLabel.text])
-        cell.authorLabel.text = @"";
-        cell.messageLabel.text = [self.messageArray objectAtIndex:indexPath.row];
-        cell.messageLabel.textAlignment = UITextLayoutDirectionRight;
-       // CGRectMake(boundsX+50 ,20, 300, 25);
-        //self.messageLabel.frame = frame;
-//        cell.frame
+    DLog(@"messagesAuthorsArray: %@, currUser.userId: %@", _messageAuthorsArray[indexPath.row], currUser.userId );
+    if( _messageAuthorsArray[indexPath.row] == self.members[currUser.userId] ) {
+        cell = [tableView dequeueReusableCellWithIdentifier:@"CHOwnMessageTableViewCell" forIndexPath:indexPath];
+        cell.messageTextView.text = [self.messageArray objectAtIndex:indexPath.row];
         
-        
-       /* UILabel *lisnerMessage=[[UILabel alloc] init];
-        lisnerMessage.backgroundColor = [UIColor clearColor];
-        [lisnerMessage setFrame:cell.frame];
-        lisnerMessage.numberOfLines=0;
-        lisnerMessage.textAlignment=UITextLayoutDirectionRight;
-        lisnerMessage.text=[self.messageArray objectAtIndex:indexPath.row];
-        [cell.contentView addSubview:lisnerMessage];
-        */
-        
-        
-        
-        
-       // cell.messageLabel.frame = CGRectMake(;
-//        cell.messageLabel.textAlignment = UITextLayoutDirectionRight;
     }
     
     else {
+        cell = [tableView dequeueReusableCellWithIdentifier:cHMessageTableViewCell forIndexPath:indexPath];
         cell.authorLabel.text = [[NSString alloc] initWithFormat:@"%@:",[self.messageAuthorsArray objectAtIndex:indexPath.row]];
-        cell.messageLabel.text = [self.messageArray objectAtIndex:indexPath.row];
-        /*
-        UILabel *authMessage = [[UILabel alloc] init];
-        authMessage.backgroundColor = [UIColor redColor];
-        [authMessage setFrame:cell.frame];
-        authMessage.numberOfLines = 0;
-        authMessage.textAlignment = UITextLayoutDirectionLeft;
-        authMessage.text = [[NSString alloc] initWithFormat:@"%@:", [self.messageAuthorsArray objectAtIndex:indexPath.row] ];
-        [cell.contentView addSubview:authMessage];
+        cell.messageTextView.text = [self.messageArray objectAtIndex:indexPath.row];
 
-        UILabel *lisnerMessage=[[UILabel alloc] init];
-        lisnerMessage.backgroundColor = [UIColor clearColor];
-        [lisnerMessage setFrame:cell.frame];
-        lisnerMessage.numberOfLines=0;
-        lisnerMessage.textAlignment=UITextLayoutDirectionRight;
-        lisnerMessage.text=[self.messageArray objectAtIndex:indexPath.row];
-        [cell.contentView addSubview:lisnerMessage];
-         */
     }
 
     return cell;
@@ -307,12 +252,9 @@
 
 -(CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath;
 {
-    CGSize renderedSize = [[self.messageArray objectAtIndex:indexPath.row] sizeWithFont: [UIFont fontWithName:@"Times New Roman" size:17] constrainedToSize:CGSizeMake(300, CGFLOAT_MAX) lineBreakMode:NSLineBreakByWordWrapping];
-    
-    if (renderedSize.height < 50.0) {
-        return 50.0;
-    }
-    return renderedSize.height;
+    CGSize renderedSize = [[self.messageArray objectAtIndex:indexPath.row] sizeWithFont: [UIFont systemFontOfSize:17.0] constrainedToSize:CGSizeMake(205, CGFLOAT_MAX) lineBreakMode:NSLineBreakByWordWrapping];
+
+    return renderedSize.height + 30.0;
 }
 
 @end

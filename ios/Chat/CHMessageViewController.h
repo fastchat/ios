@@ -16,6 +16,7 @@
 //@property (weak, nonatomic) IBOutlet UITextView *messageDisplayTextView;
 @property (strong, nonatomic) NSString *groupId;
 @property (nonatomic, strong) NSDictionary *group;
+@property (nonatomic, strong) NSDictionary *userIds;
 @property (weak, nonatomic) IBOutlet UITextField *messageField;
 @property (weak, nonatomic) IBOutlet UITableView *messageTable;
 

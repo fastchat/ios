@@ -16,6 +16,7 @@
 //@property (strong, nonatomic) UILabel *authorLabel;
 @property (weak, nonatomic) IBOutlet UILabel *authorLabel;
 @property (weak, nonatomic) IBOutlet UILabel *messageLabel;
+@property (weak, nonatomic) IBOutlet UITextView *messageTextView;
 
 @property NSDate *dateSent;
 

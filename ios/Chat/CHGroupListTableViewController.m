@@ -74,6 +74,8 @@
     UIBarButtonItem *menuButton = [[UIBarButtonItem alloc] initWithTitle:@"Menu" style:UIBarButtonItemStylePlain target:self action:@selector(displaySideMenu)];
     
     self.navigationItem.leftBarButtonItem = menuButton;
+    
+    [UIApplication sharedApplication].applicationIconBadgeNumber = 0;
 }
 
 -(void) viewWillAppear:(BOOL)animated
@@ -89,6 +91,7 @@
     
     [[CHNetworkManager sharedManager] getGroups:^(NSArray *groups) {
         self.groups = groups;
+//        self.users
         
         DLog(@"groups: %@",groups);
         [self.tableView reloadData];

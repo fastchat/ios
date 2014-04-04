@@ -30,6 +30,10 @@
 - (void)awakeFromNib
 {
     // Initialization code
+    [super awakeFromNib];
+    
+    self.messageTextView.layer.cornerRadius = 5.0;
+    self.messageTextView.layer.masksToBounds = YES;
 }
 
 - (void)setSelected:(BOOL)selected animated:(BOOL)animated
