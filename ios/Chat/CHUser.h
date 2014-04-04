@@ -9,7 +9,10 @@
 #import <Foundation/Foundation.h>
 
 @interface CHUser : NSObject
-    @property (strong, atomic) NSString *username;
-    @property NSArray *invites;
-    @property NSArray *groups;
+
+@property (nonatomic, copy) NSString *userId;
+@property (nonatomic, copy) NSString *username;
+@property (nonatomic, copy) NSArray *invites;
+@property (nonatomic, copy) NSArray *groups;
+
 @end

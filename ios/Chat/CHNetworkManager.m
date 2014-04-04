@@ -45,8 +45,7 @@
             [self.requestSerializer setValue:self.sessiontoken forHTTPHeaderField:@"session-token"];
             
             // Save the session token to avoid future login
-            [[NSUserDefaults standardUserDefaults]
-             setObject:self.sessiontoken forKey:@"session-token"];
+            [[NSUserDefaults standardUserDefaults] setObject:self.sessiontoken forKey:@"session-token"];
 
             [self GET:@"/user" parameters:nil success:^(NSURLSessionDataTask *task, id responseObject) {
                 if( callback ) {
@@ -155,15 +154,18 @@
     }];
 }
 
-- (void)getProfile: (void (^)(CHUser *userProfile))callback;
+- (void)getProfile:(void (^)(CHUser *userProfile))callback;
 {
     [self GET:@"/user" parameters:nil success:^(NSURLSessionDataTask *task, id responseObject) {
         if( callback ) {
+            
             CHUser *user = [[CHUser alloc] init];
-            DLog(@"Invites: %@", responseObject[@"profile"][@"invites"]);
-            [user setUsername:responseObject[@"profile"][@"username"]];
-            [user setGroups:responseObject[@"profile"][@"groups"]];
-            [user setInvites:responseObject[@"profile"][@"invites"]];
+            
+            user.userId = responseObject[@"profile"][@"_id"];
+            user.username = responseObject[@"profile"][@"username"];
+            user.groups = responseObject[@"profile"][@"groups"];
+            user.invites =responseObject[@"profile"][@"invites"];
+            
             self.currentUser = user;
             callback(user);
         }
@@ -248,8 +250,7 @@
 - (BOOL)hasStoredSessionToken;
 {
     
-    NSString *savedValue = [[NSUserDefaults standardUserDefaults]
-                            stringForKey:@"session-token"];
+    NSString *savedValue = [[NSUserDefaults standardUserDefaults] stringForKey:@"session-token"];
     
     if( savedValue != nil ) {
         DLog(@"Setting session token to %@", savedValue);

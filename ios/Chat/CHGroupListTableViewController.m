@@ -15,38 +15,23 @@
 #import "CHViewController.h"
 #import "CHMessageTableViewController.h"
 #import "CHGroupTableViewCell.h"
+#import "NSDate+TimeAgo.h"
+#import "CHMessageIPadViewController.h"
 
 @interface CHGroupListTableViewController ()
 
+@property (nonatomic, strong) CHUser *user;
 @property NSArray *groups;
 
 @end
 
 @implementation CHGroupListTableViewController
 
-//- (id)initWithStyle:(UITableViewStyle)style
-//{
-//    self = [super initWithStyle:style];
-//    if (self) {
-//        // Custom initialization
-//    }
-//    return self;
-//}
-
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-    
-    // Uncomment the following line to preserve selection between presentations.
-    // self.clearsSelectionOnViewWillAppear = NO;
-    
-    // Uncomment the following line to display an Edit button in the navigation bar for this view controller.
-    // self.navigationItem.rightBarButtonItem = self.editButtonItem;
-    
-    self.navigationItem.title = @"My Groups";
-    
 
-    
+    self.navigationItem.title = @"My Groups";
     
     // Check to see if we are logged in
     if( ![[CHNetworkManager sharedManager] hasStoredSessionToken] ) {
@@ -56,11 +41,20 @@
         loginController.modalPresentationStyle = UIModalPresentationFormSheet;
         loginController.modalTransitionStyle = UIModalTransitionStyleCoverVertical;
         [self presentViewController:loginController animated:NO completion:nil];
+        return;
     }
     
-    else {
+    [[CHNetworkManager sharedManager] getGroups:^(NSArray *groups) {
+        self.groups = groups;
+        [self.tableView reloadData];
+        
+        [[UIApplication sharedApplication] registerForRemoteNotificationTypes:
+         (UIRemoteNotificationTypeBadge | UIRemoteNotificationTypeSound | UIRemoteNotificationTypeAlert)];
+    }];
     
-    }
+    [[CHNetworkManager sharedManager] getProfile:^(CHUser *userProfile) {
+        self.user = userProfile;
+    }];
     
     UIBarButtonItem *addButton = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemAdd target:self action:@selector(showAddView)];
     self.navigationItem.rightBarButtonItem = addButton;
@@ -69,33 +63,6 @@
     UIBarButtonItem *menuButton = [[UIBarButtonItem alloc] initWithTitle:@"Menu" style:UIBarButtonItemStylePlain target:self action:@selector(displaySideMenu)];
     
     self.navigationItem.leftBarButtonItem = menuButton;
-}
-
--(void) viewWillAppear:(BOOL)animated
-{
-    [super viewWillAppear:animated];
-    //set initial values here
-    
-    UIActivityIndicatorView *spinner = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleGray];
-    spinner.center = CGPointMake(160, 240);
-    spinner.tag = 12;
-    [self.view addSubview:spinner];
-    [spinner startAnimating];
-    
-    [[CHNetworkManager sharedManager] getGroups:^(NSArray *groups) {
-        self.groups = groups;
-        
-        DLog(@"groups: %@",groups);
-        [self.tableView reloadData];
-        [spinner stopAnimating];
-        
-        [[UIApplication sharedApplication] registerForRemoteNotificationTypes:
-         (UIRemoteNotificationTypeBadge | UIRemoteNotificationTypeSound | UIRemoteNotificationTypeAlert)];
-    }];
-    
-    [[CHNetworkManager sharedManager] getProfile:^(CHUser *userProfile) {
-        
-    }];
 }
 
 - (void)displaySideMenu {
@@ -109,18 +76,20 @@
     [[self navigationController] pushViewController:controller animated:YES];
 }
 
-#pragma mark - Table view data source
-
-- (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
+- (NSDateFormatter *)formatter;
 {
-
-    // Return the number of sections.
-    return 1;
+    static NSDateFormatter *_formatter = nil;
+    if (!_formatter) {
+        _formatter = [[NSDateFormatter alloc] init];
+        [_formatter setDateFormat:@"yyyy-MM-dd'T'HH:mm:ss.SSSz"]; //2014-03-29T17:08:39.871Z"
+    }
+    return _formatter;
 }
+
+#pragma mark - Table view data source
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
-    // Return the number of rows in the section.
     return self.groups.count;
 }
 
@@ -136,17 +105,27 @@
         CHGroupTableViewCell *c = (CHGroupTableViewCell *)cell;
         c.groupTextLabel.text = _groups[indexPath.row][@"name"];
         c.groupDetailLabel.text = @"This is the last message sent! I hope you enjoy it.";
-        c.groupDetailRightLabel.text = @"";
+        c.groupDetailRightLabel.text = [[[self formatter] dateFromString:@"2014-03-29T17:08:37.194Z"] timeAgo];
+        return c;
+        
     }
 
     // Configure the cell...
     cell.textLabel.text = [self.groups[indexPath.row] objectForKey:@"name"];
-    DLog(@"group: %@", [self.groups[indexPath.row] objectForKey:@"name"]);
     
     return cell;
 }
 
-- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
+- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath;
+{
+    [tableView deselectRowAtIndexPath:indexPath animated:YES];
+    if (IPAD) {
+        CHMessageIPadViewController *messages = [self.splitViewController.viewControllers[1] viewControllers][0];
+        messages.user = _user;
+        messages.group = _groups[indexPath.row];
+        return;
+    }
+    
     // Open messageViewController with proper group id
     DLog(@"Opening group id: %@", [self.groups[indexPath.row] objectForKey:@"_id"]);
     [self.tableView setDelaysContentTouches:NO];
