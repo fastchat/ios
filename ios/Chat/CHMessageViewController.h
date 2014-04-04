@@ -8,8 +8,9 @@
 
 #import <UIKit/UIKit.h>
 #import "SocketIO.h"
+#import "CHSocketManager.h"
 
-@interface CHMessageViewController : UIViewController <UITextFieldDelegate, SocketIODelegate, UITableViewDataSource,UITableViewDelegate>
+@interface CHMessageViewController : UIViewController <UITextFieldDelegate, SocketIODelegate, UITableViewDataSource,UITableViewDelegate, CHSocketManagerDelegate>
 //@property (weak, nonatomic) IBOutlet UITextField *messageTextField;
 //@property (weak, nonatomic) IBOutlet UIButton *sendButton;
 //@property (weak, nonatomic) IBOutlet UIScrollView *chatScrollView;
@@ -24,4 +25,6 @@
 @property (strong, nonatomic) UIImage *screenShotImage;
 
 - (IBAction)sendButtonTouched:(id)sender;
+
+
 @end

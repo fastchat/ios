@@ -161,6 +161,7 @@
 		279CF22218E218E000C82399 /* UI files */ = {
 			isa = PBXGroup;
 			children = (
+				2768EAB018D91538006D14BB /* Authentication */,
 				279CF22518E2198800C82399 /* Groups */,
 				279CF22418E2196900C82399 /* Messaging */,
 				2768EAB418DB1965006D14BB /* CHMenuViewController.h */,
@@ -256,7 +257,6 @@
 		AA7759DF18D54D3000E4E7AB /* Chat */ = {
 			isa = PBXGroup;
 			children = (
-				2768EAB018D91538006D14BB /* Authentication */,
 				AA71AE8118E0ECA900CDE1E2 /* App Delegate */,
 				AA71AE8218E0ECB200CDE1E2 /* User Interface */,
 				2768EAAF18D9151A006D14BB /* Networking */,

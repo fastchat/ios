@@ -15,6 +15,7 @@
 #import "CHMessageTableViewController.h"
 #import "CHMessageTableViewCell.h"
 #import "CHOwnMessageTableViewCell.h"
+#import "CHSocketManager.h"
 
 @interface CHMessageViewController ()
 
@@ -45,18 +46,7 @@
     [super viewDidLoad];
     // Do any additional setup after loading the view.
     
-    ///
-    /// Connect to server!
-    ///
-    self.socket = [[SocketIO alloc] initWithDelegate:self];
-    
-    [_socket connectToHost:@"powerful-cliffs-9562.herokuapp.com" onPort:80 withParams:@{@"token": [CHNetworkManager sharedManager].sessiontoken}];
-    
-    // Load previous messages
-
-    /*[[CHNetworkManager sharedManager] getMessagesFromDate:[[NSDate alloc] initWithTimeIntervalSinceNow:0] group:nil  callback:^(NSArray *messages) {
-        DLog(@"Returned: %@", messages);
-    }];*/
+    [[CHSocketManager sharedManager] setDelegate:self];
     
     NSArray *members = _group[@"members"];
     NSMutableDictionary *tempIds = [NSMutableDictionary dictionary];
@@ -118,7 +108,7 @@
     [self.navigationController pushViewController:inviteViewController animated:YES];
 }
 
-- (void) socketIODidConnect:(SocketIO *)socket;
+/*- (void) socketIODidConnect:(SocketIO *)socket;
 {
     DLog(@"Connected! %@", socket);
 }
@@ -140,6 +130,7 @@
 
 - (void) socketIO:(SocketIO *)socket didReceiveEvent:(SocketIOPacket *)packet;
 {
+    DLog(@"RECEIVED AN EVENT RIGHT OVER HERE");
     DLog(@"Event: %@", packet.dataAsJSON);
     if ([packet.dataAsJSON[@"name"] isEqualToString:@"message"]) {
         NSDictionary *data = [packet.dataAsJSON[@"args"] firstObject];
@@ -160,7 +151,7 @@
     }
 
 }
-
+*/
 
 /*
 #pragma mark - Navigation
@@ -179,14 +170,16 @@
     CHUser *currUser = [[CHNetworkManager sharedManager] currentUser];
     DLog(@"Curr user: %@", currUser.username);
     DLog(@"group: %@", self.groupId);
-    [_socket sendEvent:@"message" withData:@{@"from": currUser.userId, @"text" : msg, @"groupId": self.groupId}];
+//    [_socket sendEvent:@"message" withData:@{@"from": currUser.userId, @"text" : msg, @"groupId": self.groupId}];
 
+    [[CHSocketManager sharedManager] sendMessageWithEvent:@"message" data:@{@"from": currUser.userId, @"text" : msg, @"groupId": self.groupId}];
+    
     self.messageField.text = @"";
     
 //    [self.messageTable setContentOffset:CGPointMake(0, CGFLOAT_MAX)];
     [self.messageTable setContentOffset:CGPointMake(0, CGFLOAT_MAX)];
     [_messageArray addObject:msg];
-    [_messageAuthorsArray addObject:currUser.userId];
+    [_messageAuthorsArray addObject:_members[currUser.userId]];
 
     [self.messageTable reloadData];
 
@@ -234,7 +227,7 @@
     
     
     DLog(@"messagesAuthorsArray: %@, currUser.userId: %@", _messageAuthorsArray[indexPath.row], currUser.userId );
-    if( _messageAuthorsArray[indexPath.row] == self.members[currUser.userId] ) {
+    if( [_messageAuthorsArray[indexPath.row] isEqualToString:self.members[currUser.userId]] ) {
         cell = [tableView dequeueReusableCellWithIdentifier:@"CHOwnMessageTableViewCell" forIndexPath:indexPath];
         cell.messageTextView.text = [self.messageArray objectAtIndex:indexPath.row];
         
@@ -255,6 +248,23 @@
     CGSize renderedSize = [[self.messageArray objectAtIndex:indexPath.row] sizeWithFont: [UIFont systemFontOfSize:17.0] constrainedToSize:CGSizeMake(205, CGFLOAT_MAX) lineBreakMode:NSLineBreakByWordWrapping];
 
     return renderedSize.height + 30.0;
+}
+
+-(BOOL)manager:(CHSocketManager *)manager doesCareAboutMessage:(NSDictionary *)message;
+{
+    if( [message[@"group"] isEqualToString:_groupId]) {
+        [_messageArray addObject:message[@"text"]];
+
+        [self.messageAuthorsArray addObject:self.members[message[@"from"]]];
+        DLog(@"Author: %@", self.members[message[@"from"]]);
+        //        [self.messageDisplayTextView scrollRangeToVisible:NSMakeRange([self.messageDisplayTextView.text length], 0)];
+        [self.messageTable setContentOffset:CGPointMake(0, CGFLOAT_MAX)];
+        
+        [self.messageTable reloadData];
+
+        return YES;
+    }
+    return NO;
 }
 
 @end

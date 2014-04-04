@@ -74,6 +74,7 @@
         [self.navigationController pushViewController:controller animated:YES];
     }
     
+    // Logout
     else if( indexPath.row == 2 ) {
         [[CHNetworkManager sharedManager] logoutWithCallback:^(bool successful, NSError *error) {
             //[self.navigationController popViewControllerAnimated:YES];

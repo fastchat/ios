@@ -8,6 +8,7 @@
 
 #import "CHAppDelegate.h"
 #import "CHNetworkManager.h"
+#import "CHSocketManager.h"
 
 @implementation CHAppDelegate
 
@@ -15,6 +16,7 @@
 {
     // Override point for customization after application launch.
     [[CHNetworkManager sharedManager] hasStoredSessionToken];
+    [[CHSocketManager sharedManager] openSocket];
     
     return YES;
 }
