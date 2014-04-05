@@ -274,7 +274,6 @@
         
         
         [self.messageTable beginUpdates];
-        CHUser *currUser = [[CHNetworkManager sharedManager] currentUser];
         
         [_messageArray addObject:message[@"text"]];
         [_messageAuthorsArray addObject:_members[message[@"from"]]];

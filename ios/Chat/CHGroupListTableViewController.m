@@ -17,7 +17,7 @@
 
 @interface CHGroupListTableViewController ()
 
-@property NSArray *groups;
+
 
 @end
 
@@ -44,6 +44,7 @@
     
     self.navigationItem.title = @"My Groups";
     
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(loadGroupsAndRefresh) name:@"UserLogInSuccessful" object:nil];
 
     
     
@@ -65,7 +66,11 @@
     
     else {
     
+        [self loadGroupsAndRefresh];
+        
     }
+    
+
     
     UIBarButtonItem *addButton = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemAdd target:self action:@selector(showAddView)];
     self.navigationItem.rightBarButtonItem = addButton;
@@ -78,11 +83,8 @@
     [UIApplication sharedApplication].applicationIconBadgeNumber = 0;
 }
 
--(void) viewWillAppear:(BOOL)animated
+-(void) loadGroupsAndRefresh;
 {
-    [super viewWillAppear:animated];
-    //set initial values here
-    
     UIActivityIndicatorView *spinner = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleGray];
     spinner.center = CGPointMake(160, 240);
     spinner.tag = 12;
@@ -91,19 +93,29 @@
     
     [[CHNetworkManager sharedManager] getGroups:^(NSArray *groups) {
         self.groups = groups;
-//        self.users
+        //        self.users
         
         DLog(@"groups: %@",groups);
         [self.tableView reloadData];
         [spinner stopAnimating];
         
-        [[UIApplication sharedApplication] registerForRemoteNotificationTypes:
-         (UIRemoteNotificationTypeBadge | UIRemoteNotificationTypeSound | UIRemoteNotificationTypeAlert)];
     }];
     
     [[CHNetworkManager sharedManager] getProfile:^(CHUser *userProfile) {
         
     }];
+}
+
+-(void) viewWillAppear:(BOOL)animated
+{
+    [super viewWillAppear:animated];
+    //set initial values here
+    
+
+        
+    [[UIApplication sharedApplication] registerForRemoteNotificationTypes:
+     (UIRemoteNotificationTypeBadge | UIRemoteNotificationTypeSound | UIRemoteNotificationTypeAlert)];
+
 }
 
 - (void)displaySideMenu {

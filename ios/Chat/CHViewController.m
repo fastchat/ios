@@ -59,6 +59,11 @@
         callback:^(bool successful, NSError *error) {
             if( successful ) {
                 [[CHSocketManager sharedManager] openSocket];
+                
+                // Fire a notification that will be picked up by the groupList controller to refresh
+                [[NSNotificationCenter defaultCenter] postNotificationName:@"UserLogInSuccessful" object:nil];
+
+                
                 [self dismissViewControllerAnimated:YES completion:nil];
 
             }
