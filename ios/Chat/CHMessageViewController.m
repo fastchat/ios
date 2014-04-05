@@ -175,17 +175,16 @@
 - (IBAction)sendButtonTouched:(id)sender {
     NSString *msg = self.messageField.text;
     
+    if ( [msg isEqualToString:@""] || msg == nil ) {
+        return;
+    }
+    
     CHUser *currUser = [[CHNetworkManager sharedManager] currentUser];
-    DLog(@"Curr user: %@", currUser.username);
-    DLog(@"group: %@", self.groupId);
-//    [_socket sendEvent:@"message" withData:@{@"from": currUser.userId, @"text" : msg, @"groupId": self.groupId}];
 
     [[CHSocketManager sharedManager] sendMessageWithEvent:@"message" data:@{@"from": currUser.userId, @"text" : msg, @"group": self.groupId}];
     
     self.messageField.text = @"";
-    
-//    [self.messageTable setContentOffset:CGPointMake(0, CGFLOAT_MAX)];
-    //[self.messageTable setContentOffset:CGPointMake(0, CGFLOAT_MAX)];
+
     [self.messageTable beginUpdates];
     
     [_messageArray addObject:msg];
@@ -197,9 +196,6 @@
     [self.messageTable endUpdates];
     
     [self.messageTable scrollToRowAtIndexPath:[NSIndexPath indexPathForRow:_messageArray.count - 1 inSection:0] atScrollPosition:UITableViewScrollPositionBottom animated:YES];
-    
-    
-    //[self.messageTable reloadData];
 
 }
 
@@ -221,7 +217,6 @@
     
     _textViewSpaceToBottomConstraint.constant = br.size.height;
 
-//    self.messageTextField.text = @"";
     self.messageField.text = @"";
 }
 
@@ -243,19 +238,15 @@
 
      CHUser *currUser = [[CHNetworkManager sharedManager] currentUser];
     
-    
-    DLog(@"messagesAuthorsArray: %@, currUser.userId: %@", _messageAuthorsArray[indexPath.row], currUser.userId );
     if( [_messageAuthorsArray[indexPath.row] isEqualToString:self.members[currUser.userId]] ) {
         cell = [tableView dequeueReusableCellWithIdentifier:@"CHOwnMessageTableViewCell" forIndexPath:indexPath];
         cell.messageTextView.text = [self.messageArray objectAtIndex:indexPath.row];
-        
     }
     
     else {
         cell = [tableView dequeueReusableCellWithIdentifier:cHMessageTableViewCell forIndexPath:indexPath];
         cell.authorLabel.text = [[NSString alloc] initWithFormat:@"%@:",[self.messageAuthorsArray objectAtIndex:indexPath.row]];
         cell.messageTextView.text = [self.messageArray objectAtIndex:indexPath.row];
-
     }
 
     return cell;
@@ -291,7 +282,7 @@
 }
 
 - (void)reloadTableViewData{
-    //[self.messageTable reloadData];
+
     ///
     /// Load up old messages
     ///
@@ -304,9 +295,6 @@
         self.messageArray = [[NSMutableArray alloc] init];
         self.messageAuthorsArray = [[NSMutableArray alloc] init];
         
-        
-        DLog(@"MEssages from server: %@", messages);
-        
         for ( NSDictionary *message in messages) {
             [self.messageArray addObject:message[@"text"]];
             [self.messageAuthorsArray addObject:self.members[message[@"from"]]];
@@ -314,9 +302,7 @@
         
         self.messageArray = [[[self.messageArray reverseObjectEnumerator] allObjects] mutableCopy];
         self.messageAuthorsArray = [[[self.messageAuthorsArray reverseObjectEnumerator] allObjects] mutableCopy];
-        DLog(@"Main thread? %d", [NSThread isMainThread]);
-        
-        //[self.messageTable setContentOffset:CGPointMake(0, CGFLOAT_MAX)];
+
         [self.messageTable reloadData];
     }];
 

@@ -36,12 +36,6 @@
 {
     [super viewDidLoad];
     
-    // Uncomment the following line to preserve selection between presentations.
-    // self.clearsSelectionOnViewWillAppear = NO;
-    
-    // Uncomment the following line to display an Edit button in the navigation bar for this view controller.
-    // self.navigationItem.rightBarButtonItem = self.editButtonItem;
-    
     self.navigationItem.title = @"My Groups";
     
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(loadGroupsAndRefresh) name:@"UserLogInSuccessful" object:nil];
@@ -54,14 +48,6 @@
 
         UIViewController *loginController = [self.storyboard instantiateViewControllerWithIdentifier:@"CHViewNavController"];
         [self presentViewController:loginController animated:NO completion:nil];
-//        [self.navigationController presentModalViewController:loginController animated:NO];
-
-//        [self.navigationController pushViewController:loginController animated:NO];
-//        [self.navigationController presentViewController:loginController animated:NO completion:^{
-//            DLog(@"Finished logging in");
-//            [self.navigationController popViewControllerAnimated:YES];
-//        }];
-        
     }
     
     else {
