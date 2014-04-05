@@ -6,9 +6,9 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import com.example.fastchat.fragments.LoginFragment;
 import com.example.fastchat.fragments.GroupsFragment;
+import com.example.fastchat.models.User;
 import com.example.fastchat.networking.SocketIoController;
 import com.example.fastchat.networking.NetworkManager;
-
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.google.android.gms.gcm.GoogleCloudMessaging;
@@ -36,6 +36,7 @@ public class MainActivity extends ActionBarActivity {
 	private static final String PROPERTY_APP_VERSION = "appVersion";
 	private static final String USERNAME = "username";
 	private static final String SESSION_TOKEN="session_token";
+	private static final String USER_ID="user_id";
 	private final static int PLAY_SERVICES_RESOLUTION_REQUEST = 9000;
 
 	/**
@@ -64,8 +65,8 @@ public class MainActivity extends ActionBarActivity {
 				.add(R.id.container, new LoginFragment()).commit();
 			}
 			else{
-				NetworkManager.setUsername(credentials.get(0));
-				NetworkManager.setToken(credentials.get(1));
+				User currentUser = new User(credentials.get(0),credentials.get(1),credentials.get(2));
+				NetworkManager.setCurrentUser(currentUser);
 				getSupportFragmentManager().beginTransaction()
 				.add(R.id.container, new GroupsFragment()).commit();
 			}
@@ -124,10 +125,16 @@ public class MainActivity extends ActionBarActivity {
 		return super.onOptionsItemSelected(item);
 	}
 
-	public static void switchView(Fragment f){
-		MainActivity.activity.getActionBar().setDisplayHomeAsUpEnabled(true);
-		manager.beginTransaction()
-		.replace(R.id.container, f).addToBackStack(f.getClass().getName()).commit();
+	public static void switchView(final Fragment f){
+		MainActivity.activity.runOnUiThread(new Runnable(){
+			public void run(){
+				MainActivity.activity.getActionBar().setDisplayHomeAsUpEnabled(true);
+				
+				manager.beginTransaction()
+				.replace(R.id.container, f).addToBackStack(f.getClass().getName()).commit();
+			}
+		});
+		
 	}
 
 	public void hideKeyboard(){
@@ -145,7 +152,7 @@ public class MainActivity extends ActionBarActivity {
 		SocketIoController.disconnect();
 		super.onStop();
 	}
-
+	
 	/**
 	 * Check the device to make sure it has the Google Play Services APK. If
 	 * it doesn't, display a dialog that allows users to download the APK from
@@ -203,6 +210,7 @@ public class MainActivity extends ActionBarActivity {
 		else{
 			Log.i(this.getClass().getName(), "User information found.");
 			ArrayList<String> credentials = new ArrayList<String>(0);
+			credentials.add(prefs.getString(USER_ID, ""));
 			credentials.add(username);
 			String token = prefs.getString(SESSION_TOKEN, "");
 			credentials.add(token);
@@ -210,11 +218,12 @@ public class MainActivity extends ActionBarActivity {
 		}
 	}
 	
-	public static void saveLoginCredentials(String username,String token){
+	public static void saveLoginCredentials(User user){
 		final SharedPreferences prefs = getGCMPreferences(MainActivity.activity.getApplicationContext());
 		SharedPreferences.Editor editor = prefs.edit();
-		editor.putString(USERNAME, username);
-		editor.putString(SESSION_TOKEN, token);
+		editor.putString(USER_ID, user.getId());
+		editor.putString(USERNAME, user.getUsername());
+		editor.putString(SESSION_TOKEN, user.getSessionToken());
 		editor.commit();
 	}
 	
@@ -271,7 +280,6 @@ public class MainActivity extends ActionBarActivity {
 	 * using the 'from' address in the message.
 	 */
 	private void sendRegistrationIdToBackend() {
-		// Your implementation here.
 	}
 
 	private void registerInBackground(){

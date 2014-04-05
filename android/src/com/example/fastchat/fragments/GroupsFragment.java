@@ -1,6 +1,7 @@
 package com.example.fastchat.fragments;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -8,6 +9,7 @@ import org.json.JSONObject;
 
 import com.example.fastchat.MainActivity;
 import com.example.fastchat.R;
+import com.example.fastchat.models.Group;
 import com.example.fastchat.networking.NetworkManager;
 
 import android.os.Bundle;
@@ -16,7 +18,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
 public class GroupsFragment extends Fragment {
@@ -24,12 +25,10 @@ public class GroupsFragment extends Fragment {
 	private static View rootView;
 	
 	//LIST OF ARRAY STRINGS WHICH WILL SERVE AS LIST ITEMS
-    private static ArrayList<String> groupNames=new ArrayList<String>();
-    
-    private static ArrayList<JSONObject> groups=new ArrayList<JSONObject>();
+    private static ArrayList<Group> groups=new ArrayList<Group>();
 
     //DEFINING A STRING ADAPTER WHICH WILL HANDLE THE DATA OF THE LISTVIEW
-    private static ArrayAdapter<String> adapter;
+    private static GroupsAdapter adapter;
 
 	
 	@Override
@@ -40,9 +39,7 @@ public class GroupsFragment extends Fragment {
 				false);
 		rootView.requestFocus();
 		
-		 adapter=new ArrayAdapter<String>(getActivity(),
-		            android.R.layout.simple_list_item_1,
-		            groupNames);
+		 adapter=new GroupsAdapter(getActivity(),groups);
 		 final ListView lv = (ListView) rootView.findViewById(R.id.room_list);
 		 lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 
@@ -50,7 +47,7 @@ public class GroupsFragment extends Fragment {
 			  public void onItemClick(AdapterView<?> arg0, View arg1, int position, long arg3) {
 			    System.out.println("Selected Room #:"+position);
 			    MessageFragment mf = new MessageFragment();
-			    NetworkManager.setCurrentRoom(groups.get(position));
+			    NetworkManager.setCurrentRoom((Group) adapter.getItem(position));
 			    MainActivity.switchView(mf);
 			    
 			  }
@@ -62,25 +59,28 @@ public class GroupsFragment extends Fragment {
 				 
 			 }
 		 });
-		 NetworkManager.getGroups();
+		 if(NetworkManager.getAllGroups()==null || NetworkManager.getAllGroups().isEmpty()){
+			 NetworkManager.getGroups();
+		 }
 		 
 		return rootView;
 	}
 	
 	public static void addGroups(JSONArray array){
 		groups.clear();
-		groupNames.clear();
+		HashMap<String,Group> groupsMap = new HashMap<String,Group>();
 		for(int i=0;i<array.length();i++){
 			try {
 				JSONObject o = array.getJSONObject(i);
-				groups.add(o);
-				String groupName = o.getString("name");
-				groupNames.add(groupName);
+				Group tempGroup = new Group(o);
+				groupsMap.put(tempGroup.getId(),tempGroup);
+				groups.add(tempGroup);
 			} catch (JSONException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		}
+		NetworkManager.setGroups(groupsMap);
 		MainActivity.activity.runOnUiThread(new Runnable(){
 			 public void run(){
 				 adapter.notifyDataSetChanged();

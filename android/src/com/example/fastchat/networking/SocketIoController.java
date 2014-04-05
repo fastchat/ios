@@ -6,6 +6,7 @@ import org.json.JSONObject;
 
 import com.example.fastchat.Utils;
 import com.example.fastchat.fragments.MessageFragment;
+import com.example.fastchat.models.Message;
 import com.koushikdutta.async.http.AsyncHttpClient;
 import com.koushikdutta.async.http.socketio.Acknowledge;
 import com.koushikdutta.async.http.socketio.ConnectCallback;
@@ -49,13 +50,11 @@ public class SocketIoController {
 						System.out.println("onEvent:"+argument);
 						try {
 							JSONObject messageObject = argument.getJSONObject(0);
-							String groupId = messageObject.getString("group");
-							if(NetworkManager.getCurrentRoom().getString("_id").equals(groupId)){
-								String message = messageObject.getString("text");
-								String from = messageObject.getString("from");
-								String finalMessage = from+":"+message;
-								System.out.println("Message: "+finalMessage);
-								MessageFragment.addMessage(message, false,NetworkManager.getUsernameFromId(from));
+							Message message = new Message(messageObject);
+							if(message.getGroupId().equals(NetworkManager.getCurrentGroup().getId())){
+								MessageFragment.addMessage(message);
+							}else{
+								NetworkManager.getAllGroups().get(message.getGroupId()).addMessage(message);
 							}
 						} catch (JSONException e) {
 							// TODO Auto-generated catch block
@@ -83,21 +82,8 @@ public class SocketIoController {
 		}
 	}
 	
-	public static void sendMessage(String text){
-		JSONObject message = new JSONObject();
-		JSONArray array = new JSONArray();
-		try {
-			message.put("text", text);
-			message.put("from", NetworkManager.getUsername());
-			message.put("group", NetworkManager.getCurrentRoom().get("_id"));
-			array.put(message);
-			client.emit("message",array);
-		} catch (JSONException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-			Utils.makeToast(e);
-		}
-		
+	public static void sendMessage(Message m){
+		client.emit("message",m.getSendFormat());	
 	}
 
 	public static boolean isConnected() {

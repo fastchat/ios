@@ -3,7 +3,7 @@ package com.example.fastchat.fragments;
 import java.util.ArrayList;
 
 import com.example.fastchat.R;
-import com.example.fastchat.networking.Message;
+import com.example.fastchat.models.Message;
 
 import android.content.Context;
 import android.graphics.Color;
@@ -12,6 +12,7 @@ import android.text.Spannable;
 import android.text.SpannableString;
 import android.text.style.RelativeSizeSpan;
 import android.text.style.StyleSpan;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -54,7 +55,10 @@ public class MessageAdapter extends BaseAdapter {
 		}
 		else
 			holder = (ViewHolder) convertView.getTag();
-		final SpannableString out0 = new SpannableString(message.getText()+"\n"+message.getFrom());
+		String text = message.getText();
+		String username = message.getFrom().getUsername();
+		String date = message.getDateString();
+		SpannableString out0 = new SpannableString(message.getText()+"\n"+message.getFrom().getUsername()+" "+message.getDateString());
         StyleSpan boldSpan = new StyleSpan(Typeface.BOLD);
         RelativeSizeSpan smallSpan = new RelativeSizeSpan(0.5f);
         out0.setSpan(boldSpan, 0, message.getText().length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);

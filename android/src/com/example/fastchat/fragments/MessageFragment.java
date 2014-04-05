@@ -7,7 +7,7 @@ import org.json.JSONException;
 import com.example.fastchat.MainActivity;
 import com.example.fastchat.R;
 import com.example.fastchat.Utils;
-import com.example.fastchat.networking.Message;
+import com.example.fastchat.models.Message;
 import com.example.fastchat.networking.SocketIoController;
 import com.example.fastchat.networking.NetworkManager;
 import com.example.fastchat.notifications.GcmIntentService;
@@ -27,28 +27,20 @@ public class MessageFragment extends Fragment implements OnClickListener {
 
 	private static View rootView;
 	
-	private static ArrayList<Message> messages=new ArrayList<Message>();
 
     //DEFINING A STRING ADAPTER WHICH WILL HANDLE THE DATA OF THE LISTVIEW
     private static MessageAdapter adapter;
 	
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
-		try {
-			GcmIntentService.clearNotifications();
-			messages.clear();
-			NetworkManager.getCurrentGroupMessages();
-			MainActivity.activity.getActionBar().setTitle(NetworkManager.getCurrentRoom().getString("name"));
-		} catch (JSONException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-			Utils.makeToast(e);
-		}
+		GcmIntentService.clearNotifications();
+		NetworkManager.getCurrentGroupMessages();
+		MainActivity.activity.getActionBar().setTitle(NetworkManager.getCurrentGroup().getName());
 		rootView = inflater.inflate(R.layout.message_main, container,
 				false);
 		Button button = (Button) rootView.findViewById(R.id.send_button);
 	     button.setOnClickListener(this);
-	     adapter=new MessageAdapter(getActivity(), messages);
+	     adapter=new MessageAdapter(getActivity(), NetworkManager.getCurrentGroup().getMessages());
 	     final ListView lv = (ListView) rootView.findViewById(R.id.messages_container);
 	     MainActivity.activity.runOnUiThread(new Runnable(){
 			 public void run(){
@@ -60,12 +52,18 @@ public class MessageFragment extends Fragment implements OnClickListener {
 	     if(!SocketIoController.isConnected()){
 	    	 SocketIoController.connect();
 	     }
+	     MainActivity.activity.runOnUiThread(new Runnable(){
+				public void run(){
+					adapter.notifyDataSetChanged();
+					lv.setSelection(adapter.getCount() - 1);
+				}
+			});
 		return rootView;
 	}
 	
-	public static void addMessage(String message, boolean is_own_message,String from){
+	public static void addMessage(Message message){
 		
-		messages.add(new Message(message,is_own_message,from));
+		NetworkManager.getCurrentGroup().getMessages().add(message);
 		final ListView lv = (ListView) rootView.findViewById(R.id.messages_container);
 		MainActivity.activity.runOnUiThread(new Runnable(){
 			public void run(){
@@ -74,17 +72,6 @@ public class MessageFragment extends Fragment implements OnClickListener {
 			}
 		});
 		
-	}
-	
-	public static void clearAllMessages(){
-		messages.clear();
-		final ListView lv = (ListView) rootView.findViewById(R.id.messages_container);
-		MainActivity.activity.runOnUiThread(new Runnable(){
-			public void run(){
-				adapter.notifyDataSetChanged();
-				lv.setSelection(adapter.getCount() - 1);
-			}
-		});
 	}
 
 	@Override
@@ -96,7 +83,8 @@ public class MessageFragment extends Fragment implements OnClickListener {
 		messageBox.clearFocus();
 		InputMethodManager in = (InputMethodManager) MainActivity.activity.getSystemService(MainActivity.INPUT_METHOD_SERVICE);
         in.hideSoftInputFromWindow(messageBox.getApplicationWindowToken(),InputMethodManager.HIDE_NOT_ALWAYS);
-		addMessage(message,true,NetworkManager.getUsername());
-		SocketIoController.sendMessage(message);
+        Message messageObject = new Message(message,NetworkManager.getCurrentUser());
+		addMessage(messageObject);
+		SocketIoController.sendMessage(messageObject);
 	}
 }

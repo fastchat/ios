@@ -12,6 +12,9 @@ import com.example.fastchat.MainActivity;
 import com.example.fastchat.Utils;
 import com.example.fastchat.fragments.MessageFragment;
 import com.example.fastchat.fragments.GroupsFragment;
+import com.example.fastchat.models.Group;
+import com.example.fastchat.models.Message;
+import com.example.fastchat.models.User;
 import com.koushikdutta.async.future.Future;
 import com.koushikdutta.async.http.AsyncHttpClient;
 import com.koushikdutta.async.http.AsyncHttpClient.JSONArrayCallback;
@@ -25,10 +28,10 @@ public class NetworkManager {
 
 	private static final String url ="http://powerful-cliffs-9562.herokuapp.com:80";
 	//private static final String url ="http://minty.shawnsthompson.com:3000";
-	private static String session_token = "";
-	private static String username ="";
-	private static JSONObject currentRoom;
-	private static HashMap<String, String> currentRoomUsers = new HashMap<String,String>();
+	private static User currentUser;
+	private static Group currentGroup;
+	// HashMap <groupId, Groups>
+	private static HashMap<String,Group> groups = new HashMap<String,Group>();
 
 
 	private static final JSONObjectCallback loginCallback = new AsyncHttpClient.JSONObjectCallback() {
@@ -39,17 +42,17 @@ public class NetworkManager {
 				Utils.makeToast(e);
 				return;
 			}
+			System.out.println("I got a JSONObject: " + result);
+			Fragment fragment = new GroupsFragment();
 			try {
-				session_token = result.getString("session-token");
-				System.out.println("I got a JSONObject: " + result);
-				Fragment fragment = new GroupsFragment();
-				postDeviceId(MainActivity.regid);
-				MainActivity.saveLoginCredentials(username, session_token);
-				MainActivity.switchView(fragment);
+				currentUser.setToken(result.getString("session-token"));
 			} catch (JSONException e1) {
-				Utils.makeToast("Invalid Username and/or Password");
+				// TODO Auto-generated catch block
 				e1.printStackTrace();
 			}
+			MainActivity.saveLoginCredentials(currentUser);
+			NetworkManager.postDeviceId(MainActivity.regid);
+			MainActivity.switchView(fragment);
 
 
 
@@ -97,14 +100,7 @@ public class NetworkManager {
 				int j = result.length()-i-1;
 				try {
 					JSONObject messageObject = result.getJSONObject(j);
-					String message = messageObject.getString("text");
-					String from = currentRoomUsers.get(messageObject.getString("from"));
-					if(from.equals(username)){
-						MessageFragment.addMessage(message, true,from);
-					}else{
-						MessageFragment.addMessage(message, false,from);
-					}
-					
+					MessageFragment.addMessage(new Message(messageObject));
 				} catch (JSONException e1) {
 					// TODO Auto-generated catch block
 					e1.printStackTrace();
@@ -118,7 +114,7 @@ public class NetworkManager {
 	public static Future<JSONArray> getGroups(){
 
 		AsyncHttpGet get = new AsyncHttpGet(url+"/group");
-		get.setHeader("session-token", session_token);
+		get.setHeader("session-token", currentUser.getSessionToken());
 		return AsyncHttpClient.getDefaultInstance().executeJSONArray(get,groupsCallback);
 
 	}
@@ -126,15 +122,9 @@ public class NetworkManager {
 
 	public static Future<JSONArray> getCurrentGroupMessages()
 	{
-		String groupId="";
-		try {
-			groupId = currentRoom.getString("_id");
-		} catch (JSONException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		String groupId = currentGroup.getId();
 		AsyncHttpGet get = new AsyncHttpGet(url+"/group/"+groupId+"/messages");
-		get.setHeader("session-token", session_token);
+		get.setHeader("session-token", currentUser.getSessionToken());
 		return AsyncHttpClient.getDefaultInstance().executeJSONArray(get,groupMessagesCallback);
 
 	}
@@ -142,7 +132,7 @@ public class NetworkManager {
 
 
 	public static Future<JSONObject> postLogin(String username, String password){
-		NetworkManager.username=username;
+		currentUser = new User(null,username,null);
 		AsyncHttpPost post = new AsyncHttpPost(url+"/login");
 		JSONObject object = new JSONObject();
 		try {
@@ -165,7 +155,7 @@ public class NetworkManager {
 			return null;
 		}
 		AsyncHttpPost post = new AsyncHttpPost(url+"/user/device");
-		post.setHeader("session-token", session_token);
+		post.setHeader("session-token", currentUser.getSessionToken());
 		JSONObject object = new JSONObject();
 		try {
 			object.put("token", reg_id);
@@ -185,43 +175,34 @@ public class NetworkManager {
 	}
 
 	public static String getToken() {
-		return session_token;
+		return currentUser.getSessionToken();
+	}
+
+	public static Group getCurrentGroup(){
+		return currentGroup;
 	}
 	
-	public static void setToken(String token){
-		session_token=token;
-	}
-
-	public static JSONObject getCurrentRoom(){
-		return currentRoom;
-	}
-
-	public static void setCurrentRoom(JSONObject room){
-		currentRoom = room;
-		JSONArray users;
-		try {
-			users = room.getJSONArray("members");
-
-			for(int i=0;i<users.length();i++){
-				JSONObject userObject = users.getJSONObject(i);
-				currentRoomUsers.put(userObject.getString("_id"), userObject.getString("username"));
-			}
-		} catch (JSONException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-			Utils.makeToast(e);
-		}
-	}
-
-	public static String getUsername(){
-		return username;
+	public static HashMap<String,Group> getAllGroups(){
+		return groups;
 	}
 	
-	public static String getUsernameFromId(String id){
-		return currentRoomUsers.get(id);
+	public static void setGroups(HashMap<String,Group> g){
+		groups = g;
+	}
+
+	public static void setCurrentRoom(Group group){
+		currentGroup = group;
+	}
+
+	public static User getCurrentUser(){
+		return  currentUser;
 	}
 	
-	public static void setUsername(String user){
-		username=user;
+	public static User getUsernameFromId(String id){
+		return currentGroup.getUsername(id);
+	}
+	
+	public static void setCurrentUser(User user){
+		currentUser=user;
 	}
 }
