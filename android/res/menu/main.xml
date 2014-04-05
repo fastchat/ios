@@ -4,6 +4,11 @@
     tools:context="com.example.fastchat.MainActivity" >
 
     <item
+        android:id="@+id/new_group"
+        android:orderInCategory="25"
+        android:title="@string/new_group"
+        app:showAsAction="never"/>
+    <item
         android:id="@+id/profile"
         android:orderInCategory="25"
         android:title="@string/profile"

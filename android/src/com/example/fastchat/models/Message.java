@@ -11,11 +11,9 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import android.text.format.DateFormat;
 import android.util.Log;
 
 import com.example.fastchat.Utils;
-import com.example.fastchat.fragments.MessageFragment;
 import com.example.fastchat.networking.NetworkManager;
 
 public class Message {
@@ -47,7 +45,7 @@ public class Message {
 	
 	
 	public String getDateString(){
-		SimpleDateFormat dfOut = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss");
+		SimpleDateFormat dfOut = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss",Locale.US);
 		 Calendar cal = Calendar.getInstance();
 		 TimeZone tz = cal.getTimeZone();
 		 dfOut.setTimeZone(tz);
@@ -55,9 +53,8 @@ public class Message {
 			Date date = new Date();
 			return dfOut.format(date);
 		}
-		 SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
+		 SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'",Locale.US);
 		 df.setTimeZone(TimeZone.getTimeZone("UTC"));
-		 //SimpleDateFormat dfOut = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss");
 		try {
 			 Date date = df.parse(this.sentTime);
 			 
@@ -95,7 +92,6 @@ public class Message {
 		JSONArray array = new JSONArray();
 		try {
 			message.put("text", text);
-			message.put("from", this.from.getUsername());
 			message.put("group", NetworkManager.getCurrentGroup().getId());
 			array.put(message);
 		} catch (JSONException e) {

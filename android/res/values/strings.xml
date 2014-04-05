@@ -10,4 +10,5 @@
 	<string name="sign_out">Sign Out</string>
 	<string name="profile">Profile</string>
 	<string name="invitations">Invitations</string>
+	<string name="new_group">New Group</string>
 </resources>

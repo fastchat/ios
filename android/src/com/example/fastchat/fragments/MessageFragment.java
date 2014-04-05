@@ -1,12 +1,7 @@
 package com.example.fastchat.fragments;
 
-import java.util.ArrayList;
-
-import org.json.JSONException;
-
 import com.example.fastchat.MainActivity;
 import com.example.fastchat.R;
-import com.example.fastchat.Utils;
 import com.example.fastchat.models.Message;
 import com.example.fastchat.networking.SocketIoController;
 import com.example.fastchat.networking.NetworkManager;

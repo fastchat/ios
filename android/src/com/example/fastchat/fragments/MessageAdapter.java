@@ -12,7 +12,6 @@ import android.text.Spannable;
 import android.text.SpannableString;
 import android.text.style.RelativeSizeSpan;
 import android.text.style.StyleSpan;
-import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -55,9 +54,6 @@ public class MessageAdapter extends BaseAdapter {
 		}
 		else
 			holder = (ViewHolder) convertView.getTag();
-		String text = message.getText();
-		String username = message.getFrom().getUsername();
-		String date = message.getDateString();
 		SpannableString out0 = new SpannableString(message.getText()+"\n"+message.getFrom().getUsername()+" "+message.getDateString());
         StyleSpan boldSpan = new StyleSpan(Typeface.BOLD);
         RelativeSizeSpan smallSpan = new RelativeSizeSpan(0.5f);

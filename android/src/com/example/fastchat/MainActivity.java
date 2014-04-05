@@ -6,6 +6,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import com.example.fastchat.fragments.LoginFragment;
 import com.example.fastchat.fragments.GroupsFragment;
+import com.example.fastchat.fragments.NewGroupFragment;
 import com.example.fastchat.models.User;
 import com.example.fastchat.networking.SocketIoController;
 import com.example.fastchat.networking.NetworkManager;
@@ -118,6 +119,9 @@ public class MainActivity extends ActionBarActivity {
 		case R.id.profile:
 			break;
 		case R.id.invitations:
+			break;
+		case R.id.new_group:
+			switchView(new NewGroupFragment());
 			break;
 		default:
 			break;

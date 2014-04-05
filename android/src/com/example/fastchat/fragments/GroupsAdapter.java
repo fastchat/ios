@@ -4,20 +4,12 @@ import java.util.ArrayList;
 
 import com.example.fastchat.R;
 import com.example.fastchat.models.Group;
-import com.example.fastchat.models.Message;
 
 import android.content.Context;
 import android.graphics.Color;
-import android.graphics.Typeface;
-import android.text.Spannable;
-import android.text.SpannableString;
-import android.text.style.RelativeSizeSpan;
-import android.text.style.StyleSpan;
-import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.LinearLayout.LayoutParams;
 import android.widget.BaseAdapter;
 import android.widget.TextView;
 
