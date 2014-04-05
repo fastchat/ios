@@ -29,7 +29,9 @@ public class MessageFragment extends Fragment implements OnClickListener {
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
 		GcmIntentService.clearNotifications();
-		NetworkManager.getCurrentGroupMessages();
+		if(NetworkManager.getCurrentGroup().getMessages().isEmpty()){
+			NetworkManager.getCurrentGroupMessages();
+		}
 		MainActivity.activity.getActionBar().setTitle(NetworkManager.getCurrentGroup().getName());
 		rootView = inflater.inflate(R.layout.message_main, container,
 				false);
@@ -44,21 +46,14 @@ public class MessageFragment extends Fragment implements OnClickListener {
 				 
 			 }
 		 });
-	     if(!SocketIoController.isConnected()){
-	    	 SocketIoController.connect();
-	     }
-	     MainActivity.activity.runOnUiThread(new Runnable(){
-				public void run(){
-					adapter.notifyDataSetChanged();
-					lv.setSelection(adapter.getCount() - 1);
-				}
-			});
+	     updateUI();
 		return rootView;
 	}
 	
-	public static void addMessage(Message message){
-		
-		NetworkManager.getCurrentGroup().getMessages().add(message);
+	public static void updateUI(){
+		if(rootView==null){
+			return;
+		}
 		final ListView lv = (ListView) rootView.findViewById(R.id.messages_container);
 		MainActivity.activity.runOnUiThread(new Runnable(){
 			public void run(){
@@ -66,6 +61,12 @@ public class MessageFragment extends Fragment implements OnClickListener {
 				lv.setSelection(adapter.getCount() - 1);
 			}
 		});
+	}
+	
+	public static void addMessage(Message message){
+		
+		NetworkManager.getCurrentGroup().getMessages().add(message);
+		updateUI();
 		
 	}
 

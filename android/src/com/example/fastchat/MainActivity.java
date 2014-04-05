@@ -2,11 +2,14 @@ package com.example.fastchat;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import com.example.fastchat.fragments.LoginFragment;
 import com.example.fastchat.fragments.GroupsFragment;
+import com.example.fastchat.fragments.MessageFragment;
 import com.example.fastchat.fragments.NewGroupFragment;
+import com.example.fastchat.models.Group;
 import com.example.fastchat.models.User;
 import com.example.fastchat.networking.SocketIoController;
 import com.example.fastchat.networking.NetworkManager;
@@ -61,7 +64,7 @@ public class MainActivity extends ActionBarActivity {
 		manager = getSupportFragmentManager();
 		if (savedInstanceState == null) {
 			ArrayList<String> credentials = getLoginCredentials();
-			if(credentials.size()<2){
+			if(credentials.size()<3){
 				getSupportFragmentManager().beginTransaction()
 				.add(R.id.container, new LoginFragment()).commit();
 			}
@@ -150,10 +153,23 @@ public class MainActivity extends ActionBarActivity {
 	protected void onResume() {
 		super.onResume();
 		checkPlayServices();
+		ArrayList<String> credentials = getLoginCredentials();
+		if(credentials.size()==3){
+			SocketIoController.connect();
+		}
+		if(NetworkManager.getCurrentGroup()!=null){
+			NetworkManager.getCurrentGroupMessages();
+		}
 	}
 	
 	protected void onStop(){
 		SocketIoController.disconnect();
+		NetworkManager.getCurrentGroup().getMessages().clear();
+		HashMap<String,Group> groups = NetworkManager.getAllGroups();
+		for(Group g : groups.values()){
+			g.getMessages().clear();
+		}
+		groups.clear();
 		super.onStop();
 	}
 	

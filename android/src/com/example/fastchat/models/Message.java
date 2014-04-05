@@ -72,7 +72,7 @@ public class Message {
 	}
 	
 	public boolean isMine(){
-		return NetworkManager.getCurrentUser().getId().equals(this.from.getId());
+		return NetworkManager.getCurrentUser().getUsername().equals(this.from.getUsername());
 	}
 	
 	public User getFrom(){

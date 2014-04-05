@@ -11,6 +11,7 @@ import com.example.fastchat.MainActivity;
 import com.example.fastchat.R;
 import com.example.fastchat.models.Group;
 import com.example.fastchat.networking.NetworkManager;
+import com.example.fastchat.networking.SocketIoController;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -62,7 +63,9 @@ public class GroupsFragment extends Fragment {
 		 if(NetworkManager.getAllGroups()==null || NetworkManager.getAllGroups().isEmpty()){
 			 NetworkManager.getGroups();
 		 }
-		 
+		 if(!SocketIoController.isConnected()){
+	    	 SocketIoController.connect();
+	     }
 		return rootView;
 	}
 	
