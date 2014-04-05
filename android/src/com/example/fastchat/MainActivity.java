@@ -164,7 +164,9 @@ public class MainActivity extends ActionBarActivity {
 	
 	protected void onStop(){
 		SocketIoController.disconnect();
-		NetworkManager.getCurrentGroup().getMessages().clear();
+		if(NetworkManager.getCurrentGroup()!=null){
+			NetworkManager.getCurrentGroup().getMessages().clear();
+		}
 		HashMap<String,Group> groups = NetworkManager.getAllGroups();
 		for(Group g : groups.values()){
 			g.getMessages().clear();

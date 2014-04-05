@@ -12,6 +12,8 @@ import com.example.fastchat.R;
 import com.example.fastchat.models.Group;
 import com.example.fastchat.networking.NetworkManager;
 import com.example.fastchat.networking.SocketIoController;
+import com.koushikdutta.async.future.Future;
+import com.koushikdutta.async.http.socketio.SocketIOClient;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -30,7 +32,6 @@ public class GroupsFragment extends Fragment {
 
     //DEFINING A STRING ADAPTER WHICH WILL HANDLE THE DATA OF THE LISTVIEW
     private static GroupsAdapter adapter;
-
 	
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -47,8 +48,9 @@ public class GroupsFragment extends Fragment {
 			  @Override
 			  public void onItemClick(AdapterView<?> arg0, View arg1, int position, long arg3) {
 			    System.out.println("Selected Room #:"+position);
-			    MessageFragment mf = new MessageFragment();
 			    NetworkManager.setCurrentRoom((Group) adapter.getItem(position));
+			    MessageFragment mf = new MessageFragment();
+			   
 			    MainActivity.switchView(mf);
 			    
 			  }
@@ -63,8 +65,9 @@ public class GroupsFragment extends Fragment {
 		 if(NetworkManager.getAllGroups()==null || NetworkManager.getAllGroups().isEmpty()){
 			 NetworkManager.getGroups();
 		 }
+		 System.out.println("Getting here :"+SocketIoController.isConnected());
 		 if(!SocketIoController.isConnected()){
-	    	 SocketIoController.connect();
+	    	SocketIoController.connect();
 	     }
 		return rootView;
 	}

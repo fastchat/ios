@@ -7,6 +7,7 @@ import org.json.JSONObject;
 import com.example.fastchat.Utils;
 import com.example.fastchat.fragments.MessageFragment;
 import com.example.fastchat.models.Message;
+import com.koushikdutta.async.future.Future;
 import com.koushikdutta.async.http.AsyncHttpClient;
 import com.koushikdutta.async.http.socketio.Acknowledge;
 import com.koushikdutta.async.http.socketio.ConnectCallback;
@@ -20,12 +21,25 @@ public class SocketIoController {
 
 	private static SocketIOClient client;
 	
-	public static void connect(){
+	private static Future<SocketIOClient> clientFuture;
+	
+	public static Future<SocketIOClient> connect(){
 		String newURL = NetworkManager.getURL();
 		System.out.println("Socket.io connect:"+newURL+"token:"+NetworkManager.getToken());
 		SocketIORequest request = new SocketIORequest(newURL,null,"token="+NetworkManager.getToken());
 		//request.setHeader("token", NetworkManager.getToken());
-		SocketIOClient.connect(AsyncHttpClient.getDefaultInstance(), request, new ConnectCallback() {
+		if(clientFuture !=null){
+			if(!clientFuture.isDone()){
+				return clientFuture;
+			}
+		}
+		if(client!=null){
+			if(client.isConnected())
+			{
+				client.disconnect();
+			}
+		}
+		clientFuture = SocketIOClient.connect(AsyncHttpClient.getDefaultInstance(), request, new ConnectCallback() {
 		    @Override
 		    public void onConnectCompleted(Exception ex, SocketIOClient client) {
 		        if (ex != null) {
@@ -74,9 +88,13 @@ public class SocketIoController {
 		        SocketIoController.client=client;
 		    }
 		});
+		return clientFuture;
 	}
 	
 	public static void disconnect(){
+		if(clientFuture!=null){
+			clientFuture.cancel();
+		}
 		if(client!=null){
 			client.disconnect();
 		}
