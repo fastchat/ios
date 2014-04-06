@@ -217,7 +217,7 @@
     
     [UIView animateWithDuration:animationDuration animations:^{
         CGRect containerFrame = self.containerView.frame;
-        self.messageTable.contentInset = UIEdgeInsetsMake(0, 0, keyboardHeight+containerFrame.size.height, 0);
+        self.messageTable.contentInset = UIEdgeInsetsMake(kDefaultContentOffset, 0, keyboardHeight+containerFrame.size.height, 0);
         self.messageTable.scrollIndicatorInsets = UIEdgeInsetsZero;
         
             [self.messageTable scrollToRowAtIndexPath:[NSIndexPath indexPathForRow:_messageArray.count - 1 inSection:0] atScrollPosition:UITableViewScrollPositionBottom animated:YES];
@@ -388,7 +388,7 @@
 
     
     // Resize table
-    self.messageTable.contentInset = UIEdgeInsetsMake(0, 0, self.containerView.frame.size.height + self.heightOfKeyboard, 0);
+    self.messageTable.contentInset = UIEdgeInsetsMake(kDefaultContentOffset, 0, self.containerView.frame.size.height + self.heightOfKeyboard, 0);
     self.messageTable.scrollIndicatorInsets = UIEdgeInsetsZero;
     
     [self.messageTable scrollToRowAtIndexPath:[NSIndexPath indexPathForRow:_messageArray.count - 1 inSection:0] atScrollPosition:UITableViewScrollPositionBottom animated:YES];
