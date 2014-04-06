@@ -19,7 +19,9 @@
 @property (nonatomic, strong) NSDictionary *group;
 @property (nonatomic, strong) NSDictionary *userIds;
 @property (weak, nonatomic) IBOutlet UITextField *messageField;
+@property (weak, nonatomic) IBOutlet UITextView *messageEntryField;
 @property (weak, nonatomic) IBOutlet UITableView *messageTable;
+@property (weak, nonatomic) IBOutlet NSLayoutConstraint *bottomDistance;
 
 @property (strong, nonatomic) IBOutlet UIImageView *screenShotImageView;
 @property (strong, nonatomic) UIImage *screenShotImage;

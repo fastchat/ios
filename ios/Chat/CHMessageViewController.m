@@ -17,6 +17,8 @@
 #import "CHOwnMessageTableViewCell.h"
 #import "CHSocketManager.h"
 
+#define kDefaultContentOffset 55
+
 @interface CHMessageViewController ()
 
 @property NSString *messages;
@@ -30,16 +32,6 @@
 @end
 
 @implementation CHMessageViewController
-    IBOutlet NSLayoutConstraint* _textViewSpaceToBottomConstraint;
-
-- (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
-{
-    self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
-    if (self) {
-        // Custom initialization
-    }
-    return self;
-}
 
 - (void)viewDidLoad
 {
@@ -48,6 +40,9 @@
     
     //Reload message table when app returns to foreground
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(reloadTableViewData) name:@"ReloadAppDelegateTable" object:nil];
+    
+    // Set table view content offset
+    self.messageTable.contentInset = UIEdgeInsetsMake(0, 0, kDefaultContentOffset, 0);
     
     
     [[CHSocketManager sharedManager] setDelegate:self];
@@ -62,8 +57,6 @@
     
     _messageArray = [[NSMutableArray alloc] init];
     _messageAuthorsArray = [[NSMutableArray alloc] init];
-    [self.messageTable setDelegate:self];
-    [self.messageTable setDataSource:self];
     
     self.messages = @"";
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(keyboardWillShow:) name:UIKeyboardWillShowNotification object:nil];
@@ -105,7 +98,11 @@
         [self.messageTable scrollToRowAtIndexPath:[NSIndexPath indexPathForRow:_messageArray.count - 1 inSection:0] atScrollPosition:UITableViewScrollPositionBottom animated:NO];
     }];
     
-    [self.messageField becomeFirstResponder];
+    //[self.messageEntryField becomeFirstResponder];
+    
+    //[self.messageField sizeToFit];
+        self.messageEntryField.layer.cornerRadius = 5.0;
+    [self.messageEntryField sizeToFit];
 }
 
 - (void) inviteUser;
@@ -173,7 +170,7 @@
 */
 
 - (IBAction)sendButtonTouched:(id)sender {
-    NSString *msg = self.messageField.text;
+    NSString *msg = self.messageEntryField.text;
     
     if ( [msg isEqualToString:@""] || msg == nil ) {
         return;
@@ -183,7 +180,7 @@
 
     [[CHSocketManager sharedManager] sendMessageWithEvent:@"message" data:@{@"from": currUser.userId, @"text" : msg, @"group": self.groupId}];
     
-    self.messageField.text = @"";
+    self.messageEntryField.text = @"";
 
     [self.messageTable beginUpdates];
     
@@ -199,30 +196,43 @@
 
 }
 
--(BOOL)textFieldShouldReturn:(UITextField *)textField
+- (void) keyboardWillShow: (NSNotification*) notification
 {
-    [textField resignFirstResponder];
-    return YES;
-}
-
-- (void) dealloc
-{
-    [[NSNotificationCenter defaultCenter] removeObserver: self];
-}
-
-- (void) keyboardWillShow: (NSNotification*) n
-{
-    NSValue* bv = n.userInfo[UIKeyboardFrameEndUserInfoKey];
-    CGRect br = [bv CGRectValue];
+    NSDictionary* keyboardInfo = [notification userInfo];
+    NSValue* keyboardFrameEnded = [keyboardInfo valueForKey:UIKeyboardFrameBeginUserInfoKey];
+    CGRect keyboardFrameEndedRect = [keyboardFrameEnded CGRectValue];
     
-    _textViewSpaceToBottomConstraint.constant = br.size.height;
-
-    self.messageField.text = @"";
+    NSInteger keyboardHeight = keyboardFrameEndedRect.size.height;
+    
+    float animationDuration = [[keyboardInfo valueForKey:UIKeyboardAnimationDurationUserInfoKey] floatValue];
+    
+    self.messageTable.contentInset = UIEdgeInsetsMake(0, 0, keyboardHeight+kDefaultContentOffset, 0);
+    [UIView animateWithDuration:animationDuration animations:^{
+        self.bottomDistance.constant = keyboardHeight;
+        [self.view layoutIfNeeded];
+    } completion:^(BOOL finished) {
+        
+    }];
+    [self.messageTable scrollToRowAtIndexPath:[NSIndexPath indexPathForRow:_messageArray.count - 1 inSection:0] atScrollPosition:UITableViewScrollPositionBottom animated:YES];
+    
+    
 }
 
-- (void) keyboardWillHide: (NSNotification*) n
+- (void) keyboardWillHide: (NSNotification*) notification
 {
-    _textViewSpaceToBottomConstraint.constant = 0;
+    NSDictionary* keyboardInfo = [notification userInfo];
+    
+    float animationDuration = [[keyboardInfo valueForKey:UIKeyboardAnimationDurationUserInfoKey] floatValue];
+    
+    self.messageTable.contentInset = UIEdgeInsetsMake(0, 0, kDefaultContentOffset, 0);
+    [UIView animateWithDuration:animationDuration animations:^{
+        self.bottomDistance.constant = 0;
+        [self.view layoutIfNeeded];
+    } completion:^(BOOL finished) {
+        
+    }];
+    [self.messageTable scrollToRowAtIndexPath:[NSIndexPath indexPathForRow:_messageArray.count - 1 inSection:0] atScrollPosition:UITableViewScrollPositionBottom animated:YES];
+    
 }
 
 #pragma mark - TableView DataSource Implementation
@@ -252,9 +262,14 @@
     return cell;
 }
 
+-(void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath;
+{
+    [self.messageEntryField resignFirstResponder];
+}
+
 -(CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath;
 {
-    CGSize renderedSize = [[self.messageArray objectAtIndex:indexPath.row] sizeWithFont: [UIFont systemFontOfSize:17.0] constrainedToSize:CGSizeMake(205, CGFLOAT_MAX) lineBreakMode:NSLineBreakByWordWrapping];
+    CGSize renderedSize = [[self.messageArray objectAtIndex:indexPath.row] sizeWithFont: [UIFont systemFontOfSize:14.0] constrainedToSize:CGSizeMake(205, CGFLOAT_MAX) lineBreakMode:NSLineBreakByWordWrapping];
 
     return renderedSize.height + 30.0;
 }
