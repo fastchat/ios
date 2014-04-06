@@ -10,4 +10,6 @@
 
 @interface CHGroupListTableViewController : UITableViewController
 
+@property NSArray *groups;
+
 @end

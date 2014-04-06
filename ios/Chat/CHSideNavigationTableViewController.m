@@ -10,6 +10,7 @@
 #import "CHInvitationsTableViewController.h"
 #import "CHNetworkManager.h"
 #import "CHViewController.h"
+#import "CHSocketManager.h"
 
 @interface CHSideNavigationTableViewController ()
 @property NSArray *menuLabels;
@@ -74,9 +75,11 @@
         [self.navigationController pushViewController:controller animated:YES];
     }
     
+    // Logout
     else if( indexPath.row == 2 ) {
         [[CHNetworkManager sharedManager] logoutWithCallback:^(bool successful, NSError *error) {
             //[self.navigationController popViewControllerAnimated:YES];
+            [[CHSocketManager sharedManager] closeSocket];
             [self.navigationController popViewControllerAnimated:YES];
             //[self presentViewController:loginController animated:NO completion:nil];
             CHViewController *loginController = [self.storyboard instantiateViewControllerWithIdentifier:@"CHViewController"];

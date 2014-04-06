@@ -14,76 +14,115 @@
 #import "CHUser.h"
 #import "CHMessageTableViewController.h"
 #import "CHMessageTableViewCell.h"
+#import "CHOwnMessageTableViewCell.h"
+#import "CHSocketManager.h"
+
+#define kDefaultContentOffset 55
 
 @interface CHMessageViewController ()
 
 @property NSString *messages;
 @property NSMutableArray *messageArray;
 @property (nonatomic, strong) SocketIO *socket;
+@property CGRect previousMessageTextViewRect;
 
 
 @property NSMutableArray *messageAuthorsArray;
 @property (nonatomic, strong) NSMutableDictionary *members;
 
+@property float heightOfKeyboard;
+
 @end
 
 @implementation CHMessageViewController
-    IBOutlet NSLayoutConstraint* _textViewSpaceToBottomConstraint;
-
-- (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
-{
-    self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
-    if (self) {
-        // Custom initialization
-    }
-    return self;
-}
 
 - (void)viewDidLoad
 {
     [super viewDidLoad];
     // Do any additional setup after loading the view.
+    self.messageEntryField.hidden = YES;
     
-    ///
-    /// Connect to server!
-    ///
-    self.socket = [[SocketIO alloc] initWithDelegate:self];
+    self.containerView = [[UIView alloc] initWithFrame:CGRectMake(0, self.view.frame.size.height - 40, 320, 40)];
     
-    [_socket connectToHost:@"powerful-cliffs-9562.herokuapp.com" onPort:80 withParams:@{@"token": [CHNetworkManager sharedManager].sessiontoken}];
+    self.textView = [[HPGrowingTextView alloc] initWithFrame:CGRectMake(6, 3, 240, 40)];
+    self.textView.isScrollable = NO;
+    self.textView.contentInset = UIEdgeInsetsMake(0, 5, 0, 5);
     
-    // Load previous messages
+	self.textView.minNumberOfLines = 1;
+	self.textView.maxNumberOfLines = 6;
+    // you can also set the maximum height in points with maxHeight
+    self.textView.maxHeight = 140.0f;
+	self.textView.returnKeyType = UIReturnKeyDefault; //just as an example
+	self.textView.font = [UIFont systemFontOfSize:15.0f];
+	self.textView.delegate = self;
+    self.textView.internalTextView.scrollIndicatorInsets = UIEdgeInsetsMake(5, 0, 5, 0);
+    self.textView.backgroundColor = [UIColor whiteColor];
+    self.textView.placeholder = @"Send a message...";
+    
+    [self.view addSubview:self.containerView];
+    
+    UIImage *rawEntryBackground = [UIImage imageNamed:@"MessageEntryInputField.png"];
+    UIImage *entryBackground = [rawEntryBackground stretchableImageWithLeftCapWidth:13 topCapHeight:22];
+    UIImageView *entryImageView = [[UIImageView alloc] initWithImage:entryBackground];
+    entryImageView.frame = CGRectMake(5, 0, 248, 40);
+    entryImageView.autoresizingMask = UIViewAutoresizingFlexibleHeight | UIViewAutoresizingFlexibleWidth;
+    
+    UIImage *rawBackground = [UIImage imageNamed:@"MessageEntryBackground.png"];
+    UIImage *background = [rawBackground stretchableImageWithLeftCapWidth:13 topCapHeight:22];
+    UIImageView *imageView = [[UIImageView alloc] initWithImage:background];
+    imageView.frame = CGRectMake(0, 0, self.containerView.frame.size.width, self.containerView.frame.size.height);
+    imageView.autoresizingMask = UIViewAutoresizingFlexibleHeight | UIViewAutoresizingFlexibleWidth;
 
-    /*[[CHNetworkManager sharedManager] getMessagesFromDate:[[NSDate alloc] initWithTimeIntervalSinceNow:0] group:nil  callback:^(NSArray *messages) {
-        DLog(@"Returned: %@", messages);
-    }];*/
+    
+    self.textView.autoresizingMask = UIViewAutoresizingFlexibleWidth;
+    
+    [self.containerView addSubview:imageView];
+    [self.containerView addSubview:self.textView];
+    [self.containerView addSubview:entryImageView];
+    
+    
+    UIImage *sendBtnBackground = [[UIImage imageNamed:@"MessageEntrySendButton.png"] stretchableImageWithLeftCapWidth:13 topCapHeight:0];
+    UIImage *selectedSendBtnBackground = [[UIImage imageNamed:@"MessageEntrySendButton.png"] stretchableImageWithLeftCapWidth:13 topCapHeight:0];
+    
+    
+    
+    UIButton *doneBtn = [UIButton buttonWithType:UIButtonTypeRoundedRect]; //[UIButton buttonWithType:UIButtonTypeCustom];
+	doneBtn.frame = CGRectMake(self.containerView.frame.size.width - 72, 1, 72, 40);
+    doneBtn.autoresizingMask = UIViewAutoresizingFlexibleTopMargin | UIViewAutoresizingFlexibleLeftMargin;
+	[doneBtn setTitle:@"Send" forState:UIControlStateNormal];
+    
+    //[doneBtn setTitleShadowColor:[UIColor colorWithWhite:0 alpha:0.4] forState:UIControlStateNormal];
+    doneBtn.titleLabel.shadowOffset = CGSizeMake (0.0, -1.0);
+    doneBtn.titleLabel.font = [UIFont systemFontOfSize:18.0f];//[UIFont boldSystemFontOfSize:18.0f];
+    
+    [doneBtn setTitleColor:[UIColor blueColor] forState:UIControlStateNormal];
+	[doneBtn addTarget:self action:@selector(sendMessage) forControlEvents:UIControlEventTouchUpInside];
+    //[doneBtn setBackgroundImage:sendBtnBackground forState:UIControlStateNormal];
+    //[doneBtn setBackgroundImage:selectedSendBtnBackground forState:UIControlStateSelected];
+	[self.containerView addSubview:doneBtn];
+    self.containerView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleTopMargin;
+   
+    //Reload message table when app returns to foreground
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(reloadTableViewData) name:@"ReloadAppDelegateTable" object:nil];
+    
+    self.previousMessageTextViewRect = CGRectZero;
+    
+    // Set table view content offset
+    self.messageTable.contentInset = UIEdgeInsetsMake(0, 0, kDefaultContentOffset, 0);
+    
+    
+    [[CHSocketManager sharedManager] setDelegate:self];
+    
+    NSArray *members = _group[@"members"];
+    NSMutableDictionary *tempIds = [NSMutableDictionary dictionary];
+    [members enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
+        NSDictionary *dict = obj;
+        tempIds[dict[@"_id"]] = dict[@"username"];
+    }];
+    self.userIds = tempIds;
     
     _messageArray = [[NSMutableArray alloc] init];
     _messageAuthorsArray = [[NSMutableArray alloc] init];
-    [self.messageTable setDelegate:self];
-    [self.messageTable setDataSource:self];
-    /* _messageTable = [[UITableView alloc]initWithFrame:CGRectMake(0, 50, 300, 200)];
-    [self.messageTable registerClass:[CHMessageTableViewCell class] forCellReuseIdentifier:@"CHMessageTableViewCell"];
-    
-    [_messageTable setDelegate:self];
-    [_messageTable setDataSource:self];
-    
-    
-    
-    [self.view addSubview:_messageTable];
-     */
-    
-
-    
-    /*
-    _messageField = [[UITextField alloc] initWithFrame:CGRectMake(35, 275, 250, 35)];
-    
-    _messageField.textColor = [UIColor colorWithRed:0/256.0 green:84/256.0 blue:129/256.0 alpha:1.0];
-    _messageField.font = [UIFont fontWithName:@"Helvetica-Bold" size:16];
-    _messageField.backgroundColor=[UIColor blueColor];
-    _messageField.text=@"Hello World";
-    [_messageField setDelegate:self];
-    [self.view addSubview:_messageField];
-    */
     
     self.messages = @"";
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(keyboardWillShow:) name:UIKeyboardWillShowNotification object:nil];
@@ -100,9 +139,6 @@
     //
     self.members = [NSMutableDictionary dictionary];
     for (NSDictionary *aMember in self.group[@"members"]) {
-        /// Map them together
-        /// "_id": "532f38fd53664a0200000001",
-        /// "username": "ethan"
         self.members[aMember[@"_id"]] = aMember[@"username"];
     }
     
@@ -116,12 +152,23 @@
             [self.messageArray addObject:message[@"text"]];
             [self.messageAuthorsArray addObject:self.members[message[@"from"]]];
         }
-
-        [self.messageTable setContentOffset:CGPointMake(0, CGFLOAT_MAX)];
+        
+        self.messageArray = [[[self.messageArray reverseObjectEnumerator] allObjects] mutableCopy];
+        self.messageAuthorsArray = [[[self.messageAuthorsArray reverseObjectEnumerator] allObjects] mutableCopy];
+        
+        
+        
+        //[self.messageTable setContentOffset:CGPointMake(0, CGFLOAT_MAX)];
         [self.messageTable reloadData];
+        
+        [self.messageTable scrollToRowAtIndexPath:[NSIndexPath indexPathForRow:_messageArray.count - 1 inSection:0] atScrollPosition:UITableViewScrollPositionBottom animated:NO];
     }];
     
-    [self.messageField becomeFirstResponder];
+}
+
+-(void)resignTextView
+{
+	[self.textView resignFirstResponder];
 }
 
 - (void) inviteUser;
@@ -132,107 +179,108 @@
     [self.navigationController pushViewController:inviteViewController animated:YES];
 }
 
-- (void) socketIODidConnect:(SocketIO *)socket;
+- (void)sendMessage;
 {
-    DLog(@"Connected! %@", socket);
-   // NSString *text = self.messageDisplayTextView.text;
-//    text = [text stringByAppendingString:@"\nConnected\n"];
-//    self.messageDisplayTextView.text = text;
     
-}
-
-- (void) socketIODidDisconnect:(SocketIO *)socket disconnectedWithError:(NSError *)error;
-{
-    DLog(@"Disconnected! %@ %@", socket, error);
-}
-
-- (void) socketIO:(SocketIO *)socket didReceiveMessage:(SocketIOPacket *)packet;
-{
-    DLog(@"Messsage: %@", packet.data);
-}
-
-- (void) socketIO:(SocketIO *)socket didReceiveJSON:(SocketIOPacket *)packet;
-{
-    DLog(@"JSON: %@", packet.data);
-}
-
-- (void) socketIO:(SocketIO *)socket didReceiveEvent:(SocketIOPacket *)packet;
-{
-    DLog(@"Event: %@", packet.dataAsJSON);
-    if ([packet.dataAsJSON[@"name"] isEqualToString:@"message"]) {
-        NSDictionary *data = [packet.dataAsJSON[@"args"] firstObject];
-        
-//            self.messageDisplayTextView.text = [NSString stringWithFormat:@"%@ %@\n%@: %@\n\n", self.messageDisplayTextView.text, [[NSDate alloc] initWithTimeIntervalSinceNow:0], data[@"from"], data[@"text"]];
-
-        [self.messageArray addObject:data[@"text"]];
-      //  [_messageTable setContentOffset:CGPointMake(0, CGFLOAT_MAX)];
-        
-        [self.messageAuthorsArray addObject:data[@"from"]];
-
-//        [self.messageDisplayTextView scrollRangeToVisible:NSMakeRange([self.messageDisplayTextView.text length], 0)];
-        [self.messageTable setContentOffset:CGPointMake(0, CGFLOAT_MAX)];
-        
-        [self.messageTable reloadData];
+    NSString *msg = self.textView.text;
+    
+    DLog(@"Send message: %@", msg);
+    
+    if ( [msg isEqualToString:@""] || msg == nil ) {
+        return;
     }
-
-}
-
-
-/*
-#pragma mark - Navigation
-
-// In a storyboard-based application, you will often want to do a little preparation before navigation
-- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender
-{
-    // Get the new view controller using [segue destinationViewController].
-    // Pass the selected object to the new view controller.
-}
-*/
-
-- (IBAction)sendButtonTouched:(id)sender {
-    NSString *msg = self.messageField.text;
     
     CHUser *currUser = [[CHNetworkManager sharedManager] currentUser];
-    DLog(@"Curr user: %@", currUser.username);
-    DLog(@"group: %@", self.groupId);
-    [_socket sendEvent:@"message" withData:@{@"from": currUser.username, @"text" : msg, @"groupId": self.groupId}];
-
-    self.messageField.text = @"";
     
-//    [self.messageTable setContentOffset:CGPointMake(0, CGFLOAT_MAX)];
-    [self.messageTable setContentOffset:CGPointMake(0, CGFLOAT_MAX)];
+    [[CHSocketManager sharedManager] sendMessageWithEvent:@"message" data:@{@"from": currUser.userId, @"text" : msg, @"group": self.groupId}];
+    
+    self.textView.text = @"";
+    
+    [self.messageTable beginUpdates];
+    
     [_messageArray addObject:msg];
-    [_messageAuthorsArray addObject:currUser.username];
-
-    [self.messageTable reloadData];
-
-}
-
--(BOOL)textFieldShouldReturn:(UITextField *)textField
-{
-    [textField resignFirstResponder];
-    return YES;
-}
-
-- (void) dealloc
-{
-    [[NSNotificationCenter defaultCenter] removeObserver: self];
-}
-
-- (void) keyboardWillShow: (NSNotification*) n
-{
-    NSValue* bv = n.userInfo[UIKeyboardFrameEndUserInfoKey];
-    CGRect br = [bv CGRectValue];
+    [_messageAuthorsArray addObject:_members[currUser.userId]];
     
-    _textViewSpaceToBottomConstraint.constant = br.size.height;
-
-//    self.messageTextField.text = @"";
-    self.messageField.text = @"";
+    // Magically add rows to table view
+    [self.messageTable insertRowsAtIndexPaths:@[[NSIndexPath indexPathForRow:_messageArray.count - 1 inSection:0]] withRowAnimation:UITableViewRowAnimationAutomatic];
+    
+    [self.messageTable endUpdates];
+    
+    [self.messageTable scrollToRowAtIndexPath:[NSIndexPath indexPathForRow:_messageArray.count - 1 inSection:0] atScrollPosition:UITableViewScrollPositionBottom animated:YES];
+    
+    [self resignTextView];
 }
 
-- (void) keyboardWillHide: (NSNotification*) n
+- (void) keyboardWillShow: (NSNotification*) notification
 {
-    _textViewSpaceToBottomConstraint.constant = 0;
+    NSDictionary* keyboardInfo = [notification userInfo];
+    NSValue* keyboardFrameEnded = [keyboardInfo valueForKey:UIKeyboardFrameBeginUserInfoKey];
+    CGRect keyboardFrameEndedRect = [keyboardFrameEnded CGRectValue];
+    
+    NSInteger keyboardHeight = keyboardFrameEndedRect.size.height;
+    
+    // Need to access keyboard height in textViewDidGrow. Using global for now, should refactor
+    self.heightOfKeyboard = keyboardHeight;
+    
+    
+    // get keyboard size and loctaion
+	CGRect keyboardBounds;
+    [[notification.userInfo valueForKey:UIKeyboardFrameEndUserInfoKey] getValue: &keyboardBounds];
+  
+    // Need to translate the bounds to account for rotation.
+    keyboardBounds = [self.view convertRect:keyboardBounds toView:nil];
+
+    
+    
+    NSTimeInterval animationDuration = [[notification.userInfo objectForKey:UIKeyboardAnimationDurationUserInfoKey] floatValue];
+    UIViewAnimationCurve animationCurve = [[notification.userInfo objectForKey:UIKeyboardAnimationCurveUserInfoKey] intValue];
+    
+    [UIView setAnimationCurve:animationCurve];
+    
+    [UIView animateWithDuration:animationDuration animations:^{
+        CGRect containerFrame = self.containerView.frame;
+        self.messageTable.contentInset = UIEdgeInsetsMake(0, 0, keyboardHeight+containerFrame.size.height, 0);
+        self.messageTable.scrollIndicatorInsets = UIEdgeInsetsZero;
+        
+            [self.messageTable scrollToRowAtIndexPath:[NSIndexPath indexPathForRow:_messageArray.count - 1 inSection:0] atScrollPosition:UITableViewScrollPositionBottom animated:YES];
+        
+        
+        containerFrame.origin.y = self.view.bounds.size.height - (keyboardBounds.size.height + containerFrame.size.height);
+        
+        // set views with new info
+        self.containerView.frame = containerFrame;
+        
+    }];
+    
+
+
+
+}
+
+- (void) keyboardWillHide: (NSNotification*) notification
+{
+    
+    NSTimeInterval animationDuration = [[notification.userInfo objectForKey:UIKeyboardAnimationDurationUserInfoKey] floatValue];
+    UIViewAnimationCurve animationCurve = [[notification.userInfo objectForKey:UIKeyboardAnimationCurveUserInfoKey] intValue];
+    
+    [UIView setAnimationCurve:animationCurve];
+    
+    [UIView animateWithDuration:animationDuration animations:^{
+        CGRect containerFrame = self.containerView.frame;
+        self.messageTable.contentInset = UIEdgeInsetsMake(0, 0, containerFrame.size.height, 0);
+        self.messageTable.scrollIndicatorInsets = UIEdgeInsetsZero;
+        
+        
+        containerFrame.origin.y = self.view.bounds.size.height - containerFrame.size.height;
+        
+        // set views with new info
+        self.containerView.frame = containerFrame;
+
+    }];
+    
+    
+    
+    [self.messageTable scrollToRowAtIndexPath:[NSIndexPath indexPathForRow:_messageArray.count - 1 inSection:0] atScrollPosition:UITableViewScrollPositionBottom animated:YES];
 }
 
 #pragma mark - TableView DataSource Implementation
@@ -242,77 +290,109 @@
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
-    DLog(@"Cell row: %i", indexPath.row);
-    static NSString *cellIdentifier = @"CHMessageTableViewCell";
+    static NSString *cHMessageTableViewCell = @"CHMessageTableViewCell";
     
-    CHMessageTableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:cellIdentifier forIndexPath:indexPath];
+    CHMessageTableViewCell *cell = nil;
 
-    //cell.authorLabel.text = _messageAuthorsArray[indexPath.row];
-    //cell.messageLabel.text = _messageArray[indexPath.row];
-    
      CHUser *currUser = [[CHNetworkManager sharedManager] currentUser];
     
-    
-    
-    if( _messageAuthorsArray[indexPath.row] == currUser.username ) {
-//    if( [cell.authorLabel.text])
-        cell.authorLabel.text = @"";
-        cell.messageLabel.text = [self.messageArray objectAtIndex:indexPath.row];
-        cell.messageLabel.textAlignment = UITextLayoutDirectionRight;
-       // CGRectMake(boundsX+50 ,20, 300, 25);
-        //self.messageLabel.frame = frame;
-//        cell.frame
-        
-        
-       /* UILabel *lisnerMessage=[[UILabel alloc] init];
-        lisnerMessage.backgroundColor = [UIColor clearColor];
-        [lisnerMessage setFrame:cell.frame];
-        lisnerMessage.numberOfLines=0;
-        lisnerMessage.textAlignment=UITextLayoutDirectionRight;
-        lisnerMessage.text=[self.messageArray objectAtIndex:indexPath.row];
-        [cell.contentView addSubview:lisnerMessage];
-        */
-        
-        
-        
-        
-       // cell.messageLabel.frame = CGRectMake(;
-//        cell.messageLabel.textAlignment = UITextLayoutDirectionRight;
+    if( [_messageAuthorsArray[indexPath.row] isEqualToString:self.members[currUser.userId]] ) {
+        cell = [tableView dequeueReusableCellWithIdentifier:@"CHOwnMessageTableViewCell" forIndexPath:indexPath];
+        cell.messageTextView.text = [self.messageArray objectAtIndex:indexPath.row];
     }
     
     else {
+        cell = [tableView dequeueReusableCellWithIdentifier:cHMessageTableViewCell forIndexPath:indexPath];
         cell.authorLabel.text = [[NSString alloc] initWithFormat:@"%@:",[self.messageAuthorsArray objectAtIndex:indexPath.row]];
-        cell.messageLabel.text = [self.messageArray objectAtIndex:indexPath.row];
-        /*
-        UILabel *authMessage = [[UILabel alloc] init];
-        authMessage.backgroundColor = [UIColor redColor];
-        [authMessage setFrame:cell.frame];
-        authMessage.numberOfLines = 0;
-        authMessage.textAlignment = UITextLayoutDirectionLeft;
-        authMessage.text = [[NSString alloc] initWithFormat:@"%@:", [self.messageAuthorsArray objectAtIndex:indexPath.row] ];
-        [cell.contentView addSubview:authMessage];
-
-        UILabel *lisnerMessage=[[UILabel alloc] init];
-        lisnerMessage.backgroundColor = [UIColor clearColor];
-        [lisnerMessage setFrame:cell.frame];
-        lisnerMessage.numberOfLines=0;
-        lisnerMessage.textAlignment=UITextLayoutDirectionRight;
-        lisnerMessage.text=[self.messageArray objectAtIndex:indexPath.row];
-        [cell.contentView addSubview:lisnerMessage];
-         */
+        cell.messageTextView.text = [self.messageArray objectAtIndex:indexPath.row];
     }
 
     return cell;
 }
 
+-(void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath;
+{
+    DLog(@"Selected a row");
+    [self resignTextView];
+}
+
 -(CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath;
 {
-    CGSize renderedSize = [[self.messageArray objectAtIndex:indexPath.row] sizeWithFont: [UIFont fontWithName:@"Times New Roman" size:17] constrainedToSize:CGSizeMake(300, CGFLOAT_MAX) lineBreakMode:NSLineBreakByWordWrapping];
+    CGSize renderedSize = [[self.messageArray objectAtIndex:indexPath.row] sizeWithFont: [UIFont systemFontOfSize:14.0] constrainedToSize:CGSizeMake(205, CGFLOAT_MAX) lineBreakMode:NSLineBreakByWordWrapping];
+
+    return renderedSize.height + 30.0;
+}
+
+-(BOOL)manager:(CHSocketManager *)manager doesCareAboutMessage:(NSDictionary *)message;
+{
+    if( [message[@"group"] isEqualToString:_groupId]) {
+        
+        
+        [self.messageTable beginUpdates];
+        
+        [_messageArray addObject:message[@"text"]];
+        [_messageAuthorsArray addObject:_members[message[@"from"]]];
+        
+        // Magically add rows to table view
+        [self.messageTable insertRowsAtIndexPaths:@[[NSIndexPath indexPathForRow:_messageArray.count - 1 inSection:0]] withRowAnimation:UITableViewRowAnimationAutomatic];
+        
+        [self.messageTable endUpdates];
+        
+        [self.messageTable scrollToRowAtIndexPath:[NSIndexPath indexPathForRow:_messageArray.count - 1 inSection:0] atScrollPosition:UITableViewScrollPositionBottom animated:YES];
     
-    if (renderedSize.height < 50.0) {
-        return 50.0;
+        return YES;
     }
-    return renderedSize.height;
+    return NO;
+}
+
+- (void)reloadTableViewData{
+
+    ///
+    /// Load up old messages
+    ///
+    [[CHNetworkManager sharedManager] getMessagesForGroup:self.groupId callback:^(NSArray *messages) {
+        //[self.messageArray removeAllObjects];
+        //[self.messageAuthorsArray removeAllObjects];
+        self.messageArray =nil;
+        self.messageAuthorsArray = nil;
+        
+        self.messageArray = [[NSMutableArray alloc] init];
+        self.messageAuthorsArray = [[NSMutableArray alloc] init];
+        
+        for ( NSDictionary *message in messages) {
+            [self.messageArray addObject:message[@"text"]];
+            [self.messageAuthorsArray addObject:self.members[message[@"from"]]];
+        }
+        
+        self.messageArray = [[[self.messageArray reverseObjectEnumerator] allObjects] mutableCopy];
+        self.messageAuthorsArray = [[[self.messageAuthorsArray reverseObjectEnumerator] allObjects] mutableCopy];
+
+        [self.messageTable reloadData];
+    }];
+
+}
+
+-(void)viewDidDisappear:(BOOL)animated;
+{
+    [super viewDidDisappear:animated];
+    [[NSNotificationCenter defaultCenter] removeObserver:self];
+}
+
+- (void)growingTextView:(HPGrowingTextView *)growingTextView willChangeHeight:(float)height
+{
+    float diff = (growingTextView.frame.size.height - height);
+    
+	CGRect r = self.containerView.frame;
+    r.size.height -= diff;
+    r.origin.y += diff;
+	self.containerView.frame = r;
+    
+    // Resize table
+    
+    self.messageTable.contentInset = UIEdgeInsetsMake(0, 0, self.containerView.frame.size.height + self.heightOfKeyboard, 0);
+    self.messageTable.scrollIndicatorInsets = UIEdgeInsetsZero;
+    
+    [self.messageTable scrollToRowAtIndexPath:[NSIndexPath indexPathForRow:_messageArray.count - 1 inSection:0] atScrollPosition:UITableViewScrollPositionBottom animated:YES];
 }
 
 @end
