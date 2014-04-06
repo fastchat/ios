@@ -39,9 +39,7 @@
 #pragma mark - Socket IO
 
 - (IBAction)registerWasTouched:(id)sender {
-    DLog(@"Register new user");
     CHRegisterViewController *registerViewController = [self.storyboard instantiateViewControllerWithIdentifier:@"CHRegisterViewController"];
-    DLog(@"navigationController: %@",self.navigationController);
 
     [[self navigationController] pushViewController:registerViewController animated:YES];
 
@@ -57,7 +55,7 @@
                 [[CHSocketManager sharedManager] openSocket];
                 
                 // Fire a notification that will be picked up by the groupList controller to refresh
-                [[NSNotificationCenter defaultCenter] postNotificationName:@"UserLogInSuccessful" object:nil];
+                [[NSNotificationCenter defaultCenter] postNotificationName:@"ReloadGroupListTable" object:nil];
 
                 
                 [self dismissViewControllerAnimated:YES completion:nil];

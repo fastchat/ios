@@ -14,12 +14,13 @@
 #import "CHOwnMessageTableViewCell.h"
 #import "CHSocketManager.h"
 
-#define kDefaultContentOffset 55
+#define kDefaultContentOffset 70
 
 @interface CHMessageViewController ()
 
 @property NSString *messages;
 @property NSMutableArray *messageArray;
+@property NSMutableArray *msgArray;
 @property (nonatomic, strong) SocketIO *socket;
 @property CGRect previousMessageTextViewRect;
 
@@ -111,6 +112,7 @@
     
     _messageArray = [[NSMutableArray alloc] init];
     _messageAuthorsArray = [[NSMutableArray alloc] init];
+    _msgArray = [[NSMutableArray alloc] init];
     
     self.messages = @"";
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(keyboardWillShow:) name:UIKeyboardWillShowNotification object:nil];
@@ -134,11 +136,19 @@
     ///
     [[CHNetworkManager sharedManager] getMessagesForGroup:self.groupId callback:^(NSArray *messages) {
         
-        for ( NSDictionary *message in messages) {
+        for ( NSMutableDictionary *message in messages) {
+            DLog(@"MESSAGE: %@", message);
+            NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
+            [dateFormatter setDateFormat:@"yyyy-MM-dd'T'HH:mm:ss.SSSz"];
+            NSDate *date  = [dateFormatter dateFromString:message[@"sent"]];
+//            message[@"sent"] = date;
+            NSDictionary *newMessage = @{@"from" : message[@"from"], @"text" : message[@"text"], @"sent": date};
+            [_msgArray addObject:newMessage];
+
             [self.messageArray addObject:message[@"text"]];
             [self.messageAuthorsArray addObject:self.members[message[@"from"]]];
         }
-        
+        self.msgArray = [[[self.msgArray reverseObjectEnumerator] allObjects] mutableCopy];
         self.messageArray = [[[self.messageArray reverseObjectEnumerator] allObjects] mutableCopy];
         self.messageAuthorsArray = [[[self.messageAuthorsArray reverseObjectEnumerator] allObjects] mutableCopy];
         
@@ -171,9 +181,12 @@
     }
     
     CHUser *currUser = [[CHNetworkManager sharedManager] currentUser];
+    NSMutableDictionary *data = [[NSMutableDictionary alloc] initWithDictionary:@{@"from": currUser.userId, @"text" : msg, @"group": self.groupId}];
     
-    [[CHSocketManager sharedManager] sendMessageWithEvent:@"message" data:@{@"from": currUser.userId, @"text" : msg, @"group": self.groupId}];
+    [[CHSocketManager sharedManager] sendMessageWithEvent:@"message" data:data];
     
+    data[@"sent"] = [NSDate date];
+    [_msgArray addObject:data];
     self.textView.text = @"";
     
     [self.messageTable beginUpdates];
@@ -217,7 +230,7 @@
     
     [UIView animateWithDuration:animationDuration animations:^{
         CGRect containerFrame = self.containerView.frame;
-        self.messageTable.contentInset = UIEdgeInsetsMake(0, 0, keyboardHeight+containerFrame.size.height, 0);
+        self.messageTable.contentInset = UIEdgeInsetsMake(kDefaultContentOffset, 0, keyboardHeight+containerFrame.size.height, 0);
         self.messageTable.scrollIndicatorInsets = UIEdgeInsetsZero;
         
             [self.messageTable scrollToRowAtIndexPath:[NSIndexPath indexPathForRow:_messageArray.count - 1 inSection:0] atScrollPosition:UITableViewScrollPositionBottom animated:YES];
@@ -242,7 +255,7 @@
     
     [UIView animateWithDuration:animationDuration animations:^{
         CGRect containerFrame = self.containerView.frame;
-        self.messageTable.contentInset = UIEdgeInsetsMake(0, 0, containerFrame.size.height, 0);
+        self.messageTable.contentInset = UIEdgeInsetsMake(kDefaultContentOffset, 0, containerFrame.size.height, 0);
         self.messageTable.scrollIndicatorInsets = UIEdgeInsetsZero;
         
         
@@ -285,6 +298,27 @@
         
         cell.messageTextView.attributedText = attrString;//[self.messageArray objectAtIndex:indexPath.row];
         //cell.messageTextView.text = [self.messageArray objectAtIndex:indexPath.row];
+        cell.authorLabel.text = [[NSString alloc] initWithFormat:@"%@:",[self.messageAuthorsArray objectAtIndex:indexPath.row]];
+        if ([[_msgArray objectAtIndex:indexPath.row] objectForKey:@"sent"] != nil) {
+            // Format the timestamp
+            NSDate *timestamp = [[_msgArray objectAtIndex:indexPath.row] objectForKey:@"sent"];
+            DLog(@"Timestamp: %@", timestamp);
+            NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
+            [dateFormatter setDateFormat:@"yyyy-MM-dd'T'HH:mm:ss.SSSz"];
+            
+            //            NSDate *date  = [dateFormatter dateFromString:[timestamp ]];
+            //DLog(@"date: %@", date);
+            // Convert to new Date Format
+            //            [dateFormatter setDateFormat:@"yyyy-MM-dd HH:mm:ss"];
+            [dateFormatter setDateFormat:@"HH:mm"];
+            NSString *newDate = [dateFormatter stringFromDate:timestamp];
+            DLog(@"New date: %@", newDate);
+            cell.timestampLabel.text = newDate;//[[_msgArray objectAtIndex:indexPath.row] objectForKey:@"sent"];
+        }
+        else {
+            cell.timestampLabel.text = @"";
+        }
+
     }
     
     else {
@@ -303,6 +337,26 @@
         [[NSAttributedString alloc] initWithString:[NSString stringWithFormat:@"%@",[self.messageArray objectAtIndex:indexPath.row]] attributes:attrsDictionary];
         
         cell.messageTextView.attributedText = attrString;
+        DLog(@"Row: %d, arrayLength: %d", indexPath.row, _msgArray.count);
+        if ([[_msgArray objectAtIndex:indexPath.row] objectForKey:@"sent"] != nil) {
+            // Format the timestamp
+            NSDate *timestamp = [[_msgArray objectAtIndex:indexPath.row] objectForKey:@"sent"];
+            DLog(@"Timestamp: %@", timestamp);
+            NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
+            [dateFormatter setDateFormat:@"yyyy-MM-dd'T'HH:mm:ss.SSSz"];
+
+//            NSDate *date  = [dateFormatter dateFromString:[timestamp ]];
+            //DLog(@"date: %@", date);
+            // Convert to new Date Format
+//            [dateFormatter setDateFormat:@"yyyy-MM-dd HH:mm:ss"];
+            [dateFormatter setDateFormat:@"HH:mm"];
+            NSString *newDate = [dateFormatter stringFromDate:timestamp];
+            DLog(@"New date: %@", newDate);
+            cell.timestampLabel.text = newDate;//[[_msgArray objectAtIndex:indexPath.row] objectForKey:@"sent"];
+        }
+        else {
+            cell.timestampLabel.text = @"";
+        }
         
         //cell.messageTextView.attributedText = [self.messageArray objectAtIndex:indexPath.row];
 //        cell.messageTextView.text = [self.messageArray objectAtIndex:indexPath.row];
@@ -333,6 +387,16 @@
         
         [_messageArray addObject:message[@"text"]];
         [_messageAuthorsArray addObject:_members[message[@"from"]]];
+        
+        
+        
+        DLog(@"MESSAGE: %@", message);
+        NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
+        [dateFormatter setDateFormat:@"yyyy-MM-dd'T'HH:mm:ss.SSSz"];
+        NSDate *date  = [dateFormatter dateFromString:message[@"sent"]];
+        //            message[@"sent"] = date;
+        NSDictionary *newMessage = @{@"from" : message[@"from"], @"text" : message[@"text"], @"sent": date};
+        [_msgArray addObject:newMessage];
         
         // Magically add rows to table view
         [self.messageTable insertRowsAtIndexPaths:@[[NSIndexPath indexPathForRow:_messageArray.count - 1 inSection:0]] withRowAnimation:UITableViewRowAnimationAutomatic];
@@ -385,9 +449,10 @@
     r.size.height -= diff;
     r.origin.y += diff;
 	self.containerView.frame = r;
+
     
     // Resize table
-    self.messageTable.contentInset = UIEdgeInsetsMake(0, 0, self.containerView.frame.size.height + self.heightOfKeyboard, 0);
+    self.messageTable.contentInset = UIEdgeInsetsMake(kDefaultContentOffset, 0, self.containerView.frame.size.height + self.heightOfKeyboard, 0);
     self.messageTable.scrollIndicatorInsets = UIEdgeInsetsZero;
     
     [self.messageTable scrollToRowAtIndexPath:[NSIndexPath indexPathForRow:_messageArray.count - 1 inSection:0] atScrollPosition:UITableViewScrollPositionBottom animated:YES];

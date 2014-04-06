@@ -21,8 +21,8 @@
 -(void)logoutWithCallback: (void (^)(bool successful, NSError *error))callback;
 - (void)registerWithUsername: (NSString *)username password:(NSString *)password callback:(void (^)(NSArray *userData))callback;
 - (void)getGroups: (void (^)(NSArray *groups))callback;
-- (void)createGroupWithName: (NSString *)groupName callback: (void (^)(bool successful, NSError *error))callback;
-//- (void)getMessagesFromDate: (NSDate *)date group:(NSString *)group callback:(void (^)(NSArray *messages))callback;
+- (void)createGroupWithName: (NSString *)groupName members: (NSArray *)members callback: (void (^)(bool successful, NSError *error))callback;
+
 - (void)getMessagesForGroup:(NSString *)group callback:(void (^)(NSArray *messages))callback;
 - (void)getProfile: (void (^)(CHUser *userProfile))callback;
 - (void)getProfileOfUser: (NSString *)username callback: (void (^)(CHUser *userProfile))callback;

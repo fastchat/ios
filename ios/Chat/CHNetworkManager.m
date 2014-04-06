@@ -108,10 +108,11 @@
     }];
 }
 
-- (void)createGroupWithName: (NSString *)groupName callback: (void (^)(bool successful, NSError *error))callback;
+- (void)createGroupWithName: (NSString *)groupName members: (NSArray *)members callback: (void (^)(bool successful, NSError *error))callback;
 {
-    [self POST:@"/group" parameters:@{@"name" : groupName} success:^(NSURLSessionDataTask *task, id responseObject) {
-        
+    DLog(@"HERE");
+    [self POST:@"/group" parameters:@{@"name" : groupName, @"members" : members, @"text" : @"Group created"} success:^(NSURLSessionDataTask *task, id responseObject) {
+        DLog(@"Making call");
         if( callback ) {
             callback(YES,nil);
         }

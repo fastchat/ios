@@ -38,7 +38,7 @@
     
     self.navigationItem.title = @"My Groups";
     
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(loadGroupsAndRefresh) name:@"UserLogInSuccessful" object:nil];
+        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(loadGroupsAndRefresh) name:@"ReloadGroupListTable" object:nil];
 
     
     
@@ -58,7 +58,7 @@
     
 
     
-    UIBarButtonItem *addButton = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemAdd target:self action:@selector(showAddView)];
+    UIBarButtonItem *addButton = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemCompose target:self action:@selector(showAddView)];
     self.navigationItem.rightBarButtonItem = addButton;
     
     
