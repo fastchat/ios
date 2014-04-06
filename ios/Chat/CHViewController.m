@@ -39,9 +39,7 @@
 #pragma mark - Socket IO
 
 - (IBAction)registerWasTouched:(id)sender {
-    DLog(@"Register new user");
     CHRegisterViewController *registerViewController = [self.storyboard instantiateViewControllerWithIdentifier:@"CHRegisterViewController"];
-    DLog(@"navigationController: %@",self.navigationController);
 
     [[self navigationController] pushViewController:registerViewController animated:YES];
 
