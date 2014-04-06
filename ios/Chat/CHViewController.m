@@ -50,11 +50,7 @@
 
 - (IBAction)loginWasTouched:(id)sender {
     self.errorLabel.text = @"";
-    DLog(@"Attempting to login with user %@ and password %@", self.emailTextField.text, self.passwordTextField.text);
-    NSDictionary *params = @{@"email": self.emailTextField.text,
-     @"password": self.passwordTextField.text};
     
-
     [[CHNetworkManager sharedManager] postLoginWithUsername:self.emailTextField.text password:self.passwordTextField.text
         callback:^(bool successful, NSError *error) {
             if( successful ) {
@@ -71,9 +67,5 @@
                 self.errorLabel.text = error.localizedDescription;
             }
         }];
-    
-    
-    
-
 }
 @end
