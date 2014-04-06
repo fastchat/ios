@@ -51,7 +51,7 @@
     // you can also set the maximum height in points with maxHeight
     self.textView.maxHeight = 140.0f;
 	self.textView.returnKeyType = UIReturnKeyDefault; //just as an example
-	self.textView.font = [UIFont systemFontOfSize:15.0f];
+	self.textView.font = [UIFont systemFontOfSize:14.0f];
 	self.textView.delegate = self;
     self.textView.internalTextView.scrollIndicatorInsets = UIEdgeInsetsMake(5, 0, 5, 0);
     self.textView.backgroundColor = [UIColor whiteColor];
@@ -373,9 +373,10 @@
 
 -(CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath;
 {
-    CGSize renderedSize = [[self.messageArray objectAtIndex:indexPath.row] sizeWithFont: [UIFont systemFontOfSize:14.0] constrainedToSize:CGSizeMake(205, CGFLOAT_MAX) lineBreakMode:NSLineBreakByWordWrapping];
+    CGSize renderedSize = [[[self.msgArray objectAtIndex:indexPath.row] objectForKey:@"text"] sizeWithFont: [UIFont systemFontOfSize:14.0f] constrainedToSize:CGSizeMake(205, CGFLOAT_MAX) lineBreakMode:NSLineBreakByWordWrapping];
 
-    return renderedSize.height + 30.0;
+    DLog(@"renderedSize: %f", renderedSize.height);
+    return renderedSize.height + 45.0f;
 }
 
 -(BOOL)manager:(CHSocketManager *)manager doesCareAboutMessage:(NSDictionary *)message;
