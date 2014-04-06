@@ -298,13 +298,41 @@
     
     if( [_messageAuthorsArray[indexPath.row] isEqualToString:self.members[currUser.userId]] ) {
         cell = [tableView dequeueReusableCellWithIdentifier:@"CHOwnMessageTableViewCell" forIndexPath:indexPath];
-        cell.messageTextView.text = [self.messageArray objectAtIndex:indexPath.row];
+        // Setting to nil as workaround for iOS 7 bug showing links at wrong time
+        cell.messageTextView.text = nil;
+        [cell.messageTextView setScrollEnabled:NO];
+        
+        //Set attributed string as workaround for iOS 7 bug
+        UIFont *font = [UIFont systemFontOfSize:14.0];
+        NSDictionary *attrsDictionary =
+        [NSDictionary dictionaryWithObject:font
+                                    forKey:NSFontAttributeName];
+        NSAttributedString *attrString =
+        [[NSAttributedString alloc] initWithString:[NSString stringWithFormat:@"%@",[self.messageArray objectAtIndex:indexPath.row]] attributes:attrsDictionary];
+        
+        cell.messageTextView.attributedText = attrString;//[self.messageArray objectAtIndex:indexPath.row];
+        //cell.messageTextView.text = [self.messageArray objectAtIndex:indexPath.row];
     }
     
     else {
         cell = [tableView dequeueReusableCellWithIdentifier:cHMessageTableViewCell forIndexPath:indexPath];
         cell.authorLabel.text = [[NSString alloc] initWithFormat:@"%@:",[self.messageAuthorsArray objectAtIndex:indexPath.row]];
-        cell.messageTextView.text = [self.messageArray objectAtIndex:indexPath.row];
+        // Setting to nil as workaround for iOS 7 bug showing links at wrong time
+        cell.messageTextView.text = nil;
+        [cell.messageTextView setScrollEnabled:NO];
+        
+        //Set attributed string as workaround for iOS 7 bug
+        UIFont *font = [UIFont systemFontOfSize:14.0];
+        NSDictionary *attrsDictionary =
+        [NSDictionary dictionaryWithObject:font
+                                    forKey:NSFontAttributeName];
+        NSAttributedString *attrString =
+        [[NSAttributedString alloc] initWithString:[NSString stringWithFormat:@"%@",[self.messageArray objectAtIndex:indexPath.row]] attributes:attrsDictionary];
+        
+        cell.messageTextView.attributedText = attrString;
+        
+        //cell.messageTextView.attributedText = [self.messageArray objectAtIndex:indexPath.row];
+//        cell.messageTextView.text = [self.messageArray objectAtIndex:indexPath.row];
     }
 
     return cell;
