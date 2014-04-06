@@ -76,7 +76,7 @@
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
     // Accept invite
-    [[CHNetworkManager sharedManager] acceptInviteAtIndex:[[NSNumber alloc] initWithInt:indexPath.row] callback:^(bool successful, NSError *error) {
+    [[CHNetworkManager sharedManager] acceptInviteAtIndex:@(indexPath.row) callback:^(bool successful, NSError *error) {
         //Do Stuff
     }];
 }
