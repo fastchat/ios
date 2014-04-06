@@ -14,7 +14,7 @@
 #import "CHOwnMessageTableViewCell.h"
 #import "CHSocketManager.h"
 
-#define kDefaultContentOffset 55
+#define kDefaultContentOffset 70
 
 @interface CHMessageViewController ()
 
@@ -242,7 +242,7 @@
     
     [UIView animateWithDuration:animationDuration animations:^{
         CGRect containerFrame = self.containerView.frame;
-        self.messageTable.contentInset = UIEdgeInsetsMake(0, 0, containerFrame.size.height, 0);
+        self.messageTable.contentInset = UIEdgeInsetsMake(kDefaultContentOffset, 0, containerFrame.size.height, 0);
         self.messageTable.scrollIndicatorInsets = UIEdgeInsetsZero;
         
         
@@ -385,6 +385,7 @@
     r.size.height -= diff;
     r.origin.y += diff;
 	self.containerView.frame = r;
+
     
     // Resize table
     self.messageTable.contentInset = UIEdgeInsetsMake(0, 0, self.containerView.frame.size.height + self.heightOfKeyboard, 0);
