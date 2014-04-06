@@ -24,10 +24,13 @@
 @property NSString *messages;
 @property NSMutableArray *messageArray;
 @property (nonatomic, strong) SocketIO *socket;
+@property CGRect previousMessageTextViewRect;
 
 
 @property NSMutableArray *messageAuthorsArray;
 @property (nonatomic, strong) NSMutableDictionary *members;
+
+@property float heightOfKeyboard;
 
 @end
 
@@ -37,9 +40,72 @@
 {
     [super viewDidLoad];
     // Do any additional setup after loading the view.
+    self.messageEntryField.hidden = YES;
     
+    self.containerView = [[UIView alloc] initWithFrame:CGRectMake(0, self.view.frame.size.height - 40, 320, 40)];
+    
+    self.textView = [[HPGrowingTextView alloc] initWithFrame:CGRectMake(6, 3, 240, 40)];
+    self.textView.isScrollable = NO;
+    self.textView.contentInset = UIEdgeInsetsMake(0, 5, 0, 5);
+    
+	self.textView.minNumberOfLines = 1;
+	self.textView.maxNumberOfLines = 6;
+    // you can also set the maximum height in points with maxHeight
+    self.textView.maxHeight = 140.0f;
+	self.textView.returnKeyType = UIReturnKeyDefault; //just as an example
+	self.textView.font = [UIFont systemFontOfSize:15.0f];
+	self.textView.delegate = self;
+    self.textView.internalTextView.scrollIndicatorInsets = UIEdgeInsetsMake(5, 0, 5, 0);
+    self.textView.backgroundColor = [UIColor whiteColor];
+    self.textView.placeholder = @"Send a message...";
+    
+    [self.view addSubview:self.containerView];
+    
+    UIImage *rawEntryBackground = [UIImage imageNamed:@"MessageEntryInputField.png"];
+    UIImage *entryBackground = [rawEntryBackground stretchableImageWithLeftCapWidth:13 topCapHeight:22];
+    UIImageView *entryImageView = [[UIImageView alloc] initWithImage:entryBackground];
+    entryImageView.frame = CGRectMake(5, 0, 248, 40);
+    entryImageView.autoresizingMask = UIViewAutoresizingFlexibleHeight | UIViewAutoresizingFlexibleWidth;
+    
+    UIImage *rawBackground = [UIImage imageNamed:@"MessageEntryBackground.png"];
+    UIImage *background = [rawBackground stretchableImageWithLeftCapWidth:13 topCapHeight:22];
+    UIImageView *imageView = [[UIImageView alloc] initWithImage:background];
+    imageView.frame = CGRectMake(0, 0, self.containerView.frame.size.width, self.containerView.frame.size.height);
+    imageView.autoresizingMask = UIViewAutoresizingFlexibleHeight | UIViewAutoresizingFlexibleWidth;
+
+    
+    self.textView.autoresizingMask = UIViewAutoresizingFlexibleWidth;
+    
+    [self.containerView addSubview:imageView];
+    [self.containerView addSubview:self.textView];
+    [self.containerView addSubview:entryImageView];
+    
+    
+    UIImage *sendBtnBackground = [[UIImage imageNamed:@"MessageEntrySendButton.png"] stretchableImageWithLeftCapWidth:13 topCapHeight:0];
+    UIImage *selectedSendBtnBackground = [[UIImage imageNamed:@"MessageEntrySendButton.png"] stretchableImageWithLeftCapWidth:13 topCapHeight:0];
+    
+    
+    
+    UIButton *doneBtn = [UIButton buttonWithType:UIButtonTypeRoundedRect]; //[UIButton buttonWithType:UIButtonTypeCustom];
+	doneBtn.frame = CGRectMake(self.containerView.frame.size.width - 69, 8, 63, 27);
+    doneBtn.autoresizingMask = UIViewAutoresizingFlexibleTopMargin | UIViewAutoresizingFlexibleLeftMargin;
+	[doneBtn setTitle:@"Send" forState:UIControlStateNormal];
+    
+    //[doneBtn setTitleShadowColor:[UIColor colorWithWhite:0 alpha:0.4] forState:UIControlStateNormal];
+    doneBtn.titleLabel.shadowOffset = CGSizeMake (0.0, -1.0);
+    doneBtn.titleLabel.font = [UIFont systemFontOfSize:18.0f];//[UIFont boldSystemFontOfSize:18.0f];
+    
+    [doneBtn setTitleColor:[UIColor blueColor] forState:UIControlStateNormal];
+	[doneBtn addTarget:self action:@selector(sendMessage) forControlEvents:UIControlEventTouchUpInside];
+    //[doneBtn setBackgroundImage:sendBtnBackground forState:UIControlStateNormal];
+    //[doneBtn setBackgroundImage:selectedSendBtnBackground forState:UIControlStateSelected];
+	[self.containerView addSubview:doneBtn];
+    self.containerView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleTopMargin;
+   
     //Reload message table when app returns to foreground
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(reloadTableViewData) name:@"ReloadAppDelegateTable" object:nil];
+    
+    self.previousMessageTextViewRect = CGRectZero;
     
     // Set table view content offset
     self.messageTable.contentInset = UIEdgeInsetsMake(0, 0, kDefaultContentOffset, 0);
@@ -98,11 +164,11 @@
         [self.messageTable scrollToRowAtIndexPath:[NSIndexPath indexPathForRow:_messageArray.count - 1 inSection:0] atScrollPosition:UITableViewScrollPositionBottom animated:NO];
     }];
     
-    //[self.messageEntryField becomeFirstResponder];
-    
-    //[self.messageField sizeToFit];
-        self.messageEntryField.layer.cornerRadius = 5.0;
-    [self.messageEntryField sizeToFit];
+}
+
+-(void)resignTextView
+{
+	[self.textView resignFirstResponder];
 }
 
 - (void) inviteUser;
@@ -113,87 +179,36 @@
     [self.navigationController pushViewController:inviteViewController animated:YES];
 }
 
-/*- (void) socketIODidConnect:(SocketIO *)socket;
+- (void)sendMessage;
 {
-    DLog(@"Connected! %@", socket);
-}
-
-- (void) socketIODidDisconnect:(SocketIO *)socket disconnectedWithError:(NSError *)error;
-{
-    DLog(@"Disconnected! %@ %@", socket, error);
-}
-
-- (void) socketIO:(SocketIO *)socket didReceiveMessage:(SocketIOPacket *)packet;
-{
-    DLog(@"Messsage: %@", packet.data);
-}
-
-- (void) socketIO:(SocketIO *)socket didReceiveJSON:(SocketIOPacket *)packet;
-{
-    DLog(@"JSON: %@", packet.data);
-}
-
-- (void) socketIO:(SocketIO *)socket didReceiveEvent:(SocketIOPacket *)packet;
-{
-    DLog(@"RECEIVED AN EVENT RIGHT OVER HERE");
-    DLog(@"Event: %@", packet.dataAsJSON);
-    if ([packet.dataAsJSON[@"name"] isEqualToString:@"message"]) {
-        NSDictionary *data = [packet.dataAsJSON[@"args"] firstObject];
-        
-//            self.messageDisplayTextView.text = [NSString stringWithFormat:@"%@ %@\n%@: %@\n\n", self.messageDisplayTextView.text, [[NSDate alloc] initWithTimeIntervalSinceNow:0], data[@"from"], data[@"text"]];
-
-        // Ensure only messages from the current group are used
-//        if (self.groupId isEqualToString:packet.dataAsJSON[@"groupId"]) {
-            [self.messageArray addObject:data[@"text"]];
-      //  [_messageTable setContentOffset:CGPointMake(0, CGFLOAT_MAX)];
-        
-            [self.messageAuthorsArray addObject:data[@"from"]];
-
-//        [self.messageDisplayTextView scrollRangeToVisible:NSMakeRange([self.messageDisplayTextView.text length], 0)];
-            [self.messageTable setContentOffset:CGPointMake(0, CGFLOAT_MAX)];
-        
-            [self.messageTable reloadData];
-    }
-
-}
-*/
-
-/*
-#pragma mark - Navigation
-
-// In a storyboard-based application, you will often want to do a little preparation before navigation
-- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender
-{
-    // Get the new view controller using [segue destinationViewController].
-    // Pass the selected object to the new view controller.
-}
-*/
-
-- (IBAction)sendButtonTouched:(id)sender {
-    NSString *msg = self.messageEntryField.text;
+    
+    NSString *msg = self.textView.text;
+    
+    DLog(@"Send message: %@", msg);
     
     if ( [msg isEqualToString:@""] || msg == nil ) {
         return;
     }
     
     CHUser *currUser = [[CHNetworkManager sharedManager] currentUser];
-
+    
     [[CHSocketManager sharedManager] sendMessageWithEvent:@"message" data:@{@"from": currUser.userId, @"text" : msg, @"group": self.groupId}];
     
-    self.messageEntryField.text = @"";
-
+    self.textView.text = @"";
+    
     [self.messageTable beginUpdates];
     
     [_messageArray addObject:msg];
     [_messageAuthorsArray addObject:_members[currUser.userId]];
-
+    
     // Magically add rows to table view
     [self.messageTable insertRowsAtIndexPaths:@[[NSIndexPath indexPathForRow:_messageArray.count - 1 inSection:0]] withRowAnimation:UITableViewRowAnimationAutomatic];
     
     [self.messageTable endUpdates];
     
     [self.messageTable scrollToRowAtIndexPath:[NSIndexPath indexPathForRow:_messageArray.count - 1 inSection:0] atScrollPosition:UITableViewScrollPositionBottom animated:YES];
-
+    
+    [self resignTextView];
 }
 
 - (void) keyboardWillShow: (NSNotification*) notification
@@ -204,35 +219,68 @@
     
     NSInteger keyboardHeight = keyboardFrameEndedRect.size.height;
     
-    float animationDuration = [[keyboardInfo valueForKey:UIKeyboardAnimationDurationUserInfoKey] floatValue];
+    // Need to access keyboard height in textViewDidGrow. Using global for now, should refactor
+    self.heightOfKeyboard = keyboardHeight;
     
-    self.messageTable.contentInset = UIEdgeInsetsMake(0, 0, keyboardHeight+kDefaultContentOffset, 0);
+    
+    // get keyboard size and loctaion
+	CGRect keyboardBounds;
+    [[notification.userInfo valueForKey:UIKeyboardFrameEndUserInfoKey] getValue: &keyboardBounds];
+  
+    // Need to translate the bounds to account for rotation.
+    keyboardBounds = [self.view convertRect:keyboardBounds toView:nil];
+
+    
+    
+    NSTimeInterval animationDuration = [[notification.userInfo objectForKey:UIKeyboardAnimationDurationUserInfoKey] floatValue];
+    UIViewAnimationCurve animationCurve = [[notification.userInfo objectForKey:UIKeyboardAnimationCurveUserInfoKey] intValue];
+    
+    [UIView setAnimationCurve:animationCurve];
+    
     [UIView animateWithDuration:animationDuration animations:^{
-        self.bottomDistance.constant = keyboardHeight;
-        [self.view layoutIfNeeded];
-    } completion:^(BOOL finished) {
+        CGRect containerFrame = self.containerView.frame;
+        self.messageTable.contentInset = UIEdgeInsetsMake(0, 0, keyboardHeight+containerFrame.size.height, 0);
+        self.messageTable.scrollIndicatorInsets = UIEdgeInsetsZero;
+        
+            [self.messageTable scrollToRowAtIndexPath:[NSIndexPath indexPathForRow:_messageArray.count - 1 inSection:0] atScrollPosition:UITableViewScrollPositionBottom animated:YES];
+        
+        
+        containerFrame.origin.y = self.view.bounds.size.height - (keyboardBounds.size.height + containerFrame.size.height);
+        
+        // set views with new info
+        self.containerView.frame = containerFrame;
         
     }];
-    [self.messageTable scrollToRowAtIndexPath:[NSIndexPath indexPathForRow:_messageArray.count - 1 inSection:0] atScrollPosition:UITableViewScrollPositionBottom animated:YES];
     
-    
+
+
+
 }
 
 - (void) keyboardWillHide: (NSNotification*) notification
 {
-    NSDictionary* keyboardInfo = [notification userInfo];
     
-    float animationDuration = [[keyboardInfo valueForKey:UIKeyboardAnimationDurationUserInfoKey] floatValue];
+    NSTimeInterval animationDuration = [[notification.userInfo objectForKey:UIKeyboardAnimationDurationUserInfoKey] floatValue];
+    UIViewAnimationCurve animationCurve = [[notification.userInfo objectForKey:UIKeyboardAnimationCurveUserInfoKey] intValue];
     
-    self.messageTable.contentInset = UIEdgeInsetsMake(0, 0, kDefaultContentOffset, 0);
+    [UIView setAnimationCurve:animationCurve];
+    
     [UIView animateWithDuration:animationDuration animations:^{
-        self.bottomDistance.constant = 0;
-        [self.view layoutIfNeeded];
-    } completion:^(BOOL finished) {
+        CGRect containerFrame = self.containerView.frame;
+        self.messageTable.contentInset = UIEdgeInsetsMake(0, 0, containerFrame.size.height, 0);
+        self.messageTable.scrollIndicatorInsets = UIEdgeInsetsZero;
         
+        
+        containerFrame.origin.y = self.view.bounds.size.height - containerFrame.size.height;
+        
+        // set views with new info
+        self.containerView.frame = containerFrame;
+
     }];
-    [self.messageTable scrollToRowAtIndexPath:[NSIndexPath indexPathForRow:_messageArray.count - 1 inSection:0] atScrollPosition:UITableViewScrollPositionBottom animated:YES];
     
+    
+    
+    [self.messageTable scrollToRowAtIndexPath:[NSIndexPath indexPathForRow:_messageArray.count - 1 inSection:0] atScrollPosition:UITableViewScrollPositionBottom animated:YES];
 }
 
 #pragma mark - TableView DataSource Implementation
@@ -264,7 +312,8 @@
 
 -(void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath;
 {
-    [self.messageEntryField resignFirstResponder];
+    DLog(@"Selected a row");
+    [self resignTextView];
 }
 
 -(CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath;
@@ -327,6 +376,23 @@
 {
     [super viewDidDisappear:animated];
     [[NSNotificationCenter defaultCenter] removeObserver:self];
+}
+
+- (void)growingTextView:(HPGrowingTextView *)growingTextView willChangeHeight:(float)height
+{
+    float diff = (growingTextView.frame.size.height - height);
+    
+	CGRect r = self.containerView.frame;
+    r.size.height -= diff;
+    r.origin.y += diff;
+	self.containerView.frame = r;
+    
+    // Resize table
+    
+    self.messageTable.contentInset = UIEdgeInsetsMake(0, 0, self.containerView.frame.size.height + self.heightOfKeyboard, 0);
+    self.messageTable.scrollIndicatorInsets = UIEdgeInsetsZero;
+    
+    [self.messageTable scrollToRowAtIndexPath:[NSIndexPath indexPathForRow:_messageArray.count - 1 inSection:0] atScrollPosition:UITableViewScrollPositionBottom animated:YES];
 }
 
 @end
