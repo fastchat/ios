@@ -337,7 +337,7 @@
         [[NSAttributedString alloc] initWithString:[NSString stringWithFormat:@"%@",[self.messageArray objectAtIndex:indexPath.row]] attributes:attrsDictionary];
         
         cell.messageTextView.attributedText = attrString;
-        
+        DLog(@"Row: %d, arrayLength: %d", indexPath.row, _msgArray.count);
         if ([[_msgArray objectAtIndex:indexPath.row] objectForKey:@"sent"] != nil) {
             // Format the timestamp
             NSDate *timestamp = [[_msgArray objectAtIndex:indexPath.row] objectForKey:@"sent"];
@@ -387,6 +387,16 @@
         
         [_messageArray addObject:message[@"text"]];
         [_messageAuthorsArray addObject:_members[message[@"from"]]];
+        
+        
+        
+        DLog(@"MESSAGE: %@", message);
+        NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
+        [dateFormatter setDateFormat:@"yyyy-MM-dd'T'HH:mm:ss.SSSz"];
+        NSDate *date  = [dateFormatter dateFromString:message[@"sent"]];
+        //            message[@"sent"] = date;
+        NSDictionary *newMessage = @{@"from" : message[@"from"], @"text" : message[@"text"], @"sent": date};
+        [_msgArray addObject:newMessage];
         
         // Magically add rows to table view
         [self.messageTable insertRowsAtIndexPaths:@[[NSIndexPath indexPathForRow:_messageArray.count - 1 inSection:0]] withRowAnimation:UITableViewRowAnimationAutomatic];
