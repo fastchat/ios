@@ -210,43 +210,9 @@
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="eXJ-CE-LvH">
                                 <rect key="frame" x="0.0" y="518" width="320" height="50"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                <subviews>
-                                    <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" bounces="NO" keyboardDismissMode="onDrag" translatesAutoresizingMaskIntoConstraints="NO" id="nNO-D4-9Y2">
-                                        <rect key="frame" x="6" y="0.0" width="268" height="45"/>
-                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                        <color key="backgroundColor" red="0.82352941176470584" green="0.82352941176470584" blue="0.82352941176470584" alpha="1" colorSpace="calibratedRGB"/>
-                                        <constraints>
-                                            <constraint firstAttribute="height" constant="45" id="CbK-zr-yLT"/>
-                                            <constraint firstAttribute="width" constant="268" id="aje-Cz-Q6u"/>
-                                        </constraints>
-                                        <fontDescription key="fontDescription" type="system" pointSize="14"/>
-                                        <textInputTraits key="textInputTraits" autocapitalizationType="sentences"/>
-                                        <connections>
-                                            <outlet property="delegate" destination="Ve0-ai-wJa" id="otP-Ga-fif"/>
-                                        </connections>
-                                    </textView>
-                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="McZ-QM-twz">
-                                        <rect key="frame" x="274" y="-10" width="46" height="60"/>
-                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                        <constraints>
-                                            <constraint firstAttribute="width" constant="46" id="IfW-UQ-LrE"/>
-                                            <constraint firstAttribute="height" constant="60" id="rBV-bj-o0z"/>
-                                        </constraints>
-                                        <state key="normal" title="Send">
-                                            <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
-                                        </state>
-                                        <connections>
-                                            <action selector="sendButtonTouched:" destination="Ve0-ai-wJa" eventType="touchUpInside" id="DUO-eA-dZF"/>
-                                        </connections>
-                                    </button>
-                                </subviews>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
                                 <constraints>
-                                    <constraint firstAttribute="bottom" secondItem="nNO-D4-9Y2" secondAttribute="bottom" constant="5" id="5uR-S3-QqU"/>
-                                    <constraint firstItem="nNO-D4-9Y2" firstAttribute="leading" secondItem="eXJ-CE-LvH" secondAttribute="leading" constant="6" id="CIe-ar-xuc"/>
-                                    <constraint firstAttribute="trailing" secondItem="McZ-QM-twz" secondAttribute="trailing" id="d26-fG-QXC"/>
                                     <constraint firstAttribute="height" constant="50" id="mLO-4o-KuN"/>
-                                    <constraint firstAttribute="bottom" secondItem="McZ-QM-twz" secondAttribute="bottom" id="pN7-7B-9wy"/>
                                 </constraints>
                             </view>
                         </subviews>
@@ -264,7 +230,6 @@
                     <navigationItem key="navigationItem" id="tJO-tD-WID"/>
                     <connections>
                         <outlet property="bottomDistance" destination="kN6-q7-cTw" id="KmP-Bv-D7R"/>
-                        <outlet property="messageEntryField" destination="nNO-D4-9Y2" id="axK-Ip-lxd"/>
                         <outlet property="messageTable" destination="srm-hB-ROt" id="8Eq-zy-qgj"/>
                     </connections>
                 </viewController>
@@ -281,7 +246,7 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                         <prototypes>
-                            <tableViewCell contentMode="scaleToFill" restorationIdentifier="CHMessageTableViewCell" selectionStyle="blue" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" id="ZmJ-Y7-InX" customClass="CHMessageTableViewCell">
+                            <tableViewCell contentMode="scaleToFill" restorationIdentifier="CHMessageTableViewCell" selectionStyle="blue" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" reuseIdentifier="CHMessageTableViewCell" id="ZmJ-Y7-InX" customClass="CHMessageTableViewCell">
                                 <rect key="frame" x="0.0" y="22" width="320" height="44"/>
                                 <autoresizingMask key="autoresizingMask"/>
                                 <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="ZmJ-Y7-InX" id="QUQ-0G-OXY">

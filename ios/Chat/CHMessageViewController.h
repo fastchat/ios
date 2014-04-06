@@ -25,7 +25,4 @@
 @property UIView *containerView;
 @property HPGrowingTextView *textView;
 
-- (IBAction)sendButtonTouched:(id)sender;
-
-
 @end

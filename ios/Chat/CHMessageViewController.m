@@ -9,11 +9,8 @@
 #import "CHMessageViewController.h"
 #import "CHNetworkManager.h"
 #import "SocketIOPacket.h"
-#import "CHNetworkManager.h"
 #import "CHInviteUserViewController.h"
 #import "CHUser.h"
-#import "CHMessageTableViewController.h"
-#import "CHMessageTableViewCell.h"
 #import "CHOwnMessageTableViewCell.h"
 #import "CHSocketManager.h"
 
@@ -80,26 +77,17 @@
     [self.containerView addSubview:self.textView];
     [self.containerView addSubview:entryImageView];
     
-    
-    UIImage *sendBtnBackground = [[UIImage imageNamed:@"MessageEntrySendButton.png"] stretchableImageWithLeftCapWidth:13 topCapHeight:0];
-    UIImage *selectedSendBtnBackground = [[UIImage imageNamed:@"MessageEntrySendButton.png"] stretchableImageWithLeftCapWidth:13 topCapHeight:0];
-    
-    
-    
     UIButton *doneBtn = [UIButton buttonWithType:UIButtonTypeRoundedRect]; //[UIButton buttonWithType:UIButtonTypeCustom];
 	doneBtn.frame = CGRectMake(self.containerView.frame.size.width - 72, 1, 72, 40);
     doneBtn.autoresizingMask = UIViewAutoresizingFlexibleTopMargin | UIViewAutoresizingFlexibleLeftMargin;
 	[doneBtn setTitle:@"Send" forState:UIControlStateNormal];
     
-    //[doneBtn setTitleShadowColor:[UIColor colorWithWhite:0 alpha:0.4] forState:UIControlStateNormal];
     doneBtn.titleLabel.shadowOffset = CGSizeMake (0.0, -1.0);
     doneBtn.titleLabel.font = [UIFont systemFontOfSize:18.0f];//[UIFont boldSystemFontOfSize:18.0f];
     
     [doneBtn setTitleColor:[UIColor blueColor] forState:UIControlStateNormal];
 	[doneBtn addTarget:self action:@selector(sendMessage) forControlEvents:UIControlEventTouchUpInside];
-    //[doneBtn setBackgroundImage:sendBtnBackground forState:UIControlStateNormal];
-    //[doneBtn setBackgroundImage:selectedSendBtnBackground forState:UIControlStateSelected];
-	[self.containerView addSubview:doneBtn];
+ 	[self.containerView addSubview:doneBtn];
     self.containerView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleTopMargin;
    
     //Reload message table when app returns to foreground
@@ -129,8 +117,6 @@
     
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(keyboardWillHide:) name:UIKeyboardWillHideNotification object:nil];
     
-    //[self.messageDisplayTextView setScrollsToTop:NO];
-    
     UIBarButtonItem *inviteButton = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemAdd target:self action:@selector(inviteUser)];
     self.navigationItem.rightBarButtonItem = inviteButton;
     
@@ -156,9 +142,6 @@
         self.messageArray = [[[self.messageArray reverseObjectEnumerator] allObjects] mutableCopy];
         self.messageAuthorsArray = [[[self.messageAuthorsArray reverseObjectEnumerator] allObjects] mutableCopy];
         
-        
-        
-        //[self.messageTable setContentOffset:CGPointMake(0, CGFLOAT_MAX)];
         [self.messageTable reloadData];
         
         [self.messageTable scrollToRowAtIndexPath:[NSIndexPath indexPathForRow:_messageArray.count - 1 inSection:0] atScrollPosition:UITableViewScrollPositionBottom animated:NO];
@@ -173,7 +156,6 @@
 
 - (void) inviteUser;
 {
-    DLog(@"Displaying invite screen %@", self.groupId);
     CHInviteUserViewController *inviteViewController = [self.storyboard instantiateViewControllerWithIdentifier:@"CHInviteUserViewController"];
     [inviteViewController setGroupId:self.groupId];
     [self.navigationController pushViewController:inviteViewController animated:YES];
@@ -183,8 +165,6 @@
 {
     
     NSString *msg = self.textView.text;
-    
-    DLog(@"Send message: %@", msg);
     
     if ( [msg isEqualToString:@""] || msg == nil ) {
         return;
@@ -207,8 +187,6 @@
     [self.messageTable endUpdates];
     
     [self.messageTable scrollToRowAtIndexPath:[NSIndexPath indexPathForRow:_messageArray.count - 1 inSection:0] atScrollPosition:UITableViewScrollPositionBottom animated:YES];
-    
-    [self resignTextView];
 }
 
 - (void) keyboardWillShow: (NSNotification*) notification
@@ -251,9 +229,6 @@
         self.containerView.frame = containerFrame;
         
     }];
-    
-
-
 
 }
 
@@ -277,8 +252,6 @@
         self.containerView.frame = containerFrame;
 
     }];
-    
-    
     
     [self.messageTable scrollToRowAtIndexPath:[NSIndexPath indexPathForRow:_messageArray.count - 1 inSection:0] atScrollPosition:UITableViewScrollPositionBottom animated:YES];
 }
@@ -379,8 +352,6 @@
     /// Load up old messages
     ///
     [[CHNetworkManager sharedManager] getMessagesForGroup:self.groupId callback:^(NSArray *messages) {
-        //[self.messageArray removeAllObjects];
-        //[self.messageAuthorsArray removeAllObjects];
         self.messageArray =nil;
         self.messageAuthorsArray = nil;
         
@@ -416,7 +387,6 @@
 	self.containerView.frame = r;
     
     // Resize table
-    
     self.messageTable.contentInset = UIEdgeInsetsMake(0, 0, self.containerView.frame.size.height + self.heightOfKeyboard, 0);
     self.messageTable.scrollIndicatorInsets = UIEdgeInsetsZero;
     

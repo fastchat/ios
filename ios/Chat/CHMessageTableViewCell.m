@@ -10,23 +10,6 @@
 
 @implementation CHMessageTableViewCell
 
-- (id)initWithStyle:(UITableViewCellStyle)style reuseIdentifier:(NSString *)reuseIdentifier
-{
-    DLog(@"This?");
-    self = [super initWithStyle:style reuseIdentifier:reuseIdentifier];
-    if (self) {
-        // Initialization code
-        self.authorLabel = [[UILabel alloc] init];
-        self.messageLabel = [[UILabel alloc] init];
-        self.authorLabel.font = [UIFont systemFontOfSize:14];
-        self.messageLabel.font = [UIFont systemFontOfSize:14];
-        [self.contentView addSubview:self.authorLabel];
-        [self.contentView addSubview:self.messageLabel];
-
-    }
-    return self;
-}
-
 - (void)awakeFromNib
 {
     // Initialization code
