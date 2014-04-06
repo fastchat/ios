@@ -20,6 +20,7 @@
 
 @property NSString *messages;
 @property NSMutableArray *messageArray;
+@property NSMutableArray *msgArray;
 @property (nonatomic, strong) SocketIO *socket;
 @property CGRect previousMessageTextViewRect;
 
@@ -111,6 +112,7 @@
     
     _messageArray = [[NSMutableArray alloc] init];
     _messageAuthorsArray = [[NSMutableArray alloc] init];
+    _msgArray = [[NSMutableArray alloc] init];
     
     self.messages = @"";
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(keyboardWillShow:) name:UIKeyboardWillShowNotification object:nil];
@@ -135,10 +137,13 @@
     [[CHNetworkManager sharedManager] getMessagesForGroup:self.groupId callback:^(NSArray *messages) {
         
         for ( NSDictionary *message in messages) {
+            DLog(@"MESSAGE: %@", message);
+            
+            [_msgArray addObject:message];
             [self.messageArray addObject:message[@"text"]];
             [self.messageAuthorsArray addObject:self.members[message[@"from"]]];
         }
-        
+        [[[self.msgArray reverseObjectEnumerator] allObjects] mutableCopy];
         self.messageArray = [[[self.messageArray reverseObjectEnumerator] allObjects] mutableCopy];
         self.messageAuthorsArray = [[[self.messageAuthorsArray reverseObjectEnumerator] allObjects] mutableCopy];
         
@@ -171,8 +176,9 @@
     }
     
     CHUser *currUser = [[CHNetworkManager sharedManager] currentUser];
+    NSDictionary *data = @{@"from": currUser.userId, @"text" : msg, @"group": self.groupId};
     
-    [[CHSocketManager sharedManager] sendMessageWithEvent:@"message" data:@{@"from": currUser.userId, @"text" : msg, @"group": self.groupId}];
+    [[CHSocketManager sharedManager] sendMessageWithEvent:@"message" data:data];
     
     self.textView.text = @"";
     
@@ -285,6 +291,26 @@
         
         cell.messageTextView.attributedText = attrString;//[self.messageArray objectAtIndex:indexPath.row];
         //cell.messageTextView.text = [self.messageArray objectAtIndex:indexPath.row];
+        cell.authorLabel.text = [[NSString alloc] initWithFormat:@"%@:",[self.messageAuthorsArray objectAtIndex:indexPath.row]];
+        if ([[_msgArray objectAtIndex:indexPath.row] objectForKey:@"sent"] != nil) {
+            // Format the timestamp
+            NSString *timestamp = [[_msgArray objectAtIndex:indexPath.row] objectForKey:@"sent"];
+            DLog(@"Timestamp: %@", timestamp);
+            NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
+            [dateFormatter setDateFormat:@"yyyy-MM-dd'T'HH:mm:ss.SSSz"];
+            NSDate *date  = [dateFormatter dateFromString:timestamp];
+            DLog(@"date: %@", date);
+            // Convert to new Date Format
+            //            [dateFormatter setDateFormat:@"yyyy-MM-dd HH:mm:ss"];
+            [dateFormatter setDateFormat:@"HH:mm"];
+            NSString *newDate = [dateFormatter stringFromDate:date];
+            DLog(@"New date: %@", newDate);
+            cell.timestampLabel.text = newDate;//[[_msgArray objectAtIndex:indexPath.row] objectForKey:@"sent"];
+        }
+        else {
+            cell.timestampLabel.text = @"";
+        }
+
     }
     
     else {
@@ -303,6 +329,25 @@
         [[NSAttributedString alloc] initWithString:[NSString stringWithFormat:@"%@",[self.messageArray objectAtIndex:indexPath.row]] attributes:attrsDictionary];
         
         cell.messageTextView.attributedText = attrString;
+        
+        if ([[_msgArray objectAtIndex:indexPath.row] objectForKey:@"sent"] != nil) {
+            // Format the timestamp
+            NSString *timestamp = [[_msgArray objectAtIndex:indexPath.row] objectForKey:@"sent"];
+            DLog(@"Timestamp: %@", timestamp);
+            NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
+            [dateFormatter setDateFormat:@"yyyy-MM-dd'T'HH:mm:ss.SSSz"];
+            NSDate *date  = [dateFormatter dateFromString:timestamp];
+            DLog(@"date: %@", date);
+            // Convert to new Date Format
+//            [dateFormatter setDateFormat:@"yyyy-MM-dd HH:mm:ss"];
+            [dateFormatter setDateFormat:@"HH:mm"];
+            NSString *newDate = [dateFormatter stringFromDate:date];
+            DLog(@"New date: %@", newDate);
+            cell.timestampLabel.text = newDate;//[[_msgArray objectAtIndex:indexPath.row] objectForKey:@"sent"];
+        }
+        else {
+            cell.timestampLabel.text = @"";
+        }
         
         //cell.messageTextView.attributedText = [self.messageArray objectAtIndex:indexPath.row];
 //        cell.messageTextView.text = [self.messageArray objectAtIndex:indexPath.row];
