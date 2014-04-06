@@ -12,8 +12,6 @@
 
 @property (weak, nonatomic) NSString *message;
 @property (weak, nonatomic) NSString *author;
-//@property (strong, nonatomic) UILabel *messageLabel;
-//@property (strong, nonatomic) UILabel *authorLabel;
 @property (weak, nonatomic) IBOutlet UILabel *authorLabel;
 @property (weak, nonatomic) IBOutlet UILabel *messageLabel;
 @property (weak, nonatomic) IBOutlet UITextView *messageTextView;
