@@ -148,7 +148,7 @@
             [self.messageArray addObject:message[@"text"]];
             [self.messageAuthorsArray addObject:self.members[message[@"from"]]];
         }
-        [[[self.msgArray reverseObjectEnumerator] allObjects] mutableCopy];
+        self.msgArray = [[[self.msgArray reverseObjectEnumerator] allObjects] mutableCopy];
         self.messageArray = [[[self.messageArray reverseObjectEnumerator] allObjects] mutableCopy];
         self.messageAuthorsArray = [[[self.messageAuthorsArray reverseObjectEnumerator] allObjects] mutableCopy];
         
