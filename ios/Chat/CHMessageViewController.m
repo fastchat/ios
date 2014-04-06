@@ -136,10 +136,15 @@
     ///
     [[CHNetworkManager sharedManager] getMessagesForGroup:self.groupId callback:^(NSArray *messages) {
         
-        for ( NSDictionary *message in messages) {
+        for ( NSMutableDictionary *message in messages) {
             DLog(@"MESSAGE: %@", message);
-            
-            [_msgArray addObject:message];
+            NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
+            [dateFormatter setDateFormat:@"yyyy-MM-dd'T'HH:mm:ss.SSSz"];
+            NSDate *date  = [dateFormatter dateFromString:message[@"sent"]];
+//            message[@"sent"] = date;
+            NSDictionary *newMessage = @{@"from" : message[@"from"], @"text" : message[@"text"], @"sent": date};
+            [_msgArray addObject:newMessage];
+
             [self.messageArray addObject:message[@"text"]];
             [self.messageAuthorsArray addObject:self.members[message[@"from"]]];
         }
@@ -176,10 +181,12 @@
     }
     
     CHUser *currUser = [[CHNetworkManager sharedManager] currentUser];
-    NSDictionary *data = @{@"from": currUser.userId, @"text" : msg, @"group": self.groupId};
+    NSMutableDictionary *data = [[NSMutableDictionary alloc] initWithDictionary:@{@"from": currUser.userId, @"text" : msg, @"group": self.groupId}];
     
     [[CHSocketManager sharedManager] sendMessageWithEvent:@"message" data:data];
     
+    data[@"sent"] = [NSDate date];
+    [_msgArray addObject:data];
     self.textView.text = @"";
     
     [self.messageTable beginUpdates];
@@ -294,16 +301,17 @@
         cell.authorLabel.text = [[NSString alloc] initWithFormat:@"%@:",[self.messageAuthorsArray objectAtIndex:indexPath.row]];
         if ([[_msgArray objectAtIndex:indexPath.row] objectForKey:@"sent"] != nil) {
             // Format the timestamp
-            NSString *timestamp = [[_msgArray objectAtIndex:indexPath.row] objectForKey:@"sent"];
+            NSDate *timestamp = [[_msgArray objectAtIndex:indexPath.row] objectForKey:@"sent"];
             DLog(@"Timestamp: %@", timestamp);
             NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
             [dateFormatter setDateFormat:@"yyyy-MM-dd'T'HH:mm:ss.SSSz"];
-            NSDate *date  = [dateFormatter dateFromString:timestamp];
-            DLog(@"date: %@", date);
+            
+            //            NSDate *date  = [dateFormatter dateFromString:[timestamp ]];
+            //DLog(@"date: %@", date);
             // Convert to new Date Format
             //            [dateFormatter setDateFormat:@"yyyy-MM-dd HH:mm:ss"];
             [dateFormatter setDateFormat:@"HH:mm"];
-            NSString *newDate = [dateFormatter stringFromDate:date];
+            NSString *newDate = [dateFormatter stringFromDate:timestamp];
             DLog(@"New date: %@", newDate);
             cell.timestampLabel.text = newDate;//[[_msgArray objectAtIndex:indexPath.row] objectForKey:@"sent"];
         }
@@ -332,16 +340,17 @@
         
         if ([[_msgArray objectAtIndex:indexPath.row] objectForKey:@"sent"] != nil) {
             // Format the timestamp
-            NSString *timestamp = [[_msgArray objectAtIndex:indexPath.row] objectForKey:@"sent"];
+            NSDate *timestamp = [[_msgArray objectAtIndex:indexPath.row] objectForKey:@"sent"];
             DLog(@"Timestamp: %@", timestamp);
             NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
             [dateFormatter setDateFormat:@"yyyy-MM-dd'T'HH:mm:ss.SSSz"];
-            NSDate *date  = [dateFormatter dateFromString:timestamp];
-            DLog(@"date: %@", date);
+
+//            NSDate *date  = [dateFormatter dateFromString:[timestamp ]];
+            //DLog(@"date: %@", date);
             // Convert to new Date Format
 //            [dateFormatter setDateFormat:@"yyyy-MM-dd HH:mm:ss"];
             [dateFormatter setDateFormat:@"HH:mm"];
-            NSString *newDate = [dateFormatter stringFromDate:date];
+            NSString *newDate = [dateFormatter stringFromDate:timestamp];
             DLog(@"New date: %@", newDate);
             cell.timestampLabel.text = newDate;//[[_msgArray objectAtIndex:indexPath.row] objectForKey:@"sent"];
         }
