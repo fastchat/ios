@@ -10,12 +10,10 @@
 
 @interface CHMessageTableViewCell : UITableViewCell
 
-@property (weak, nonatomic) NSString *message;
-@property (weak, nonatomic) NSString *author;
-//@property (strong, nonatomic) UILabel *messageLabel;
-//@property (strong, nonatomic) UILabel *authorLabel;
-@property (weak, nonatomic) IBOutlet UILabel *authorLabel;
-@property (weak, nonatomic) IBOutlet UILabel *messageLabel;
+@property (strong, nonatomic) NSString *message;
+@property (strong, nonatomic) NSString *author;
+@property (strong, nonatomic) IBOutlet UILabel *authorLabel;
+@property (strong, nonatomic) IBOutlet UILabel *messageLabel;
 @property (weak, nonatomic) IBOutlet UITextView *messageTextView;
 
 @property NSDate *dateSent;

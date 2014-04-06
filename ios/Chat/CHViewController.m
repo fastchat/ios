@@ -50,15 +50,16 @@
 
 - (IBAction)loginWasTouched:(id)sender {
     self.errorLabel.text = @"";
-    DLog(@"Attempting to login with user %@ and password %@", self.emailTextField.text, self.passwordTextField.text);
-    NSDictionary *params = @{@"email": self.emailTextField.text,
-     @"password": self.passwordTextField.text};
     
-
     [[CHNetworkManager sharedManager] postLoginWithUsername:self.emailTextField.text password:self.passwordTextField.text
         callback:^(bool successful, NSError *error) {
             if( successful ) {
                 [[CHSocketManager sharedManager] openSocket];
+                
+                // Fire a notification that will be picked up by the groupList controller to refresh
+                [[NSNotificationCenter defaultCenter] postNotificationName:@"UserLogInSuccessful" object:nil];
+
+                
                 [self dismissViewControllerAnimated:YES completion:nil];
 
             }
@@ -66,9 +67,5 @@
                 self.errorLabel.text = error.localizedDescription;
             }
         }];
-    
-    
-    
-
 }
 @end

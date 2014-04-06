@@ -34,15 +34,16 @@ UIPanGestureRecognizer* panGesture;
 {
     [super viewDidLoad];
     // Do any additional setup after loading the view.
-    
+/*
     tapGesture = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(singleTapScreenShot:)];
     [self.screenShotImageView addGestureRecognizer:tapGesture];
-    
+  */  
     // create a UIPanGestureRecognizer to detect when the screenshot is touched and dragged
-    panGesture = [[UIPanGestureRecognizer alloc] initWithTarget:self action:@selector(panGestureMoveAround:)];
+   /* panGesture = [[UIPanGestureRecognizer alloc] initWithTarget:self action:@selector(panGestureMoveAround:)];
     [panGesture setMaximumNumberOfTouches:2];
     [panGesture setDelegate:self];
     [self.screenShotImageView addGestureRecognizer:panGesture];
+    */
 }
 
 - (void)didReceiveMemoryWarning
@@ -82,7 +83,7 @@ UIPanGestureRecognizer* panGesture;
                      completion:^(BOOL finished){  }];
 }
 
--(IBAction)showLogoExpandingViewController
+/*-(IBAction)showLogoExpandingViewController
 {
     // this sets the currentViewController on the app_delegate to the expanding view controller
     // then slides the screenshot back over
@@ -101,25 +102,25 @@ UIPanGestureRecognizer* panGesture;
     }
                      completion:^(BOOL finished){ [(CHAppDelegate *)[[UIApplication sharedApplication] delegate] hideSideMenu]; }];
 }
-
+*/
 - (void)viewDidUnload
 {
     [super viewDidUnload];
     
     // remove the gesture recognizers
-    [self.screenShotImageView removeGestureRecognizer:tapGesture];
-    [self.screenShotImageView removeGestureRecognizer:panGesture];
+   // [self.screenShotImageView removeGestureRecognizer:tapGesture];
+//    [self.screenShotImageView removeGestureRecognizer:panGesture];
 }
 
-- (void)singleTapScreenShot:(UITapGestureRecognizer *)gestureRecognizer
+/*- (void)singleTapScreenShot:(UITapGestureRecognizer *)gestureRecognizer
 {
     // on a single tap of the screenshot, assume the user is done viewing the menu
     // and call the slideThenHide function
     [self slideThenHide];
 }
-
+*/
 /* The following is from http://blog.shoguniphicus.com/2011/06/15/working-with-uigesturerecognizers-uipangesturerecognizer-uipinchgesturerecognizer/ */
--(void)panGestureMoveAround:(UIPanGestureRecognizer *)gesture;
+/*-(void)panGestureMoveAround:(UIPanGestureRecognizer *)gesture;
 {
     UIView *piece = [gesture view];
     [self adjustAnchorPointForGestureRecognizer:gesture];
@@ -153,7 +154,7 @@ UIPanGestureRecognizer* panGesture;
     DLog(@"Side menu display");
     
 }
-
+*/
 
 
 @end
