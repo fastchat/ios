@@ -87,7 +87,7 @@
     
     
     UIButton *doneBtn = [UIButton buttonWithType:UIButtonTypeRoundedRect]; //[UIButton buttonWithType:UIButtonTypeCustom];
-	doneBtn.frame = CGRectMake(self.containerView.frame.size.width - 69, 8, 63, 27);
+	doneBtn.frame = CGRectMake(self.containerView.frame.size.width - 72, 1, 72, 40);
     doneBtn.autoresizingMask = UIViewAutoresizingFlexibleTopMargin | UIViewAutoresizingFlexibleLeftMargin;
 	[doneBtn setTitle:@"Send" forState:UIControlStateNormal];
     
