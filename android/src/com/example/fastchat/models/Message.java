@@ -45,7 +45,7 @@ public class Message {
 	
 	
 	public String getDateString(){
-		SimpleDateFormat dfOut = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss",Locale.US);
+		SimpleDateFormat dfOut = new SimpleDateFormat("MM/dd/yyyy hh:mm a",Locale.US);
 		 Calendar cal = Calendar.getInstance();
 		 TimeZone tz = cal.getTimeZone();
 		 dfOut.setTimeZone(tz);
