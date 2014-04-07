@@ -73,25 +73,31 @@ public class GroupsFragment extends Fragment {
 	}
 	
 	public static void addGroups(JSONArray array){
-		groups.clear();
+		MainActivity.activity.runOnUiThread(new Runnable(){
+			public void run(){
+				groups.clear();
+				adapter.notifyDataSetChanged();
+			}
+		});
 		HashMap<String,Group> groupsMap = new HashMap<String,Group>();
 		for(int i=0;i<array.length();i++){
 			try {
 				JSONObject o = array.getJSONObject(i);
-				Group tempGroup = new Group(o);
+				final Group tempGroup = new Group(o);
 				groupsMap.put(tempGroup.getId(),tempGroup);
-				groups.add(tempGroup);
+				MainActivity.activity.runOnUiThread(new Runnable(){
+					public void run(){
+						groups.add(tempGroup);
+						adapter.notifyDataSetChanged();
+					}
+				});
+				
 			} catch (JSONException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		}
 		NetworkManager.setGroups(groupsMap);
-		MainActivity.activity.runOnUiThread(new Runnable(){
-			 public void run(){
-				 adapter.notifyDataSetChanged();
-			 }
-		 });
 		
 	}
 }

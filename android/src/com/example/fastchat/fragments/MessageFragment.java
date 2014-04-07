@@ -62,11 +62,13 @@ public class MessageFragment extends Fragment implements OnClickListener {
 		});
 	}
 	
-	public static void addMessage(Message message){
-		
-		NetworkManager.getCurrentGroup().getMessages().add(message);
-		updateUI();
-		
+	public static void addMessage(final Message message){
+		MainActivity.activity.runOnUiThread(new Runnable(){
+			public void run(){
+				NetworkManager.getCurrentGroup().getMessages().add(message);
+				updateUI();
+			}
+		});
 	}
 
 	@Override

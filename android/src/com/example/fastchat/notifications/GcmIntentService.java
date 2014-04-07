@@ -91,7 +91,7 @@ public class GcmIntentService extends IntentService {
                 .setSmallIcon(R.drawable.ic_launcher)  
                 .setContentTitle(num_notifications+" New Messages")  
                 .setContentText(notifications)
-                .setDefaults(Notification.DEFAULT_VIBRATE | Notification.DEFAULT_SOUND | Notification.FLAG_SHOW_LIGHTS)
+                .setDefaults(Notification.DEFAULT_ALL)
                 .setLights(Color.MAGENTA, 500, 500)
                 .setStyle(new NotificationCompat.BigTextStyle()
                 .bigText(notifications));

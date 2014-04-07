@@ -3,6 +3,7 @@ package com.example.fastchat.fragments;
 import java.util.ArrayList;
 
 import com.example.fastchat.R;
+import com.example.fastchat.Utils;
 import com.example.fastchat.models.Group;
 
 import android.content.Context;
@@ -29,8 +30,16 @@ public class GroupsAdapter extends BaseAdapter {
 		return mGroups.size();
 	}
 	@Override
-	public Object getItem(int position) {		
-		return mGroups.get(position);
+	public Object getItem(int position) {
+		try{
+		Object item = mGroups.get(position);
+		return item;
+		}catch(IndexOutOfBoundsException e){
+			e.printStackTrace();
+			Utils.makeToast(e);
+			return null;
+		}
+		
 	}
 
 	@Override
