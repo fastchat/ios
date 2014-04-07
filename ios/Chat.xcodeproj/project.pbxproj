@@ -18,6 +18,15 @@
 		2768EABF18DE43F2006D14BB /* CHInvitationsTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2768EABE18DE43F2006D14BB /* CHInvitationsTableViewController.m */; };
 		2769B04618E7820A00CCE470 /* CHMessageTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 2769B04518E7820A00CCE470 /* CHMessageTableViewCell.m */; };
 		2769B04918E782B600CCE470 /* CHMessageTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2769B04818E782B600CCE470 /* CHMessageTableViewController.m */; };
+		2769B04F18EDD40800CCE470 /* CHOwnMessageTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 2769B04E18EDD40800CCE470 /* CHOwnMessageTableViewCell.m */; };
+		2769B05B18F1258A00CCE470 /* MessageEntryBackground@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 2769B05318F1258A00CCE470 /* MessageEntryBackground@2x.png */; };
+		2769B05C18F1258A00CCE470 /* MessageEntryBackground.png in Resources */ = {isa = PBXBuildFile; fileRef = 2769B05418F1258A00CCE470 /* MessageEntryBackground.png */; };
+		2769B05D18F1258A00CCE470 /* MessageEntryInputField.png in Resources */ = {isa = PBXBuildFile; fileRef = 2769B05518F1258A00CCE470 /* MessageEntryInputField.png */; };
+		2769B05E18F1258A00CCE470 /* MessageEntryInputField@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 2769B05618F1258A00CCE470 /* MessageEntryInputField@2x.png */; };
+		2769B05F18F1258A00CCE470 /* MessageEntrySendButton.png in Resources */ = {isa = PBXBuildFile; fileRef = 2769B05718F1258A00CCE470 /* MessageEntrySendButton.png */; };
+		2769B06018F1258A00CCE470 /* MessageEntrySendButton@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 2769B05818F1258A00CCE470 /* MessageEntrySendButton@2x.png */; };
+		2769B06118F1258A00CCE470 /* MessageEntrySendButtonPressed.png in Resources */ = {isa = PBXBuildFile; fileRef = 2769B05918F1258A00CCE470 /* MessageEntrySendButtonPressed.png */; };
+		2769B06218F1258A00CCE470 /* MessageEntrySendButtonPressed@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 2769B05A18F1258A00CCE470 /* MessageEntrySendButtonPressed@2x.png */; };
 		279CF21D18DF777500C82399 /* CHUser.m in Sources */ = {isa = PBXBuildFile; fileRef = 279CF21C18DF777400C82399 /* CHUser.m */; };
 		279CF22118DFD74D00C82399 /* CHInviteUserViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 279CF22018DFD74D00C82399 /* CHInviteUserViewController.m */; };
 		2C7FD1E6FB44435B8A225753 /* libPods-Chat.a in Frameworks */ = {isa = PBXBuildFile; fileRef = ED86F54EC1C64B14950512A1 /* libPods-Chat.a */; };
@@ -71,6 +80,16 @@
 		2769B04518E7820A00CCE470 /* CHMessageTableViewCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CHMessageTableViewCell.m; sourceTree = "<group>"; };
 		2769B04718E782B600CCE470 /* CHMessageTableViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CHMessageTableViewController.h; sourceTree = "<group>"; };
 		2769B04818E782B600CCE470 /* CHMessageTableViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CHMessageTableViewController.m; sourceTree = "<group>"; };
+		2769B04D18EDD40800CCE470 /* CHOwnMessageTableViewCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CHOwnMessageTableViewCell.h; sourceTree = "<group>"; };
+		2769B04E18EDD40800CCE470 /* CHOwnMessageTableViewCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CHOwnMessageTableViewCell.m; sourceTree = "<group>"; };
+		2769B05318F1258A00CCE470 /* MessageEntryBackground@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "MessageEntryBackground@2x.png"; sourceTree = "<group>"; };
+		2769B05418F1258A00CCE470 /* MessageEntryBackground.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = MessageEntryBackground.png; sourceTree = "<group>"; };
+		2769B05518F1258A00CCE470 /* MessageEntryInputField.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = MessageEntryInputField.png; sourceTree = "<group>"; };
+		2769B05618F1258A00CCE470 /* MessageEntryInputField@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "MessageEntryInputField@2x.png"; sourceTree = "<group>"; };
+		2769B05718F1258A00CCE470 /* MessageEntrySendButton.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = MessageEntrySendButton.png; sourceTree = "<group>"; };
+		2769B05818F1258A00CCE470 /* MessageEntrySendButton@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "MessageEntrySendButton@2x.png"; sourceTree = "<group>"; };
+		2769B05918F1258A00CCE470 /* MessageEntrySendButtonPressed.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = MessageEntrySendButtonPressed.png; sourceTree = "<group>"; };
+		2769B05A18F1258A00CCE470 /* MessageEntrySendButtonPressed@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "MessageEntrySendButtonPressed@2x.png"; sourceTree = "<group>"; };
 		279CF21B18DF777400C82399 /* CHUser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CHUser.h; sourceTree = "<group>"; };
 		279CF21C18DF777400C82399 /* CHUser.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CHUser.m; sourceTree = "<group>"; };
 		279CF21F18DFD74D00C82399 /* CHInviteUserViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CHInviteUserViewController.h; sourceTree = "<group>"; };
@@ -158,6 +177,7 @@
 		279CF22218E218E000C82399 /* UI files */ = {
 			isa = PBXGroup;
 			children = (
+				2768EAB018D91538006D14BB /* Authentication */,
 				279CF22518E2198800C82399 /* Groups */,
 				279CF22418E2196900C82399 /* Messaging */,
 				2768EAB418DB1965006D14BB /* CHMenuViewController.h */,
@@ -177,6 +197,8 @@
 				2769B04518E7820A00CCE470 /* CHMessageTableViewCell.m */,
 				2769B04718E782B600CCE470 /* CHMessageTableViewController.h */,
 				2769B04818E782B600CCE470 /* CHMessageTableViewController.m */,
+				2769B04D18EDD40800CCE470 /* CHOwnMessageTableViewCell.h */,
+				2769B04E18EDD40800CCE470 /* CHOwnMessageTableViewCell.m */,
 			);
 			name = Messaging;
 			sourceTree = "<group>";
@@ -251,7 +273,6 @@
 		AA7759DF18D54D3000E4E7AB /* Chat */ = {
 			isa = PBXGroup;
 			children = (
-				2768EAB018D91538006D14BB /* Authentication */,
 				AA71AE8118E0ECA900CDE1E2 /* App Delegate */,
 				AA71AE8218E0ECB200CDE1E2 /* User Interface */,
 				2768EAAF18D9151A006D14BB /* Networking */,
@@ -264,6 +285,14 @@
 			isa = PBXGroup;
 			children = (
 				AA7759F418D54D3000E4E7AB /* Images.xcassets */,
+				2769B05318F1258A00CCE470 /* MessageEntryBackground@2x.png */,
+				2769B05418F1258A00CCE470 /* MessageEntryBackground.png */,
+				2769B05518F1258A00CCE470 /* MessageEntryInputField.png */,
+				2769B05618F1258A00CCE470 /* MessageEntryInputField@2x.png */,
+				2769B05718F1258A00CCE470 /* MessageEntrySendButton.png */,
+				2769B05818F1258A00CCE470 /* MessageEntrySendButton@2x.png */,
+				2769B05918F1258A00CCE470 /* MessageEntrySendButtonPressed.png */,
+				2769B05A18F1258A00CCE470 /* MessageEntrySendButtonPressed@2x.png */,
 				AA7759E118D54D3000E4E7AB /* Chat-Info.plist */,
 				AA7759E218D54D3000E4E7AB /* InfoPlist.strings */,
 				AA7759E518D54D3000E4E7AB /* main.m */,
@@ -372,10 +401,18 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				2769B05B18F1258A00CCE470 /* MessageEntryBackground@2x.png in Resources */,
 				AA7759F018D54D3000E4E7AB /* Main_iPad.storyboard in Resources */,
+				2769B06118F1258A00CCE470 /* MessageEntrySendButtonPressed.png in Resources */,
+				2769B05C18F1258A00CCE470 /* MessageEntryBackground.png in Resources */,
+				2769B05D18F1258A00CCE470 /* MessageEntryInputField.png in Resources */,
 				AA7759F518D54D3000E4E7AB /* Images.xcassets in Resources */,
+				2769B05E18F1258A00CCE470 /* MessageEntryInputField@2x.png in Resources */,
 				AA7759ED18D54D3000E4E7AB /* Main_iPhone.storyboard in Resources */,
+				2769B06218F1258A00CCE470 /* MessageEntrySendButtonPressed@2x.png in Resources */,
+				2769B05F18F1258A00CCE470 /* MessageEntrySendButton.png in Resources */,
 				AA7759E418D54D3000E4E7AB /* InfoPlist.strings in Resources */,
+				2769B06018F1258A00CCE470 /* MessageEntrySendButton@2x.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -429,6 +466,7 @@
 			files = (
 				2769B04918E782B600CCE470 /* CHMessageTableViewController.m in Sources */,
 				2768EA9F18D87059006D14BB /* CHRegisterViewController.m in Sources */,
+				2769B04F18EDD40800CCE470 /* CHOwnMessageTableViewCell.m in Sources */,
 				2768EABF18DE43F2006D14BB /* CHInvitationsTableViewController.m in Sources */,
 				2768EAB618DB1965006D14BB /* CHMenuViewController.m in Sources */,
 				2768EAB318DB119A006D14BB /* CHSocketManager.m in Sources */,
@@ -578,14 +616,14 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
-				CODE_SIGN_IDENTITY = "iPhone Developer: Ethan Mick (EDMS7P324S)";
+				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer: Ethan Mick (EDMS7P324S)";
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "Chat/Chat-Prefix.pch";
 				INFOPLIST_FILE = "Chat/Chat-Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 7.1;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE = "C451D821-1F0B-4F7A-94F9-FC6AA899FF59";
+				PROVISIONING_PROFILE = "52F71840-7DE3-4E8E-8F85-A490D7D082E3";
 				TARGETED_DEVICE_FAMILY = 1;
 				WRAPPER_EXTENSION = app;
 			};
@@ -597,7 +635,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
-				CODE_SIGN_IDENTITY = "iPhone Distribution: Ethan Mick (X5BAWYYBBG)";
+				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution: Ethan Mick (X5BAWYYBBG)";
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "Chat/Chat-Prefix.pch";

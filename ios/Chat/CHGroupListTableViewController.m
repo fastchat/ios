@@ -17,7 +17,7 @@
 
 @interface CHGroupListTableViewController ()
 
-@property NSArray *groups;
+
 
 @end
 
@@ -36,14 +36,9 @@
 {
     [super viewDidLoad];
     
-    // Uncomment the following line to preserve selection between presentations.
-    // self.clearsSelectionOnViewWillAppear = NO;
-    
-    // Uncomment the following line to display an Edit button in the navigation bar for this view controller.
-    // self.navigationItem.rightBarButtonItem = self.editButtonItem;
-    
     self.navigationItem.title = @"My Groups";
     
+        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(loadGroupsAndRefresh) name:@"ReloadGroupListTable" object:nil];
 
     
     
@@ -53,34 +48,29 @@
 
         UIViewController *loginController = [self.storyboard instantiateViewControllerWithIdentifier:@"CHViewNavController"];
         [self presentViewController:loginController animated:NO completion:nil];
-//        [self.navigationController presentModalViewController:loginController animated:NO];
-
-//        [self.navigationController pushViewController:loginController animated:NO];
-//        [self.navigationController presentViewController:loginController animated:NO completion:^{
-//            DLog(@"Finished logging in");
-//            [self.navigationController popViewControllerAnimated:YES];
-//        }];
-        
     }
     
     else {
     
+        [self loadGroupsAndRefresh];
+        
     }
     
-    UIBarButtonItem *addButton = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemAdd target:self action:@selector(showAddView)];
+
+    
+    UIBarButtonItem *addButton = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemCompose target:self action:@selector(showAddView)];
     self.navigationItem.rightBarButtonItem = addButton;
     
     
     UIBarButtonItem *menuButton = [[UIBarButtonItem alloc] initWithTitle:@"Menu" style:UIBarButtonItemStylePlain target:self action:@selector(displaySideMenu)];
     
     self.navigationItem.leftBarButtonItem = menuButton;
+    
+    [UIApplication sharedApplication].applicationIconBadgeNumber = 0;
 }
 
--(void) viewWillAppear:(BOOL)animated
+-(void) loadGroupsAndRefresh;
 {
-    [super viewWillAppear:animated];
-    //set initial values here
-    
     UIActivityIndicatorView *spinner = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleGray];
     spinner.center = CGPointMake(160, 240);
     spinner.tag = 12;
@@ -89,18 +79,29 @@
     
     [[CHNetworkManager sharedManager] getGroups:^(NSArray *groups) {
         self.groups = groups;
+        //        self.users
         
         DLog(@"groups: %@",groups);
         [self.tableView reloadData];
         [spinner stopAnimating];
         
-        [[UIApplication sharedApplication] registerForRemoteNotificationTypes:
-         (UIRemoteNotificationTypeBadge | UIRemoteNotificationTypeSound | UIRemoteNotificationTypeAlert)];
     }];
     
     [[CHNetworkManager sharedManager] getProfile:^(CHUser *userProfile) {
         
     }];
+}
+
+-(void) viewWillAppear:(BOOL)animated
+{
+    [super viewWillAppear:animated];
+    //set initial values here
+    
+
+        
+    [[UIApplication sharedApplication] registerForRemoteNotificationTypes:
+     (UIRemoteNotificationTypeBadge | UIRemoteNotificationTypeSound | UIRemoteNotificationTypeAlert)];
+
 }
 
 - (void)displaySideMenu {

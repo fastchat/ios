@@ -17,8 +17,6 @@ DerivedData
 *.ipa
 *.pbxproj
 
-# CocoaPods
-Pods
 
 .DS_Store
 #

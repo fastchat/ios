@@ -90,19 +90,10 @@
     DLog(@"username: %@, password: %@", username, password);
     [self POST:@"/user" parameters:@{@"username" : username, @"password" : password} success:^(NSURLSessionDataTask *task, id responseObject) {
         if( callback ) {
-            //self.sessiontoken = responseObject[@"session-token"];
-            //[self.requestSerializer setValue:self.sessiontoken forHTTPHeaderField:@"session-token"];
-            
-            // Save the session token to avoid future login
-            //[[NSUserDefaults standardUserDefaults]
-             //setObject:self.sessiontoken forKey:@"session-token"];
-            
-            
             callback(responseObject);
         }
     } failure:^(NSURLSessionDataTask *task, NSError *error) {
         DLog(@"Error: %@", error);
-        //callback(error);
     }];
 }
 
@@ -117,10 +108,11 @@
     }];
 }
 
-- (void)createGroupWithName: (NSString *)groupName callback: (void (^)(bool successful, NSError *error))callback;
+- (void)createGroupWithName: (NSString *)groupName members: (NSArray *)members callback: (void (^)(bool successful, NSError *error))callback;
 {
-    [self POST:@"/group" parameters:@{@"name" : groupName} success:^(NSURLSessionDataTask *task, id responseObject) {
-        
+    DLog(@"HERE");
+    [self POST:@"/group" parameters:@{@"name" : groupName, @"members" : members, @"text" : @"Group created"} success:^(NSURLSessionDataTask *task, id responseObject) {
+        DLog(@"Making call");
         if( callback ) {
             callback(YES,nil);
         }
@@ -164,6 +156,8 @@
             [user setUsername:responseObject[@"profile"][@"username"]];
             [user setGroups:responseObject[@"profile"][@"groups"]];
             [user setInvites:responseObject[@"profile"][@"invites"]];
+            user.userId = responseObject[@"profile"][@"_id"];
+            
             self.currentUser = user;
             callback(user);
         }
@@ -181,16 +175,6 @@
 
 - (void)sendInviteToUsers: (NSArray *)invitees groupId: (NSString *) groupId callback: (void (^)(bool successful, NSError *error))callback;
 {
-    /*[self POST:@"/group" parameters:@{@"name" : groupName} success:^(NSURLSessionDataTask *task, id responseObject) {
-        
-        if( callback ) {
-            callback(YES,nil);
-        }
-    } failure:^(NSURLSessionDataTask *task, NSError *error) {
-        DLog(@"Error: %@", error);
-        callback(NO, error);
-    }];*/
-    
     // Add id
     NSString *url =[[NSString alloc] initWithFormat:@"/group/%@/invite",groupId];
    
@@ -213,12 +197,6 @@
         DLog(@"Invite not accepted");
         callback(NO, error);
     }];
-}
-
-- (void)sendMessageWithMessage: (NSString *)message callback: (void (^)(bool successful, NSError *error))callback;
-{
-#warning @"Not yet implemented!!"
-//    [self ]
 }
 
 - (void)postDeviceToken:(NSData *)token callback:(void (^)(BOOL success, NSError *error))callback;
