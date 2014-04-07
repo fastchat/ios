@@ -5,6 +5,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import com.example.fastchat.Utils;
+import com.example.fastchat.fragments.FastChatTextWatcher;
 import com.example.fastchat.fragments.MessageFragment;
 import com.example.fastchat.models.Message;
 import com.koushikdutta.async.future.Future;
@@ -82,6 +83,22 @@ public class SocketIoController {
 					public void onEvent(JSONArray argument,
 							Acknowledge acknowledge) {
 		        		System.out.println(argument);
+		        		JSONObject typingObject;
+						try {
+							typingObject = argument.getJSONObject(0);
+			        		String userId = typingObject.getString("from");
+			        		boolean isTyping = typingObject.getBoolean("typing");
+			        		if(isTyping){
+			        			MessageFragment.showTyping(NetworkManager.getCurrentGroup().getUsername(userId));
+			        		}
+			        		else{
+			        			MessageFragment.hideTyping(NetworkManager.getCurrentGroup().getUsername(userId));
+			        		}
+						} catch (JSONException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+							Utils.makeToast(e);
+						}
 		        	}
 		        });
 		        client.setJSONCallback(new JSONCallback() {
@@ -116,6 +133,7 @@ public class SocketIoController {
 		JSONObject object = new JSONObject();
 		try {
 			object.put("typing", true);
+			object.put("from", NetworkManager.getCurrentUser().getId());
 		} catch (JSONException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -125,10 +143,12 @@ public class SocketIoController {
 	}
 	
 	public static void sendStopTyping(){
+		FastChatTextWatcher.resetTextWatcher();
 		JSONArray array = new JSONArray();
 		JSONObject object = new JSONObject();
 		try {
 			object.put("typing", false);
+			object.put("from", NetworkManager.getCurrentUser().getId());
 		} catch (JSONException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

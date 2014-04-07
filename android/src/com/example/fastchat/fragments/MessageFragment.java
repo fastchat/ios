@@ -3,12 +3,15 @@ package com.example.fastchat.fragments;
 import com.example.fastchat.MainActivity;
 import com.example.fastchat.R;
 import com.example.fastchat.models.Message;
+import com.example.fastchat.models.User;
 import com.example.fastchat.networking.SocketIoController;
 import com.example.fastchat.networking.NetworkManager;
 import com.example.fastchat.notifications.GcmIntentService;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -17,6 +20,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.TextView;
 
 public class MessageFragment extends Fragment implements OnClickListener {
 
@@ -46,6 +50,8 @@ public class MessageFragment extends Fragment implements OnClickListener {
 			 }
 		 });
 	     updateUI();
+	     EditText messageBox = (EditText) rootView.findViewById(R.id.my_message);
+	     //messageBox.addTextChangedListener(new FastChatTextWatcher());
 		return rootView;
 	}
 	
@@ -69,6 +75,32 @@ public class MessageFragment extends Fragment implements OnClickListener {
 				updateUI();
 			}
 		});
+	}
+	
+	public static void showTyping(final User u){
+		MainActivity.activity.runOnUiThread(new Runnable(){
+			@Override
+			public void run() {
+				TextView tv = (TextView) rootView.findViewById(R.id.typing_box);
+				tv.setVisibility(View.VISIBLE);
+				tv.setText(u.getUsername()+"is typing...");
+			}
+			
+		});
+		
+	}
+	
+	public static void hideTyping(final User u){
+		MainActivity.activity.runOnUiThread(new Runnable(){
+			@Override
+			public void run() {
+				TextView tv = (TextView) rootView.findViewById(R.id.typing_box);
+				tv.setText("");
+				tv.setVisibility(View.INVISIBLE);
+			}
+			
+		});
+		
 	}
 
 	@Override

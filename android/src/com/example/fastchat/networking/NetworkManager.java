@@ -49,6 +49,7 @@ public class NetworkManager {
 			Fragment fragment = new GroupsFragment();
 			try {
 				currentUser.setToken(result.getString("session-token"));
+				getProfile();
 			} catch (JSONException e1) {
 				// TODO Auto-generated catch block
 				e1.printStackTrace();
@@ -188,6 +189,40 @@ public class NetworkManager {
 		JSONObjectBody body = new JSONObjectBody(object);
 		post.setBody(body);
 		return AsyncHttpClient.getDefaultInstance().executeJSONObject(post, deviceRegCallback);
+	}
+	
+	
+	private static final JSONObjectCallback profileCallback = new AsyncHttpClient.JSONObjectCallback() {
+		// Callback is invoked with any exceptions/errors, and the result, if available.
+		public void onCompleted(Exception e, AsyncHttpResponse response, JSONObject result) {
+			if (e != null) {
+				e.printStackTrace();
+				Utils.makeToast(e);
+				return;
+			}
+			JSONObject profileObject;
+			try {
+				profileObject = result.getJSONObject("profile");
+				User tempUser = new User(profileObject);
+				tempUser.setToken(getToken());
+				System.out.println("currentUser: "+tempUser.getId()+":"+tempUser.getUsername()+":"+tempUser.getSessionToken());
+				MainActivity.saveLoginCredentials(tempUser);
+				NetworkManager.setCurrentUser(tempUser);
+			} catch (JSONException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+				Utils.makeToast(e1);
+			}
+			
+			System.out.println(result);
+			
+		};
+	};
+	
+	public static Future<JSONObject> getProfile(){
+		AsyncHttpGet get = new AsyncHttpGet(url+"/user");
+		get.setHeader("session-token", currentUser.getSessionToken());
+		return AsyncHttpClient.getDefaultInstance().executeJSONObject(get,profileCallback);
 	}
 
 	public static String getURL(){

@@ -52,8 +52,8 @@ public class MainActivity extends ActionBarActivity {
 	GoogleCloudMessaging gcm;
 	AtomicInteger msgId = new AtomicInteger();
 	SharedPreferences prefs;
-
 	public static String regid;
+	private Fragment beginFragment;
 
 
 	@Override
@@ -65,14 +65,16 @@ public class MainActivity extends ActionBarActivity {
 		if (savedInstanceState == null) {
 			ArrayList<String> credentials = getLoginCredentials();
 			if(credentials.size()<3){
+				beginFragment = new LoginFragment();
 				getSupportFragmentManager().beginTransaction()
-				.add(R.id.container, new LoginFragment()).commit();
+				.add(R.id.container, beginFragment).commit();
 			}
 			else{
 				User currentUser = new User(credentials.get(0),credentials.get(1),credentials.get(2));
 				NetworkManager.setCurrentUser(currentUser);
+				beginFragment =  new GroupsFragment();
 				getSupportFragmentManager().beginTransaction()
-				.add(R.id.container, new GroupsFragment()).commit();
+				.add(R.id.container, beginFragment).commit();
 			}
 		}
 		
@@ -117,8 +119,10 @@ public class MainActivity extends ActionBarActivity {
 			break;
 		case R.id.sign_out:
 			clearLoginCredentials();
+			SocketIoController.disconnect();
 			NetworkManager.postLogout();
 			manager.popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
+			manager.beginTransaction().remove(beginFragment).commit();
 			manager.beginTransaction()
 			.add(R.id.container, new LoginFragment()).commit();
 			break;
@@ -226,16 +230,17 @@ public class MainActivity extends ActionBarActivity {
 	private ArrayList<String> getLoginCredentials(){
 		final SharedPreferences prefs = getGCMPreferences(getApplicationContext());
 		String username = prefs.getString(USERNAME, "");
-		if (username.isEmpty()) {
+		String userId = prefs.getString(USER_ID, "");
+		String token = prefs.getString(SESSION_TOKEN, "");
+		if (username.isEmpty() || userId.isEmpty() || token.isEmpty()) {
 			Log.i(this.getClass().getName(), "User not logged in.");
 			return new ArrayList<String>(0);
 		}
 		else{
 			Log.i(this.getClass().getName(), "User information found.");
 			ArrayList<String> credentials = new ArrayList<String>(0);
-			credentials.add(prefs.getString(USER_ID, ""));
+			credentials.add(userId);
 			credentials.add(username);
-			String token = prefs.getString(SESSION_TOKEN, "");
 			credentials.add(token);
 			return credentials;
 		}
