@@ -12,8 +12,6 @@ import com.example.fastchat.R;
 import com.example.fastchat.models.Group;
 import com.example.fastchat.networking.NetworkManager;
 import com.example.fastchat.networking.SocketIoController;
-import com.koushikdutta.async.future.Future;
-import com.koushikdutta.async.http.socketio.SocketIOClient;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;

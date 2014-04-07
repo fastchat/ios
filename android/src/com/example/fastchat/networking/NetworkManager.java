@@ -7,7 +7,6 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import android.net.Uri;
 import android.support.v4.app.Fragment;
 
 import com.example.fastchat.MainActivity;

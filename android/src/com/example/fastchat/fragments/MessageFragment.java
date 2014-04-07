@@ -6,12 +6,9 @@ import com.example.fastchat.models.Message;
 import com.example.fastchat.models.User;
 import com.example.fastchat.networking.SocketIoController;
 import com.example.fastchat.networking.NetworkManager;
-import com.example.fastchat.notifications.GcmIntentService;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.text.Editable;
-import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -51,7 +48,7 @@ public class MessageFragment extends Fragment implements OnClickListener {
 		 });
 	     updateUI();
 	     EditText messageBox = (EditText) rootView.findViewById(R.id.my_message);
-	     //messageBox.addTextChangedListener(new FastChatTextWatcher());
+	     messageBox.addTextChangedListener(new FastChatTextWatcher());
 		return rootView;
 	}
 	

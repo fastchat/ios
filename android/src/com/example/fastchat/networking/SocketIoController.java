@@ -134,6 +134,7 @@ public class SocketIoController {
 		try {
 			object.put("typing", true);
 			object.put("from", NetworkManager.getCurrentUser().getId());
+			object.put("group", NetworkManager.getCurrentGroup().getId());
 		} catch (JSONException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -149,6 +150,7 @@ public class SocketIoController {
 		try {
 			object.put("typing", false);
 			object.put("from", NetworkManager.getCurrentUser().getId());
+			object.put("group", NetworkManager.getCurrentGroup().getId());
 		} catch (JSONException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
