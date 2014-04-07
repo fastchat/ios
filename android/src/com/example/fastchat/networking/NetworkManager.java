@@ -1,11 +1,13 @@
 package com.example.fastchat.networking;
 
+import java.net.URI;
 import java.util.HashMap;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import android.net.Uri;
 import android.support.v4.app.Fragment;
 
 import com.example.fastchat.MainActivity;
@@ -21,6 +23,7 @@ import com.koushikdutta.async.http.AsyncHttpClient.JSONArrayCallback;
 import com.koushikdutta.async.http.AsyncHttpClient.JSONObjectCallback;
 import com.koushikdutta.async.http.AsyncHttpGet;
 import com.koushikdutta.async.http.AsyncHttpPost;
+import com.koushikdutta.async.http.AsyncHttpRequest;
 import com.koushikdutta.async.http.AsyncHttpResponse;
 import com.koushikdutta.async.http.body.JSONObjectBody;
 
@@ -129,8 +132,25 @@ public class NetworkManager {
 
 	}
 
+	private static final JSONObjectCallback logoutCallback = new AsyncHttpClient.JSONObjectCallback() {
+		// Callback is invoked with any exceptions/errors, and the result, if available.
+		public void onCompleted(Exception e, AsyncHttpResponse response, JSONObject result) {
+			if (e != null) {
+				e.printStackTrace();
+				Utils.makeToast(e);
+				return;
+			}
 
-
+			System.out.println(result);
+		};
+	};
+	
+	public static Future<JSONObject> postLogout(){
+		AsyncHttpRequest http = new AsyncHttpRequest(URI.create(url+"/logout"),"DELETE");
+		http.setHeader("session-token", currentUser.getSessionToken());
+		return AsyncHttpClient.getDefaultInstance().executeJSONObject(http, logoutCallback);
+	}
+	
 	public static Future<JSONObject> postLogin(String username, String password){
 		currentUser = new User(null,username,null);
 		AsyncHttpPost post = new AsyncHttpPost(url+"/login");

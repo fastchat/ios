@@ -117,11 +117,12 @@ public class MainActivity extends ActionBarActivity {
 			break;
 		case R.id.sign_out:
 			clearLoginCredentials();
-			 manager.popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
+			NetworkManager.postLogout();
+			manager.popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
+			manager.beginTransaction()
+			.add(R.id.container, new LoginFragment()).commit();
 			break;
 		case R.id.profile:
-			break;
-		case R.id.invitations:
 			break;
 		case R.id.new_group:
 			switchView(new NewGroupFragment());

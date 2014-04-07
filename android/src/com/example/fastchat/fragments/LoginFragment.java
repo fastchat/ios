@@ -51,6 +51,8 @@ public class LoginFragment extends Fragment implements OnClickListener {
 			Utils.makeToast("Please Enter a password");
 		}else{
 			NetworkManager.postLogin(usernameText, passwordText);
+			username.setText("");
+			password.setText("");
 		}
 	}
 }
