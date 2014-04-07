@@ -13,6 +13,7 @@
         android:shadowDx="1"
         android:shadowDy="1"
         android:text="Medium Text"
-        android:textSize="20sp" />
+        android:textSize="20sp"
+        android:autoLink="web" />
 
 </LinearLayout>

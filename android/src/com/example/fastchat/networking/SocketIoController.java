@@ -7,6 +7,7 @@ import org.json.JSONObject;
 import com.example.fastchat.Utils;
 import com.example.fastchat.fragments.FastChatTextWatcher;
 import com.example.fastchat.fragments.MessageFragment;
+import com.example.fastchat.models.Group;
 import com.example.fastchat.models.Message;
 import com.koushikdutta.async.future.Future;
 import com.koushikdutta.async.http.AsyncHttpClient;
@@ -88,6 +89,11 @@ public class SocketIoController {
 							typingObject = argument.getJSONObject(0);
 			        		String userId = typingObject.getString("from");
 			        		boolean isTyping = typingObject.getBoolean("typing");
+			        		String groupId = typingObject.getString("group");
+			        		Group group = NetworkManager.getCurrentGroup();
+			        		if(group==null && !groupId.equals(NetworkManager.getCurrentGroup().getId())){
+			        			return;
+			        		}
 			        		if(isTyping){
 			        			MessageFragment.showTyping(NetworkManager.getCurrentGroup().getUsername(userId));
 			        		}

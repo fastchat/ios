@@ -80,7 +80,7 @@ public class MessageFragment extends Fragment implements OnClickListener {
 			public void run() {
 				TextView tv = (TextView) rootView.findViewById(R.id.typing_box);
 				tv.setVisibility(View.VISIBLE);
-				tv.setText(u.getUsername()+"is typing...");
+				tv.setText(u.getUsername()+" is typing...");
 			}
 			
 		});
