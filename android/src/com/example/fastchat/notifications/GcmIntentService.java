@@ -56,7 +56,12 @@ public class GcmIntentService extends IntentService {
             } else if (GoogleCloudMessaging.
                     MESSAGE_TYPE_MESSAGE.equals(messageType)) {
                 // Post notification of received message.
-                sendNotification(extras.getString("text"));
+            	String msg = extras.getString("text");
+            	if(msg == null){
+            		clearNotifications();
+            	}else{
+            		sendNotification(extras.getString("text"));
+            	}
                 
                 Log.i(TAG, "Received: " + extras.getString("text"));
             }

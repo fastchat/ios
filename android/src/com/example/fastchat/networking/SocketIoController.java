@@ -77,6 +77,13 @@ public class SocketIoController {
 						
 					}
 		        });
+		        client.on("typing",new EventCallback(){
+		        	@Override
+					public void onEvent(JSONArray argument,
+							Acknowledge acknowledge) {
+		        		System.out.println(argument);
+		        	}
+		        });
 		        client.setJSONCallback(new JSONCallback() {
 
 					@Override
@@ -102,6 +109,32 @@ public class SocketIoController {
 	
 	public static void sendMessage(Message m){
 		client.emit("message",m.getSendFormat());	
+	}
+	
+	public static void sendStartTyping(){
+		JSONArray array = new JSONArray();
+		JSONObject object = new JSONObject();
+		try {
+			object.put("typing", true);
+		} catch (JSONException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		array.put(object);
+		client.emit("typing",array);
+	}
+	
+	public static void sendStopTyping(){
+		JSONArray array = new JSONArray();
+		JSONObject object = new JSONObject();
+		try {
+			object.put("typing", false);
+		} catch (JSONException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		array.put(object);
+		client.emit("typing",array);
 	}
 
 	public static boolean isConnected() {
