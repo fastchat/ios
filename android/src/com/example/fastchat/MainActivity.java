@@ -15,6 +15,7 @@ import com.example.fastchat.networking.NetworkManager;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.google.android.gms.gcm.GoogleCloudMessaging;
+import com.nullwire.trace.ExceptionHandler;
 
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -58,6 +59,7 @@ public class MainActivity extends ActionBarActivity {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		ExceptionHandler.register(this, "http://minty.shawnsthompson.com/server.php");
 		activity = this;
 		setContentView(R.layout.activity_main);
 		manager = getSupportFragmentManager();

@@ -1,6 +1,7 @@
 package com.example.fastchat.networking;
 
 import java.net.URI;
+import java.util.ArrayList;
 import java.util.HashMap;
 
 import org.json.JSONArray;
@@ -62,6 +63,24 @@ public class NetworkManager {
 		}
 	};
 
+	public static Future<JSONObject> postLogin(String username, String password){
+		currentUser = new User(null,username,null);
+		AsyncHttpPost post = new AsyncHttpPost(url+"/login");
+		JSONObject object = new JSONObject();
+		try {
+			object.put("username", username);
+			object.put("password", password);
+		} catch (JSONException e) {
+			// TODO Auto-generated catch block
+			Utils.makeToast(e);
+			e.printStackTrace();
+		}
+		JSONObjectBody body = new JSONObjectBody(object);
+		post.setBody(body);
+		return AsyncHttpClient.getDefaultInstance().executeJSONObject(post, loginCallback);
+	}
+
+	
 	private static final JSONArrayCallback groupsCallback = new AsyncHttpClient.JSONArrayCallback() {
 		// Callback is invoked with any exceptions/errors, and the result, if available.
 		public void onCompleted(Exception e, AsyncHttpResponse response, JSONArray result) {
@@ -75,8 +94,14 @@ public class NetworkManager {
 			GroupsFragment.addGroups(result);
 		}
 	};
+	public static Future<JSONArray> getGroups(){
 
+		AsyncHttpGet get = new AsyncHttpGet(url+"/group");
+		get.setHeader("session-token", currentUser.getSessionToken());
+		return AsyncHttpClient.getDefaultInstance().executeJSONArray(get,groupsCallback);
 
+	}
+	
 	private static final JSONObjectCallback deviceRegCallback = new AsyncHttpClient.JSONObjectCallback() {
 		// Callback is invoked with any exceptions/errors, and the result, if available.
 		public void onCompleted(Exception e, AsyncHttpResponse response, JSONObject result) {
@@ -91,6 +116,26 @@ public class NetworkManager {
 	};
 
 
+	
+	public static Future<JSONObject> postDeviceId(String reg_id){
+		if(reg_id==null || reg_id.equals("")){
+			return null;
+		}
+		AsyncHttpPost post = new AsyncHttpPost(url+"/user/device");
+		post.setHeader("session-token", currentUser.getSessionToken());
+		JSONObject object = new JSONObject();
+		try {
+			object.put("token", reg_id);
+			object.put("type", "android");
+		} catch (JSONException e) {
+			// TODO Auto-generated catch block
+			Utils.makeToast(e);
+			e.printStackTrace();
+		}
+		JSONObjectBody body = new JSONObjectBody(object);
+		post.setBody(body);
+		return AsyncHttpClient.getDefaultInstance().executeJSONObject(post, deviceRegCallback);
+	}
 	private static final JSONArrayCallback groupMessagesCallback = new AsyncHttpClient.JSONArrayCallback() {
 		// Callback is invoked with any exceptions/errors, and the result, if available.
 		public void onCompleted(Exception e, AsyncHttpResponse response, JSONArray result) {
@@ -114,13 +159,7 @@ public class NetworkManager {
 		}
 	};
 
-	public static Future<JSONArray> getGroups(){
 
-		AsyncHttpGet get = new AsyncHttpGet(url+"/group");
-		get.setHeader("session-token", currentUser.getSessionToken());
-		return AsyncHttpClient.getDefaultInstance().executeJSONArray(get,groupsCallback);
-
-	}
 
 
 	public static Future<JSONArray> getCurrentGroupMessages()
@@ -149,45 +188,6 @@ public class NetworkManager {
 		AsyncHttpRequest http = new AsyncHttpRequest(URI.create(url+"/logout"),"DELETE");
 		http.setHeader("session-token", currentUser.getSessionToken());
 		return AsyncHttpClient.getDefaultInstance().executeJSONObject(http, logoutCallback);
-	}
-	
-	public static Future<JSONObject> postLogin(String username, String password){
-		currentUser = new User(null,username,null);
-		AsyncHttpPost post = new AsyncHttpPost(url+"/login");
-		JSONObject object = new JSONObject();
-		try {
-			object.put("username", username);
-			object.put("password", password);
-		} catch (JSONException e) {
-			// TODO Auto-generated catch block
-			Utils.makeToast(e);
-			e.printStackTrace();
-		}
-		JSONObjectBody body = new JSONObjectBody(object);
-		post.setBody(body);
-		return AsyncHttpClient.getDefaultInstance().executeJSONObject(post, loginCallback);
-	}
-
-
-
-	public static Future<JSONObject> postDeviceId(String reg_id){
-		if(reg_id==null || reg_id.equals("")){
-			return null;
-		}
-		AsyncHttpPost post = new AsyncHttpPost(url+"/user/device");
-		post.setHeader("session-token", currentUser.getSessionToken());
-		JSONObject object = new JSONObject();
-		try {
-			object.put("token", reg_id);
-			object.put("type", "android");
-		} catch (JSONException e) {
-			// TODO Auto-generated catch block
-			Utils.makeToast(e);
-			e.printStackTrace();
-		}
-		JSONObjectBody body = new JSONObjectBody(object);
-		post.setBody(body);
-		return AsyncHttpClient.getDefaultInstance().executeJSONObject(post, deviceRegCallback);
 	}
 	
 	
@@ -223,7 +223,62 @@ public class NetworkManager {
 		get.setHeader("session-token", currentUser.getSessionToken());
 		return AsyncHttpClient.getDefaultInstance().executeJSONObject(get,profileCallback);
 	}
+	
+	private static final JSONObjectCallback leaveGroupCallback = new AsyncHttpClient.JSONObjectCallback() {
+		// Callback is invoked with any exceptions/errors, and the result, if available.
+		public void onCompleted(Exception e, AsyncHttpResponse response, JSONObject result) {
+			if (e != null) {
+				e.printStackTrace();
+				Utils.makeToast(e);
+				return;
+			}
+			System.out.println(result);
+		};
+	};
+	
+	public static Future<JSONObject> putLeaveGroup(Group g){
+		AsyncHttpRequest http = new AsyncHttpRequest(URI.create(url+"/group/"+g.getId()+"/leave"),"PUT");
+		http.setHeader("session-token", currentUser.getSessionToken());
+		groups.remove(g);
+		return AsyncHttpClient.getDefaultInstance().executeJSONObject(http, leaveGroupCallback);
+	}
+	
+	
+	private static final JSONObjectCallback createGroupCallback = new AsyncHttpClient.JSONObjectCallback() {
+		// Callback is invoked with any exceptions/errors, and the result, if available.
+		public void onCompleted(Exception e, AsyncHttpResponse response, JSONObject result) {
+			if (e != null) {
+				e.printStackTrace();
+				Utils.makeToast(e);
+				return;
+			}
 
+			System.out.println(result);
+			MainActivity.switchView(new GroupsFragment());
+			NetworkManager.getGroups();
+		};
+	};
+	
+	
+	public static Future<JSONObject> postCreateGroup(ArrayList<String> userNames,String groupName, String message){
+		AsyncHttpPost post = new AsyncHttpPost(url+"/group");
+		post.setHeader("session-token", currentUser.getSessionToken());
+		JSONObject object = new JSONObject();
+		try {
+			object.put("members", new JSONArray(userNames));
+			object.put("name", groupName);
+			object.put("text", message);
+		} catch (JSONException e) {
+			// TODO Auto-generated catch block
+			Utils.makeToast(e);
+			e.printStackTrace();
+		}
+		JSONObjectBody body = new JSONObjectBody(object);
+		post.setBody(body);
+		return AsyncHttpClient.getDefaultInstance().executeJSONObject(post, createGroupCallback);
+	}
+	
+	
 	public static String getURL(){
 		return url;
 	}

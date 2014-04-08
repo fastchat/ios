@@ -1,7 +1,9 @@
 package com.example.fastchat.fragments;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -13,9 +15,13 @@ import com.example.fastchat.models.Group;
 import com.example.fastchat.networking.NetworkManager;
 import com.example.fastchat.networking.SocketIoController;
 
+import android.app.AlertDialog;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.view.ContextMenu;
+import android.view.ContextMenu.ContextMenuInfo;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -24,13 +30,54 @@ import android.widget.ListView;
 public class GroupsFragment extends Fragment {
 
 	private static View rootView;
-	
-	//LIST OF ARRAY STRINGS WHICH WILL SERVE AS LIST ITEMS
-    private static ArrayList<Group> groups=new ArrayList<Group>();
 
-    //DEFINING A STRING ADAPTER WHICH WILL HANDLE THE DATA OF THE LISTVIEW
-    private static GroupsAdapter adapter;
-	
+	//LIST OF ARRAY STRINGS WHICH WILL SERVE AS LIST ITEMS
+	private static ArrayList<Group> groups=new ArrayList<Group>();
+
+	private static List<String> menuItems=Arrays.asList("Invite User","Leave Group");
+
+	//DEFINING A STRING ADAPTER WHICH WILL HANDLE THE DATA OF THE LISTVIEW
+	private static GroupsAdapter adapter;
+
+	@Override
+	public void onCreateContextMenu(ContextMenu menu, View v,
+			ContextMenuInfo menuInfo) {
+		if(v.getId()==R.id.room_list){
+			AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo)menuInfo;
+			menu.setHeaderTitle(groups.get(info.position).getName());
+			for(String item : menuItems){
+				menu.add(item);
+			}
+		}
+	}
+
+	@Override
+	public boolean onContextItemSelected(MenuItem item) {
+		AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo)item.getMenuInfo();
+		//int menuItemIndex = item.getItemId();
+		final Group selectedGroup = groups.get(info.position);
+		//String menuClicked = menuItems.get(menuItemIndex);
+		String menuClicked = item.getTitle().toString();
+		System.out.println("Clicked: "+menuClicked+" on group: "+selectedGroup.getName());
+		switch(menuClicked){
+		case "Invite User":
+			break;
+		case "Leave Group":
+			NetworkManager.putLeaveGroup(selectedGroup);
+			MainActivity.activity.runOnUiThread(new Runnable(){
+				public void run(){
+					groups.remove(selectedGroup);
+					adapter.notifyDataSetChanged();
+				}
+			});
+			
+			break;
+		default:
+			break;
+		}
+		return true;
+	}
+
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
@@ -38,38 +85,39 @@ public class GroupsFragment extends Fragment {
 		rootView = inflater.inflate(R.layout.groups_main, container,
 				false);
 		rootView.requestFocus();
-		
-		 adapter=new GroupsAdapter(getActivity(),groups);
-		 final ListView lv = (ListView) rootView.findViewById(R.id.room_list);
-		 lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 
-			  @Override
-			  public void onItemClick(AdapterView<?> arg0, View arg1, int position, long arg3) {
-			    System.out.println("Selected Room #:"+position);
-			    NetworkManager.setCurrentRoom((Group) adapter.getItem(position));
-			    MessageFragment mf = new MessageFragment();
-			   
-			    MainActivity.switchView(mf);
-			    
-			  }
-			});
-		 MainActivity.activity.runOnUiThread(new Runnable(){
-			 public void run(){
-				 
-				 lv.setAdapter(adapter);
-				 
-			 }
-		 });
-		 if(NetworkManager.getAllGroups()==null || NetworkManager.getAllGroups().isEmpty()){
-			 NetworkManager.getGroups();
-		 }
-		 System.out.println("Getting here :"+SocketIoController.isConnected());
-		 if(!SocketIoController.isConnected()){
-	    	SocketIoController.connect();
-	     }
+		adapter=new GroupsAdapter(getActivity(),groups);
+		final ListView lv = (ListView) rootView.findViewById(R.id.room_list);
+		lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+
+			@Override
+			public void onItemClick(AdapterView<?> arg0, View arg1, int position, long arg3) {
+				System.out.println("Selected Room #:"+position);
+				NetworkManager.setCurrentRoom((Group) adapter.getItem(position));
+				MessageFragment mf = new MessageFragment();
+
+				MainActivity.switchView(mf);
+
+			}
+		});
+		MainActivity.activity.runOnUiThread(new Runnable(){
+			public void run(){
+
+				lv.setAdapter(adapter);
+
+			}
+		});
+		if(NetworkManager.getAllGroups()==null || NetworkManager.getAllGroups().isEmpty()){
+			NetworkManager.getGroups();
+		}
+		System.out.println("Getting here :"+SocketIoController.isConnected());
+		if(!SocketIoController.isConnected()){
+			SocketIoController.connect();
+		}
+		registerForContextMenu(lv);
 		return rootView;
 	}
-	
+
 	public static void addGroups(JSONArray array){
 		MainActivity.activity.runOnUiThread(new Runnable(){
 			public void run(){
@@ -89,13 +137,13 @@ public class GroupsFragment extends Fragment {
 						adapter.notifyDataSetChanged();
 					}
 				});
-				
+
 			} catch (JSONException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		}
 		NetworkManager.setGroups(groupsMap);
-		
+
 	}
 }
