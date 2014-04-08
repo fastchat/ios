@@ -136,8 +136,22 @@
     UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"CHGroupTableViewCell" forIndexPath:indexPath];
 
     // Configure the cell...
-    cell.textLabel.text = [self.groups[indexPath.row] objectForKey:@"name"];
-    DLog(@"group: %@", [self.groups[indexPath.row] objectForKey:@"name"]);
+    
+    NSDictionary *group = self.groups[indexPath.row];
+    if ([group[@"name"] isKindOfClass:[NSString class]]) {
+        cell.textLabel.text = group[@"name"];
+    } else {
+        NSString *name = @"";
+        for (NSDictionary *user in group[@"members"]) {
+            name = [name stringByAppendingFormat:@"%@, ", user[@"username"]];
+        }
+        if (name.length > 2) {
+            name = [name substringToIndex:name.length - 2];
+        }
+        cell.textLabel.text = name;
+    }
+    
+
     
     return cell;
 }
@@ -152,7 +166,10 @@
     [vc setGroupId:_groups[indexPath.row][@"_id"]];
     [vc setGroup:_groups[indexPath.row]];
     
-    vc.title = [self.groups[indexPath.row] objectForKey:@"name"];
+    if ([[self.groups[indexPath.row] objectForKey:@"name"] isKindOfClass:[NSString class]]) {
+        vc.title = [self.groups[indexPath.row] objectForKey:@"name"];
+    }
+
 
     [self.navigationController pushViewController:vc animated:YES];
 }
