@@ -148,7 +148,7 @@
             [self.messageArray addObject:message[@"text"]];
             [self.messageAuthorsArray addObject:self.members[message[@"from"]]];
         }
-        [[[self.msgArray reverseObjectEnumerator] allObjects] mutableCopy];
+        self.msgArray = [[[self.msgArray reverseObjectEnumerator] allObjects] mutableCopy];
         self.messageArray = [[[self.messageArray reverseObjectEnumerator] allObjects] mutableCopy];
         self.messageAuthorsArray = [[[self.messageAuthorsArray reverseObjectEnumerator] allObjects] mutableCopy];
         
@@ -373,9 +373,25 @@
 
 -(CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath;
 {
-    CGSize renderedSize = [[self.messageArray objectAtIndex:indexPath.row] sizeWithFont: [UIFont systemFontOfSize:14.0] constrainedToSize:CGSizeMake(205, CGFLOAT_MAX) lineBreakMode:NSLineBreakByWordWrapping];
+ //   CGSize renSize = [[self.messageArray objectAtIndex:indexPath.row] sizeWithAttributes:@{NSFontAttributeName: [UIFont systemFontOfSize:14.0f]}];
+//    CGSize renderedSize = [[self.messageArray objectAtIndex:indexPath.row] sizeWithFont: [UIFont systemFontOfSize:14.0] constrainedToSize:CGSizeMake(205, CGFLOAT_MAX) lineBreakMode:NSLineBreakByWordWrapping];
+    
+    
+    NSAttributedString *attributedText =
+    [[NSAttributedString alloc]
+     initWithString:[[self.msgArray objectAtIndex:indexPath.row] objectForKey:@"text"]
+     attributes:@
+     {
+     NSFontAttributeName: [UIFont systemFontOfSize:14.0f]
+     }];
+    CGRect rect = [attributedText boundingRectWithSize:CGSizeMake(205, CGFLOAT_MAX)
+                                               options:NSStringDrawingUsesLineFragmentOrigin
+                                               context:nil];
+    CGSize size = rect.size;
 
-    return renderedSize.height + 30.0;
+    DLog(@"Size for %@ is %f", [[self.msgArray objectAtIndex:indexPath.row] objectForKey:@"sent"], ceilf(size.height));
+    
+    return ceilf(size.height) + 30.0;
 }
 
 -(BOOL)manager:(CHSocketManager *)manager doesCareAboutMessage:(NSDictionary *)message;
