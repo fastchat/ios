@@ -29,6 +29,7 @@
 - (void)addNewUsers: (NSArray *)invitees groupId: (NSString *) groupId callback: (void (^)(bool successful, NSError *error))callback;
 - (void)acceptInviteAtIndex: (NSNumber *)index callback: (void (^)(bool successful, NSError *error))callback;
 - (void)postDeviceToken:(NSData *)token callback:(void (^)(BOOL success, NSError *error))callback;
+- (void)putLeaveGroup:(NSString *)groupId callback:(void (^)(BOOL success, NSError *error))callback;
 
 - (BOOL)hasStoredSessionToken;
 

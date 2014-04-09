@@ -76,7 +76,7 @@
     [spinner startAnimating];
     
     [[CHNetworkManager sharedManager] getGroups:^(NSArray *groups) {
-        self.groups = groups;
+        self.groups = [groups mutableCopy];
 
         [self.tableView reloadData];
         [spinner stopAnimating];
@@ -140,6 +140,23 @@
     CHMessageViewController *vc = [self.storyboard instantiateViewControllerWithIdentifier:@"CHMessageViewController"];
     [vc setGroup:_groups[indexPath.row]];
     [self.navigationController pushViewController:vc animated:YES];
+}
+
+- (BOOL)tableView:(UITableView *)tableView canEditRowAtIndexPath:(NSIndexPath *)indexPath {
+    return YES;
+}
+
+- (void)tableView:(UITableView *)tableView commitEditingStyle:(UITableViewCellEditingStyle)editingStyle forRowAtIndexPath:(NSIndexPath *)indexPath;
+{
+    [[CHNetworkManager sharedManager] putLeaveGroup:((CHGroup *)self.groups[indexPath.row])._id callback:^(BOOL success, NSError *error) {
+       [self.groups removeObjectAtIndex:indexPath.row];
+       [tableView reloadData];
+    }];
+}
+
+- (NSString *)tableView:(UITableView *)tableView titleForDeleteConfirmationButtonForRowAtIndexPath:(NSIndexPath *)indexPath;
+{
+    return @"Leave";
 }
 
 @end

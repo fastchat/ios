@@ -229,6 +229,16 @@
     }];
 }
 
+- (void)putLeaveGroup:(NSString *)groupId callback:(void (^)(BOOL success, NSError *error))callback;
+{
+    NSString *url = [NSString stringWithFormat:@"/group/%@/leave", groupId];
+    [self PUT:url parameters:nil success:^(NSURLSessionDataTask *task, id responseObject) {
+        callback(YES, nil);
+    } failure:^(NSURLSessionDataTask *task, NSError *error) {
+        callback(NO, error);
+    }];
+}
+
 
 - (BOOL)hasStoredSessionToken;
 {
