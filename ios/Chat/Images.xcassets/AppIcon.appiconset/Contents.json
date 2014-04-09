@@ -3,19 +3,19 @@
     {
       "size" : "29x29",
       "idiom" : "iphone",
-      "filename" : "iOS-7-Full-v0-2.png",
+      "filename" : "FastChat-58.png",
       "scale" : "2x"
     },
     {
       "size" : "40x40",
       "idiom" : "iphone",
-      "filename" : "iOS-7-Full-v0-1.png",
+      "filename" : "FastChat-80.png",
       "scale" : "2x"
     },
     {
       "size" : "60x60",
       "idiom" : "iphone",
-      "filename" : "iOS-7-Full-v0.png",
+      "filename" : "FastChat-120.png",
       "scale" : "2x"
     },
     {
@@ -24,8 +24,9 @@
       "scale" : "1x"
     },
     {
-      "idiom" : "ipad",
       "size" : "29x29",
+      "idiom" : "ipad",
+      "filename" : "FastChat-58-1.png",
       "scale" : "2x"
     },
     {
@@ -34,8 +35,9 @@
       "scale" : "1x"
     },
     {
-      "idiom" : "ipad",
       "size" : "40x40",
+      "idiom" : "ipad",
+      "filename" : "FastChat-80-1.png",
       "scale" : "2x"
     },
     {

@@ -30,7 +30,6 @@
 		2769B06518F479CC00CCE470 /* CHGroup.m in Sources */ = {isa = PBXBuildFile; fileRef = 2769B06418F479CC00CCE470 /* CHGroup.m */; };
 		2769B06818F47E5E00CCE470 /* CHFastChatObject.m in Sources */ = {isa = PBXBuildFile; fileRef = 2769B06718F47E5E00CCE470 /* CHFastChatObject.m */; };
 		2769B06B18F495FD00CCE470 /* CHMessage.m in Sources */ = {isa = PBXBuildFile; fileRef = 2769B06A18F495FD00CCE470 /* CHMessage.m */; };
-		2769B06D18F4D5D500CCE470 /* iOS-7-Full-v0.png in Resources */ = {isa = PBXBuildFile; fileRef = 2769B06C18F4D5D500CCE470 /* iOS-7-Full-v0.png */; };
 		279CF21D18DF777500C82399 /* CHUser.m in Sources */ = {isa = PBXBuildFile; fileRef = 279CF21C18DF777400C82399 /* CHUser.m */; };
 		279CF22118DFD74D00C82399 /* CHInviteUserViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 279CF22018DFD74D00C82399 /* CHInviteUserViewController.m */; };
 		2C7FD1E6FB44435B8A225753 /* libPods-Chat.a in Frameworks */ = {isa = PBXBuildFile; fileRef = ED86F54EC1C64B14950512A1 /* libPods-Chat.a */; };
@@ -100,7 +99,6 @@
 		2769B06718F47E5E00CCE470 /* CHFastChatObject.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CHFastChatObject.m; sourceTree = "<group>"; };
 		2769B06918F495FD00CCE470 /* CHMessage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CHMessage.h; sourceTree = "<group>"; };
 		2769B06A18F495FD00CCE470 /* CHMessage.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CHMessage.m; sourceTree = "<group>"; };
-		2769B06C18F4D5D500CCE470 /* iOS-7-Full-v0.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "iOS-7-Full-v0.png"; sourceTree = "<group>"; };
 		279CF21B18DF777400C82399 /* CHUser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CHUser.h; sourceTree = "<group>"; };
 		279CF21C18DF777400C82399 /* CHUser.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CHUser.m; sourceTree = "<group>"; };
 		279CF21F18DFD74D00C82399 /* CHInviteUserViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CHInviteUserViewController.h; sourceTree = "<group>"; };
@@ -301,7 +299,6 @@
 		AA7759E018D54D3000E4E7AB /* Supporting Files */ = {
 			isa = PBXGroup;
 			children = (
-				2769B06C18F4D5D500CCE470 /* iOS-7-Full-v0.png */,
 				AA7759F418D54D3000E4E7AB /* Images.xcassets */,
 				2769B05318F1258A00CCE470 /* MessageEntryBackground@2x.png */,
 				2769B05418F1258A00CCE470 /* MessageEntryBackground.png */,
@@ -425,7 +422,6 @@
 				2769B05C18F1258A00CCE470 /* MessageEntryBackground.png in Resources */,
 				2769B05D18F1258A00CCE470 /* MessageEntryInputField.png in Resources */,
 				AA7759F518D54D3000E4E7AB /* Images.xcassets in Resources */,
-				2769B06D18F4D5D500CCE470 /* iOS-7-Full-v0.png in Resources */,
 				2769B05E18F1258A00CCE470 /* MessageEntryInputField@2x.png in Resources */,
 				AA7759ED18D54D3000E4E7AB /* Main_iPhone.storyboard in Resources */,
 				2769B06218F1258A00CCE470 /* MessageEntrySendButtonPressed@2x.png in Resources */,
