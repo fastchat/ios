@@ -14,6 +14,7 @@
 #import "CHMessageViewController.h"
 #import "CHViewController.h"
 #import "CHMessageTableViewController.h"
+#import "CHGroup.h"
 
 @interface CHGroupListTableViewController ()
 
@@ -55,18 +56,15 @@
         [self loadGroupsAndRefresh];
         
     }
-    
 
-    
     UIBarButtonItem *addButton = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemCompose target:self action:@selector(showAddView)];
     self.navigationItem.rightBarButtonItem = addButton;
-    
     
     UIBarButtonItem *menuButton = [[UIBarButtonItem alloc] initWithTitle:@"Menu" style:UIBarButtonItemStylePlain target:self action:@selector(displaySideMenu)];
     
     self.navigationItem.leftBarButtonItem = menuButton;
     
-    [UIApplication sharedApplication].applicationIconBadgeNumber = 0;
+    
 }
 
 -(void) loadGroupsAndRefresh;
@@ -79,9 +77,7 @@
     
     [[CHNetworkManager sharedManager] getGroups:^(NSArray *groups) {
         self.groups = groups;
-        //        self.users
-        
-        DLog(@"groups: %@",groups);
+
         [self.tableView reloadData];
         [spinner stopAnimating];
         
@@ -90,6 +86,8 @@
     [[CHNetworkManager sharedManager] getProfile:^(CHUser *userProfile) {
         
     }];
+    
+    [UIApplication sharedApplication].applicationIconBadgeNumber = 0;
 }
 
 -(void) viewWillAppear:(BOOL)animated
@@ -136,74 +134,19 @@
     UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"CHGroupTableViewCell" forIndexPath:indexPath];
 
     // Configure the cell...
-    cell.textLabel.text = [self.groups[indexPath.row] objectForKey:@"name"];
-    DLog(@"group: %@", [self.groups[indexPath.row] objectForKey:@"name"]);
+    cell.textLabel.text = [self.groups[indexPath.row] getGroupName];
     
     return cell;
 }
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
     // Open messageViewController with proper group id
-    DLog(@"Opening group id: %@", [self.groups[indexPath.row] objectForKey:@"_id"]);
+    
     [self.tableView setDelaysContentTouches:NO];
     CHMessageViewController *vc = [self.storyboard instantiateViewControllerWithIdentifier:@"CHMessageViewController"];
-//    CHMessageTableViewController *vc = [self.storyboard instantiateViewControllerWithIdentifier:@"CHMessageTableViewController"];
-    //[controller setGroupId:[self.groups[indexPath.row] objectForKey:@"_id"]];
-    [vc setGroupId:_groups[indexPath.row][@"_id"]];
-    [vc setGroup:_groups[indexPath.row]];
     
-    vc.title = [self.groups[indexPath.row] objectForKey:@"name"];
-
+    [vc setGroup:_groups[indexPath.row]];
     [self.navigationController pushViewController:vc animated:YES];
 }
-
-/*
-// Override to support conditional editing of the table view.
-- (BOOL)tableView:(UITableView *)tableView canEditRowAtIndexPath:(NSIndexPath *)indexPath
-{
-    // Return NO if you do not want the specified item to be editable.
-    return YES;
-}
-*/
-
-/*
-// Override to support editing the table view.
-- (void)tableView:(UITableView *)tableView commitEditingStyle:(UITableViewCellEditingStyle)editingStyle forRowAtIndexPath:(NSIndexPath *)indexPath
-{
-    if (editingStyle == UITableViewCellEditingStyleDelete) {
-        // Delete the row from the data source
-        [tableView deleteRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationFade];
-    } else if (editingStyle == UITableViewCellEditingStyleInsert) {
-        // Create a new instance of the appropriate class, insert it into the array, and add a new row to the table view
-    }   
-}
-*/
-
-/*
-// Override to support rearranging the table view.
-- (void)tableView:(UITableView *)tableView moveRowAtIndexPath:(NSIndexPath *)fromIndexPath toIndexPath:(NSIndexPath *)toIndexPath
-{
-}
-*/
-
-/*
-// Override to support conditional rearranging of the table view.
-- (BOOL)tableView:(UITableView *)tableView canMoveRowAtIndexPath:(NSIndexPath *)indexPath
-{
-    // Return NO if you do not want the item to be re-orderable.
-    return YES;
-}
-*/
-
-/*
-#pragma mark - Navigation
-
-// In a storyboard-based application, you will often want to do a little preparation before navigation
-- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender
-{
-    // Get the new view controller using [segue destinationViewController].
-    // Pass the selected object to the new view controller.
-}
-*/
 
 @end

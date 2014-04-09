@@ -10,6 +10,8 @@
 #import <UIKit/UIKit.h>
 #import "SocketIO.h"
 
+@class CHMessage;
+
 //@class SocketIO;
 @protocol CHSocketManagerDelegate;
 
@@ -29,6 +31,6 @@
 
 @protocol CHSocketManagerDelegate <NSObject>
 
--(BOOL)manager: (CHSocketManager *)manager doesCareAboutMessage: (NSDictionary *)message;
+-(BOOL)manager: (CHSocketManager *)manager doesCareAboutMessage: (CHMessage *)message;
 
 @end

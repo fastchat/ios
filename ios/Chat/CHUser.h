@@ -7,8 +7,9 @@
 //
 
 #import <Foundation/Foundation.h>
+#import "CHFastChatObject.h"
 
-@interface CHUser : NSObject
+@interface CHUser : CHFastChatObject
 
 @property (strong, nonatomic) NSString *username;
 @property (strong, nonatomic) NSString *userId;

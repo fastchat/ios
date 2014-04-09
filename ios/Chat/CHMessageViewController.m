@@ -13,6 +13,8 @@
 #import "CHUser.h"
 #import "CHOwnMessageTableViewCell.h"
 #import "CHSocketManager.h"
+#import "CHGroup.h"
+#import "CHMessage.h"
 
 #define kDefaultContentOffset 70
 
@@ -20,14 +22,9 @@
 
 @property NSString *messages;
 @property NSMutableArray *messageArray;
-@property NSMutableArray *msgArray;
 @property (nonatomic, strong) SocketIO *socket;
 @property CGRect previousMessageTextViewRect;
-
-
-@property NSMutableArray *messageAuthorsArray;
 @property (nonatomic, strong) NSMutableDictionary *members;
-
 @property float heightOfKeyboard;
 
 @end
@@ -38,6 +35,7 @@
 {
     [super viewDidLoad];
     // Do any additional setup after loading the view.
+    self.title = [_group getGroupName];
     self.messageEntryField.hidden = YES;
     
     self.containerView = [[UIView alloc] initWithFrame:CGRectMake(0, self.view.frame.size.height - 40, 320, 40)];
@@ -102,18 +100,18 @@
     
     [[CHSocketManager sharedManager] setDelegate:self];
     
-    NSArray *members = _group[@"members"];
+    NSArray *members = _group.members;
     NSMutableDictionary *tempIds = [NSMutableDictionary dictionary];
     [members enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
-        NSDictionary *dict = obj;
-        tempIds[dict[@"_id"]] = dict[@"username"];
+        //NSDictionary *dict = obj;
+        CHUser *currUser = obj;
+        DLog(@"User: %@", currUser);
+        tempIds[currUser.userId] = currUser.username;
     }];
     self.userIds = tempIds;
     
     _messageArray = [[NSMutableArray alloc] init];
-    _messageAuthorsArray = [[NSMutableArray alloc] init];
-    _msgArray = [[NSMutableArray alloc] init];
-    
+
     self.messages = @"";
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(keyboardWillShow:) name:UIKeyboardWillShowNotification object:nil];
     
@@ -126,34 +124,21 @@
     // make a memebrs hash
     //
     self.members = [NSMutableDictionary dictionary];
-    for (NSDictionary *aMember in self.group[@"members"]) {
-        self.members[aMember[@"_id"]] = aMember[@"username"];
+    for (CHUser *aMember in self.group.members) {
+        self.members[aMember.userId] = aMember.username;
     }
     
+
     
     ///
     /// Load up old messages
     ///
-    [[CHNetworkManager sharedManager] getMessagesForGroup:self.groupId callback:^(NSArray *messages) {
+    DLog(@"Group in viewdidload: %@", _group);
+    [[CHNetworkManager sharedManager] getMessagesForGroup:self.group._id callback:^(NSArray *messages) {
         
-        for ( NSMutableDictionary *message in messages) {
-            DLog(@"MESSAGE: %@", message);
-            NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
-            [dateFormatter setDateFormat:@"yyyy-MM-dd'T'HH:mm:ss.SSSz"];
-            NSDate *date  = [dateFormatter dateFromString:message[@"sent"]];
-//            message[@"sent"] = date;
-            NSDictionary *newMessage = @{@"from" : message[@"from"], @"text" : message[@"text"], @"sent": date};
-            [_msgArray addObject:newMessage];
-
-            [self.messageArray addObject:message[@"text"]];
-            [self.messageAuthorsArray addObject:self.members[message[@"from"]]];
-        }
-        self.msgArray = [[[self.msgArray reverseObjectEnumerator] allObjects] mutableCopy];
-        self.messageArray = [[[self.messageArray reverseObjectEnumerator] allObjects] mutableCopy];
-        self.messageAuthorsArray = [[[self.messageAuthorsArray reverseObjectEnumerator] allObjects] mutableCopy];
-        
+        self.messageArray = [NSMutableArray arrayWithArray:messages];
+        self.messageArray = [[self.messageArray reverseObjectEnumerator] allObjects];
         [self.messageTable reloadData];
-        
         [self.messageTable scrollToRowAtIndexPath:[NSIndexPath indexPathForRow:_messageArray.count - 1 inSection:0] atScrollPosition:UITableViewScrollPositionBottom animated:NO];
     }];
     
@@ -164,35 +149,32 @@
 	[self.textView resignFirstResponder];
 }
 
-- (void) inviteUser;
-{
-    CHInviteUserViewController *inviteViewController = [self.storyboard instantiateViewControllerWithIdentifier:@"CHInviteUserViewController"];
-    [inviteViewController setGroupId:self.groupId];
-    [self.navigationController pushViewController:inviteViewController animated:YES];
-}
 
 - (void)sendMessage;
 {
     
-    NSString *msg = self.textView.text;
+   NSString *msg = self.textView.text;
     
     if ( [msg isEqualToString:@""] || msg == nil ) {
         return;
     }
     
     CHUser *currUser = [[CHNetworkManager sharedManager] currentUser];
-    NSMutableDictionary *data = [[NSMutableDictionary alloc] initWithDictionary:@{@"from": currUser.userId, @"text" : msg, @"group": self.groupId}];
+    NSMutableDictionary *data = [[NSMutableDictionary alloc] initWithDictionary:@{@"from": currUser.userId, @"text" : msg, @"group": self.group._id}];
     
     [[CHSocketManager sharedManager] sendMessageWithEvent:@"message" data:data];
+    NSDateFormatter *formatter = [[NSDateFormatter alloc] init];
+    formatter.locale = [[NSLocale alloc] initWithLocaleIdentifier:@"en_US_POSIX"];
+    formatter.dateFormat = @"yyyy-MM-dd'T'HH:mm:ss.SSSz";
+
+    data[@"sent"] = [formatter stringFromDate:[NSDate date] ];
+
+    CHMessage *newMessage = [[CHMessage objectsFromJSON:@[data]] firstObject];
     
-    data[@"sent"] = [NSDate date];
-    [_msgArray addObject:data];
+    [self.messageArray addObject:newMessage];
     self.textView.text = @"";
     
     [self.messageTable beginUpdates];
-    
-    [_messageArray addObject:msg];
-    [_messageAuthorsArray addObject:_members[currUser.userId]];
     
     // Magically add rows to table view
     [self.messageTable insertRowsAtIndexPaths:@[[NSIndexPath indexPathForRow:_messageArray.count - 1 inSection:0]] withRowAnimation:UITableViewRowAnimationAutomatic];
@@ -200,6 +182,7 @@
     [self.messageTable endUpdates];
     
     [self.messageTable scrollToRowAtIndexPath:[NSIndexPath indexPathForRow:_messageArray.count - 1 inSection:0] atScrollPosition:UITableViewScrollPositionBottom animated:YES];
+
 }
 
 - (void) keyboardWillShow: (NSNotification*) notification
@@ -276,13 +259,13 @@
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
+    
     static NSString *cHMessageTableViewCell = @"CHMessageTableViewCell";
-    
+    CHMessage *currMessage = (CHMessage *)[self.messageArray objectAtIndex:indexPath.row];
     CHMessageTableViewCell *cell = nil;
-
-     CHUser *currUser = [[CHNetworkManager sharedManager] currentUser];
+    CHUser *currUser = [[CHNetworkManager sharedManager] currentUser];
     
-    if( [_messageAuthorsArray[indexPath.row] isEqualToString:self.members[currUser.userId]] ) {
+    if( [self.members[currMessage.author] isEqualToString:self.members[currUser.userId]] ) {
         cell = [tableView dequeueReusableCellWithIdentifier:@"CHOwnMessageTableViewCell" forIndexPath:indexPath];
         // Setting to nil as workaround for iOS 7 bug showing links at wrong time
         cell.messageTextView.text = nil;
@@ -293,27 +276,14 @@
         NSDictionary *attrsDictionary =
         [NSDictionary dictionaryWithObject:font
                                     forKey:NSFontAttributeName];
-        NSAttributedString *attrString =
-        [[NSAttributedString alloc] initWithString:[NSString stringWithFormat:@"%@",[self.messageArray objectAtIndex:indexPath.row]] attributes:attrsDictionary];
-        
-        cell.messageTextView.attributedText = attrString;//[self.messageArray objectAtIndex:indexPath.row];
-        //cell.messageTextView.text = [self.messageArray objectAtIndex:indexPath.row];
-        cell.authorLabel.text = [[NSString alloc] initWithFormat:@"%@:",[self.messageAuthorsArray objectAtIndex:indexPath.row]];
-        if ([[_msgArray objectAtIndex:indexPath.row] objectForKey:@"sent"] != nil) {
+         
+         NSAttributedString *attrString =
+         [[NSAttributedString alloc] initWithString:[NSString stringWithFormat:@"%@",currMessage.text] attributes:attrsDictionary];
+        cell.messageTextView.attributedText = attrString;
+        cell.authorLabel.text = [[NSString alloc] initWithFormat:@"%@:",[self.members objectForKey:currMessage.author]];
+        if (currMessage.sent != nil) {
             // Format the timestamp
-            NSDate *timestamp = [[_msgArray objectAtIndex:indexPath.row] objectForKey:@"sent"];
-            DLog(@"Timestamp: %@", timestamp);
-            NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
-            [dateFormatter setDateFormat:@"yyyy-MM-dd'T'HH:mm:ss.SSSz"];
-            
-            //            NSDate *date  = [dateFormatter dateFromString:[timestamp ]];
-            //DLog(@"date: %@", date);
-            // Convert to new Date Format
-            //            [dateFormatter setDateFormat:@"yyyy-MM-dd HH:mm:ss"];
-            [dateFormatter setDateFormat:@"HH:mm"];
-            NSString *newDate = [dateFormatter stringFromDate:timestamp];
-            DLog(@"New date: %@", newDate);
-            cell.timestampLabel.text = newDate;//[[_msgArray objectAtIndex:indexPath.row] objectForKey:@"sent"];
+            cell.timestampLabel.text = [[self timestampFormatter] stringFromDate:currMessage.sent];
         }
         else {
             cell.timestampLabel.text = @"";
@@ -323,7 +293,7 @@
     
     else {
         cell = [tableView dequeueReusableCellWithIdentifier:cHMessageTableViewCell forIndexPath:indexPath];
-        cell.authorLabel.text = [[NSString alloc] initWithFormat:@"%@:",[self.messageAuthorsArray objectAtIndex:indexPath.row]];
+        cell.authorLabel.text = [[NSString alloc] initWithFormat:@"%@:", self.members[currMessage.author]];
         // Setting to nil as workaround for iOS 7 bug showing links at wrong time
         cell.messageTextView.text = nil;
         [cell.messageTextView setScrollEnabled:NO];
@@ -334,32 +304,17 @@
         [NSDictionary dictionaryWithObject:font
                                     forKey:NSFontAttributeName];
         NSAttributedString *attrString =
-        [[NSAttributedString alloc] initWithString:[NSString stringWithFormat:@"%@",[self.messageArray objectAtIndex:indexPath.row]] attributes:attrsDictionary];
+        [[NSAttributedString alloc] initWithString:[NSString stringWithFormat:@"%@",currMessage.text] attributes:attrsDictionary];
         
         cell.messageTextView.attributedText = attrString;
-        DLog(@"Row: %d, arrayLength: %d", indexPath.row, _msgArray.count);
-        if ([[_msgArray objectAtIndex:indexPath.row] objectForKey:@"sent"] != nil) {
+       
+        if (currMessage.sent != nil) {
             // Format the timestamp
-            NSDate *timestamp = [[_msgArray objectAtIndex:indexPath.row] objectForKey:@"sent"];
-            DLog(@"Timestamp: %@", timestamp);
-            NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
-            [dateFormatter setDateFormat:@"yyyy-MM-dd'T'HH:mm:ss.SSSz"];
-
-//            NSDate *date  = [dateFormatter dateFromString:[timestamp ]];
-            //DLog(@"date: %@", date);
-            // Convert to new Date Format
-//            [dateFormatter setDateFormat:@"yyyy-MM-dd HH:mm:ss"];
-            [dateFormatter setDateFormat:@"HH:mm"];
-            NSString *newDate = [dateFormatter stringFromDate:timestamp];
-            DLog(@"New date: %@", newDate);
-            cell.timestampLabel.text = newDate;//[[_msgArray objectAtIndex:indexPath.row] objectForKey:@"sent"];
+            cell.timestampLabel.text = [[self timestampFormatter] stringFromDate:currMessage.sent];
         }
         else {
             cell.timestampLabel.text = @"";
         }
-        
-        //cell.messageTextView.attributedText = [self.messageArray objectAtIndex:indexPath.row];
-//        cell.messageTextView.text = [self.messageArray objectAtIndex:indexPath.row];
     }
 
     return cell;
@@ -373,37 +328,24 @@
 
 -(CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath;
 {
-    CGSize renderedSize = [[[self.msgArray objectAtIndex:indexPath.row] objectForKey:@"text"] sizeWithFont: [UIFont systemFontOfSize:14.0f] constrainedToSize:CGSizeMake(205, CGFLOAT_MAX) lineBreakMode:NSLineBreakByWordWrapping];
+    CGSize renderedSize = [((CHMessage *)[self.messageArray objectAtIndex:indexPath.row]).text sizeWithFont: [UIFont systemFontOfSize:14.0f] constrainedToSize:CGSizeMake(205, CGFLOAT_MAX) lineBreakMode:NSLineBreakByWordWrapping];
 
-    DLog(@"renderedSize: %f", renderedSize.height);
+    // Adding 45.0 to fix the bug where messages of certain lengths don't size the cell properly.
     return renderedSize.height + 45.0f;
 }
 
--(BOOL)manager:(CHSocketManager *)manager doesCareAboutMessage:(NSDictionary *)message;
+-(BOOL)manager:(CHSocketManager *)manager doesCareAboutMessage:(CHMessage *)message;
 {
-    if( [message[@"group"] isEqualToString:_groupId]) {
+    if( [message.group isEqualToString:self.group._id] ) {
         
         
         [self.messageTable beginUpdates];
-        
-        [_messageArray addObject:message[@"text"]];
-        [_messageAuthorsArray addObject:_members[message[@"from"]]];
-        
-        
-        
-        DLog(@"MESSAGE: %@", message);
-        NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
-        [dateFormatter setDateFormat:@"yyyy-MM-dd'T'HH:mm:ss.SSSz"];
-        NSDate *date  = [dateFormatter dateFromString:message[@"sent"]];
-        //            message[@"sent"] = date;
-        NSDictionary *newMessage = @{@"from" : message[@"from"], @"text" : message[@"text"], @"sent": date};
-        [_msgArray addObject:newMessage];
+       
+        [self.messageArray addObject:message];
         
         // Magically add rows to table view
         [self.messageTable insertRowsAtIndexPaths:@[[NSIndexPath indexPathForRow:_messageArray.count - 1 inSection:0]] withRowAnimation:UITableViewRowAnimationAutomatic];
-        
         [self.messageTable endUpdates];
-        
         [self.messageTable scrollToRowAtIndexPath:[NSIndexPath indexPathForRow:_messageArray.count - 1 inSection:0] atScrollPosition:UITableViewScrollPositionBottom animated:YES];
     
         return YES;
@@ -416,20 +358,15 @@
     ///
     /// Load up old messages
     ///
-    [[CHNetworkManager sharedManager] getMessagesForGroup:self.groupId callback:^(NSArray *messages) {
-        self.messageArray =nil;
-        self.messageAuthorsArray = nil;
-        
+    [[CHNetworkManager sharedManager] getMessagesForGroup:self.group._id callback:^(NSArray *messages) {
+        self.messageArray = nil;
         self.messageArray = [[NSMutableArray alloc] init];
-        self.messageAuthorsArray = [[NSMutableArray alloc] init];
         
-        for ( NSDictionary *message in messages) {
-            [self.messageArray addObject:message[@"text"]];
-            [self.messageAuthorsArray addObject:self.members[message[@"from"]]];
+        for ( CHMessage *message in messages) {
+            [self.messageArray addObject:message];
         }
         
         self.messageArray = [[[self.messageArray reverseObjectEnumerator] allObjects] mutableCopy];
-        self.messageAuthorsArray = [[[self.messageAuthorsArray reverseObjectEnumerator] allObjects] mutableCopy];
 
         [self.messageTable reloadData];
     }];
@@ -457,6 +394,14 @@
     self.messageTable.scrollIndicatorInsets = UIEdgeInsetsZero;
     
     [self.messageTable scrollToRowAtIndexPath:[NSIndexPath indexPathForRow:_messageArray.count - 1 inSection:0] atScrollPosition:UITableViewScrollPositionBottom animated:YES];
+}
+
+- (NSDateFormatter *)timestampFormatter {
+    NSDateFormatter *timestampFormatter = [[NSDateFormatter alloc] init];
+    [timestampFormatter setDateStyle:NSDateFormatterLongStyle];
+    timestampFormatter.locale = [[NSLocale alloc] initWithLocaleIdentifier:@"en_US_POSIX"];
+    timestampFormatter.dateFormat = @"MMMM dd, HH:mm";
+    return timestampFormatter;
 }
 
 @end
