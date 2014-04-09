@@ -180,16 +180,19 @@
     CHMessage *newMessage = [[CHMessage objectsFromJSON:@[data]] firstObject];
     
     [self.messageArray addObject:newMessage];
-    self.textView.text = @"";
+    
     
     [self.messageTable beginUpdates];
     
     // Magically add rows to table view
+    DLog(@"Message array size: %d", _messageArray.count);
     [self.messageTable insertRowsAtIndexPaths:@[[NSIndexPath indexPathForRow:_messageArray.count - 1 inSection:0]] withRowAnimation:UITableViewRowAnimationAutomatic];
     
     [self.messageTable endUpdates];
     
     [self.messageTable scrollToRowAtIndexPath:[NSIndexPath indexPathForRow:_messageArray.count - 1 inSection:0] atScrollPosition:UITableViewScrollPositionBottom animated:YES];
+    
+    self.textView.text = @"";
 
 }
 
@@ -402,6 +405,7 @@
     self.messageTable.contentInset = UIEdgeInsetsMake(kDefaultContentOffset, 0, self.containerView.frame.size.height + self.heightOfKeyboard, 0);
     self.messageTable.scrollIndicatorInsets = UIEdgeInsetsZero;
     
+    DLog(@"scrolling to %d", _messageArray.count - 1);
     [self.messageTable scrollToRowAtIndexPath:[NSIndexPath indexPathForRow:_messageArray.count - 1 inSection:0] atScrollPosition:UITableViewScrollPositionBottom animated:YES];
 }
 
