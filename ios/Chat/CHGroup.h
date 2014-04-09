@@ -17,5 +17,7 @@
 @property (nonatomic, copy) NSArray *members;
 
 - (NSString *)getGroupName;
+- (NSString *)usernameFromId: (NSString *)theId;
+
 
 @end

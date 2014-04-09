@@ -288,7 +288,7 @@
          NSAttributedString *attrString =
          [[NSAttributedString alloc] initWithString:[NSString stringWithFormat:@"%@",currMessage.text] attributes:attrsDictionary];
         cell.messageTextView.attributedText = attrString;
-        cell.authorLabel.text = [[NSString alloc] initWithFormat:@"%@:",[self.members objectForKey:currMessage.author]];
+        cell.authorLabel.text = [[NSString alloc] initWithFormat:@"%@:",[self.group usernameFromId:currMessage.author]];
         if (currMessage.sent != nil) {
             // Format the timestamp
             cell.timestampLabel.text = [[self timestampFormatter] stringFromDate:currMessage.sent];
@@ -301,7 +301,7 @@
     
     else {
         cell = [tableView dequeueReusableCellWithIdentifier:cHMessageTableViewCell forIndexPath:indexPath];
-        cell.authorLabel.text = [[NSString alloc] initWithFormat:@"%@:", self.members[currMessage.author]];
+        cell.authorLabel.text = [[NSString alloc] initWithFormat:@"%@:", [self.group usernameFromId:currMessage.author]];
         // Setting to nil as workaround for iOS 7 bug showing links at wrong time
         cell.messageTextView.text = nil;
         [cell.messageTextView setScrollEnabled:NO];

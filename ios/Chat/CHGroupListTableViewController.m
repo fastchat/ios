@@ -92,10 +92,6 @@
 {
     [super viewWillAppear:animated];
     //set initial values here
-    
-    
-    [UIApplication sharedApplication].applicationIconBadgeNumber = 0;
-
         
     [[UIApplication sharedApplication] registerForRemoteNotificationTypes:
      (UIRemoteNotificationTypeBadge | UIRemoteNotificationTypeSound | UIRemoteNotificationTypeAlert)];
@@ -141,8 +137,7 @@
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
     // Open messageViewController with proper group id
-    
-    [self.tableView setDelaysContentTouches:NO];
+    [tableView deselectRowAtIndexPath:indexPath animated:YES];
     CHMessageViewController *vc = [self.storyboard instantiateViewControllerWithIdentifier:@"CHMessageViewController"];
     
     [vc setGroup:_groups[indexPath.row]];
