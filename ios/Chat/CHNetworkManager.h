@@ -26,7 +26,7 @@
 - (void)getMessagesForGroup:(NSString *)group callback:(void (^)(NSArray *messages))callback;
 - (void)getProfile: (void (^)(CHUser *userProfile))callback;
 - (void)getProfileOfUser: (NSString *)username callback: (void (^)(CHUser *userProfile))callback;
-- (void)sendInviteToUsers: (NSArray *)invitees groupId: (NSString *) groupId callback: (void (^)(bool successful, NSError *error))callback;
+- (void)addNewUsers: (NSArray *)invitees groupId: (NSString *) groupId callback: (void (^)(bool successful, NSError *error))callback;
 - (void)acceptInviteAtIndex: (NSNumber *)index callback: (void (^)(bool successful, NSError *error))callback;
 - (void)postDeviceToken:(NSData *)token callback:(void (^)(BOOL success, NSError *error))callback;
 

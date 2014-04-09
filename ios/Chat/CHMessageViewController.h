@@ -11,10 +11,11 @@
 #import "CHSocketManager.h"
 #import "HPGrowingTextView.h"
 
+@class CHGroup;
+
 @interface CHMessageViewController : UIViewController <UITextFieldDelegate, SocketIODelegate, UITableViewDataSource,UITableViewDelegate, CHSocketManagerDelegate, UITextViewDelegate, HPGrowingTextViewDelegate>
 
-@property (strong, nonatomic) NSString *groupId;
-@property (nonatomic, strong) NSDictionary *group;
+@property (nonatomic, strong) CHGroup *group;
 @property (nonatomic, strong) NSDictionary *userIds;
 @property (weak, nonatomic) IBOutlet UITextField *messageField;
 @property (weak, nonatomic) IBOutlet UITextView *messageEntryField;

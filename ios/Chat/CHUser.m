@@ -9,5 +9,13 @@
 #import "CHUser.h"
 
 @implementation CHUser
-    
+
++ (NSDictionary *)JSONKeyPathsByPropertyKey;
+{
+    return @{
+             // Other attributes are mapped inheritently because they have the same name
+             @"userId": @"_id"
+             };
+}
+
 @end

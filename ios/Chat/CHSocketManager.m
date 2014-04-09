@@ -9,6 +9,7 @@
 #import "CHSocketManager.h"
 #import "SocketIOPacket.h"
 #import "CHNetworkManager.h"
+#import "CHMessage.h"
 
 @class SocketIO;
 
@@ -71,27 +72,15 @@
     DLog(@"Event: %@", packet.dataAsJSON);
     if ([packet.dataAsJSON[@"name"] isEqualToString:@"message"]) {
         NSDictionary *data = [packet.dataAsJSON[@"args"] firstObject];
+        CHMessage *message = [[CHMessage objectsFromJSON:@[data]] firstObject];
         
         if( [self.delegate respondsToSelector:@selector(manager:doesCareAboutMessage:)]) {
-            if( ![self.delegate manager:self doesCareAboutMessage:data] ) {
+            if( ![self.delegate manager:self doesCareAboutMessage:message] ) {
                 // add messages to list
             }
             
             
         }
-        //            self.messageDisplayTextView.text = [NSString stringWithFormat:@"%@ %@\n%@: %@\n\n", self.messageDisplayTextView.text, [[NSDate alloc] initWithTimeIntervalSinceNow:0], data[@"from"], data[@"text"]];
-        
-        // Ensure only messages from the current group are used
-        //        if (self.groupId isEqualToString:packet.dataAsJSON[@"groupId"]) {
-        //[self.messageArray addObject:data[@"text"]];
-        //  [_messageTable setContentOffset:CGPointMake(0, CGFLOAT_MAX)];
-        
-        //[self.messageAuthorsArray addObject:data[@"from"]];
-        
-        //        [self.messageDisplayTextView scrollRangeToVisible:NSMakeRange([self.messageDisplayTextView.text length], 0)];
-        //[self.messageTable setContentOffset:CGPointMake(0, CGFLOAT_MAX)];
-        
-        //[self.messageTable reloadData];
     }
     
 }
@@ -100,7 +89,6 @@
 {
     DLog(@"Sending message: %@", _socket);
     [_socket sendEvent:message withData: data];
-//    [_socket sendEvent:@"message" withData:@{@"from": currUser.userId, @"text" : msg, @"groupId": self.groupId}];
 }
 
 -(void) closeSocket;
