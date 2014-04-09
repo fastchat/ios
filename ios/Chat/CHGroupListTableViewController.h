@@ -8,8 +8,8 @@
 
 #import <UIKit/UIKit.h>
 
-@interface CHGroupListTableViewController : UITableViewController
+@interface CHGroupListTableViewController : UITableViewController <UITableViewDataSource, UITableViewDelegate>
 
-@property NSArray *groups;
+@property (nonatomic, strong) NSMutableArray *groups;
 
 @end
