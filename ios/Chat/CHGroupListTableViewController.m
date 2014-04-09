@@ -86,15 +86,15 @@
     [[CHNetworkManager sharedManager] getProfile:^(CHUser *userProfile) {
         
     }];
-    
-    [UIApplication sharedApplication].applicationIconBadgeNumber = 0;
-}
+    }
 
 -(void) viewWillAppear:(BOOL)animated
 {
     [super viewWillAppear:animated];
     //set initial values here
     
+    
+    [UIApplication sharedApplication].applicationIconBadgeNumber = 0;
 
         
     [[UIApplication sharedApplication] registerForRemoteNotificationTypes:

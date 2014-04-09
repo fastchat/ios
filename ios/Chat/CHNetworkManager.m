@@ -180,10 +180,10 @@
     //Return the users profile
 }
 
-- (void)sendInviteToUsers: (NSArray *)invitees groupId: (NSString *) groupId callback: (void (^)(bool successful, NSError *error))callback;
+- (void)addNewUsers: (NSArray *)invitees groupId: (NSString *) groupId callback: (void (^)(bool successful, NSError *error))callback;
 {
     // Add id
-    NSString *url =[[NSString alloc] initWithFormat:@"/group/%@/invite",groupId];
+    NSString *url =[[NSString alloc] initWithFormat:@"/group/%@/add",groupId];
    
     [self PUT:url parameters:@{@"invitees" : invitees} success:^(NSURLSessionDataTask *task, NSError *error) {
         

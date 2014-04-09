@@ -117,8 +117,8 @@
     
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(keyboardWillHide:) name:UIKeyboardWillHideNotification object:nil];
     
-    UIBarButtonItem *inviteButton = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemAdd target:self action:@selector(inviteUser)];
-    self.navigationItem.rightBarButtonItem = inviteButton;
+    UIBarButtonItem *addButton = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemAdd target:self action:@selector(addUser)];
+    self.navigationItem.rightBarButtonItem = addButton;
     
     //
     // make a memebrs hash
@@ -137,11 +137,19 @@
     [[CHNetworkManager sharedManager] getMessagesForGroup:self.group._id callback:^(NSArray *messages) {
         
         self.messageArray = [NSMutableArray arrayWithArray:messages];
-        self.messageArray = [[self.messageArray reverseObjectEnumerator] allObjects];
+        self.messageArray = [[[self.messageArray reverseObjectEnumerator] allObjects] mutableCopy];
         [self.messageTable reloadData];
         [self.messageTable scrollToRowAtIndexPath:[NSIndexPath indexPathForRow:_messageArray.count - 1 inSection:0] atScrollPosition:UITableViewScrollPositionBottom animated:NO];
     }];
     
+}
+
+-(void)addUser {
+    CHInviteUserViewController *inviteController = [self.storyboard instantiateViewControllerWithIdentifier:@"CHInviteUserViewController"];
+    [inviteController setGroupId:self.group._id];
+    [self.navigationController presentViewController:inviteController animated:YES completion:^{
+        
+    }];
 }
 
 -(void)resignTextView
