@@ -632,6 +632,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 7EC6EF7B5FC54E4BA2B855D4 /* Pods-Chat.xcconfig */;
 			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
 				CODE_SIGN_IDENTITY = "iPhone Developer: Ethan Mick (EDMS7P324S)";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer: Ethan Mick (EDMS7P324S)";
@@ -650,6 +651,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 7EC6EF7B5FC54E4BA2B855D4 /* Pods-Chat.xcconfig */;
 			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
 				CODE_SIGN_IDENTITY = "iPhone Distribution: Ethan Mick (X5BAWYYBBG)";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution: Ethan Mick (X5BAWYYBBG)";
