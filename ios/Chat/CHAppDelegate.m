@@ -17,6 +17,7 @@
     // Override point for customization after application launch.
     [[CHNetworkManager sharedManager] hasStoredSessionToken];
     [[CHSocketManager sharedManager] openSocket];
+    [UIApplication sharedApplication].applicationIconBadgeNumber = 0;
     
     NSSetUncaughtExceptionHandler(&uncaughtExceptionHandler);
     
@@ -53,6 +54,7 @@ void uncaughtExceptionHandler(NSException *exception) {
     DLog(@"");
     [[CHSocketManager sharedManager] openSocket];
     [[NSNotificationCenter defaultCenter] postNotificationName:@"ReloadAppDelegateTable" object:nil];
+    [UIApplication sharedApplication].applicationIconBadgeNumber = 0;
     
 }
 
