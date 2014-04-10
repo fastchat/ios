@@ -11,6 +11,7 @@
 #import "CHNetworkManager.h"
 #import "CHViewController.h"
 #import "CHSocketManager.h"
+#import "CHGroupListTableViewController.h"
 
 @interface CHSideNavigationTableViewController ()
 @property NSArray *menuLabels;
@@ -82,7 +83,10 @@
             //[self presentViewController:loginController animated:NO completion:nil];
             CHViewController *loginController = [self.storyboard instantiateViewControllerWithIdentifier:@"CHViewController"];
             [self presentViewController:loginController animated:NO completion:nil];
+           // CHGroupListTableViewController *groupController = [self.storyboard instantiateViewControllerWithIdentifier:@"CHGroupListTableViewController"];
+            //[self pushViewController:groupController animated:NO];
         }];
+        
     }
 }
 

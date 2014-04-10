@@ -17,10 +17,18 @@
     // Override point for customization after application launch.
     [[CHNetworkManager sharedManager] hasStoredSessionToken];
     [[CHSocketManager sharedManager] openSocket];
+    [UIApplication sharedApplication].applicationIconBadgeNumber = 0;
+    
+    NSSetUncaughtExceptionHandler(&uncaughtExceptionHandler);
     
     return YES;
 }
 
+void uncaughtExceptionHandler(NSException *exception) {
+    NSLog(@"CRASH: %@", exception);
+    NSLog(@"Stack Trace: %@", [exception callStackSymbols]);
+    // Internal error reporting
+}
 
 							
 - (void)applicationWillResignActive:(UIApplication *)application
@@ -46,6 +54,7 @@
     DLog(@"");
     [[CHSocketManager sharedManager] openSocket];
     [[NSNotificationCenter defaultCenter] postNotificationName:@"ReloadAppDelegateTable" object:nil];
+    [UIApplication sharedApplication].applicationIconBadgeNumber = 0;
     
 }
 

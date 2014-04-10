@@ -8,6 +8,8 @@
 
 #import "CHNetworkManager.h"
 #import "CHUser.h"
+#import "CHGroup.h"
+#import "CHMessage.h"
 
 //#define BASE_URL @"http://10.0.0.10:3000"
 #define BASE_URL @"http://powerful-cliffs-9562.herokuapp.com:80"
@@ -101,7 +103,9 @@
     DLog(@"Using session token %@", self.sessiontoken);
     [self GET:[NSString stringWithFormat:@"/group"] parameters:nil success:^(NSURLSessionDataTask *task, id responseObject) {
         if( callback ) {
-            callback(responseObject);
+            NSArray *groups = [CHGroup objectsFromJSON:responseObject];
+            DLog("Group array: %@", groups);
+            callback(groups);
         }
     } failure:^(NSURLSessionDataTask *task, NSError *error) {
         DLog(@"Error: %@", error);
@@ -135,9 +139,12 @@
 
 - (void)getMessagesForGroup:(NSString *)group callback:(void (^)(NSArray *messages))callback;
 {
+    DLog(@"The group id is %@", group);
     [self GET:[NSString stringWithFormat:@"/group/%@/messages", group] parameters:nil success:^(NSURLSessionDataTask *task, id responseObject) {
         if( callback ) {
-            callback(responseObject);
+            NSArray *messages = [CHMessage objectsFromJSON:responseObject];
+            
+            callback(messages);
         }
     } failure:^(NSURLSessionDataTask *task, NSError *error) {
         DLog(@"Error retrieving messages: %@", error);
@@ -173,10 +180,10 @@
     //Return the users profile
 }
 
-- (void)sendInviteToUsers: (NSArray *)invitees groupId: (NSString *) groupId callback: (void (^)(bool successful, NSError *error))callback;
+- (void)addNewUsers: (NSArray *)invitees groupId: (NSString *) groupId callback: (void (^)(bool successful, NSError *error))callback;
 {
     // Add id
-    NSString *url =[[NSString alloc] initWithFormat:@"/group/%@/invite",groupId];
+    NSString *url =[[NSString alloc] initWithFormat:@"/group/%@/add",groupId];
    
     [self PUT:url parameters:@{@"invitees" : invitees} success:^(NSURLSessionDataTask *task, NSError *error) {
         
@@ -219,6 +226,16 @@
         if (callback) {
             callback(NO, error);
         }
+    }];
+}
+
+- (void)putLeaveGroup:(NSString *)groupId callback:(void (^)(BOOL success, NSError *error))callback;
+{
+    NSString *url = [NSString stringWithFormat:@"/group/%@/leave", groupId];
+    [self PUT:url parameters:nil success:^(NSURLSessionDataTask *task, id responseObject) {
+        callback(YES, nil);
+    } failure:^(NSURLSessionDataTask *task, NSError *error) {
+        callback(NO, error);
     }];
 }
 
