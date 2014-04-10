@@ -45,6 +45,11 @@ public class GroupsFragment extends Fragment {
 		if(v.getId()==R.id.room_list){
 			AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo)menuInfo;
 			menu.setHeaderTitle(groups.get(info.position).getName());
+			MainActivity.activity.runOnUiThread(new Runnable(){
+				public void run(){
+					MainActivity.activity.getActionBar().setDisplayHomeAsUpEnabled(false);
+				}
+			});
 			for(String item : menuItems){
 				menu.add(item);
 			}

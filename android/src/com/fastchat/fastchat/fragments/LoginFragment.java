@@ -28,6 +28,8 @@ public class LoginFragment extends Fragment implements OnClickListener {
 				false);
 		Button button = (Button) rootView.findViewById(R.id.login_button);
 	     button.setOnClickListener(this);
+	     button = (Button) rootView.findViewById(R.id.registration_button);
+	     button.setOnClickListener(this);
 
 		return rootView;
 	}
@@ -48,7 +50,15 @@ public class LoginFragment extends Fragment implements OnClickListener {
 		else if(passwordText.length()<1){
 			Utils.makeToast("Please Enter a password");
 		}else{
-			NetworkManager.postLogin(usernameText, passwordText);
+			if(arg0.getId()==R.id.login_button){
+				NetworkManager.postLogin(usernameText, passwordText);
+			}
+			else if(arg0.getId()==R.id.registration_button){
+				NetworkManager.postRegisterUser(usernameText, passwordText);
+			}
+			else{
+				Utils.makeToast("What button did you press?!");
+			}
 			username.setText("");
 			password.setText("");
 		}

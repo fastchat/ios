@@ -334,6 +334,39 @@ public class NetworkManager {
 		return AsyncHttpClient.getDefaultInstance().executeJSONObject(http, inviteUserCallback);
 	}
 	
+	private static final JSONObjectCallback registerUserCallback = new AsyncHttpClient.JSONObjectCallback() {
+		// Callback is invoked with any exceptions/errors, and the result, if available.
+		public void onCompleted(Exception e, AsyncHttpResponse response, JSONObject result) {
+			if (e != null) {
+				e.printStackTrace();
+				Utils.makeToast(e);
+				return;
+			}
+			int responseCode = response.getHeaders().getHeaders().getResponseCode();
+			if(responseCode!=200){
+				Utils.makeToast(responseCode+" "+result);
+				return;
+			}
+			Utils.makeToast("Registration Successful! Login to continue");
+		};
+	};
+	
+	public static Future<JSONObject> postRegisterUser(String username, String password){
+		AsyncHttpPost post = new AsyncHttpPost(url+"/user");
+		JSONObject object = new JSONObject();
+		try {
+			object.put("username", username);
+			object.put("password", password);
+		} catch (JSONException e) {
+			// TODO Auto-generated catch block
+			Utils.makeToast(e);
+			e.printStackTrace();
+		}
+		JSONObjectBody body = new JSONObjectBody(object);
+		post.setBody(body);
+		return AsyncHttpClient.getDefaultInstance().executeJSONObject(post, registerUserCallback);
+	}
+	
 	
 	public static String getURL(){
 		return url;
