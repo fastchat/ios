@@ -46,26 +46,16 @@ public class NetworkManager {
 	private static final JSONObjectCallback loginCallback = new AsyncHttpClient.JSONObjectCallback() {
 		// Callback is invoked with any exceptions/errors, and the result, if available.
 		public void onCompleted(Exception e, AsyncHttpResponse response, JSONObject result) {
-			if (e != null) {
-				e.printStackTrace();
-				Utils.makeToast(e);
-				return;
-			}
+			int responseCode = handleResponse(e,response,result);
 			System.out.println("I got a JSONObject: " + result);
-			int responseCode = response.getHeaders().getHeaders().getResponseCode();
-			if(responseCode==401){
-				Utils.makeToast("Incorrect username or password!");
+			if(responseCode!=200){
 				return;
-			}else if(responseCode!=200){
-				Utils.makeToast(responseCode+" "+result);
 			}
-			
 			
 			try {
 				currentUser.setToken(result.getString("session-token"));
 				getProfile();
 			} catch (JSONException e1) {
-				// TODO Auto-generated catch block
 				e1.printStackTrace();
 				Utils.makeToast(e1);
 				return;
@@ -73,10 +63,6 @@ public class NetworkManager {
 			MainActivity.saveLoginCredentials(currentUser);
 			NetworkManager.postDeviceId(MainActivity.regid);
 			MainActivity.restartFragments(new GroupsFragment());
-			//MainActivity.switchView(fragment);
-
-
-
 		}
 	};
 
@@ -88,9 +74,9 @@ public class NetworkManager {
 			object.put("username", username);
 			object.put("password", password);
 		} catch (JSONException e) {
-			// TODO Auto-generated catch block
 			Utils.makeToast(e);
 			e.printStackTrace();
+			return null;
 		}
 		JSONObjectBody body = new JSONObjectBody(object);
 		post.setBody(body);
@@ -98,47 +84,22 @@ public class NetworkManager {
 	}
 
 	
-	private static final JSONArrayCallback groupsCallback = new AsyncHttpClient.JSONArrayCallback() {
-		// Callback is invoked with any exceptions/errors, and the result, if available.
-		public void onCompleted(Exception e, AsyncHttpResponse response, JSONArray result) {
-			if (e != null) {
-				e.printStackTrace();
-				Utils.makeToast(e);
-				return;
-			}
-			int responseCode = response.getHeaders().getHeaders().getResponseCode();
-			if(responseCode!=200){
-				Utils.makeToast(responseCode+" "+result);
-				return;
-			}
-
-			System.out.println(result);
-			GroupsFragment.addGroups(result);
-		}
-	};
 	public static Future<JSONArray> getGroups(){
 
 		AsyncHttpGet get = new AsyncHttpGet(url+"/group");
 		get.setHeader("session-token", currentUser.getSessionToken());
-		return AsyncHttpClient.getDefaultInstance().executeJSONArray(get,groupsCallback);
+		return AsyncHttpClient.getDefaultInstance().executeJSONArray(get,new AsyncHttpClient.JSONArrayCallback() {
+			public void onCompleted(Exception e, AsyncHttpResponse response, JSONArray result) {
+				int responseCode = handleResponse(e,response);
+				if(responseCode==200){
+					GroupsFragment.addGroups(result);
+				}
+			}
+		});
 
 	}
 	
-	private static final JSONObjectCallback deviceRegCallback = new AsyncHttpClient.JSONObjectCallback() {
-		// Callback is invoked with any exceptions/errors, and the result, if available.
-		public void onCompleted(Exception e, AsyncHttpResponse response, JSONObject result) {
-			if (e != null) {
-				e.printStackTrace();
-				Utils.makeToast(e);
-				return;
-			}
 
-			System.out.println(result);
-		}
-	};
-
-
-	
 	public static Future<JSONObject> postDeviceId(String reg_id){
 		if(reg_id==null || reg_id.equals("")){
 			return null;
@@ -150,38 +111,40 @@ public class NetworkManager {
 			object.put("token", reg_id);
 			object.put("type", "android");
 		} catch (JSONException e) {
-			// TODO Auto-generated catch block
 			Utils.makeToast(e);
 			e.printStackTrace();
+			return null;
 		}
 		JSONObjectBody body = new JSONObjectBody(object);
 		post.setBody(body);
-		return AsyncHttpClient.getDefaultInstance().executeJSONObject(post, deviceRegCallback);
+		return AsyncHttpClient.getDefaultInstance().executeJSONObject(post, new AsyncHttpClient.JSONObjectCallback() {
+			// Callback is invoked with any exceptions/errors, and the result, if available.
+			public void onCompleted(Exception e, AsyncHttpResponse response, JSONObject result) {
+				handleResponse(e,response,result);
+			}
+		});
 	}
+	
+	
+	
 	private static final JSONArrayCallback groupMessagesCallback = new AsyncHttpClient.JSONArrayCallback() {
 		// Callback is invoked with any exceptions/errors, and the result, if available.
 		public void onCompleted(Exception e, AsyncHttpResponse response, JSONArray result) {
-			if (e != null) {
-				e.printStackTrace();
-				Utils.makeToast(e);
-				return;
-			}
+			handleResponse(e,response);
 			for(int i=0;i<result.length();i++){
 				int j = result.length()-i-1;
 				try {
 					JSONObject messageObject = result.getJSONObject(j);
 					MessageFragment.addMessage(new Message(messageObject));
 				} catch (JSONException e1) {
-					// TODO Auto-generated catch block
 					e1.printStackTrace();
+					Utils.makeToast(e1);
 				}
 				
 			}
 			System.out.println(result);
 		}
 	};
-
-
 
 
 	public static Future<JSONArray> getCurrentGroupMessages()
@@ -193,34 +156,21 @@ public class NetworkManager {
 
 	}
 
-	private static final JSONObjectCallback logoutCallback = new AsyncHttpClient.JSONObjectCallback() {
-		// Callback is invoked with any exceptions/errors, and the result, if available.
-		public void onCompleted(Exception e, AsyncHttpResponse response, JSONObject result) {
-			if (e != null) {
-				e.printStackTrace();
-				Utils.makeToast(e);
-				return;
-			}
-
-			System.out.println(result);
-		};
-	};
 	
 	public static Future<JSONObject> postLogout(){
 		AsyncHttpRequest http = new AsyncHttpRequest(URI.create(url+"/logout"),"DELETE");
 		http.setHeader("session-token", currentUser.getSessionToken());
-		return AsyncHttpClient.getDefaultInstance().executeJSONObject(http, logoutCallback);
+		return AsyncHttpClient.getDefaultInstance().executeJSONObject(http, new AsyncHttpClient.JSONObjectCallback() {
+			public void onCompleted(Exception e, AsyncHttpResponse response, JSONObject result) {
+				handleResponse(e,response,result,"Successfully logged out");
+			};
+		});
 	}
 	
 	
 	private static final JSONObjectCallback profileCallback = new AsyncHttpClient.JSONObjectCallback() {
-		// Callback is invoked with any exceptions/errors, and the result, if available.
 		public void onCompleted(Exception e, AsyncHttpResponse response, JSONObject result) {
-			if (e != null) {
-				e.printStackTrace();
-				Utils.makeToast(e);
-				return;
-			}
+			handleResponse(e,response,result);
 			JSONObject profileObject;
 			try {
 				profileObject = result.getJSONObject("profile");
@@ -230,7 +180,6 @@ public class NetworkManager {
 				MainActivity.saveLoginCredentials(tempUser);
 				NetworkManager.setCurrentUser(tempUser);
 			} catch (JSONException e1) {
-				// TODO Auto-generated catch block
 				e1.printStackTrace();
 				Utils.makeToast(e1);
 			}
@@ -246,40 +195,16 @@ public class NetworkManager {
 		return AsyncHttpClient.getDefaultInstance().executeJSONObject(get,profileCallback);
 	}
 	
-	private static final JSONObjectCallback leaveGroupCallback = new AsyncHttpClient.JSONObjectCallback() {
-		// Callback is invoked with any exceptions/errors, and the result, if available.
-		public void onCompleted(Exception e, AsyncHttpResponse response, JSONObject result) {
-			if (e != null) {
-				e.printStackTrace();
-				Utils.makeToast(e);
-				return;
-			}
-			System.out.println(result);
-		};
-	};
-	
 	public static Future<JSONObject> putLeaveGroup(Group g){
 		AsyncHttpRequest http = new AsyncHttpRequest(URI.create(url+"/group/"+g.getId()+"/leave"),"PUT");
 		http.setHeader("session-token", currentUser.getSessionToken());
 		groups.remove(g);
-		return AsyncHttpClient.getDefaultInstance().executeJSONObject(http, leaveGroupCallback);
+		return AsyncHttpClient.getDefaultInstance().executeJSONObject(http, new AsyncHttpClient.JSONObjectCallback() {
+			public void onCompleted(Exception e, AsyncHttpResponse response, JSONObject result) {
+				handleResponse(e,response,result,"Successfully left the group");
+			};
+		});
 	}
-	
-	
-	private static final JSONObjectCallback createGroupCallback = new AsyncHttpClient.JSONObjectCallback() {
-		// Callback is invoked with any exceptions/errors, and the result, if available.
-		public void onCompleted(Exception e, AsyncHttpResponse response, JSONObject result) {
-			if (e != null) {
-				e.printStackTrace();
-				Utils.makeToast(e);
-				return;
-			}
-
-			System.out.println(result);
-			MainActivity.switchView(new GroupsFragment());
-			NetworkManager.getGroups();
-		};
-	};
 	
 	
 	public static Future<JSONObject> postCreateGroup(ArrayList<String> userNames,String groupName, String message){
@@ -291,33 +216,21 @@ public class NetworkManager {
 			object.put("name", groupName);
 			object.put("text", message);
 		} catch (JSONException e) {
-			// TODO Auto-generated catch block
 			Utils.makeToast(e);
 			e.printStackTrace();
+			return null;
 		}
 		JSONObjectBody body = new JSONObjectBody(object);
 		post.setBody(body);
-		return AsyncHttpClient.getDefaultInstance().executeJSONObject(post, createGroupCallback);
+		return AsyncHttpClient.getDefaultInstance().executeJSONObject(post, new AsyncHttpClient.JSONObjectCallback() {
+			public void onCompleted(Exception e, AsyncHttpResponse response, JSONObject result) {
+				handleResponse(e,response,result);
+				MainActivity.switchView(new GroupsFragment());
+				NetworkManager.getGroups();
+			};
+		});
 	}
 	
-	private static final JSONObjectCallback inviteUserCallback = new AsyncHttpClient.JSONObjectCallback() {
-		// Callback is invoked with any exceptions/errors, and the result, if available.
-		public void onCompleted(Exception e, AsyncHttpResponse response, JSONObject result) {
-			if (e != null) {
-				e.printStackTrace();
-				Utils.makeToast(e);
-				return;
-			}
-			int responseCode = response.getHeaders().getHeaders().getResponseCode();
-			if(responseCode!=200){
-				Utils.makeToast(responseCode+" "+result);
-			}
-
-			System.out.println(result);
-			MainActivity.switchView(new GroupsFragment());
-			NetworkManager.getGroups();
-		};
-	};
 	
 	
 	public static Future<JSONObject> putInviteUser(String username, Group g){
@@ -327,31 +240,22 @@ public class NetworkManager {
 		try {
 			object.put("invitees", new JSONArray(Arrays.asList(username)));
 		} catch (JSONException e) {
-			// TODO Auto-generated catch block
 			Utils.makeToast(e);
 			e.printStackTrace();
+			return null;
 		}
 		JSONObjectBody body = new JSONObjectBody(object);
 		http.setBody(body);
-		return AsyncHttpClient.getDefaultInstance().executeJSONObject(http, inviteUserCallback);
+		
+		return AsyncHttpClient.getDefaultInstance().executeJSONObject(http, new AsyncHttpClient.JSONObjectCallback() {
+			// Callback is invoked with any exceptions/errors, and the result, if available.
+			public void onCompleted(Exception e, AsyncHttpResponse response, JSONObject result) {
+				handleResponse(e,response,result);
+				MainActivity.switchView(new GroupsFragment());
+				NetworkManager.getGroups();
+			};
+		});
 	}
-	
-	private static final JSONObjectCallback registerUserCallback = new AsyncHttpClient.JSONObjectCallback() {
-		// Callback is invoked with any exceptions/errors, and the result, if available.
-		public void onCompleted(Exception e, AsyncHttpResponse response, JSONObject result) {
-			if (e != null) {
-				e.printStackTrace();
-				Utils.makeToast(e);
-				return;
-			}
-			int responseCode = response.getHeaders().getHeaders().getResponseCode();
-			if(responseCode!=200){
-				Utils.makeToast(responseCode+" "+result);
-				return;
-			}
-			Utils.makeToast("Registration Successful! Login to continue");
-		};
-	};
 	
 	public static Future<JSONObject> postRegisterUser(String username, String password){
 		AsyncHttpPost post = new AsyncHttpPost(url+"/user");
@@ -360,13 +264,18 @@ public class NetworkManager {
 			object.put("username", username);
 			object.put("password", password);
 		} catch (JSONException e) {
-			// TODO Auto-generated catch block
 			Utils.makeToast(e);
 			e.printStackTrace();
+			return null;
 		}
 		JSONObjectBody body = new JSONObjectBody(object);
 		post.setBody(body);
-		return AsyncHttpClient.getDefaultInstance().executeJSONObject(post, registerUserCallback);
+		return AsyncHttpClient.getDefaultInstance().executeJSONObject(post, new AsyncHttpClient.JSONObjectCallback() {
+			// Callback is invoked with any exceptions/errors, and the result, if available.
+			public void onCompleted(Exception e, AsyncHttpResponse response, JSONObject result) {
+				handleResponse(e,response,result,"Registration Successful! Login to continue");
+			}
+		});
 	}
 	
 	private static final DownloadCallback dataCallback = new AsyncHttpClient.DownloadCallback() {
@@ -374,6 +283,10 @@ public class NetworkManager {
 		@Override
 		public void onCompleted(Exception e, AsyncHttpResponse source,
 				ByteBufferList result) {
+			int responseCode = handleResponse(e,source);
+			if(responseCode!=200){
+				return;
+			}
 			String requestUrl = source.getRequest().getUri().toString();
 			String[] urlSplit = requestUrl.split("/");
 			String userId = urlSplit[urlSplit.length-2];
@@ -395,6 +308,39 @@ public class NetworkManager {
 		System.out.println("URL: "+url+"/user/"+id+"/avatar");
 		get.setHeader("session-token", currentUser.getSessionToken());
 		return AsyncHttpClient.getDefaultInstance().executeByteBufferList(get,dataCallback);
+		
+	}
+	
+	private static int handleResponse(Exception e,AsyncHttpResponse response){
+		return handleResponse(e,response,null,null);
+	}
+	private static int handleResponse(Exception e,AsyncHttpResponse response,JSONObject result){
+		return handleResponse(e,response,result,null);
+	}
+	
+	private static int handleResponse(Exception e,AsyncHttpResponse response,JSONObject result, String correctResponseText){
+		if (e != null) {
+			e.printStackTrace();
+			Utils.makeToast(e);
+			return 500;
+		}
+		int responseCode = response.getHeaders().getHeaders().getResponseCode();
+		if(responseCode==200){
+			if(correctResponseText!=null){
+				Utils.makeToast(correctResponseText);
+			}
+		}else{
+			String errorMessage = "";
+			if(result!=null){
+				try {
+					errorMessage = result.getString("error");
+				} catch (JSONException e1) {
+					e1.printStackTrace();
+				}
+			}
+			Utils.makeToast(responseCode+": "+errorMessage);
+		}
+		return responseCode;
 		
 	}
 	
