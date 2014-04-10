@@ -3,6 +3,8 @@ package com.fastchat.fastchat.models;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import android.graphics.Bitmap;
+
 import com.fastchat.fastchat.Utils;
 
 public class User {
@@ -10,6 +12,7 @@ public class User {
 	private String id;
 	private String username;
 	private String sessiontoken;
+	private Bitmap avatar;
 	
 	public User(String id, String username, String token){
 		this.id=id;
@@ -50,6 +53,14 @@ public class User {
 	
 	public String getSessionToken(){
 		return this.sessiontoken;
+	}
+	
+	public Bitmap getBitmap(){
+		return this.avatar;
+	}
+	
+	public void setBitmap(Bitmap b){
+		this.avatar=b;
 	}
 
 }

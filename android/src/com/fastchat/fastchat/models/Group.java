@@ -26,13 +26,16 @@ public class Group {
 			for(int i=0;i<membersJSON.length();i++){
 				JSONObject userObject = membersJSON.getJSONObject(i);
 				User tempUser = new User(userObject);
-				User currentUser = NetworkManager.getCurrentUser();
-				if(tempUser.getUsername().equals(currentUser.getUsername())){
-					currentUser.setId(tempUser.getId());
-					this.members.put(currentUser.getId(), currentUser);
+				HashMap<String,User> users = NetworkManager.getUsersMap();
+				if(users.containsKey(tempUser.getId())){
+					User u = users.get(tempUser.getId());
+					members.put(tempUser.getId(), u);
 				}else{
-					this.members.put(tempUser.getId(), tempUser);
+					users.put(tempUser.getId(), tempUser);
+					members.put(tempUser.getId(), tempUser);
+					NetworkManager.getAvatar(tempUser.getId());
 				}
+					
 			}
 		} catch (JSONException e) {
 			// TODO Auto-generated catch block

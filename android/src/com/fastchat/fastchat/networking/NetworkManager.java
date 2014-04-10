@@ -1,5 +1,6 @@
 package com.fastchat.fastchat.networking;
 
+
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -9,20 +10,20 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 
 import com.fastchat.fastchat.MainActivity;
-import com.fastchat.fastchat.R;
 import com.fastchat.fastchat.Utils;
 import com.fastchat.fastchat.fragments.GroupsFragment;
-import com.fastchat.fastchat.fragments.LoginFragment;
 import com.fastchat.fastchat.fragments.MessageFragment;
 import com.fastchat.fastchat.models.Group;
 import com.fastchat.fastchat.models.Message;
 import com.fastchat.fastchat.models.User;
+import com.koushikdutta.async.ByteBufferList;
 import com.koushikdutta.async.future.Future;
 import com.koushikdutta.async.http.AsyncHttpClient;
+import com.koushikdutta.async.http.AsyncHttpClient.DownloadCallback;
 import com.koushikdutta.async.http.AsyncHttpClient.JSONArrayCallback;
 import com.koushikdutta.async.http.AsyncHttpClient.JSONObjectCallback;
 import com.koushikdutta.async.http.AsyncHttpGet;
@@ -39,6 +40,7 @@ public class NetworkManager {
 	private static Group currentGroup;
 	// HashMap <groupId, Groups>
 	private static HashMap<String,Group> groups = new HashMap<String,Group>();
+	private static HashMap<String, User> users  = new HashMap<String,User>();
 
 
 	private static final JSONObjectCallback loginCallback = new AsyncHttpClient.JSONObjectCallback() {
@@ -367,6 +369,35 @@ public class NetworkManager {
 		return AsyncHttpClient.getDefaultInstance().executeJSONObject(post, registerUserCallback);
 	}
 	
+	private static final DownloadCallback dataCallback = new AsyncHttpClient.DownloadCallback() {
+
+		@Override
+		public void onCompleted(Exception e, AsyncHttpResponse source,
+				ByteBufferList result) {
+			String requestUrl = source.getRequest().getUri().toString();
+			String[] urlSplit = requestUrl.split("/");
+			String userId = urlSplit[urlSplit.length-2];
+			
+			byte[] data = result.getAllByteArray();
+			System.out.println("Avatar UserID: "+userId+ "Length: "+data.length);
+			Bitmap avatar = BitmapFactory.decodeByteArray(data, 0, data.length);
+			if(avatar==null){
+				System.out.println("Avatar null for user:"+userId+"");
+				return;
+			}
+			NetworkManager.getUsernameFromId(userId).setBitmap(avatar);
+		}
+		
+    };
+	
+	public static Future<ByteBufferList> getAvatar(String id) {
+		AsyncHttpGet get = new AsyncHttpGet(url+"/user/"+id+"/avatar");
+		System.out.println("URL: "+url+"/user/"+id+"/avatar");
+		get.setHeader("session-token", currentUser.getSessionToken());
+		return AsyncHttpClient.getDefaultInstance().executeByteBufferList(get,dataCallback);
+		
+	}
+	
 	
 	public static String getURL(){
 		return url;
@@ -397,10 +428,14 @@ public class NetworkManager {
 	}
 	
 	public static User getUsernameFromId(String id){
-		return currentGroup.getUsername(id);
+		return users.get(id);
 	}
 	
 	public static void setCurrentUser(User user){
 		currentUser=user;
+	}
+	
+	public static HashMap<String,User> getUsersMap(){
+		return users;
 	}
 }

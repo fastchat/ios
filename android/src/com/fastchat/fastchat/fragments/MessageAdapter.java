@@ -6,6 +6,7 @@ import com.fastchat.fastchat.R;
 import com.fastchat.fastchat.models.Message;
 
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.text.Spannable;
@@ -16,6 +17,8 @@ import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.LinearLayout.LayoutParams;
 import android.widget.BaseAdapter;
 import android.widget.TextView;
@@ -50,6 +53,8 @@ public class MessageAdapter extends BaseAdapter {
 			holder = new ViewHolder();
 			convertView = LayoutInflater.from(mContext).inflate(R.layout.sms_row, parent, false);
 			holder.message = (TextView) convertView.findViewById(R.id.message_text);
+			holder.image = (ImageView) convertView.findViewById(R.id.imageView1);
+			holder.layout = (LinearLayout) convertView.findViewById(R.id.sms_layout);
 			convertView.setTag(holder);
 		}
 		else
@@ -60,26 +65,35 @@ public class MessageAdapter extends BaseAdapter {
         out0.setSpan(boldSpan, 0, message.getText().length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
         out0.setSpan(smallSpan, message.getText().length(), out0.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
         holder.message.setText(out0);
+        Bitmap avatar = message.getFrom().getBitmap();
+        if(avatar!=null){
+        	holder.image.setImageBitmap(avatar);
+        	
+        }else{
+        	holder.image.setImageDrawable(null);
+        }
 
-		LayoutParams lp = (LayoutParams) holder.message.getLayoutParams();	
+		LayoutParams lp = (LayoutParams) holder.layout.getLayoutParams();	
 		//Check whether message is mine to show green background and align to right
 		if(message.isMine())
 		{
-			holder.message.setBackgroundResource(R.drawable.speech_bubble_green);
+			holder.layout.setBackgroundResource(R.drawable.speech_bubble_green);
 			lp.gravity = Gravity.RIGHT;
 		}
 		//If not mine then it is from sender to show orange background and align to left
 		else
 		{
-			holder.message.setBackgroundResource(R.drawable.speech_bubble_orange);
+			holder.layout.setBackgroundResource(R.drawable.speech_bubble_orange);
 			lp.gravity = Gravity.LEFT;
 		}
-		holder.message.setLayoutParams(lp);
+		holder.layout.setLayoutParams(lp);
 		holder.message.setTextColor(Color.BLACK);	
 		return convertView;
 	}
 	private static class ViewHolder
 	{
+		public LinearLayout layout;
+		public ImageView image;
 		TextView message;
 	}
 	@Override

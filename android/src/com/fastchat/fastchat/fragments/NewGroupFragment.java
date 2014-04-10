@@ -52,6 +52,7 @@ public class NewGroupFragment extends Fragment implements OnClickListener {
 
 			}
 		});
+		NetworkManager.getAvatar(NetworkManager.getCurrentUser().getId());
 		return rootView;
 	}
 
