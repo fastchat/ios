@@ -10,10 +10,13 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 
 import com.fastchat.fastchat.MainActivity;
+import com.fastchat.fastchat.R;
 import com.fastchat.fastchat.Utils;
 import com.fastchat.fastchat.fragments.GroupsFragment;
+import com.fastchat.fastchat.fragments.LoginFragment;
 import com.fastchat.fastchat.fragments.MessageFragment;
 import com.fastchat.fastchat.models.Group;
 import com.fastchat.fastchat.models.Message;
@@ -54,7 +57,7 @@ public class NetworkManager {
 			}else if(responseCode!=200){
 				Utils.makeToast(responseCode+" "+result);
 			}
-			Fragment fragment = new GroupsFragment();
+			
 			
 			try {
 				currentUser.setToken(result.getString("session-token"));
@@ -62,10 +65,13 @@ public class NetworkManager {
 			} catch (JSONException e1) {
 				// TODO Auto-generated catch block
 				e1.printStackTrace();
+				Utils.makeToast(e1);
+				return;
 			}
 			MainActivity.saveLoginCredentials(currentUser);
 			NetworkManager.postDeviceId(MainActivity.regid);
-			MainActivity.switchView(fragment);
+			MainActivity.restartFragments(new GroupsFragment());
+			//MainActivity.switchView(fragment);
 
 
 

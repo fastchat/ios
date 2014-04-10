@@ -34,7 +34,7 @@ public class InviteUserFragment extends Fragment implements OnClickListener{
 		String username = usernameTextBox.getText().toString();
 		System.out.println(username);
 		NetworkManager.putInviteUser(username, NetworkManager.getCurrentGroup());
-		MainActivity.goBackOneFragment();
+		MainActivity.goBackToBeginning();
 	}
 	
 }

@@ -54,7 +54,7 @@ public class MainActivity extends ActionBarActivity {
 	AtomicInteger msgId = new AtomicInteger();
 	SharedPreferences prefs;
 	public static String regid;
-	private Fragment beginFragment;
+	public static Fragment beginFragment;
 
 
 	@Override
@@ -123,10 +123,7 @@ public class MainActivity extends ActionBarActivity {
 			clearLoginCredentials();
 			SocketIoController.disconnect();
 			NetworkManager.postLogout();
-			manager.popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
-			manager.beginTransaction().remove(beginFragment).commit();
-			manager.beginTransaction()
-			.add(R.id.container, new LoginFragment()).commit();
+			restartFragments(new LoginFragment());
 			break;
 		case R.id.profile:
 			break;
@@ -151,7 +148,15 @@ public class MainActivity extends ActionBarActivity {
 		
 	}
 	
-	public static void goBackOneFragment(){
+	public static void restartFragments(Fragment newFragment){
+		manager.popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
+		manager.beginTransaction().remove(beginFragment).commit();
+		manager.beginTransaction()
+		.add(R.id.container, newFragment).commit();
+		beginFragment = newFragment;
+	}
+	
+	public static void goBackToBeginning(){
 		if(manager.getBackStackEntryCount()>0){
 	          manager.popBackStack();
 	    }
