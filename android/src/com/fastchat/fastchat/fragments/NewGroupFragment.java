@@ -1,12 +1,12 @@
-package com.example.fastchat.fragments;
+package com.fastchat.fastchat.fragments;
 
 
 import java.util.ArrayList;
 
-import com.example.fastchat.MainActivity;
-import com.example.fastchat.R;
-import com.example.fastchat.Utils;
-import com.example.fastchat.networking.NetworkManager;
+import com.fastchat.fastchat.MainActivity;
+import com.fastchat.fastchat.R;
+import com.fastchat.fastchat.Utils;
+import com.fastchat.fastchat.networking.NetworkManager;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;

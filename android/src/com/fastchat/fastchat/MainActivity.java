@@ -1,17 +1,18 @@
-package com.example.fastchat;
+package com.fastchat.fastchat;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import com.example.fastchat.fragments.LoginFragment;
-import com.example.fastchat.fragments.GroupsFragment;
-import com.example.fastchat.fragments.NewGroupFragment;
-import com.example.fastchat.models.Group;
-import com.example.fastchat.models.User;
-import com.example.fastchat.networking.SocketIoController;
-import com.example.fastchat.networking.NetworkManager;
+import com.fastchat.fastchat.R;
+import com.fastchat.fastchat.fragments.GroupsFragment;
+import com.fastchat.fastchat.fragments.LoginFragment;
+import com.fastchat.fastchat.fragments.NewGroupFragment;
+import com.fastchat.fastchat.models.Group;
+import com.fastchat.fastchat.models.User;
+import com.fastchat.fastchat.networking.NetworkManager;
+import com.fastchat.fastchat.networking.SocketIoController;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.google.android.gms.gcm.GoogleCloudMessaging;
@@ -148,6 +149,12 @@ public class MainActivity extends ActionBarActivity {
 			}
 		});
 		
+	}
+	
+	public static void goBackOneFragment(){
+		if(manager.getBackStackEntryCount()>0){
+	          manager.popBackStack();
+	    }
 	}
 
 	public void hideKeyboard(){

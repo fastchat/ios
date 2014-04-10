@@ -1,14 +1,14 @@
-package com.example.fastchat.networking;
+package com.fastchat.fastchat.networking;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import com.example.fastchat.Utils;
-import com.example.fastchat.fragments.FastChatTextWatcher;
-import com.example.fastchat.fragments.MessageFragment;
-import com.example.fastchat.models.Group;
-import com.example.fastchat.models.Message;
+import com.fastchat.fastchat.Utils;
+import com.fastchat.fastchat.fragments.FastChatTextWatcher;
+import com.fastchat.fastchat.fragments.MessageFragment;
+import com.fastchat.fastchat.models.Group;
+import com.fastchat.fastchat.models.Message;
 import com.koushikdutta.async.future.Future;
 import com.koushikdutta.async.http.AsyncHttpClient;
 import com.koushikdutta.async.http.socketio.Acknowledge;

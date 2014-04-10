@@ -1,9 +1,9 @@
-package com.example.fastchat.models;
+package com.fastchat.fastchat.models;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import com.example.fastchat.Utils;
+import com.fastchat.fastchat.Utils;
 
 public class User {
 	

@@ -1,4 +1,4 @@
-package com.example.fastchat.fragments;
+package com.fastchat.fastchat.fragments;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -9,11 +9,11 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import com.example.fastchat.MainActivity;
-import com.example.fastchat.R;
-import com.example.fastchat.models.Group;
-import com.example.fastchat.networking.NetworkManager;
-import com.example.fastchat.networking.SocketIoController;
+import com.fastchat.fastchat.MainActivity;
+import com.fastchat.fastchat.R;
+import com.fastchat.fastchat.models.Group;
+import com.fastchat.fastchat.networking.NetworkManager;
+import com.fastchat.fastchat.networking.SocketIoController;
 
 import android.app.AlertDialog;
 import android.os.Bundle;
@@ -61,6 +61,8 @@ public class GroupsFragment extends Fragment {
 		System.out.println("Clicked: "+menuClicked+" on group: "+selectedGroup.getName());
 		switch(menuClicked){
 		case "Invite User":
+			NetworkManager.setCurrentRoom(selectedGroup);
+			MainActivity.switchView(new InviteUserFragment());
 			break;
 		case "Leave Group":
 			NetworkManager.putLeaveGroup(selectedGroup);

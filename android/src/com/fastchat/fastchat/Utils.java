@@ -1,4 +1,4 @@
-package com.example.fastchat;
+package com.fastchat.fastchat;
 
 import android.widget.Toast;
 

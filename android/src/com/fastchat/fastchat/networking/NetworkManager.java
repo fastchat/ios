@@ -1,7 +1,8 @@
-package com.example.fastchat.networking;
+package com.fastchat.fastchat.networking;
 
 import java.net.URI;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 
 import org.json.JSONArray;
@@ -10,13 +11,13 @@ import org.json.JSONObject;
 
 import android.support.v4.app.Fragment;
 
-import com.example.fastchat.MainActivity;
-import com.example.fastchat.Utils;
-import com.example.fastchat.fragments.MessageFragment;
-import com.example.fastchat.fragments.GroupsFragment;
-import com.example.fastchat.models.Group;
-import com.example.fastchat.models.Message;
-import com.example.fastchat.models.User;
+import com.fastchat.fastchat.MainActivity;
+import com.fastchat.fastchat.Utils;
+import com.fastchat.fastchat.fragments.GroupsFragment;
+import com.fastchat.fastchat.fragments.MessageFragment;
+import com.fastchat.fastchat.models.Group;
+import com.fastchat.fastchat.models.Message;
+import com.fastchat.fastchat.models.User;
 import com.koushikdutta.async.future.Future;
 import com.koushikdutta.async.http.AsyncHttpClient;
 import com.koushikdutta.async.http.AsyncHttpClient.JSONArrayCallback;
@@ -46,7 +47,15 @@ public class NetworkManager {
 				return;
 			}
 			System.out.println("I got a JSONObject: " + result);
+			int responseCode = response.getHeaders().getHeaders().getResponseCode();
+			if(responseCode==401){
+				Utils.makeToast("Incorrect username or password!");
+				return;
+			}else if(responseCode!=200){
+				Utils.makeToast(responseCode+" "+result);
+			}
 			Fragment fragment = new GroupsFragment();
+			
 			try {
 				currentUser.setToken(result.getString("session-token"));
 				getProfile();
@@ -87,6 +96,11 @@ public class NetworkManager {
 			if (e != null) {
 				e.printStackTrace();
 				Utils.makeToast(e);
+				return;
+			}
+			int responseCode = response.getHeaders().getHeaders().getResponseCode();
+			if(responseCode!=200){
+				Utils.makeToast(responseCode+" "+result);
 				return;
 			}
 
@@ -276,6 +290,42 @@ public class NetworkManager {
 		JSONObjectBody body = new JSONObjectBody(object);
 		post.setBody(body);
 		return AsyncHttpClient.getDefaultInstance().executeJSONObject(post, createGroupCallback);
+	}
+	
+	private static final JSONObjectCallback inviteUserCallback = new AsyncHttpClient.JSONObjectCallback() {
+		// Callback is invoked with any exceptions/errors, and the result, if available.
+		public void onCompleted(Exception e, AsyncHttpResponse response, JSONObject result) {
+			if (e != null) {
+				e.printStackTrace();
+				Utils.makeToast(e);
+				return;
+			}
+			int responseCode = response.getHeaders().getHeaders().getResponseCode();
+			if(responseCode!=200){
+				Utils.makeToast(responseCode+" "+result);
+			}
+
+			System.out.println(result);
+			MainActivity.switchView(new GroupsFragment());
+			NetworkManager.getGroups();
+		};
+	};
+	
+	
+	public static Future<JSONObject> putInviteUser(String username, Group g){
+		AsyncHttpRequest http = new AsyncHttpRequest(URI.create(url+"/group/"+g.getId()+"/add"),"PUT");
+		http.setHeader("session-token", currentUser.getSessionToken());
+		JSONObject object = new JSONObject();
+		try {
+			object.put("invitees", new JSONArray(Arrays.asList(username)));
+		} catch (JSONException e) {
+			// TODO Auto-generated catch block
+			Utils.makeToast(e);
+			e.printStackTrace();
+		}
+		JSONObjectBody body = new JSONObjectBody(object);
+		http.setBody(body);
+		return AsyncHttpClient.getDefaultInstance().executeJSONObject(http, inviteUserCallback);
 	}
 	
 	

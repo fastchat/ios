@@ -1,4 +1,4 @@
-package com.example.fastchat.models;
+package com.fastchat.fastchat.models;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -13,8 +13,8 @@ import org.json.JSONObject;
 
 import android.util.Log;
 
-import com.example.fastchat.Utils;
-import com.example.fastchat.networking.NetworkManager;
+import com.fastchat.fastchat.Utils;
+import com.fastchat.fastchat.networking.NetworkManager;
 
 public class Message {
 

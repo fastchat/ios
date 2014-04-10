@@ -1,10 +1,10 @@
-package com.example.fastchat.fragments;
+package com.fastchat.fastchat.fragments;
 
 
-import com.example.fastchat.MainActivity;
-import com.example.fastchat.R;
-import com.example.fastchat.Utils;
-import com.example.fastchat.networking.NetworkManager;
+import com.fastchat.fastchat.MainActivity;
+import com.fastchat.fastchat.R;
+import com.fastchat.fastchat.Utils;
+import com.fastchat.fastchat.networking.NetworkManager;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -19,8 +19,6 @@ import android.widget.EditText;
 public class LoginFragment extends Fragment implements OnClickListener {
 
 	private View rootView;
-	public LoginFragment() {
-	}
 
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,

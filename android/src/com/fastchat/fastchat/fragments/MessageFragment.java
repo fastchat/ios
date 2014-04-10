@@ -1,11 +1,11 @@
-package com.example.fastchat.fragments;
+package com.fastchat.fastchat.fragments;
 
-import com.example.fastchat.MainActivity;
-import com.example.fastchat.R;
-import com.example.fastchat.models.Message;
-import com.example.fastchat.models.User;
-import com.example.fastchat.networking.SocketIoController;
-import com.example.fastchat.networking.NetworkManager;
+import com.fastchat.fastchat.MainActivity;
+import com.fastchat.fastchat.R;
+import com.fastchat.fastchat.models.Message;
+import com.fastchat.fastchat.models.User;
+import com.fastchat.fastchat.networking.NetworkManager;
+import com.fastchat.fastchat.networking.SocketIoController;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;

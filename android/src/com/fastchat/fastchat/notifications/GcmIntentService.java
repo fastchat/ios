@@ -1,7 +1,7 @@
-package com.example.fastchat.notifications;
+package com.fastchat.fastchat.notifications;
 
-import com.example.fastchat.MainActivity;
-import com.example.fastchat.R;
+import com.fastchat.fastchat.MainActivity;
+import com.fastchat.fastchat.R;
 import com.google.android.gms.gcm.GoogleCloudMessaging;
 
 import android.app.IntentService;

@@ -1,10 +1,10 @@
-package com.example.fastchat.fragments;
+package com.fastchat.fastchat.fragments;
 
 import java.util.ArrayList;
 
-import com.example.fastchat.R;
-import com.example.fastchat.Utils;
-import com.example.fastchat.models.Group;
+import com.fastchat.fastchat.R;
+import com.fastchat.fastchat.Utils;
+import com.fastchat.fastchat.models.Group;
 
 import android.content.Context;
 import android.graphics.Color;

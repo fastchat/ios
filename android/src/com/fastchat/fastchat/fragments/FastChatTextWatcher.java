@@ -1,6 +1,6 @@
-package com.example.fastchat.fragments;
+package com.fastchat.fastchat.fragments;
 
-import com.example.fastchat.networking.SocketIoController;
+import com.fastchat.fastchat.networking.SocketIoController;
 
 import android.text.Editable;
 import android.text.TextWatcher;

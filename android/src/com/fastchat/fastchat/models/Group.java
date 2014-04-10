@@ -1,4 +1,4 @@
-package com.example.fastchat.models;
+package com.fastchat.fastchat.models;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -7,7 +7,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import com.example.fastchat.networking.NetworkManager;
+import com.fastchat.fastchat.networking.NetworkManager;
 
 public class Group {
 
