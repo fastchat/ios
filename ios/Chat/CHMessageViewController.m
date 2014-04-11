@@ -15,6 +15,7 @@
 #import "CHSocketManager.h"
 #import "CHGroup.h"
 #import "CHMessage.h"
+#import "CHCircleImageView.h"
 
 #define kDefaultContentOffset 70
 
@@ -26,6 +27,8 @@
 @property CGRect previousMessageTextViewRect;
 @property (nonatomic, strong) NSMutableDictionary *members;
 @property float heightOfKeyboard;
+@property int currPage;
+@property UIRefreshControl *refresh;
 
 @end
 
@@ -37,6 +40,16 @@
     // Do any additional setup after loading the view.
     self.title = [_group getGroupName];
     self.messageEntryField.hidden = YES;
+    
+    self.currPage = 0;
+    
+    self.refresh = [[UIRefreshControl alloc] init];
+    self.refresh.attributedTitle = [[NSAttributedString alloc] initWithString:@"Pull to load old messages"];
+    [self.refresh addTarget:self
+                action:@selector(loadMoreMessages)
+      forControlEvents:UIControlEventValueChanged];
+
+    [self.messageTable addSubview:self.refresh];
     
     self.containerView = [[UIView alloc] initWithFrame:CGRectMake(0, self.view.frame.size.height - 40, 320, 40)];
     
@@ -110,6 +123,14 @@
     }];
     self.userIds = tempIds;
     
+    // Get all member avatars
+    /*for( CHUser *user in members ) {
+        [[CHNetworkManager sharedManager] getAvatarOfUser:user.userId callback:^(UIImage *avatar) {
+            user.avatar = avatar;
+        }];
+    }*/
+    
+    
     _messageArray = [[NSMutableArray alloc] init];
 
     self.messages = @"";
@@ -134,7 +155,7 @@
     /// Load up old messages
     ///
     DLog(@"Group in viewdidload: %@", _group);
-    [[CHNetworkManager sharedManager] getMessagesForGroup:self.group._id callback:^(NSArray *messages) {
+    [[CHNetworkManager sharedManager] getMessagesForGroup:self.group._id page:nil callback:^(NSArray *messages) {
         self.messageArray = [NSMutableArray arrayWithArray:messages];
 
         self.messageArray = [[[self.messageArray reverseObjectEnumerator] allObjects] mutableCopy];
@@ -142,6 +163,24 @@
         [self.messageTable scrollToRowAtIndexPath:[NSIndexPath indexPathForRow:_messageArray.count - 1 inSection:0] atScrollPosition:UITableViewScrollPositionBottom animated:NO];
     }];
     
+}
+
+-(void)loadMoreMessages;
+{
+    self.currPage = self.currPage + 1;
+    
+    [[CHNetworkManager sharedManager] getMessagesForGroup:self.group._id page:self.currPage callback:^(NSArray *messages) {
+//        [self.messageArray addObjectsFromArray:messages];
+        messages = [[[messages reverseObjectEnumerator] allObjects] mutableCopy];
+        NSRange range = NSMakeRange(0, messages.count);
+        NSIndexSet *indexSet = [NSIndexSet indexSetWithIndexesInRange:range];
+        [self.messageArray insertObjects:messages atIndexes:indexSet];
+//        self.messageArray = [[[self.messageArray reverseObjectEnumerator] allObjects] mutableCopy];
+        [self.messageTable reloadData];
+        [self.messageTable scrollToRowAtIndexPath:[NSIndexPath indexPathForRow:_messageArray.count - 1 inSection:0] atScrollPosition:UITableViewScrollPositionBottom animated:NO];
+        
+        [self.refresh endRefreshing];
+    }];
 }
 
 -(void)addUser {
@@ -291,7 +330,12 @@
          NSAttributedString *attrString =
          [[NSAttributedString alloc] initWithString:[NSString stringWithFormat:@"%@",currMessage.text] attributes:attrsDictionary];
         cell.messageTextView.attributedText = attrString;
-        cell.authorLabel.text = [[NSString alloc] initWithFormat:@"%@:",[self.group usernameFromId:currMessage.author]];
+        cell.authorLabel.text = [[NSString alloc] initWithFormat:@"by %@",[self.group usernameFromId:currMessage.author]];
+
+        if( currUser.avatar ) {
+            [cell.avatarImageView setImage:currUser.avatar];
+        }
+        
         if (currMessage.sent != nil) {
             // Format the timestamp
             cell.timestampLabel.text = [[self timestampFormatter] stringFromDate:currMessage.sent];
@@ -304,7 +348,7 @@
     
     else {
         cell = [tableView dequeueReusableCellWithIdentifier:cHMessageTableViewCell forIndexPath:indexPath];
-        cell.authorLabel.text = [[NSString alloc] initWithFormat:@"%@:", [self.group usernameFromId:currMessage.author]];
+        cell.authorLabel.text = [[NSString alloc] initWithFormat:@"by %@", [self.group usernameFromId:currMessage.author]];
         // Setting to nil as workaround for iOS 7 bug showing links at wrong time
         cell.messageTextView.text = nil;
         [cell.messageTextView setScrollEnabled:NO];
@@ -342,7 +386,7 @@
     CGSize renderedSize = [((CHMessage *)[self.messageArray objectAtIndex:indexPath.row]).text sizeWithFont: [UIFont systemFontOfSize:14.0f] constrainedToSize:CGSizeMake(205, CGFLOAT_MAX) lineBreakMode:NSLineBreakByWordWrapping];
 
     // Adding 45.0 to fix the bug where messages of certain lengths don't size the cell properly.
-    return renderedSize.height + 45.0f;
+    return renderedSize.height + 25.0f;
 
 }
 
@@ -370,7 +414,7 @@
     ///
     /// Load up old messages
     ///
-    [[CHNetworkManager sharedManager] getMessagesForGroup:self.group._id callback:^(NSArray *messages) {
+    [[CHNetworkManager sharedManager] getMessagesForGroup:self.group._id page:nil callback:^(NSArray *messages) {
         self.messageArray = nil;
         self.messageArray = [[NSMutableArray alloc] init];
         
@@ -393,6 +437,7 @@
 
 - (void)growingTextView:(HPGrowingTextView *)growingTextView willChangeHeight:(float)height
 {
+    DLog(@"change size");
     float diff = (growingTextView.frame.size.height - height);
     
 	CGRect r = self.containerView.frame;
@@ -405,7 +450,7 @@
     self.messageTable.contentInset = UIEdgeInsetsMake(kDefaultContentOffset, 0, self.containerView.frame.size.height + self.heightOfKeyboard, 0);
     self.messageTable.scrollIndicatorInsets = UIEdgeInsetsZero;
     
-    DLog(@"scrolling to %d", _messageArray.count - 1);
+
     [self.messageTable scrollToRowAtIndexPath:[NSIndexPath indexPathForRow:_messageArray.count - 1 inSection:0] atScrollPosition:UITableViewScrollPositionBottom animated:YES];
 }
 

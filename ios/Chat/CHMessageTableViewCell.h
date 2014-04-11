@@ -16,6 +16,7 @@
 @property (strong, nonatomic) IBOutlet UILabel *messageLabel;
 @property (weak, nonatomic) IBOutlet UITextView *messageTextView;
 @property (weak, nonatomic) IBOutlet UILabel *timestampLabel;
+@property (weak, nonatomic) IBOutlet UIImageView *avatarImageView;
 
 @property NSDate *dateSent;
 

@@ -10,6 +10,7 @@
 #import "CHUser.h"
 #import "CHGroup.h"
 #import "CHMessage.h"
+#import "AFNetworking.h"
 
 //#define BASE_URL @"http://10.0.0.10:3000"
 #define BASE_URL @"http://powerful-cliffs-9562.herokuapp.com:80"
@@ -137,21 +138,38 @@
     }];
 }
 
-- (void)getMessagesForGroup:(NSString *)group callback:(void (^)(NSArray *messages))callback;
+- (void)getMessagesForGroup:(NSString *)group page:(int)page callback:(void (^)(NSArray *messages))callback;
 {
     DLog(@"The group id is %@", group);
-    [self GET:[NSString stringWithFormat:@"/group/%@/messages", group] parameters:nil success:^(NSURLSessionDataTask *task, id responseObject) {
-        if( callback ) {
-            NSArray *messages = [CHMessage objectsFromJSON:responseObject];
+    if( !page ) {
+        [self GET:[NSString stringWithFormat:@"/group/%@/messages", group] parameters:nil success:^(NSURLSessionDataTask *task, id responseObject) {
+            if( callback ) {
+                NSArray *messages = [CHMessage objectsFromJSON:responseObject];
             
-            callback(messages);
-        }
-    } failure:^(NSURLSessionDataTask *task, NSError *error) {
-        DLog(@"Error retrieving messages: %@", error);
-        if (callback) {
-            callback(nil);
-        }
-    }];
+                callback(messages);
+            }
+        } failure:^(NSURLSessionDataTask *task, NSError *error) {
+            DLog(@"Error retrieving messages: %@", error);
+            if (callback) {
+                callback(nil);
+            }
+        }];
+    }
+    else {
+        DLog(@"Using page: %d", page);
+        [self GET:[NSString stringWithFormat:@"/group/%@/messages?page=%d", group, page] parameters:nil success:^(NSURLSessionDataTask *task, id responseObject) {
+            if( callback ) {
+                NSArray *messages = [CHMessage objectsFromJSON:responseObject];
+                
+                callback(messages);
+            }
+        } failure:^(NSURLSessionDataTask *task, NSError *error) {
+            DLog(@"Error retrieving messages: %@", error);
+            if (callback) {
+                callback(nil);
+            }
+        }];
+    }
 }
 
 - (void)getProfile: (void (^)(CHUser *userProfile))callback;
@@ -175,9 +193,29 @@
 
 }
 
-- (void)getProfileOfUser: (NSString *)username callback: (void (^)(CHUser *userProfile))callback;
+- (void)getAvatarOfUser: (NSString *)userId callback: (void (^)(UIImage *avatar))callback;
 {
-    //Return the users profile
+    
+    NSMutableURLRequest *request = [[NSMutableURLRequest alloc] initWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"%@/user/%@/avatar",BASE_URL, userId]]];
+    [request setValue:self.sessiontoken forHTTPHeaderField:@"session-token"];
+    
+    AFHTTPRequestOperation *requestOperation = [[AFHTTPRequestOperation alloc] initWithRequest:request];
+    requestOperation.responseSerializer = [AFImageResponseSerializer serializer];
+    [requestOperation setCompletionBlockWithSuccess:^(AFHTTPRequestOperation *operation, id responseObject) {
+        NSLog(@"Response: %@", responseObject);
+
+        if (self.currentUser) {
+            self.currentUser.avatar = responseObject;
+        }
+        if(callback) {
+            callback(responseObject);
+        }
+        
+    } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+        NSLog(@"Image error: %@", error);
+    }];
+    
+    [requestOperation start];
 }
 
 - (void)addNewUsers: (NSArray *)invitees groupId: (NSString *) groupId callback: (void (^)(bool successful, NSError *error))callback;
@@ -254,7 +292,6 @@
     
     return savedValue != nil;
 }
-
 
 
 @end

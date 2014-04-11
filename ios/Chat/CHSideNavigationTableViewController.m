@@ -12,6 +12,7 @@
 #import "CHViewController.h"
 #import "CHSocketManager.h"
 #import "CHGroupListTableViewController.h"
+#import "CHProfileViewController.h"
 
 @interface CHSideNavigationTableViewController ()
 @property NSArray *menuLabels;
@@ -62,12 +63,15 @@
     
     // Configure the cell...
     cell.textLabel.text = self.menuLabels[indexPath.row];
-    
 
     return cell;
 }
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
+    if( indexPath.row == 0 ) {
+        CHProfileViewController *controller = [self.storyboard instantiateViewControllerWithIdentifier:@"CHProfileViewController"];
+        [self.navigationController pushViewController:controller animated:YES];
+    }
     if( indexPath.row == 1 ) {
         DLog(@"Navigate to invitations screen.");
         CHInvitationsTableViewController *controller = [self.storyboard instantiateViewControllerWithIdentifier:@"CHInvitationsTableViewController"];

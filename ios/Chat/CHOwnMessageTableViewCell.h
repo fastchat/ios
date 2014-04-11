@@ -10,4 +10,5 @@
 
 @interface CHOwnMessageTableViewCell : CHMessageTableViewCell
 
+
 @end

@@ -9,6 +9,7 @@
 #import "CHAppDelegate.h"
 #import "CHNetworkManager.h"
 #import "CHSocketManager.h"
+#import "CHUser.h"
 
 @implementation CHAppDelegate
 
@@ -60,9 +61,20 @@ void uncaughtExceptionHandler(NSException *exception) {
 
 - (void)applicationDidBecomeActive:(UIApplication *)application
 {
-    DLog(@"");
     // Restart any tasks that were paused (or not yet started) while the application was inactive. If the application was previously in the background, optionally refresh the user interface.
     //[[NSNotificationCenter defaultCenter] postNotificationName:@"ReloadAppDelegateTable" object:nil];
+    if ( [[CHNetworkManager sharedManager] sessiontoken] != nil ) {
+        if ( [[CHNetworkManager sharedManager] currentUser] == nil ) {
+            [[CHNetworkManager sharedManager] getProfile:^(CHUser *userProfile) {
+                CHUser *user = [[CHNetworkManager sharedManager] currentUser];
+                
+                [[CHNetworkManager sharedManager] getAvatarOfUser:user.userId callback:^(UIImage *avatar) {
+                    user.avatar = avatar;
+                    [[CHNetworkManager sharedManager] setCurrentUser:user];
+                }];
+            }];
+        }
+    }
 }
 
 - (void)applicationWillTerminate:(UIApplication *)application

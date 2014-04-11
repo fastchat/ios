@@ -15,5 +15,6 @@
 @property (strong, nonatomic) NSString *userId;
 @property NSArray *invites;
 @property NSArray *groups;
+@property UIImage *avatar;
 
 @end
