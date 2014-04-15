@@ -2,7 +2,6 @@ package com.fastchat.fastchat.networking;
 
 
 import java.net.URI;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -49,7 +48,7 @@ public class NetworkManager {
 		public void onCompleted(Exception e, AsyncHttpResponse response, JSONObject result) {
 			int responseCode = handleResponse(e,response,result);
 			System.out.println("I got a JSONObject: " + result);
-			if(responseCode!=200){
+			if(responseCode<200 || responseCode>299){
 				return;
 			}
 			
@@ -92,7 +91,7 @@ public class NetworkManager {
 		return AsyncHttpClient.getDefaultInstance().executeJSONArray(get,new AsyncHttpClient.JSONArrayCallback() {
 			public void onCompleted(Exception e, AsyncHttpResponse response, JSONArray result) {
 				int responseCode = handleResponse(e,response);
-				if(responseCode==200){
+				if(responseCode>=200 && responseCode<300){
 					GroupsFragment.addGroups(result);
 				}
 			}
@@ -285,7 +284,7 @@ public class NetworkManager {
 		public void onCompleted(Exception e, AsyncHttpResponse source,
 				ByteBufferList result) {
 			int responseCode = handleResponse(e,source);
-			if(responseCode!=200){
+			if(responseCode<200 || responseCode>299){
 				return;
 			}
 			String requestUrl = source.getRequest().getUri().toString();
@@ -326,7 +325,7 @@ public class NetworkManager {
 			return 500;
 		}
 		int responseCode = response.getHeaders().getHeaders().getResponseCode();
-		if(responseCode==200){
+		if(responseCode>=200 && responseCode<300){
 			if(correctResponseText!=null){
 				Utils.makeToast(correctResponseText);
 			}
