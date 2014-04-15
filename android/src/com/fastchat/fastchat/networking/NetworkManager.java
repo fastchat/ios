@@ -1,6 +1,8 @@
 package com.fastchat.fastchat.networking;
 
 
+import java.io.File;
+import java.io.FileOutputStream;
 import java.net.URI;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -10,6 +12,8 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import android.content.Context;
+import android.content.ContextWrapper;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 
@@ -30,13 +34,17 @@ import com.koushikdutta.async.http.AsyncHttpGet;
 import com.koushikdutta.async.http.AsyncHttpPost;
 import com.koushikdutta.async.http.AsyncHttpRequest;
 import com.koushikdutta.async.http.AsyncHttpResponse;
+import com.koushikdutta.async.http.body.FilePart;
 import com.koushikdutta.async.http.body.JSONObjectBody;
+import com.koushikdutta.async.http.body.MultipartFormDataBody;
+import com.koushikdutta.async.http.socketio.Acknowledge;
+import com.koushikdutta.async.http.socketio.StringCallback;
 
 public class NetworkManager {
 
-	private static final String url ="http://powerful-cliffs-9562.herokuapp.com:80";
-	//private static final String url ="http://minty.shawnsthompson.com:3000";
-	private static User currentUser;
+	//private static final String url ="http://powerful-cliffs-9562.herokuapp.com:80";
+	private static final String url ="http://129.21.117.238:3000";
+	private static String currentUserId = "0";
 	private static Group currentGroup;
 	// HashMap <groupId, Groups>
 	private static HashMap<String,Group> groups = new HashMap<String,Group>();
@@ -53,21 +61,21 @@ public class NetworkManager {
 			}
 			
 			try {
-				currentUser.setToken(result.getString("session-token"));
+				getCurrentUser().setToken(result.getString("session-token"));
 				getProfile();
+				NetworkManager.postDeviceId(MainActivity.regid);
+				
 			} catch (JSONException e1) {
 				e1.printStackTrace();
 				Utils.makeToast(e1);
 				return;
 			}
-			MainActivity.saveLoginCredentials(currentUser);
-			NetworkManager.postDeviceId(MainActivity.regid);
-			MainActivity.restartFragments(new GroupsFragment());
 		}
 	};
 
 	public static Future<JSONObject> postLogin(String username, String password){
-		currentUser = new User(null,username,null);
+		User u = new User(null,username,null);
+		setCurrentUser(u);
 		AsyncHttpPost post = new AsyncHttpPost(url+"/login");
 		JSONObject object = new JSONObject();
 		try {
@@ -87,7 +95,7 @@ public class NetworkManager {
 	public static Future<JSONArray> getGroups(){
 
 		AsyncHttpGet get = new AsyncHttpGet(url+"/group");
-		get.setHeader("session-token", currentUser.getSessionToken());
+		get.setHeader("session-token", getCurrentUser().getSessionToken());
 		return AsyncHttpClient.getDefaultInstance().executeJSONArray(get,new AsyncHttpClient.JSONArrayCallback() {
 			public void onCompleted(Exception e, AsyncHttpResponse response, JSONArray result) {
 				int responseCode = handleResponse(e,response);
@@ -105,7 +113,7 @@ public class NetworkManager {
 			return null;
 		}
 		AsyncHttpPost post = new AsyncHttpPost(url+"/user/device");
-		post.setHeader("session-token", currentUser.getSessionToken());
+		post.setHeader("session-token", getCurrentUser().getSessionToken());
 		JSONObject object = new JSONObject();
 		try {
 			object.put("token", reg_id);
@@ -130,7 +138,11 @@ public class NetworkManager {
 	private static final JSONArrayCallback groupMessagesCallback = new AsyncHttpClient.JSONArrayCallback() {
 		// Callback is invoked with any exceptions/errors, and the result, if available.
 		public void onCompleted(Exception e, AsyncHttpResponse response, JSONArray result) {
-			handleResponse(e,response);
+			int responseCode =handleResponse(e,response);
+			if(responseCode<200 || responseCode>299){
+				Utils.makeToast("Unable to retrieve groups");
+				return;
+			}
 			for(int i=0;i<result.length();i++){
 				int j = result.length()-i-1;
 				try {
@@ -151,7 +163,7 @@ public class NetworkManager {
 	{
 		String groupId = currentGroup.getId();
 		AsyncHttpGet get = new AsyncHttpGet(url+"/group/"+groupId+"/messages");
-		get.setHeader("session-token", currentUser.getSessionToken());
+		get.setHeader("session-token", getCurrentUser().getSessionToken());
 		return AsyncHttpClient.getDefaultInstance().executeJSONArray(get,groupMessagesCallback);
 
 	}
@@ -159,7 +171,7 @@ public class NetworkManager {
 	
 	public static Future<JSONObject> postLogout(){
 		AsyncHttpRequest http = new AsyncHttpRequest(URI.create(url+"/logout"),"DELETE");
-		http.setHeader("session-token", currentUser.getSessionToken());
+		http.setHeader("session-token", getCurrentUser().getSessionToken());
 		return AsyncHttpClient.getDefaultInstance().executeJSONObject(http, new AsyncHttpClient.JSONObjectCallback() {
 			public void onCompleted(Exception e, AsyncHttpResponse response, JSONObject result) {
 				handleResponse(e,response,result,"Successfully logged out");
@@ -177,8 +189,11 @@ public class NetworkManager {
 				User tempUser = new User(profileObject);
 				tempUser.setToken(getToken());
 				System.out.println("currentUser: "+tempUser.getId()+":"+tempUser.getUsername()+":"+tempUser.getSessionToken());
-				MainActivity.saveLoginCredentials(tempUser);
 				NetworkManager.setCurrentUser(tempUser);
+
+				MainActivity.saveLoginCredentials(tempUser);
+				NetworkManager.getAvatar(tempUser.getId());
+				MainActivity.restartFragments(new GroupsFragment());
 			} catch (JSONException e1) {
 				e1.printStackTrace();
 				Utils.makeToast(e1);
@@ -191,13 +206,13 @@ public class NetworkManager {
 	
 	public static Future<JSONObject> getProfile(){
 		AsyncHttpGet get = new AsyncHttpGet(url+"/user");
-		get.setHeader("session-token", currentUser.getSessionToken());
+		get.setHeader("session-token", getCurrentUser().getSessionToken());
 		return AsyncHttpClient.getDefaultInstance().executeJSONObject(get,profileCallback);
 	}
 	
 	public static Future<JSONObject> putLeaveGroup(Group g){
 		AsyncHttpRequest http = new AsyncHttpRequest(URI.create(url+"/group/"+g.getId()+"/leave"),"PUT");
-		http.setHeader("session-token", currentUser.getSessionToken());
+		http.setHeader("session-token", getCurrentUser().getSessionToken());
 		groups.remove(g);
 		return AsyncHttpClient.getDefaultInstance().executeJSONObject(http, new AsyncHttpClient.JSONObjectCallback() {
 			public void onCompleted(Exception e, AsyncHttpResponse response, JSONObject result) {
@@ -209,7 +224,7 @@ public class NetworkManager {
 	
 	public static Future<JSONObject> postCreateGroup(List<String> userNames,String groupName, String message){
 		AsyncHttpPost post = new AsyncHttpPost(url+"/group");
-		post.setHeader("session-token", currentUser.getSessionToken());
+		post.setHeader("session-token", getCurrentUser().getSessionToken());
 		JSONObject object = new JSONObject();
 		try {
 			object.put("members", new JSONArray(userNames));
@@ -235,7 +250,7 @@ public class NetworkManager {
 	
 	public static Future<JSONObject> putInviteUser(String username, Group g){
 		AsyncHttpRequest http = new AsyncHttpRequest(URI.create(url+"/group/"+g.getId()+"/add"),"PUT");
-		http.setHeader("session-token", currentUser.getSessionToken());
+		http.setHeader("session-token", getCurrentUser().getSessionToken());
 		JSONObject object = new JSONObject();
 		try {
 			object.put("invitees", new JSONArray(Arrays.asList(username)));
@@ -303,13 +318,57 @@ public class NetworkManager {
 		
     };
 	
-	public static Future<ByteBufferList> getAvatar(String id) {
+	public static synchronized Future<ByteBufferList> getAvatar(String id) {
 		AsyncHttpGet get = new AsyncHttpGet(url+"/user/"+id+"/avatar");
 		System.out.println("URL: "+url+"/user/"+id+"/avatar");
-		get.setHeader("session-token", currentUser.getSessionToken());
+		get.setHeader("session-token", getCurrentUser().getSessionToken());
 		return AsyncHttpClient.getDefaultInstance().executeByteBufferList(get,dataCallback);
-		
 	}
+	
+	public static Future<String> postAvatar(Bitmap bitmap){
+		System.out.println("POSTING user Avatar: "+url+"/user/"+getCurrentUser().getId()+"/avatar");
+		AsyncHttpPost post = new AsyncHttpPost(url+"/user/"+getCurrentUser().getId()+"/avatar");
+		post.setHeader("session-token", getCurrentUser().getSessionToken());
+		MultipartFormDataBody body = new MultipartFormDataBody();
+		String fileDirectory = saveToInternalSorage(bitmap)+"/avatar.jpeg";
+		FilePart fp = new FilePart("avatar",new File(fileDirectory));
+		fp.setContentType("image/jpeg");
+		body.addPart(fp);
+		post.setBody(body);
+		return AsyncHttpClient.getDefaultInstance().executeString(post, new AsyncHttpClient.StringCallback() {
+
+			@Override
+			public void onCompleted(Exception e, AsyncHttpResponse response,
+					String result) {
+				NetworkManager.handleResponse(e, response);
+				System.out.println("Avatar result"+result);
+			}
+		});
+	}
+	
+	private static String saveToInternalSorage(Bitmap bitmapImage){
+        ContextWrapper cw = new ContextWrapper(MainActivity.activity.getApplicationContext());
+        File directory = cw.getDir("directoryName", Context.MODE_PRIVATE);
+        File mypath=new File(directory,"avatar.jpeg");
+
+        FileOutputStream fos = null;
+        try {
+           // fos = openFileOutput(filename, Context.MODE_PRIVATE);
+
+            fos = new FileOutputStream(mypath);
+
+            // Use the compress method on the BitMap object to write image to the OutputStream
+            bitmapImage.compress(Bitmap.CompressFormat.JPEG, 80, fos);
+            fos.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+            Utils.makeToast(e);
+        }
+        return directory.getAbsolutePath();
+    }
+	
+	
+	
 	
 	private static int handleResponse(Exception e,AsyncHttpResponse response){
 		return handleResponse(e,response,null,null);
@@ -350,7 +409,7 @@ public class NetworkManager {
 	}
 
 	public static String getToken() {
-		return currentUser.getSessionToken();
+		return getCurrentUser().getSessionToken();
 	}
 
 	public static Group getCurrentGroup(){
@@ -370,7 +429,7 @@ public class NetworkManager {
 	}
 
 	public static User getCurrentUser(){
-		return  currentUser;
+		return  users.get(currentUserId);
 	}
 	
 	public static User getUsernameFromId(String id){
@@ -378,7 +437,18 @@ public class NetworkManager {
 	}
 	
 	public static void setCurrentUser(User user){
-		currentUser=user;
+		if(users.containsKey("0")){ //Default value for a user is 0.
+			users.remove("0");
+		}
+		
+		if(!users.containsKey(user.getId())){
+			users.put(user.getId(), user);
+		}else{
+			User tempUser = users.get(user.getId());
+			tempUser.setToken(user.getSessionToken());
+			tempUser.setUsername(user.getUsername());
+		}
+		currentUserId=user.getId();
 	}
 	
 	public static HashMap<String,User> getUsersMap(){

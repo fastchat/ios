@@ -81,6 +81,7 @@ public class MainActivity extends ActionBarActivity {
 			else{
 				User currentUser = new User(credentials.get(0),credentials.get(1),credentials.get(2));
 				NetworkManager.setCurrentUser(currentUser);
+				NetworkManager.getAvatar(currentUser.getId());
 				beginFragment =  new GroupsFragment();
 				getSupportFragmentManager().beginTransaction()
 				.add(R.id.container, beginFragment).commit();
