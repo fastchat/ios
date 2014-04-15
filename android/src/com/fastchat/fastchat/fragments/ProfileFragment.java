@@ -10,6 +10,7 @@ import com.fastchat.fastchat.networking.NetworkManager;
 import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.PorterDuffXfermode;
@@ -40,6 +41,7 @@ public class ProfileFragment extends Fragment implements OnClickListener {
 	private ImageView avatarView;
 	private Bitmap currentBitmap;
 	private static final int BITMAP_SIZE = 300; // 300px X 300px
+	private static Bitmap defaultBitmap=null;
 	
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -62,11 +64,23 @@ public class ProfileFragment extends Fragment implements OnClickListener {
         // in onCreate or any event where your want the user to
         // select a file
 		if(arg0.getId()==R.id.new_avatar){
-	        Intent intent = new Intent();
+	        /*Intent intent = new Intent();
 	        intent.setType("image/*");
 	        intent.setAction(Intent.ACTION_GET_CONTENT);
 	        startActivityForResult(Intent.createChooser(intent,
-	                "Select Picture"), SELECT_PICTURE);
+	                "Select Picture"), SELECT_PICTURE);*/
+			Intent intent = new Intent(Intent.ACTION_PICK, 
+				    android.provider.MediaStore.Images.Media.INTERNAL_CONTENT_URI);
+
+				intent.setType("image/*");
+				intent.putExtra("crop", "true");
+				intent.putExtra("scale", true);
+				intent.putExtra("outputX", BITMAP_SIZE);
+				intent.putExtra("outputY", BITMAP_SIZE);
+				intent.putExtra("aspectX", 1);
+				intent.putExtra("aspectY", 1);
+				intent.putExtra("return-data", true);
+				startActivityForResult(intent, 1);
 		}else if(arg0.getId()==R.id.save_avatar){
 			NetworkManager.getCurrentUser().setBitmap(currentBitmap);
 			NetworkManager.postAvatar(currentBitmap);
@@ -78,31 +92,42 @@ public class ProfileFragment extends Fragment implements OnClickListener {
 	
 	public void onActivityResult(int requestCode, int resultCode, Intent data) {
 	    if (resultCode == MainActivity.RESULT_OK) {
+	    	Uri selectedImageUri = data.getData();
 	        if (requestCode == SELECT_PICTURE) {
-	            Uri selectedImageUri = data.getData();
+	            
 	            Log.d("URI VAL", "selectedImageUri = " + selectedImageUri.toString());
 	            selectedImagePath = getPath(selectedImageUri);
 
-	            if(selectedImagePath!=null){         
-	                // IF LOCAL IMAGE, NO MATTER IF ITS DIRECTLY FROM GALLERY (EXCEPT PICASSA ALBUM),
-	                // OR OI/ASTRO FILE MANAGER. EVEN DROPBOX IS SUPPORTED BY THIS BECAUSE DROPBOX DOWNLOAD THE IMAGE 
-	                // IN THIS FORM - file:///storage/emulated/0/Android/data/com.dropbox.android/...
-	                System.out.println("local image"); 
-	                try {
-						currentBitmap = MediaStore.Images.Media.getBitmap(MainActivity.activity.getContentResolver(), selectedImageUri);
-						currentBitmap = Bitmap.createScaledBitmap(currentBitmap,BITMAP_SIZE, BITMAP_SIZE, false);
+
+	                final Bundle extras = data.getExtras();
+
+	                if (extras != null) {
+	                	System.out.println("Cropped image");
+	                    Bitmap photo = extras.getParcelable("data");
+	                    currentBitmap = Bitmap.createScaledBitmap(photo,BITMAP_SIZE, BITMAP_SIZE, false);
 						currentBitmap = getRoundedCornerBitmap(currentBitmap);
 						avatarView.setImageBitmap(currentBitmap);
-					} catch (IOException e) {
-						e.printStackTrace();
-						Utils.makeToast(e);
-					}
+	                }
+	                else if(selectedImagePath!=null){         
+		                // IF LOCAL IMAGE, NO MATTER IF ITS DIRECTLY FROM GALLERY (EXCEPT PICASSA ALBUM),
+		                // OR OI/ASTRO FILE MANAGER. EVEN DROPBOX IS SUPPORTED BY THIS BECAUSE DROPBOX DOWNLOAD THE IMAGE 
+		                // IN THIS FORM - file:///storage/emulated/0/Android/data/com.dropbox.android/...
+		                System.out.println("local image"); 
+		                try {
+							currentBitmap = MediaStore.Images.Media.getBitmap(MainActivity.activity.getContentResolver(), selectedImageUri);
+							currentBitmap = Bitmap.createScaledBitmap(currentBitmap,BITMAP_SIZE, BITMAP_SIZE, false);
+							currentBitmap = getRoundedCornerBitmap(currentBitmap);
+							avatarView.setImageBitmap(currentBitmap);
+						} catch (IOException e) {
+							e.printStackTrace();
+							Utils.makeToast(e);
+						}
+	                }
 	            }
 	            else{
 	                System.out.println("picasa image!");
 	                loadPicasaImageFromGallery(selectedImageUri);
 	            }
-	        }
 	    }
 	}
 
@@ -175,4 +200,12 @@ public class ProfileFragment extends Fragment implements OnClickListener {
 	 
 	    return output;
 	  }
+	
+	public static Bitmap getDefaultBitmap(){
+		if(defaultBitmap==null){
+			defaultBitmap = BitmapFactory.decodeResource(MainActivity.activity.getResources(), R.drawable.profile_dark);
+			defaultBitmap = getRoundedCornerBitmap(defaultBitmap);
+		}
+		return defaultBitmap;
+	}
 }

@@ -72,8 +72,8 @@ public class MessageAdapter extends BaseAdapter {
         	holder.image.setImageBitmap(avatar);
         	
         }else{
-        	holder.image.setImageDrawable(null);
-        	holder.image.setBackgroundColor(Color.GRAY);
+        	holder.image.setImageBitmap(ProfileFragment.getDefaultBitmap());
+        	//holder.image.setBackgroundColor(Color.GRAY);
         }
 
 		LayoutParams lp = (LayoutParams) holder.layout.getLayoutParams();	
