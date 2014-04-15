@@ -42,11 +42,6 @@ public class GroupsFragment extends Fragment {
 	@Override
 	public void onCreateContextMenu(ContextMenu menu, View v,
 			ContextMenuInfo menuInfo) {
-		HashMap<String, String> hitParameters = new HashMap<String, String>();
-		hitParameters.put(Fields.HIT_TYPE, "appview");
-		hitParameters.put(Fields.SCREEN_NAME, "Groups Screen");
-
-		MainActivity.tracker.send(hitParameters);
 		if(v.getId()==R.id.room_list){
 			AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo)menuInfo;
 			menu.setHeaderTitle(groups.get(info.position).getName());
@@ -94,6 +89,11 @@ public class GroupsFragment extends Fragment {
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
 		MainActivity.activity.getActionBar().setTitle("Groups");
+		HashMap<String, String> hitParameters = new HashMap<String, String>();
+		hitParameters.put(Fields.HIT_TYPE, "appview");
+		hitParameters.put(Fields.SCREEN_NAME, "Groups Screen");
+
+		MainActivity.tracker.send(hitParameters);
 		rootView = inflater.inflate(R.layout.groups, container,
 				false);
 		rootView.requestFocus();

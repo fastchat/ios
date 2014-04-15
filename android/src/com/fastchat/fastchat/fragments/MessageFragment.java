@@ -2,18 +2,25 @@ package com.fastchat.fastchat.fragments;
 
 import com.fastchat.fastchat.MainActivity;
 import com.fastchat.fastchat.R;
+import com.fastchat.fastchat.models.Group;
 import com.fastchat.fastchat.models.Message;
 import com.fastchat.fastchat.models.User;
 import com.fastchat.fastchat.networking.NetworkManager;
 import com.fastchat.fastchat.networking.SocketIoController;
 
+import android.content.ClipData;
+import android.content.ClipboardManager;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.view.ContextMenu;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
+import android.view.ContextMenu.ContextMenuInfo;
 import android.view.View.OnClickListener;
 import android.view.inputmethod.InputMethodManager;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
@@ -26,7 +33,35 @@ public class MessageFragment extends Fragment implements OnClickListener {
 
     //DEFINING A STRING ADAPTER WHICH WILL HANDLE THE DATA OF THE LISTVIEW
     private static MessageAdapter adapter;
+    
+    
+    @Override
+	public void onCreateContextMenu(ContextMenu menu, View v,
+			ContextMenuInfo menuInfo) {
+		if(v.getId()==R.id.messages_container){
+			AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo)menuInfo;
+			menu.setHeaderTitle("Message");
+			MainActivity.activity.runOnUiThread(new Runnable(){
+				public void run(){
+					MainActivity.activity.getActionBar().setDisplayHomeAsUpEnabled(false);
+				}
+			});
+			menu.add("Copy Text");
+		}
+    }
 	
+    @Override
+	public boolean onContextItemSelected(MenuItem item) {
+    	AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo)item.getMenuInfo();
+		//int menuItemIndex = item.getItemId();
+		final Message selectedMessage = NetworkManager.getCurrentGroup().getMessages().get(info.position);
+		ClipboardManager clipboard = (ClipboardManager) MainActivity.activity.getSystemService(MainActivity.CLIPBOARD_SERVICE); 
+		 ClipData clip = ClipData.newPlainText("FastChat copied message", selectedMessage.getText());
+		 clipboard.setPrimaryClip(clip);
+    	return true;
+    }
+    
+    
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
 		if(NetworkManager.getCurrentGroup().getMessages().isEmpty()){
@@ -49,6 +84,7 @@ public class MessageFragment extends Fragment implements OnClickListener {
 	     updateUI();
 	     EditText messageBox = (EditText) rootView.findViewById(R.id.my_message);
 	     messageBox.addTextChangedListener(new FastChatTextWatcher());
+	     registerForContextMenu(lv);
 		return rootView;
 	}
 	
