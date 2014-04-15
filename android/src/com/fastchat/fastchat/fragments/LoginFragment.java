@@ -1,10 +1,13 @@
 package com.fastchat.fastchat.fragments;
 
 
+import java.util.HashMap;
+
 import com.fastchat.fastchat.MainActivity;
 import com.fastchat.fastchat.R;
 import com.fastchat.fastchat.Utils;
 import com.fastchat.fastchat.networking.NetworkManager;
+import com.google.analytics.tracking.android.Fields;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -24,7 +27,7 @@ public class LoginFragment extends Fragment implements OnClickListener {
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
 		MainActivity.activity.getActionBar().setTitle("Login");
-		rootView = inflater.inflate(R.layout.home_main, container,
+		rootView = inflater.inflate(R.layout.login, container,
 				false);
 		Button button = (Button) rootView.findViewById(R.id.login_button);
 	     button.setOnClickListener(this);
@@ -36,6 +39,11 @@ public class LoginFragment extends Fragment implements OnClickListener {
 
 	@Override
 	public void onClick(View arg0) {
+		HashMap<String, String> hitParameters = new HashMap<String, String>();
+		hitParameters.put(Fields.HIT_TYPE, "appview");
+		hitParameters.put(Fields.SCREEN_NAME, "Login Screen");
+
+		MainActivity.tracker.send(hitParameters);
 		final EditText username = (EditText) rootView.findViewById(R.id.text_username);
 		final EditText password = (EditText) rootView.findViewById(R.id.text_password);
 		InputMethodManager in = (InputMethodManager) MainActivity.activity.getSystemService(MainActivity.INPUT_METHOD_SERVICE);

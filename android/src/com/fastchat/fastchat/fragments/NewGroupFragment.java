@@ -2,11 +2,16 @@ package com.fastchat.fastchat.fragments;
 
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 import com.fastchat.fastchat.MainActivity;
 import com.fastchat.fastchat.R;
 import com.fastchat.fastchat.Utils;
 import com.fastchat.fastchat.networking.NetworkManager;
+import com.kpbird.chipsedittextlibrary.ChipsAdapter;
+import com.kpbird.chipsedittextlibrary.ChipsItem;
+import com.kpbird.chipsedittextlibrary.ChipsMultiAutoCompleteTextview;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -25,11 +30,6 @@ public class NewGroupFragment extends Fragment implements OnClickListener {
 
 	private View rootView;
 	
-	ArrayList<String> usersToInvite = new ArrayList<String>();
-	
-	//DEFINING A STRING ADAPTER WHICH WILL HANDLE THE DATA OF THE LISTVIEW
-	private static ArrayAdapter<String> adapter;
-	
 	public NewGroupFragment() {
 	}
 
@@ -37,55 +37,28 @@ public class NewGroupFragment extends Fragment implements OnClickListener {
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
 		MainActivity.activity.getActionBar().setTitle("New Group");
-		rootView = inflater.inflate(R.layout.new_group_main, container,
+		rootView = inflater.inflate(R.layout.new_group, container,
 				false);
+		ArrayList<ChipsItem> arrUsernames = new ArrayList<ChipsItem>();
+		ChipsMultiAutoCompleteTextview ch = (ChipsMultiAutoCompleteTextview) rootView.findViewById(R.id.invite_users);
+		ChipsAdapter chipsAdapter = new ChipsAdapter(MainActivity.activity.getApplicationContext(), arrUsernames);
+		ch.setAdapter(chipsAdapter);
 		Button button = (Button) rootView.findViewById(R.id.button_send_invite);
 	     button.setOnClickListener(this);
-	     button = (Button) rootView.findViewById(R.id.button_add_user);
-	     button.setOnClickListener(this);
-	    adapter=new ArrayAdapter<String>(getActivity(),android.R.layout.simple_list_item_1,usersToInvite);
-		final ListView lv = (ListView) rootView.findViewById(R.id.users_to_invite);
-		MainActivity.activity.runOnUiThread(new Runnable(){
-			public void run(){
-
-				lv.setAdapter(adapter);
-
-			}
-		});
-		NetworkManager.getAvatar(NetworkManager.getCurrentUser().getId());
 		return rootView;
 	}
 
 	@Override
 	public void onClick(View arg0) {
-		if(arg0.getId()==R.id.button_add_user){
-			EditText et = (EditText) rootView.findViewById(R.id.invite_users);
-			final String userName = et.getText().toString();
-			MainActivity.activity.runOnUiThread(new Runnable(){
-				public void run(){
-					usersToInvite.add(userName);
-					adapter.notifyDataSetChanged();
-				}
-			});
-		}else{
-			EditText groupName = (EditText) rootView.findViewById(R.id.group_name);
-			EditText messageBox = (EditText) rootView.findViewById(R.id.invite_message);
-			if(groupName.length()==0 || messageBox.length()==0 || usersToInvite.size()==0){
-				Utils.makeToast("Please fill out all of the information");
-				return;
-			}
-			
-			NetworkManager.postCreateGroup(usersToInvite, groupName.getText().toString(), messageBox.getText().toString());
+		EditText groupName = (EditText) rootView.findViewById(R.id.group_name);
+		ChipsMultiAutoCompleteTextview ch = (ChipsMultiAutoCompleteTextview) rootView.findViewById(R.id.invite_users);
+		EditText messageBox = (EditText) rootView.findViewById(R.id.invite_message);
+		List<String> users = Arrays.asList(ch.getText().toString().split(" "));
+		if(groupName.length()==0 || messageBox.length()==0 || users.size()==0){
+			Utils.makeToast("Please fill out all of the information");
+			return;
 		}
 		
-	}
-	
-	public void addUserToList(final String user){
-		MainActivity.activity.runOnUiThread(new Runnable(){
-			public void run(){
-				usersToInvite.add(user);
-				adapter.notifyDataSetChanged();
-			}
-		});
+		NetworkManager.postCreateGroup(users, groupName.getText().toString(), messageBox.getText().toString());
 	}
 }

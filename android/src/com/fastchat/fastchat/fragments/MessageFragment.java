@@ -33,7 +33,7 @@ public class MessageFragment extends Fragment implements OnClickListener {
 			NetworkManager.getCurrentGroupMessages();
 		}
 		MainActivity.activity.getActionBar().setTitle(NetworkManager.getCurrentGroup().getName());
-		rootView = inflater.inflate(R.layout.message_main, container,
+		rootView = inflater.inflate(R.layout.message, container,
 				false);
 		Button button = (Button) rootView.findViewById(R.id.send_button);
 	     button.setOnClickListener(this);

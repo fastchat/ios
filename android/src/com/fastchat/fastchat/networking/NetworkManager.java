@@ -5,6 +5,7 @@ import java.net.URI;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -207,7 +208,7 @@ public class NetworkManager {
 	}
 	
 	
-	public static Future<JSONObject> postCreateGroup(ArrayList<String> userNames,String groupName, String message){
+	public static Future<JSONObject> postCreateGroup(List<String> userNames,String groupName, String message){
 		AsyncHttpPost post = new AsyncHttpPost(url+"/group");
 		post.setHeader("session-token", currentUser.getSessionToken());
 		JSONObject object = new JSONObject();

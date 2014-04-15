@@ -5,6 +5,8 @@ import java.util.ArrayList;
 import com.fastchat.fastchat.R;
 import com.fastchat.fastchat.Utils;
 import com.fastchat.fastchat.models.Group;
+import com.fastchat.fastchat.models.User;
+import com.fastchat.fastchat.networking.NetworkManager;
 
 import android.content.Context;
 import android.graphics.Color;
@@ -56,7 +58,22 @@ public class GroupsAdapter extends BaseAdapter {
 		}else{
 			holder = (ViewHolder) convertView.getTag();
 		}
-        holder.message.setText(group.getName());
+		if(group.getName()==null || group.getName().isEmpty()){
+			String titleText="";
+			for(User u : group.getUsers().values()){
+				if(u.getUsername().equals(NetworkManager.getCurrentUser().getUsername())){
+					continue;
+				}
+				if(titleText.equals("")){
+					titleText+=u.getUsername();
+				}else{
+					titleText+=","+u.getUsername();
+				}
+			}
+			holder.message.setText(titleText);
+		}else{
+			holder.message.setText(group.getName());
+		}
 
 		holder.message.setTextColor(Color.BLACK);	
 		return convertView;

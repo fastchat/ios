@@ -62,4 +62,8 @@ public class Group {
 	public String getName() {
 		return this.name;
 	}
+	
+	public HashMap<String,User> getUsers(){
+		return members;
+	}
 }

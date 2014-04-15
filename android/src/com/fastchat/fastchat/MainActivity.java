@@ -9,6 +9,7 @@ import com.fastchat.fastchat.R;
 import com.fastchat.fastchat.fragments.GroupsFragment;
 import com.fastchat.fastchat.fragments.LoginFragment;
 import com.fastchat.fastchat.fragments.NewGroupFragment;
+import com.fastchat.fastchat.fragments.ProfileFragment;
 import com.fastchat.fastchat.models.Group;
 import com.fastchat.fastchat.models.User;
 import com.fastchat.fastchat.networking.NetworkManager;
@@ -16,7 +17,6 @@ import com.fastchat.fastchat.networking.SocketIoController;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.google.android.gms.gcm.GoogleCloudMessaging;
-import com.nullwire.trace.ExceptionHandler;
 
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -28,8 +28,14 @@ import android.content.pm.PackageManager.NameNotFoundException;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.WindowManager;
+
+import com.google.analytics.tracking.android.EasyTracker;
+import com.google.analytics.tracking.android.Fields;
+import com.google.analytics.tracking.android.GoogleAnalytics;
+import com.google.analytics.tracking.android.Tracker;
 
 
 public class MainActivity extends ActionBarActivity {
@@ -55,12 +61,13 @@ public class MainActivity extends ActionBarActivity {
 	SharedPreferences prefs;
 	public static String regid;
 	public static Fragment beginFragment;
+	public static Tracker tracker;
 
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		ExceptionHandler.register(this, "http://minty.shawnsthompson.com/server.php");
+		
 		activity = this;
 		setContentView(R.layout.activity_main);
 		manager = getSupportFragmentManager();
@@ -98,10 +105,9 @@ public class MainActivity extends ActionBarActivity {
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 
-		// Inflate the menu; this adds items to the action bar if it is present.
-		getMenuInflater().inflate(R.menu.main, menu);
-		getActionBar().setDisplayHomeAsUpEnabled(false);
-		return true;
+		MenuInflater inflater = getMenuInflater();
+	    inflater.inflate(R.menu.main, menu);
+	    return super.onCreateOptionsMenu(menu);
 	}
 
 	@Override
@@ -126,6 +132,7 @@ public class MainActivity extends ActionBarActivity {
 			restartFragments(new LoginFragment());
 			break;
 		case R.id.profile:
+			switchView(new ProfileFragment());
 			break;
 		case R.id.new_group:
 			switchView(new NewGroupFragment());
@@ -180,6 +187,12 @@ public class MainActivity extends ActionBarActivity {
 		}
 	}
 	
+	protected void onStart(){
+		EasyTracker.getInstance(this).activityStart(this);
+		tracker = GoogleAnalytics.getInstance(this).getTracker("UA-50037918-1");
+		super.onStart();
+	}
+	
 	protected void onStop(){
 		SocketIoController.disconnect();
 		if(NetworkManager.getCurrentGroup()!=null){
@@ -190,6 +203,7 @@ public class MainActivity extends ActionBarActivity {
 			g.getMessages().clear();
 		}
 		groups.clear();
+		EasyTracker.getInstance(this).activityStop(this);
 		super.onStop();
 	}
 	

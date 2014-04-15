@@ -51,7 +51,7 @@ public class MessageAdapter extends BaseAdapter {
 		if(convertView == null)
 		{
 			holder = new ViewHolder();
-			convertView = LayoutInflater.from(mContext).inflate(R.layout.sms_row, parent, false);
+			convertView = LayoutInflater.from(mContext).inflate(R.layout.message_row, parent, false);
 			holder.message = (TextView) convertView.findViewById(R.id.message_text);
 			holder.image = (ImageView) convertView.findViewById(R.id.imageView1);
 			holder.layout = (LinearLayout) convertView.findViewById(R.id.sms_layout);
