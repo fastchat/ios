@@ -1,6 +1,5 @@
 package com.fastchat.fastchat.fragments;
 
-import java.io.FileNotFoundException;
 import java.io.IOException;
 
 import com.fastchat.fastchat.MainActivity;
@@ -11,6 +10,12 @@ import com.fastchat.fastchat.networking.NetworkManager;
 import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Bitmap;
+import android.graphics.Canvas;
+import android.graphics.Paint;
+import android.graphics.PorterDuffXfermode;
+import android.graphics.Rect;
+import android.graphics.RectF;
+import android.graphics.Bitmap.Config;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
@@ -31,8 +36,6 @@ public class ProfileFragment extends Fragment implements OnClickListener {
 	private static final int SELECT_PICTURE = 1;
 
 	private String selectedImagePath;
-	//ADDED
-	private String filemanagerstring;
 	
 	private ImageView avatarView;
 	private Bitmap currentBitmap;
@@ -88,6 +91,7 @@ public class ProfileFragment extends Fragment implements OnClickListener {
 	                try {
 						currentBitmap = MediaStore.Images.Media.getBitmap(MainActivity.activity.getContentResolver(), selectedImageUri);
 						currentBitmap = Bitmap.createScaledBitmap(currentBitmap,BITMAP_SIZE, BITMAP_SIZE, false);
+						currentBitmap = getRoundedCornerBitmap(currentBitmap);
 						avatarView.setImageBitmap(currentBitmap);
 					} catch (IOException e) {
 						e.printStackTrace();
@@ -119,6 +123,7 @@ public class ProfileFragment extends Fragment implements OnClickListener {
 	                    try {
 	                        currentBitmap = android.provider.MediaStore.Images.Media.getBitmap(MainActivity.activity.getContentResolver(), uri);
 	                        currentBitmap = Bitmap.createScaledBitmap(currentBitmap,BITMAP_SIZE, BITMAP_SIZE, false);
+	                        currentBitmap = getRoundedCornerBitmap(currentBitmap);
 	                        avatarView.setImageBitmap(currentBitmap);
 	                        // THIS IS THE BITMAP IMAGE WE ARE LOOKING FOR.
 	                    } catch (Exception ex) {
@@ -148,4 +153,26 @@ public class ProfileFragment extends Fragment implements OnClickListener {
 	    else 
 	        return uri.getPath();               // FOR OI/ASTRO/Dropbox etc
 	}
+	
+	public static Bitmap getRoundedCornerBitmap(Bitmap bitmap) {
+	    Bitmap output = Bitmap.createBitmap(bitmap.getWidth(),
+	        bitmap.getHeight(), Config.ARGB_8888);
+	    Canvas canvas = new Canvas(output);
+	 
+	    final int color = 0xff424242;
+	    final Paint paint = new Paint();
+	    final Rect rect = new Rect(0, 0, bitmap.getWidth(), bitmap.getHeight());
+	    final RectF rectF = new RectF(rect);
+	    final float roundPx = bitmap.getWidth();
+	 
+	    paint.setAntiAlias(true);
+	    canvas.drawARGB(0, 0, 0, 0);
+	    paint.setColor(color);
+	    canvas.drawRoundRect(rectF, roundPx, roundPx, paint);
+	 
+	    paint.setXfermode(new PorterDuffXfermode(android.graphics.PorterDuff.Mode.SRC_IN));
+	    canvas.drawBitmap(bitmap, rect, rect, paint);
+	 
+	    return output;
+	  }
 }

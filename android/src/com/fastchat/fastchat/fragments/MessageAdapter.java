@@ -27,6 +27,7 @@ public class MessageAdapter extends BaseAdapter {
 
 	private Context mContext;
 	private ArrayList<Message> mMessages;
+	private static final int MARGINS = 30;
 	
 	public MessageAdapter(Context context, ArrayList<Message> messages) {
 		super();
@@ -57,8 +58,9 @@ public class MessageAdapter extends BaseAdapter {
 			holder.layout = (LinearLayout) convertView.findViewById(R.id.sms_layout);
 			convertView.setTag(holder);
 		}
-		else
+		else{
 			holder = (ViewHolder) convertView.getTag();
+		}
 		SpannableString out0 = new SpannableString(message.getText()+"\n"+message.getFrom().getUsername()+" "+message.getDateString());
         StyleSpan boldSpan = new StyleSpan(Typeface.BOLD);
         RelativeSizeSpan smallSpan = new RelativeSizeSpan(0.5f);
@@ -71,6 +73,7 @@ public class MessageAdapter extends BaseAdapter {
         	
         }else{
         	holder.image.setImageDrawable(null);
+        	holder.image.setBackgroundColor(Color.GRAY);
         }
 
 		LayoutParams lp = (LayoutParams) holder.layout.getLayoutParams();	
@@ -79,12 +82,14 @@ public class MessageAdapter extends BaseAdapter {
 		{
 			holder.layout.setBackgroundResource(R.drawable.speech_bubble_green);
 			lp.gravity = Gravity.RIGHT;
+			lp.setMargins(MARGINS, 0, 0, 0);
 		}
 		//If not mine then it is from sender to show orange background and align to left
 		else
 		{
 			holder.layout.setBackgroundResource(R.drawable.speech_bubble_orange);
 			lp.gravity = Gravity.LEFT;
+			lp.setMargins(0, 0, MARGINS, 0);
 		}
 		holder.layout.setLayoutParams(lp);
 		holder.message.setTextColor(Color.BLACK);	
@@ -100,5 +105,4 @@ public class MessageAdapter extends BaseAdapter {
 	public long getItemId(int position) {
 		return position;
 	}
-
 }

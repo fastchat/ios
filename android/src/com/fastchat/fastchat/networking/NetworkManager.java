@@ -21,6 +21,7 @@ import com.fastchat.fastchat.MainActivity;
 import com.fastchat.fastchat.Utils;
 import com.fastchat.fastchat.fragments.GroupsFragment;
 import com.fastchat.fastchat.fragments.MessageFragment;
+import com.fastchat.fastchat.fragments.ProfileFragment;
 import com.fastchat.fastchat.models.Group;
 import com.fastchat.fastchat.models.Message;
 import com.fastchat.fastchat.models.User;
@@ -37,13 +38,11 @@ import com.koushikdutta.async.http.AsyncHttpResponse;
 import com.koushikdutta.async.http.body.FilePart;
 import com.koushikdutta.async.http.body.JSONObjectBody;
 import com.koushikdutta.async.http.body.MultipartFormDataBody;
-import com.koushikdutta.async.http.socketio.Acknowledge;
-import com.koushikdutta.async.http.socketio.StringCallback;
 
 public class NetworkManager {
 
-	//private static final String url ="http://powerful-cliffs-9562.herokuapp.com:80";
-	private static final String url ="http://129.21.117.238:3000";
+	private static final String url ="http://powerful-cliffs-9562.herokuapp.com:80";
+	//private static final String url ="http://129.21.117.238:3000";
 	private static String currentUserId = "0";
 	private static Group currentGroup;
 	// HashMap <groupId, Groups>
@@ -309,10 +308,12 @@ public class NetworkManager {
 			byte[] data = result.getAllByteArray();
 			System.out.println("Avatar UserID: "+userId+ "Length: "+data.length);
 			Bitmap avatar = BitmapFactory.decodeByteArray(data, 0, data.length);
+			
 			if(avatar==null){
 				System.out.println("Avatar null for user:"+userId+"");
 				return;
 			}
+			avatar = ProfileFragment.getRoundedCornerBitmap(avatar);
 			NetworkManager.getUsernameFromId(userId).setBitmap(avatar);
 		}
 		
