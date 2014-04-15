@@ -29,6 +29,7 @@ import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.TextView;
 
 public class ProfileFragment extends Fragment implements OnClickListener {
 	
@@ -52,6 +53,8 @@ public class ProfileFragment extends Fragment implements OnClickListener {
 		avatarView = (ImageView) rootView.findViewById(R.id.avatar);
 		currentBitmap = NetworkManager.getCurrentUser().getBitmap();
 		avatarView.setImageBitmap(currentBitmap);
+		TextView tv = (TextView) rootView.findViewById(R.id.profile_username);
+		tv.setText(NetworkManager.getCurrentUser().getUsername());
 		Button selectAvatar = (Button) rootView.findViewById(R.id.new_avatar);
 		selectAvatar.setOnClickListener(this);
 		Button saveAvatar = (Button) rootView.findViewById(R.id.save_avatar);
