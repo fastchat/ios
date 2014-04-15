@@ -20,6 +20,7 @@ import android.graphics.BitmapFactory;
 import com.fastchat.fastchat.MainActivity;
 import com.fastchat.fastchat.Utils;
 import com.fastchat.fastchat.fragments.GroupsFragment;
+import com.fastchat.fastchat.fragments.LoginFragment;
 import com.fastchat.fastchat.fragments.MessageFragment;
 import com.fastchat.fastchat.fragments.ProfileFragment;
 import com.fastchat.fastchat.models.Group;
@@ -100,6 +101,8 @@ public class NetworkManager {
 				int responseCode = handleResponse(e,response);
 				if(responseCode>=200 && responseCode<300){
 					GroupsFragment.addGroups(result);
+				}else{
+					MainActivity.restartFragments(new LoginFragment());
 				}
 			}
 		});

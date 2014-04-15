@@ -109,6 +109,9 @@ public class MessageFragment extends Fragment implements OnClickListener {
 		messageBox.clearFocus();
 		InputMethodManager in = (InputMethodManager) MainActivity.activity.getSystemService(MainActivity.INPUT_METHOD_SERVICE);
         in.hideSoftInputFromWindow(messageBox.getApplicationWindowToken(),InputMethodManager.HIDE_NOT_ALWAYS);
+        if(message.isEmpty()){
+        	return;
+        }
         Message messageObject = new Message(message,NetworkManager.getCurrentUser());
 		addMessage(messageObject);
 		SocketIoController.sendMessage(messageObject);
