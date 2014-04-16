@@ -1,7 +1,6 @@
 package com.fastchat.fastchat.fragments;
 
 import java.io.IOException;
-import java.util.HashMap;
 
 import com.fastchat.fastchat.MainActivity;
 import com.fastchat.fastchat.R;

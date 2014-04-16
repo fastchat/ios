@@ -10,7 +10,6 @@ import com.fastchat.fastchat.fragments.MessageFragment;
 import com.fastchat.fastchat.models.Group;
 import com.fastchat.fastchat.models.Message;
 import com.koushikdutta.async.future.Future;
-import com.koushikdutta.async.future.FutureCallback;
 import com.koushikdutta.async.http.AsyncHttpClient;
 import com.koushikdutta.async.http.socketio.Acknowledge;
 import com.koushikdutta.async.http.socketio.ConnectCallback;

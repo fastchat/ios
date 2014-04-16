@@ -1,10 +1,7 @@
 package com.fastchat.fastchat.fragments;
 
-import java.util.HashMap;
-
 import com.fastchat.fastchat.MainActivity;
 import com.fastchat.fastchat.R;
-import com.fastchat.fastchat.models.Group;
 import com.fastchat.fastchat.models.Message;
 import com.fastchat.fastchat.models.User;
 import com.fastchat.fastchat.networking.NetworkManager;
@@ -43,7 +40,7 @@ public class MessageFragment extends Fragment implements OnClickListener {
 	public void onCreateContextMenu(ContextMenu menu, View v,
 			ContextMenuInfo menuInfo) {
 		if(v.getId()==R.id.messages_container){
-			AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo)menuInfo;
+			//AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo)menuInfo;
 			menu.setHeaderTitle("Message");
 			MainActivity.activity.runOnUiThread(new Runnable(){
 				public void run(){
