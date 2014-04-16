@@ -149,10 +149,9 @@ public class SocketIoController {
 	public static void sendMessage(final Message m){
 		if(client==null || !client.isConnected()){
 			Utils.makeToast("Couldn't send message. Try again later");
+			MessageFragment.removeMessage(m);
 		}else{
 			client.emit("message",m.getSendFormat());
-			NetworkManager.getCurrentGroup().getMessages().remove(m);
-			MessageFragment.updateUI();
 		}
 		
 	}

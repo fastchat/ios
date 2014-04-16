@@ -344,7 +344,7 @@ public class NetworkManager {
 			@Override
 			public void onCompleted(Exception e, AsyncHttpResponse response,
 					String result) {
-				NetworkManager.handleResponse(e, response);
+				NetworkManager.handleResponse(e, response,null,"Successfully saved avatar");
 				System.out.println("Avatar result"+result);
 			}
 		});

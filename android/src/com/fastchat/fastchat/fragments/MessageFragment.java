@@ -30,9 +30,7 @@ import android.widget.TextView;
 public class MessageFragment extends Fragment implements OnClickListener {
 
 	private static View rootView;
-	
-
-    //DEFINING A STRING ADAPTER WHICH WILL HANDLE THE DATA OF THE LISTVIEW
+    
     private static MessageAdapter adapter;
     
     
@@ -82,7 +80,6 @@ public class MessageFragment extends Fragment implements OnClickListener {
 				 
 			 }
 		 });
-	     updateUI();
 	     EditText messageBox = (EditText) rootView.findViewById(R.id.my_message);
 	     messageBox.addTextChangedListener(new FastChatTextWatcher());
 	     registerForContextMenu(lv);
@@ -90,6 +87,7 @@ public class MessageFragment extends Fragment implements OnClickListener {
 	}
 	
 	public void onStart(){
+		updateUI();
 		Tracker t = MainActivity.tracker;
 		t.setScreenName("Message View");
 
@@ -102,6 +100,7 @@ public class MessageFragment extends Fragment implements OnClickListener {
 		if(rootView==null){
 			return;
 		}
+		System.out.println("Updating message list");
 		final ListView lv = (ListView) rootView.findViewById(R.id.messages_container);
 		MainActivity.activity.runOnUiThread(new Runnable(){
 			public void run(){
@@ -112,12 +111,14 @@ public class MessageFragment extends Fragment implements OnClickListener {
 	}
 	
 	public static void addMessage(final Message message){
-		MainActivity.activity.runOnUiThread(new Runnable(){
-			public void run(){
-				NetworkManager.getCurrentGroup().getMessages().add(message);
-				updateUI();
-			}
-		});
+		NetworkManager.getCurrentGroup().getMessages().add(message);
+		updateUI();
+	}
+	
+	public static void removeMessage(Message m){
+		NetworkManager.getCurrentGroup().getMessages().remove(m);
+		updateUI();
+		
 	}
 	
 	public static void showTyping(final User u){
