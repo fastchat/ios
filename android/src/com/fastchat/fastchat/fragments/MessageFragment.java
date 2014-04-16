@@ -111,14 +111,22 @@ public class MessageFragment extends Fragment implements OnClickListener {
 	}
 	
 	public static void addMessage(final Message message){
-		NetworkManager.getCurrentGroup().getMessages().add(message);
-		updateUI();
+		MainActivity.activity.runOnUiThread(new Runnable(){
+			public void run(){
+				NetworkManager.getCurrentGroup().getMessages().add(message);
+				updateUI();
+			}
+		});
+		
 	}
 	
-	public static void removeMessage(Message m){
-		NetworkManager.getCurrentGroup().getMessages().remove(m);
-		updateUI();
-		
+	public static void removeMessage(final Message m){
+		MainActivity.activity.runOnUiThread(new Runnable(){
+			public void run(){
+				NetworkManager.getCurrentGroup().getMessages().remove(m);
+				updateUI();
+			}
+		});
 	}
 	
 	public static void showTyping(final User u){
@@ -127,7 +135,11 @@ public class MessageFragment extends Fragment implements OnClickListener {
 			public void run() {
 				TextView tv = (TextView) rootView.findViewById(R.id.typing_box);
 				tv.setVisibility(View.VISIBLE);
-				tv.setText(u.getUsername()+" is typing...");
+				try{
+					tv.setText(u.getUsername()+" is typing...");
+				}catch(NullPointerException e){
+					e.printStackTrace();
+				}
 			}
 			
 		});

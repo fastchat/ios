@@ -97,10 +97,10 @@ public class SocketIoController {
 			        			return;
 			        		}
 			        		if(isTyping){
-			        			MessageFragment.showTyping(NetworkManager.getCurrentGroup().getUsername(userId));
+			        			MessageFragment.showTyping(NetworkManager.getUsernameFromId(userId));
 			        		}
 			        		else{
-			        			MessageFragment.hideTyping(NetworkManager.getCurrentGroup().getUsername(userId));
+			        			MessageFragment.showTyping(NetworkManager.getUsernameFromId(userId));
 			        		}
 						} catch (JSONException e) {
 							// TODO Auto-generated catch block

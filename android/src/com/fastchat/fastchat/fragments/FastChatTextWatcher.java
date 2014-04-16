@@ -16,6 +16,9 @@ public class FastChatTextWatcher implements TextWatcher{
         		typingThread = new Thread(new Runnable(){
         			public void run(){
         				while(true){
+        					if(FastChatTextWatcher.getLastTyping()==null){
+        						lastTyping=System.currentTimeMillis();
+        					}
         					Long timeDifference = System.currentTimeMillis()-FastChatTextWatcher.getLastTyping();
         					if(timeDifference>2000){//If the user has stopped typing for 2 seconds. Send stop typing.
         						SocketIoController.sendStopTyping();
