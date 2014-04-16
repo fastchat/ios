@@ -9,7 +9,8 @@ import com.fastchat.fastchat.models.Message;
 import com.fastchat.fastchat.models.User;
 import com.fastchat.fastchat.networking.NetworkManager;
 import com.fastchat.fastchat.networking.SocketIoController;
-import com.google.analytics.tracking.android.Fields;
+import com.google.android.gms.analytics.HitBuilders;
+import com.google.android.gms.analytics.Tracker;
 
 import android.content.ClipData;
 import android.content.ClipboardManager;
@@ -70,9 +71,6 @@ public class MessageFragment extends Fragment implements OnClickListener {
 		if(NetworkManager.getCurrentGroup().getMessages().isEmpty()){
 			NetworkManager.getCurrentGroupMessages();
 		}
-		HashMap<String, String> hitParameters = new HashMap<String, String>();
-		hitParameters.put(Fields.HIT_TYPE, "appview");
-		hitParameters.put(Fields.SCREEN_NAME, "Message Screen");
 		MainActivity.activity.getActionBar().setTitle(NetworkManager.getCurrentGroup().getName());
 		rootView = inflater.inflate(R.layout.message, container,
 				false);
@@ -92,6 +90,15 @@ public class MessageFragment extends Fragment implements OnClickListener {
 	     messageBox.addTextChangedListener(new FastChatTextWatcher());
 	     registerForContextMenu(lv);
 		return rootView;
+	}
+	
+	public void onStart(){
+		Tracker t = MainActivity.tracker;
+		t.setScreenName("Message View");
+
+        // Send a screen view.
+        t.send(new HitBuilders.AppViewBuilder().build());
+        super.onStart();
 	}
 	
 	public static void updateUI(){

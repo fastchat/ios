@@ -7,7 +7,8 @@ import com.fastchat.fastchat.MainActivity;
 import com.fastchat.fastchat.R;
 import com.fastchat.fastchat.Utils;
 import com.fastchat.fastchat.networking.NetworkManager;
-import com.google.analytics.tracking.android.Fields;
+import com.google.android.gms.analytics.HitBuilders;
+import com.google.android.gms.analytics.Tracker;
 
 import android.content.Intent;
 import android.database.Cursor;
@@ -50,9 +51,6 @@ public class ProfileFragment extends Fragment implements OnClickListener {
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
 		MainActivity.activity.getActionBar().setTitle("Profile");
-		HashMap<String, String> hitParameters = new HashMap<String, String>();
-		hitParameters.put(Fields.HIT_TYPE, "appview");
-		hitParameters.put(Fields.SCREEN_NAME, "Profile Screen");
 		rootView = inflater.inflate(R.layout.profile, container,
 				false);
 		avatarView = (ImageView) rootView.findViewById(R.id.avatar);
@@ -65,6 +63,15 @@ public class ProfileFragment extends Fragment implements OnClickListener {
 		Button saveAvatar = (Button) rootView.findViewById(R.id.save_avatar);
 		saveAvatar.setOnClickListener(this);
 		return rootView;
+	}
+	
+	public void onStart(){
+		Tracker t = MainActivity.tracker;
+		t.setScreenName("Profile View");
+
+        // Send a screen view.
+        t.send(new HitBuilders.AppViewBuilder().build());
+        super.onStart();
 	}
 
 	public void onClick(View arg0) {

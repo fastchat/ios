@@ -3,14 +3,14 @@ package com.fastchat.fastchat.fragments;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
 
 import com.fastchat.fastchat.MainActivity;
 import com.fastchat.fastchat.R;
 import com.fastchat.fastchat.Utils;
 import com.fastchat.fastchat.networking.NetworkManager;
-import com.google.analytics.tracking.android.Fields;
+import com.google.android.gms.analytics.HitBuilders;
+import com.google.android.gms.analytics.Tracker;
 import com.kpbird.chipsedittextlibrary.ChipsAdapter;
 import com.kpbird.chipsedittextlibrary.ChipsItem;
 import com.kpbird.chipsedittextlibrary.ChipsMultiAutoCompleteTextview;
@@ -35,9 +35,6 @@ public class NewGroupFragment extends Fragment implements OnClickListener {
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
 		MainActivity.activity.getActionBar().setTitle("New Group");
-		HashMap<String, String> hitParameters = new HashMap<String, String>();
-		hitParameters.put(Fields.HIT_TYPE, "appview");
-		hitParameters.put(Fields.SCREEN_NAME, "New Group Screen");
 		rootView = inflater.inflate(R.layout.new_group, container,
 				false);
 		ArrayList<ChipsItem> arrUsernames = new ArrayList<ChipsItem>();
@@ -47,6 +44,15 @@ public class NewGroupFragment extends Fragment implements OnClickListener {
 		Button button = (Button) rootView.findViewById(R.id.button_send_invite);
 	     button.setOnClickListener(this);
 		return rootView;
+	}
+	
+	public void onStart(){
+		Tracker t = MainActivity.tracker;
+		t.setScreenName("New Group View");
+
+        // Send a screen view.
+        t.send(new HitBuilders.AppViewBuilder().build());
+        super.onStart();
 	}
 
 	@Override

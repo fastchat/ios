@@ -14,7 +14,8 @@ import com.fastchat.fastchat.R;
 import com.fastchat.fastchat.models.Group;
 import com.fastchat.fastchat.networking.NetworkManager;
 import com.fastchat.fastchat.networking.SocketIoController;
-import com.google.analytics.tracking.android.Fields;
+import com.google.android.gms.analytics.HitBuilders;
+import com.google.android.gms.analytics.Tracker;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -89,11 +90,7 @@ public class GroupsFragment extends Fragment {
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
 		MainActivity.activity.getActionBar().setTitle("Groups");
-		HashMap<String, String> hitParameters = new HashMap<String, String>();
-		hitParameters.put(Fields.HIT_TYPE, "appview");
-		hitParameters.put(Fields.SCREEN_NAME, "Groups Screen");
 
-		MainActivity.tracker.send(hitParameters);
 		rootView = inflater.inflate(R.layout.groups, container,
 				false);
 		rootView.requestFocus();
@@ -128,6 +125,15 @@ public class GroupsFragment extends Fragment {
 		}
 		registerForContextMenu(lv);
 		return rootView;
+	}
+	
+	public void onStart(){
+		Tracker t = MainActivity.tracker;
+		t.setScreenName("Groups View");
+
+        // Send a screen view.
+        t.send(new HitBuilders.AppViewBuilder().build());
+        super.onStart();
 	}
 
 	public static void addGroups(JSONArray array){

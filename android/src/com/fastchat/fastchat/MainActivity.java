@@ -14,6 +14,10 @@ import com.fastchat.fastchat.models.Group;
 import com.fastchat.fastchat.models.User;
 import com.fastchat.fastchat.networking.NetworkManager;
 import com.fastchat.fastchat.networking.SocketIoController;
+import com.google.android.gms.analytics.GoogleAnalytics;
+import com.google.android.gms.analytics.Logger;
+import com.google.android.gms.analytics.Logger.LogLevel;
+import com.google.android.gms.analytics.Tracker;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.google.android.gms.gcm.GoogleCloudMessaging;
@@ -32,11 +36,6 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.WindowManager;
 
-import com.google.analytics.tracking.android.EasyTracker;
-import com.google.analytics.tracking.android.GoogleAnalytics;
-import com.google.analytics.tracking.android.Logger.LogLevel;
-import com.google.analytics.tracking.android.Tracker;
-
 
 public class MainActivity extends ActionBarActivity {
 
@@ -49,6 +48,7 @@ public class MainActivity extends ActionBarActivity {
 	private static final String SESSION_TOKEN="session_token";
 	private static final String USER_ID="user_id";
 	private final static int PLAY_SERVICES_RESOLUTION_REQUEST = 9000;
+	
 
 	/**
 	 * Substitute you own sender ID here. This is the project number you got
@@ -69,6 +69,7 @@ public class MainActivity extends ActionBarActivity {
 		super.onCreate(savedInstanceState);
 		GoogleAnalytics.getInstance(this).getLogger()
 	    .setLogLevel(LogLevel.VERBOSE);
+		tracker = getTracker();
 		activity = this;
 		setContentView(R.layout.activity_main);
 		manager = getSupportFragmentManager();
@@ -190,12 +191,12 @@ public class MainActivity extends ActionBarActivity {
 	}
 	
 	protected void onStart(){
-		EasyTracker.getInstance(this).activityStart(this);
-		tracker = GoogleAnalytics.getInstance(this).getTracker("UA-50037918-1");
+		GoogleAnalytics.getInstance(this).reportActivityStart(this);
 		super.onStart();
 	}
 	
 	protected void onStop(){
+		GoogleAnalytics.getInstance(this).reportActivityStop(this);
 		SocketIoController.disconnect();
 		if(NetworkManager.getCurrentGroup()!=null){
 			NetworkManager.getCurrentGroup().getMessages().clear();
@@ -205,7 +206,6 @@ public class MainActivity extends ActionBarActivity {
 			g.getMessages().clear();
 		}
 		groups.clear();
-		EasyTracker.getInstance(this).activityStop(this);
 		super.onStop();
 	}
 	
@@ -373,4 +373,10 @@ public class MainActivity extends ActionBarActivity {
 
 		}.start();
 	}
+	
+	synchronized Tracker getTracker() {
+		GoogleAnalytics analytics = GoogleAnalytics.getInstance(this);
+	    Tracker t = analytics.newTracker(R.xml.app_tracker);
+	    return t;
+	  }
 }
