@@ -10,11 +10,14 @@ import com.fastchat.fastchat.fragments.MessageFragment;
 import com.fastchat.fastchat.models.Group;
 import com.fastchat.fastchat.models.Message;
 import com.koushikdutta.async.future.Future;
+import com.koushikdutta.async.future.FutureCallback;
 import com.koushikdutta.async.http.AsyncHttpClient;
 import com.koushikdutta.async.http.socketio.Acknowledge;
 import com.koushikdutta.async.http.socketio.ConnectCallback;
+import com.koushikdutta.async.http.socketio.DisconnectCallback;
 import com.koushikdutta.async.http.socketio.EventCallback;
 import com.koushikdutta.async.http.socketio.JSONCallback;
+import com.koushikdutta.async.http.socketio.ReconnectCallback;
 import com.koushikdutta.async.http.socketio.SocketIOClient;
 import com.koushikdutta.async.http.socketio.SocketIORequest;
 import com.koushikdutta.async.http.socketio.StringCallback;
@@ -116,22 +119,43 @@ public class SocketIoController {
 					}
 		        });
 		        SocketIoController.client=client;
+		        client.setDisconnectCallback(new DisconnectCallback(){
+					@Override
+					public void onDisconnect(Exception e) {
+						Utils.makeToast("Lost connection with the server");
+					}
+		        });
+		        client.setReconnectCallback(new ReconnectCallback(){
+					@Override
+					public void onReconnect() {
+						Utils.makeToast("Reconnected to the server");
+					}
+		        });
 		    }
 		});
 		return clientFuture;
 	}
 	
 	public static void disconnect(){
+		
 		if(clientFuture!=null){
 			clientFuture.cancel();
 		}
 		if(client!=null){
+			client.setDisconnectCallback(null);
 			client.disconnect();
 		}
 	}
 	
-	public static void sendMessage(Message m){
-		client.emit("message",m.getSendFormat());	
+	public static void sendMessage(final Message m){
+		if(client==null || !client.isConnected()){
+			Utils.makeToast("Couldn't send message. Try again later");
+		}else{
+			client.emit("message",m.getSendFormat());
+			NetworkManager.getCurrentGroup().getMessages().remove(m);
+			MessageFragment.updateUI();
+		}
+		
 	}
 	
 	public static void sendStartTyping(){
@@ -146,7 +170,9 @@ public class SocketIoController {
 			e.printStackTrace();
 		}
 		array.put(object);
-		client.emit("typing",array);
+		if(client!=null){
+			client.emit("typing",array);
+		}
 	}
 	
 	public static void sendStopTyping(){
@@ -162,7 +188,9 @@ public class SocketIoController {
 			e.printStackTrace();
 		}
 		array.put(object);
-		client.emit("typing",array);
+		if(client!=null){
+			client.emit("typing",array);
+		}
 	}
 
 	public static boolean isConnected() {

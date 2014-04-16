@@ -27,6 +27,9 @@ public class LoginFragment extends Fragment implements OnClickListener {
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
 		MainActivity.activity.getActionBar().setTitle("Login");
+		HashMap<String, String> hitParameters = new HashMap<String, String>();
+		hitParameters.put(Fields.HIT_TYPE, "appview");
+		hitParameters.put(Fields.SCREEN_NAME, "Login Screen");
 		rootView = inflater.inflate(R.layout.login, container,
 				false);
 		Button button = (Button) rootView.findViewById(R.id.login_button);

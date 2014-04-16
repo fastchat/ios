@@ -34,6 +34,7 @@ import android.view.WindowManager;
 
 import com.google.analytics.tracking.android.EasyTracker;
 import com.google.analytics.tracking.android.GoogleAnalytics;
+import com.google.analytics.tracking.android.Logger.LogLevel;
 import com.google.analytics.tracking.android.Tracker;
 
 
@@ -66,7 +67,8 @@ public class MainActivity extends ActionBarActivity {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		
+		GoogleAnalytics.getInstance(this).getLogger()
+	    .setLogLevel(LogLevel.VERBOSE);
 		activity = this;
 		setContentView(R.layout.activity_main);
 		manager = getSupportFragmentManager();
