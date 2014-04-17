@@ -25,6 +25,7 @@ public class Message {
 	private String sentTime;
 	private boolean hasMedia;
 	private MultiMedia media;
+	private static final String TAG=Message.class.getName();
 	
 	public Message(String text,User from){
 		this.text=text;

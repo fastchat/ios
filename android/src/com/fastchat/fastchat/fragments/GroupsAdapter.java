@@ -10,6 +10,7 @@ import com.fastchat.fastchat.networking.NetworkManager;
 
 import android.content.Context;
 import android.graphics.Color;
+import android.text.SpannableString;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -20,6 +21,8 @@ public class GroupsAdapter extends BaseAdapter {
 
 	private Context mContext;
 	private ArrayList<Group> mGroups;
+	
+	private static final String TAG=GroupsAdapter.class.getName();
 	
 	public GroupsAdapter(Context context, ArrayList<Group> messages) {
 		super();
@@ -53,7 +56,8 @@ public class GroupsAdapter extends BaseAdapter {
 		{
 			holder = new ViewHolder();
 			convertView = LayoutInflater.from(mContext).inflate(R.layout.groups_row, parent, false);
-			holder.message = (TextView) convertView.findViewById(R.id.message_text);
+			holder.message = (TextView) convertView.findViewById(R.id.group_text);
+			holder.unread = (TextView) convertView.findViewById(R.id.unread_count);
 			convertView.setTag(holder);
 		}else{
 			holder = (ViewHolder) convertView.getTag();
@@ -74,12 +78,15 @@ public class GroupsAdapter extends BaseAdapter {
 		}else{
 			holder.message.setText(group.getName());
 		}
-
+		if(group.getUnreadMessages()>0){
+			holder.unread.setText(""+group.getUnreadMessages());
+		}
 		holder.message.setTextColor(Color.BLACK);	
 		return convertView;
 	}
 	private static class ViewHolder
 	{
+		public TextView unread;
 		TextView message;
 	}
 	@Override

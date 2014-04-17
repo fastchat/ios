@@ -6,8 +6,11 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import android.util.Log;
+
 import com.fastchat.fastchat.Utils;
 import com.fastchat.fastchat.fragments.FastChatTextWatcher;
+import com.fastchat.fastchat.fragments.GroupsFragment;
 import com.fastchat.fastchat.fragments.MessageFragment;
 import com.fastchat.fastchat.models.Group;
 import com.fastchat.fastchat.models.Message;
@@ -31,9 +34,11 @@ public class SocketIoController {
 	
 	private static ArrayList<Message> multiMediaMessage = new ArrayList<Message>();
 	
+	private static final String TAG=SocketIoController.class.getName();
+	
 	public static Future<SocketIOClient> connect(){
 		String newURL = NetworkManager.getURL();
-		System.out.println("Socket.io connect:"+newURL+"token:"+NetworkManager.getToken());
+		Log.d(TAG,"Socket.io connect:"+newURL+"token:"+NetworkManager.getToken());
 		SocketIORequest request = new SocketIORequest(newURL,null,"token="+NetworkManager.getToken());
 		
 		//request.setHeader("token", NetworkManager.getToken());
@@ -61,7 +66,7 @@ public class SocketIoController {
 
 					@Override
 					public void onString(String string, Acknowledge acknowledge) {
-						System.out.println("onString:"+string);
+						Log.d(TAG,"onString:"+string);
 						
 					}
 		        });
@@ -70,17 +75,22 @@ public class SocketIoController {
 					@Override
 					public void onEvent(JSONArray argument,
 							Acknowledge acknowledge) {
-						System.out.println("onEvent:"+argument);
+						Log.d(TAG,"onEvent message:"+argument);
 						try {
 							JSONObject messageObject = argument.getJSONObject(0);
 							Message message = new Message(messageObject);
-							if(message.getGroupId().equals(NetworkManager.getCurrentGroup().getId())){
+							Group currGroup = NetworkManager.getCurrentGroup();
+							if(currGroup==null || !currGroup.getId().equals(message.getGroupId())){
+								Group tempGroup = NetworkManager.getAllGroups().get(message.getGroupId());
+								tempGroup.addMessage(message);
+								tempGroup.addOneToUnreadCount();
+								GroupsFragment.updateUi();
+							}
+							else{
 								MessageFragment.addMessage(message);
-							}else{
-								NetworkManager.getAllGroups().get(message.getGroupId()).addMessage(message);
 							}
 						} catch (JSONException e) {
-							// TODO Auto-generated catch block
+							Utils.makeToast(e);
 							e.printStackTrace();
 						}
 						
@@ -91,16 +101,16 @@ public class SocketIoController {
 					@Override
 					public void onEvent(JSONArray argument,
 							Acknowledge acknowledge) {
-						System.out.println("onEvent:"+argument);
+						Log.d(TAG,"onEvent media_message:"+argument);
 						try {
 							String messageId = argument.getString(0);
 							
 							Message m = SocketIoController.multiMediaMessage.remove(0);
 							m.setId(messageId);
 							NetworkManager.postMultimediaMessage(m);
-							System.out.println("POSTING data: "+m.getId());
+							Log.d(TAG,"POSTING data: "+m.getId());
 						} catch (JSONException e) {
-							// TODO Auto-generated catch block
+							Utils.makeToast(e);
 							e.printStackTrace();
 						}
 
@@ -110,7 +120,7 @@ public class SocketIoController {
 		        	@Override
 					public void onEvent(JSONArray argument,
 							Acknowledge acknowledge) {
-		        		System.out.println(argument);
+		        		Log.d(TAG,"onEvent typing:"+argument);
 		        		JSONObject typingObject;
 						try {
 							typingObject = argument.getJSONObject(0);
@@ -128,7 +138,6 @@ public class SocketIoController {
 			        			MessageFragment.showTyping(NetworkManager.getUsernameFromId(userId));
 			        		}
 						} catch (JSONException e) {
-							// TODO Auto-generated catch block
 							e.printStackTrace();
 							Utils.makeToast(e);
 						}
@@ -138,7 +147,7 @@ public class SocketIoController {
 
 					@Override
 					public void onJSON(JSONObject json, Acknowledge acknowledge) {
-						System.out.println("onJSON:"+json);
+						Log.d(TAG,"onJSON:"+json);
 						
 					}
 		        });
@@ -147,6 +156,7 @@ public class SocketIoController {
 					@Override
 					public void onDisconnect(Exception e) {
 						Utils.makeToast("Lost connection with the server");
+						GroupsFragment.setUnliveData();
 					}
 		        });
 		        client.setReconnectCallback(new ReconnectCallback(){
@@ -192,7 +202,7 @@ public class SocketIoController {
 			object.put("from", NetworkManager.getCurrentUser().getId());
 			object.put("group", NetworkManager.getCurrentGroup().getId());
 		} catch (JSONException e) {
-			// TODO Auto-generated catch block
+			Utils.makeToast(e);
 			e.printStackTrace();
 		}
 		array.put(object);
@@ -201,16 +211,16 @@ public class SocketIoController {
 		}
 	}
 	
-	public static void sendStopTyping(){
+	public static void sendStopTyping(Group g){
 		FastChatTextWatcher.resetTextWatcher();
 		JSONArray array = new JSONArray();
 		JSONObject object = new JSONObject();
 		try {
 			object.put("typing", false);
 			object.put("from", NetworkManager.getCurrentUser().getId());
-			object.put("group", NetworkManager.getCurrentGroup().getId());
+			object.put("group", g.getId());
 		} catch (JSONException e) {
-			// TODO Auto-generated catch block
+			Utils.makeToast(e);
 			e.printStackTrace();
 		}
 		array.put(object);

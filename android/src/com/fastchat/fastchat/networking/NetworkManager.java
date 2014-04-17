@@ -18,6 +18,7 @@ import android.content.Context;
 import android.content.ContextWrapper;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.util.Log;
 
 import com.fastchat.fastchat.MainActivity;
 import com.fastchat.fastchat.Utils;
@@ -53,13 +54,15 @@ public class NetworkManager {
 	private static HashMap<String,Group> groups = new HashMap<String,Group>();
 	private static HashMap<String, User> users  = new HashMap<String,User>();
 	private static User fastChatUser = new User(null,"FastChat",null);
+	
+	private static final String TAG=NetworkManager.class.getName();
 
 
 	private static final JSONObjectCallback loginCallback = new AsyncHttpClient.JSONObjectCallback() {
 		// Callback is invoked with any exceptions/errors, and the result, if available.
 		public void onCompleted(Exception e, AsyncHttpResponse response, JSONObject result) {
 			int responseCode = handleResponse(e,response,result);
-			System.out.println("I got a JSONObject: " + result);
+			Log.d(TAG,"I got a JSONObject: " + result);
 			if(responseCode<200 || responseCode>299){
 				return;
 			}
@@ -104,6 +107,7 @@ public class NetworkManager {
 			public void onCompleted(Exception e, AsyncHttpResponse response, JSONArray result) {
 				int responseCode = handleResponse(e,response);
 				if(responseCode>=200 && responseCode<300){
+					Log.d(TAG,"GET groups: "+result);
 					GroupsFragment.addGroups(result);
 				}else{
 					MainActivity.restartFragments(new LoginFragment());
@@ -160,7 +164,7 @@ public class NetworkManager {
 				}
 				
 			}
-			System.out.println(result);
+			Log.d(TAG,"Group Message:"+result);
 		}
 	};
 
@@ -205,7 +209,7 @@ public class NetworkManager {
 				profileObject = result.getJSONObject("profile");
 				User tempUser = new User(profileObject);
 				tempUser.setToken(getToken());
-				System.out.println("currentUser: "+tempUser.getId()+":"+tempUser.getUsername()+":"+tempUser.getSessionToken());
+				Log.d(TAG,"currentUser: "+tempUser.getId()+":"+tempUser.getUsername()+":"+tempUser.getSessionToken());
 				NetworkManager.setCurrentUser(tempUser);
 
 				MainActivity.saveLoginCredentials(tempUser);
@@ -216,7 +220,7 @@ public class NetworkManager {
 				Utils.makeToast(e1);
 			}
 			
-			System.out.println(result);
+			Log.d(TAG,"Profile:"+result);
 			
 		};
 	};
@@ -324,11 +328,11 @@ public class NetworkManager {
 			String userId = urlSplit[urlSplit.length-2];
 			
 			byte[] data = result.getAllByteArray();
-			System.out.println("Avatar UserID: "+userId+ "Length: "+data.length);
+			Log.d(TAG,"Avatar UserID: "+userId+ "Length: "+data.length);
 			Bitmap avatar = BitmapFactory.decodeByteArray(data, 0, data.length);
 			
 			if(avatar==null){
-				System.out.println("Avatar null for user:"+userId+"");
+				Log.d(TAG,"Avatar null for user:"+userId+"");
 				return;
 			}
 			avatar = ProfileFragment.getRoundedCornerBitmap(avatar);
@@ -339,13 +343,12 @@ public class NetworkManager {
 	
 	public static synchronized Future<ByteBufferList> getAvatar(String id) {
 		AsyncHttpGet get = new AsyncHttpGet(url+"/user/"+id+"/avatar");
-		System.out.println("URL: "+url+"/user/"+id+"/avatar");
 		get.setHeader("session-token", getCurrentUser().getSessionToken());
 		return AsyncHttpClient.getDefaultInstance().executeByteBufferList(get,dataCallback);
 	}
 	
 	public static Future<String> postAvatar(Bitmap bitmap){
-		System.out.println("POSTING user Avatar: "+url+"/user/"+getCurrentUser().getId()+"/avatar");
+		Log.d(TAG,"POSTING user Avatar: "+url+"/user/"+getCurrentUser().getId()+"/avatar");
 		AsyncHttpPost post = new AsyncHttpPost(url+"/user/"+getCurrentUser().getId()+"/avatar");
 		post.setHeader("session-token", getCurrentUser().getSessionToken());
 		MultipartFormDataBody body = new MultipartFormDataBody();
@@ -360,13 +363,13 @@ public class NetworkManager {
 			public void onCompleted(Exception e, AsyncHttpResponse response,
 					String result) {
 				NetworkManager.handleResponse(e, response,null,"Successfully saved avatar");
-				System.out.println("Avatar result"+result);
+				Log.d(TAG,"Avatar result"+result);
 			}
 		});
 	}
 	
 	public static Future<String> postMultimediaMessage(Message m){
-		System.out.println("POSTING multimedia Message: "+url+"/group/"+m.getGroupId()+"/message/"+m.getId()+"/media");
+		Log.d(TAG,"POSTING multimedia Message: "+url+"/group/"+m.getGroupId()+"/message/"+m.getId()+"/media");
 		AsyncHttpPost post = new AsyncHttpPost(url+"/group/"+m.getGroupId()+"/message/"+m.getId()+"/media");
 		post.setHeader("session-token", getCurrentUser().getSessionToken());
 		MultipartFormDataBody body = new MultipartFormDataBody();
@@ -397,7 +400,7 @@ public class NetworkManager {
 			String messageId = urlSplit[urlSplit.length-2];
 			
 			byte[] data = result.getAllByteArray();
-			System.out.println("Media MessageID: "+messageId+ "Length: "+data.length);
+			Log.d(TAG,"Media MessageID: "+messageId+ "Length: "+data.length);
 			String content_type = source.getHeaders().getHeaders().get("Content-type");
 			MultiMedia mms = new MultiMedia("test.tmp",content_type,data);
 			for(Message m : getCurrentGroup().getMessages()){
@@ -413,7 +416,7 @@ public class NetworkManager {
 	
 	public static synchronized Future<ByteBufferList> getMessageMedia(Message m) {
 		AsyncHttpGet get = new AsyncHttpGet(url+"/group/"+m.getGroupId()+"/message/"+m.getId()+"/media");
-		System.out.println("URL: "+url+"/group/"+m.getGroupId()+"/message/"+m.getId()+"/media");
+		Log.d(TAG,"URL: "+url+"/group/"+m.getGroupId()+"/message/"+m.getId()+"/media");
 		get.setHeader("session-token", getCurrentUser().getSessionToken());
 		return AsyncHttpClient.getDefaultInstance().executeByteBufferList(get,mediaCallback);
 	}
@@ -476,7 +479,9 @@ public class NetworkManager {
 			Utils.makeToast(e);
 			return 500;
 		}
+		
 		int responseCode = response.getHeaders().getHeaders().getResponseCode();
+		Log.d(TAG,responseCode+":"+response.getRequest().getMethod()+" "+response.getRequest().getUri().toString());
 		if(responseCode>=200 && responseCode<300){
 			if(correctResponseText!=null){
 				Utils.makeToast(correctResponseText);

@@ -19,6 +19,7 @@ import com.google.android.gms.analytics.Tracker;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
 import android.view.LayoutInflater;
@@ -36,6 +37,10 @@ public class GroupsFragment extends Fragment {
 	private static ArrayList<Group> groups=new ArrayList<Group>();
 
 	private static List<String> menuItems=Arrays.asList("Invite User","Leave Group");
+	
+	private static final String TAG=GroupsFragment.class.getName();
+	
+	private static boolean liveData;
 
 	//DEFINING A STRING ADAPTER WHICH WILL HANDLE THE DATA OF THE LISTVIEW
 	private static GroupsAdapter adapter;
@@ -64,7 +69,7 @@ public class GroupsFragment extends Fragment {
 		final Group selectedGroup = groups.get(info.position);
 		//String menuClicked = menuItems.get(menuItemIndex);
 		String menuClicked = item.getTitle().toString();
-		System.out.println("Clicked: "+menuClicked+" on group: "+selectedGroup.getName());
+		Log.d(TAG,"Clicked: "+menuClicked+" on group: "+selectedGroup.getName());
 		switch(menuClicked){
 		case "Invite User":
 			NetworkManager.setCurrentRoom(selectedGroup);
@@ -101,8 +106,9 @@ public class GroupsFragment extends Fragment {
 
 			@Override
 			public void onItemClick(AdapterView<?> arg0, View arg1, int position, long arg3) {
-				System.out.println("Selected Room #:"+position);
+				Log.d(TAG,"Selected Room #:"+position);
 				NetworkManager.setCurrentRoom((Group) adapter.getItem(position));
+				NetworkManager.getCurrentGroup().resetUnreadCount();
 				MessageFragment mf = new MessageFragment();
 
 				MainActivity.switchView(mf);
@@ -116,18 +122,22 @@ public class GroupsFragment extends Fragment {
 
 			}
 		});
-		if(NetworkManager.getAllGroups()==null || NetworkManager.getAllGroups().isEmpty()){
-			NetworkManager.getGroups();
-		}
-		System.out.println("Getting here :"+SocketIoController.isConnected());
-		if(!SocketIoController.isConnected()){
-			SocketIoController.connect();
-		}
+		
 		registerForContextMenu(lv);
 		return rootView;
 	}
 	
 	public void onStart(){
+		if(!liveData || !SocketIoController.isConnected()){
+			NetworkManager.getGroups();
+			if(SocketIoController.isConnected()){
+				liveData=true;
+			}
+		}
+		NetworkManager.setCurrentRoom(null);
+		if(!SocketIoController.isConnected()){
+			SocketIoController.connect();
+		}
 		Tracker t = MainActivity.tracker;
 		t.setScreenName("Groups View");
 
@@ -162,6 +172,17 @@ public class GroupsFragment extends Fragment {
 			}
 		}
 		NetworkManager.setGroups(groupsMap);
-
+	}
+	
+	public static void updateUi(){
+		MainActivity.activity.runOnUiThread(new Runnable(){
+			public void run(){
+				adapter.notifyDataSetChanged();
+			}
+		});
+	}
+	
+	public static void setUnliveData(){
+		liveData=false;
 	}
 }

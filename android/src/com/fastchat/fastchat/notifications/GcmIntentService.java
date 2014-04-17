@@ -20,7 +20,7 @@ import android.util.Log;
 public class GcmIntentService extends IntentService {
     public static final int NOTIFICATION_ID = 1;
     NotificationCompat.Builder builder;
-    private static final String TAG = "FastChat-GcmIntentService";
+    private static final String TAG = GcmIntentService.class.getName();
     private static final String NOTIFICATIONS = "notifications";
     private static final String NUM_NOTIFICATIONS = "num_notifications";
     private static GcmIntentService service;

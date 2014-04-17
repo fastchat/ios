@@ -16,12 +16,18 @@ public class Group {
 	private String id;
 	private String name;
 	
+	private Message lastMessage;
+	private int unreadMessages=0;
+	
+	private static final String TAG=Group.class.getName();
+	
 	public Group(JSONObject groupObject){
 		this.messages = new ArrayList<Message>();
 		this.members = new HashMap<String,User>();
 		try {
 			this.id = groupObject.getString("_id");
 			this.name = groupObject.getString("name");
+
 			JSONArray membersJSON = groupObject.getJSONArray("members");
 			for(int i=0;i<membersJSON.length();i++){
 				JSONObject userObject = membersJSON.getJSONObject(i);
@@ -37,6 +43,9 @@ public class Group {
 				}
 					
 			}
+			this.unreadMessages = groupObject.getInt("unread");
+			JSONObject lastMessage = groupObject.getJSONObject("lastMessage");
+			this.lastMessage = new Message(lastMessage);
 		} catch (JSONException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -65,5 +74,21 @@ public class Group {
 	
 	public HashMap<String,User> getUsers(){
 		return members;
+	}
+	
+	public int getUnreadMessages(){
+		return this.unreadMessages;
+	}
+	
+	public Message getLastMessage(){
+		return this.lastMessage;
+	}
+	
+	public void addOneToUnreadCount(){
+		this.unreadMessages+=1;
+	}
+	
+	public void resetUnreadCount(){
+		this.unreadMessages=0;
 	}
 }

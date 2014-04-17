@@ -48,6 +48,9 @@ public class MainActivity extends ActionBarActivity {
 	private static final String USER_ID="user_id";
 	private final static int PLAY_SERVICES_RESOLUTION_REQUEST = 9000;
 	
+	
+	private static final String TAG=MainActivity.class.getName();
+	
 
 	/**
 	 * Substitute you own sender ID here. This is the project number you got
@@ -66,8 +69,6 @@ public class MainActivity extends ActionBarActivity {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		GoogleAnalytics.getInstance(this).getLogger()
-	    .setLogLevel(LogLevel.VERBOSE);
 		tracker = getTracker();
 		activity = this;
 		setContentView(R.layout.activity_main);
@@ -203,6 +204,7 @@ public class MainActivity extends ActionBarActivity {
 	protected void onStop(){
 		GoogleAnalytics.getInstance(this).reportActivityStop(this);
 		SocketIoController.disconnect();
+		GroupsFragment.setUnliveData();
 		if(NetworkManager.getCurrentGroup()!=null){
 			NetworkManager.getCurrentGroup().getMessages().clear();
 		}

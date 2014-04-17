@@ -6,6 +6,7 @@ import org.json.JSONObject;
 import android.graphics.Bitmap;
 
 import com.fastchat.fastchat.Utils;
+import com.fastchat.fastchat.networking.NetworkManager;
 
 public class User {
 	
@@ -13,6 +14,8 @@ public class User {
 	private String username;
 	private String sessiontoken;
 	private Bitmap avatar;
+	
+	private static final String TAG=User.class.getName();
 	
 	public User(String id, String username, String token){
 		this.id=id;

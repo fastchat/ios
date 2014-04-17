@@ -9,6 +9,7 @@ import com.google.android.gms.analytics.Tracker;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -20,6 +21,8 @@ import android.widget.EditText;
 public class LoginFragment extends Fragment implements OnClickListener {
 
 	private View rootView;
+	
+	private static final String TAG=LoginFragment.class.getName();
 
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -53,7 +56,7 @@ public class LoginFragment extends Fragment implements OnClickListener {
         in.hideSoftInputFromWindow(password.getApplicationWindowToken(),InputMethodManager.HIDE_NOT_ALWAYS);
 		String usernameText = username.getText().toString();
 		String passwordText = password.getText().toString();
-		System.out.println("Login Clicked!"+usernameText+":"+passwordText);
+		Log.d(TAG,"Login Clicked!"+usernameText+":"+passwordText);
 		if(usernameText.length()<1){
 			Utils.makeToast("Please Enter a username");
 		}

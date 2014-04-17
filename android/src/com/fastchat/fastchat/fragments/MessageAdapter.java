@@ -8,6 +8,7 @@ import com.fastchat.fastchat.MainActivity;
 import com.fastchat.fastchat.R;
 import com.fastchat.fastchat.models.Message;
 import com.fastchat.fastchat.models.MultiMedia;
+import com.fastchat.fastchat.networking.NetworkManager;
 
 import android.content.Context;
 import android.graphics.Bitmap;
@@ -34,6 +35,8 @@ public class MessageAdapter extends BaseAdapter {
 	private Context mContext;
 	private ArrayList<Message> mMessages;
 	private static final int MARGINS = 30;
+	
+	private static final String TAG=MessageAdapter.class.getName();
 	
 	
 	public MessageAdapter(Context context, ArrayList<Message> messages) {

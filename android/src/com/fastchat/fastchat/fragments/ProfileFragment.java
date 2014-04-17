@@ -46,6 +46,8 @@ public class ProfileFragment extends Fragment implements OnClickListener {
 	private Bitmap currentBitmap;
 	private static final int BITMAP_SIZE = 300; // 300px X 300px
 	private static Bitmap defaultBitmap=null;
+	
+	private static final String TAG=ProfileFragment.class.getName();
 
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -127,7 +129,7 @@ public class ProfileFragment extends Fragment implements OnClickListener {
 				
 				
 				if (extras != null) {
-					System.out.println("Cropped image");
+					Log.d(TAG,"Cropped image");
 					Bitmap photo = extras.getParcelable("data");
 					currentBitmap = Bitmap.createScaledBitmap(photo,BITMAP_SIZE, BITMAP_SIZE, false);
 					currentBitmap = getRoundedCornerBitmap(currentBitmap);
@@ -135,11 +137,11 @@ public class ProfileFragment extends Fragment implements OnClickListener {
 				}
 
 				else if(selectedImagePath!=null){
-					Log.d("URI VAL", "selectedImageUri = " + selectedImageUri.toString());
+					Log.d(TAG, "selectedImageUri = " + selectedImageUri.toString());
 					// IF LOCAL IMAGE, NO MATTER IF ITS DIRECTLY FROM GALLERY (EXCEPT PICASSA ALBUM),
 					// OR OI/ASTRO FILE MANAGER. EVEN DROPBOX IS SUPPORTED BY THIS BECAUSE DROPBOX DOWNLOAD THE IMAGE 
 					// IN THIS FORM - file:///storage/emulated/0/Android/data/com.dropbox.android/...
-					System.out.println("local image"); 
+					Log.d(TAG,"local image"); 
 					try {
 						currentBitmap = MediaStore.Images.Media.getBitmap(MainActivity.activity.getContentResolver(), selectedImageUri);
 						currentBitmap = Bitmap.createScaledBitmap(currentBitmap,BITMAP_SIZE, BITMAP_SIZE, false);
@@ -152,7 +154,7 @@ public class ProfileFragment extends Fragment implements OnClickListener {
 				}
 			}
 			else{
-				System.out.println("picasa image!");
+				Log.d(TAG,"picasa image!");
 				loadPicasaImageFromGallery(selectedImageUri);
 			}
 		}

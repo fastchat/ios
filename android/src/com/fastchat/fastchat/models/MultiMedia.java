@@ -5,6 +5,7 @@ import java.util.List;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.util.Log;
 import android.webkit.MimeTypeMap;
 
 public class MultiMedia {
@@ -20,6 +21,8 @@ public class MultiMedia {
 	private Bitmap bitmap;
 	
 	private boolean isImage=false;
+	
+	private static final String TAG=MultiMedia.class.getName();
 
 	public MultiMedia(String fileName,String mime_type,byte[] data){
 		this.fileName=fileName;
@@ -30,7 +33,7 @@ public class MultiMedia {
 			String extension = MimeTypeMap.getFileExtensionFromUrl(fileName);
 			this.mime_type=MimeTypeMap.getSingleton().getMimeTypeFromExtension(extension);
 		}
-		System.out.println("File Name: "+this.fileName+" MIME_TYPE: "+this.mime_type+" Data Length:"+this.data.length);
+		Log.d(TAG,"File Name: "+this.fileName+" MIME_TYPE: "+this.mime_type+" Data Length:"+this.data.length);
 		if(imageMime.contains(this.mime_type)){
 			BitmapFactory.Options opts = new BitmapFactory.Options();
 			opts.inSampleSize = 4;

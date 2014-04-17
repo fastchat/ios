@@ -1,6 +1,7 @@
 package com.fastchat.fastchat.fragments;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -17,6 +18,8 @@ public class InviteUserFragment extends Fragment implements OnClickListener{
 
 	private View rootView;
 	
+	private static final String TAG=InviteUserFragment.class.getName();
+	
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
 		MainActivity.activity.getActionBar().setTitle("Invite User");
@@ -32,7 +35,7 @@ public class InviteUserFragment extends Fragment implements OnClickListener{
 	public void onClick(View arg0) {
 		EditText usernameTextBox = (EditText) rootView.findViewById(R.id.invite_username);
 		String username = usernameTextBox.getText().toString();
-		System.out.println(username);
+		Log.d(TAG,"Invited: "+username);
 		NetworkManager.putInviteUser(username, NetworkManager.getCurrentGroup());
 		MainActivity.goBackToBeginning();
 	}

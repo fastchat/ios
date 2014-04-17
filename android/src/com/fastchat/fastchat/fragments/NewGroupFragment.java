@@ -28,8 +28,7 @@ public class NewGroupFragment extends Fragment implements OnClickListener {
 
 	private View rootView;
 	
-	public NewGroupFragment() {
-	}
+	private static final String TAG=NewGroupFragment.class.getName();
 
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,

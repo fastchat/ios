@@ -1,5 +1,7 @@
 package com.fastchat.fastchat.fragments;
 
+import com.fastchat.fastchat.models.Group;
+import com.fastchat.fastchat.networking.NetworkManager;
 import com.fastchat.fastchat.networking.SocketIoController;
 
 import android.text.Editable;
@@ -8,6 +10,13 @@ import android.text.TextWatcher;
 public class FastChatTextWatcher implements TextWatcher{
    	 private static Long lastTyping=null;
    	 private static Thread typingThread;
+   	 private static Group currGroup;
+   	 
+   	private static final String TAG=FastChatTextWatcher.class.getName();
+   	
+   	public FastChatTextWatcher(Group g){
+   		this.currGroup=g;
+   	}
    	 
         @Override
         public void onTextChanged(CharSequence s, int start, int before, int count) {
@@ -21,11 +30,11 @@ public class FastChatTextWatcher implements TextWatcher{
         					}
         					Long timeDifference = System.currentTimeMillis()-FastChatTextWatcher.getLastTyping();
         					if(timeDifference>2000){//If the user has stopped typing for 2 seconds. Send stop typing.
-        						SocketIoController.sendStopTyping();
+        						SocketIoController.sendStopTyping(currGroup);
         						break;
         					}
         					try {
-								Thread.sleep(250);
+								Thread.sleep(150);
 							} catch (InterruptedException e) {
 								// TODO Auto-generated catch block
 								e.printStackTrace();

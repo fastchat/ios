@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical"
     android:layout_width="fill_parent"
-    android:layout_height="fill_parent">
+    android:layout_height="fill_parent"
+    android:orientation="vertical" >
 	
     <ListView
         android:id="@+id/messages_container"
@@ -39,9 +39,10 @@
 
         <Button
             android:id="@+id/attach_button"
-            android:layout_width="40dp"
-            android:layout_height="wrap_content"
-            android:text="A" />
+            android:layout_width="25dp"
+            android:layout_height="30dp"
+            android:layout_gravity="center_vertical"
+            android:background="@drawable/paperclip2_black" />
 
         <Button 
             android:id="@+id/send_button"

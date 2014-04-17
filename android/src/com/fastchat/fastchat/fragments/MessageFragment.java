@@ -1,13 +1,13 @@
 package com.fastchat.fastchat.fragments;
 
-import java.io.ByteArrayInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
 
 import com.fastchat.fastchat.MainActivity;
 import com.fastchat.fastchat.R;
-import com.fastchat.fastchat.Utils;
+import com.fastchat.fastchat.models.Group;
 import com.fastchat.fastchat.models.Message;
 import com.fastchat.fastchat.models.MultiMedia;
 import com.fastchat.fastchat.models.User;
@@ -20,7 +20,6 @@ import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Intent;
 import android.database.Cursor;
-import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
@@ -48,9 +47,10 @@ public class MessageFragment extends Fragment implements OnClickListener {
     
     private static final int SELECT_FILE=1;
     
-    private static String selectedFilePath="";
     
     private static MultiMedia multiMedia;
+    
+    private static final String TAG=MessageFragment.class.getName();
     
     
     @Override
@@ -79,10 +79,28 @@ public class MessageFragment extends Fragment implements OnClickListener {
     	return true;
     }
     
+    private boolean isMessagesUpToDate(){
+    	ArrayList<Message> mess = NetworkManager.getCurrentGroup().getMessages();
+    	if(mess==null || mess.isEmpty()){
+    		return false;
+    	}
+    	Message latestWeHave = mess.get(mess.size()-1);
+    	Message latestFromGroup = NetworkManager.getCurrentGroup().getLastMessage();
+    	User currUser = NetworkManager.getCurrentUser();
+    	if((latestWeHave.getId()==null || latestWeHave.getId().isEmpty()) && latestFromGroup.getFrom()==currUser){
+    		return true;
+    	}
+    	else if(latestWeHave.getId().equals(latestFromGroup.getId())){
+    		return true;
+    	}
+    	return false;
+    }
     
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
-		if(NetworkManager.getCurrentGroup().getMessages().isEmpty()){
+		
+		
+		if(!isMessagesUpToDate()){
 			NetworkManager.getCurrentGroupMessages();
 		}
 		MainActivity.activity.getActionBar().setTitle(NetworkManager.getCurrentGroup().getName());
@@ -102,7 +120,7 @@ public class MessageFragment extends Fragment implements OnClickListener {
 			 }
 		 });
 	     EditText messageBox = (EditText) rootView.findViewById(R.id.my_message);
-	     messageBox.addTextChangedListener(new FastChatTextWatcher());
+	     messageBox.addTextChangedListener(new FastChatTextWatcher(NetworkManager.getCurrentGroup()));
 	     registerForContextMenu(lv);
 		return rootView;
 	}
@@ -209,7 +227,7 @@ public class MessageFragment extends Fragment implements OnClickListener {
 			if (requestCode == SELECT_FILE) {
 				try {
 					Uri fileUri = data.getData();
-					System.out.println("File Path: "+fileUri.getPath());
+					Log.d(TAG,"File Path: "+fileUri.getPath());
 					InputStream input = MainActivity.activity.getContentResolver().openInputStream(data.getData());
 					String[] proj = {MediaStore.Files.FileColumns.DISPLAY_NAME,MediaStore.Files.FileColumns.MIME_TYPE};
 					Cursor cursor = MainActivity.activity.getContentResolver().query(fileUri, proj, null, null, null);
@@ -222,12 +240,12 @@ public class MessageFragment extends Fragment implements OnClickListener {
 				            columnIndex = cursor.getColumnIndexOrThrow(MediaStore.Files.FileColumns.MIME_TYPE);
 				            cursor.moveToFirst();
 				            mime_type = cursor.getString(columnIndex);
-				            System.out.println("File Name:"+fileName+" MIME Type:"+mime_type);
+				            Log.d(TAG,"File Name:"+fileName+" MIME Type:"+mime_type);
 				        }
 					byte[] buf = new byte[input.available()];
 				    while (input.read(buf) != -1) {
 				    }
-				    System.out.println("File Size: "+buf.length);
+				    Log.d(TAG,"File Size: "+buf.length);
 				    if(fileName==""){
 				    	fileName = fileUri.getLastPathSegment();
 				    }
