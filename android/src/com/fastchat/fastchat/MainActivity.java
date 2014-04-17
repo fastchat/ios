@@ -191,6 +191,12 @@ public class MainActivity extends ActionBarActivity {
 	
 	protected void onStart(){
 		GoogleAnalytics.getInstance(this).reportActivityStart(this);
+		HashMap<String,User> users = NetworkManager.getUsersMap();
+		if(users!=null){
+			for(User u : users.values()){
+				NetworkManager.getAvatar(u.getId());
+			}
+		}
 		super.onStart();
 	}
 	
