@@ -35,7 +35,7 @@
             android:layout_weight="1.0"
             android:hint="Create a Message"
             android:layout_gravity="center_vertical"
-            android:maxLines="1"/>
+            android:maxLines="4"/>
         <Button 
             android:id="@+id/send_button"
             android:layout_width="wrap_content"
