@@ -23,24 +23,41 @@ public class Message {
 	private User from;
 	private String groupId;
 	private String sentTime;
+	private boolean hasMedia;
+	private MultiMedia media;
 	
 	public Message(String text,User from){
 		this.text=text;
 		this.from=from;
 	}
 	
+	public Message(String text, User from, String groupId, MultiMedia media){
+		this.text=text;
+		this.from=from;
+		this.media=media;
+		this.groupId=groupId;
+		if(media!=null && media.getData().length>0){
+			hasMedia=true;
+		}
+	}
+	
 	public Message(JSONObject messageObject){
 		try {
 			this.text=messageObject.getString("text");
+			this.id=messageObject.getString("_id");
 			this.groupId = messageObject.getString("group");
 			this.sentTime= messageObject.getString("sent");
 			this.from= NetworkManager.getUsernameFromId(messageObject.getString("from"));
+			this.hasMedia = messageObject.getBoolean("hasMedia");
 		} catch (JSONException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		if(this.from==null){
 			this.from=NetworkManager.getFastChatUser();
+		}
+		if(this.hasMedia){
+			NetworkManager.getMessageMedia(this);
 		}
 		
 	}
@@ -85,16 +102,33 @@ public class Message {
 		return this.id;
 	}
 	
+	public void setId(String newId){
+		this.id=newId;
+	}
+	
 	public String getGroupId(){
 		return this.groupId;
 	}
 	
+	public boolean hasMedia(){
+		return this.hasMedia;
+	}
+	
+	public MultiMedia getMedia(){
+		return this.media;
+	}
+	
+	public void setMedia(MultiMedia m){
+		this.media=m;
+		this.hasMedia=true;
+	}
 	public JSONArray getSendFormat(){
 		JSONObject message = new JSONObject();
 		JSONArray array = new JSONArray();
 		try {
 			message.put("text", text);
 			message.put("group", NetworkManager.getCurrentGroup().getId());
+			message.put("hasMedia", hasMedia);
 			array.put(message);
 		} catch (JSONException e) {
 			// TODO Auto-generated catch block

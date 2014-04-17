@@ -1,12 +1,17 @@
 package com.fastchat.fastchat.fragments;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
+import com.fastchat.fastchat.MainActivity;
 import com.fastchat.fastchat.R;
 import com.fastchat.fastchat.models.Message;
+import com.fastchat.fastchat.models.MultiMedia;
 
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.text.Spannable;
@@ -18,6 +23,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.ImageView.ScaleType;
 import android.widget.LinearLayout;
 import android.widget.LinearLayout.LayoutParams;
 import android.widget.BaseAdapter;
@@ -28,6 +34,7 @@ public class MessageAdapter extends BaseAdapter {
 	private Context mContext;
 	private ArrayList<Message> mMessages;
 	private static final int MARGINS = 30;
+	
 	
 	public MessageAdapter(Context context, ArrayList<Message> messages) {
 		super();
@@ -60,6 +67,17 @@ public class MessageAdapter extends BaseAdapter {
 		}
 		else{
 			holder = (ViewHolder) convertView.getTag();
+		}
+		holder.multiMedia = (ImageView) convertView.findViewById(R.id.multi_media);
+		holder.multiMedia.setImageDrawable(null);
+		holder.multiMedia.setVisibility(View.GONE);
+		if(message.hasMedia()){
+			MultiMedia mms = message.getMedia();
+			if(mms!=null && mms.isImage()){
+				//holder.multiMedia.setScaleType(ScaleType.CENTER_INSIDE);
+				holder.multiMedia.setImageBitmap(mms.getBitmap());
+				holder.multiMedia.setVisibility(View.VISIBLE);
+			}
 		}
 		SpannableString out0 = new SpannableString(message.getText()+"\n"+message.getFrom().getUsername()+" "+message.getDateString());
         StyleSpan boldSpan = new StyleSpan(Typeface.BOLD);
@@ -97,6 +115,7 @@ public class MessageAdapter extends BaseAdapter {
 	}
 	private static class ViewHolder
 	{
+		public ImageView multiMedia;
 		public LinearLayout layout;
 		public ImageView image;
 		TextView message;

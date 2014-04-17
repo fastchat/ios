@@ -36,6 +36,13 @@
             android:hint="Create a Message"
             android:layout_gravity="center_vertical"
             android:maxLines="4"/>
+
+        <Button
+            android:id="@+id/attach_button"
+            android:layout_width="40dp"
+            android:layout_height="wrap_content"
+            android:text="A" />
+
         <Button 
             android:id="@+id/send_button"
             android:layout_width="wrap_content"

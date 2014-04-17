@@ -88,7 +88,7 @@ public class GcmIntentService extends IntentService {
     	
     	NotificationCompat.Builder builder =  
                 new NotificationCompat.Builder(this)  
-                .setSmallIcon(R.drawable.app_icon)  
+                .setSmallIcon(R.drawable.ic_fastchat_icon)  
                 .setContentTitle(num_notifications+" New Messages")  
                 .setContentText(notifications)
                 .setDefaults(Notification.DEFAULT_ALL)

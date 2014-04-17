@@ -181,7 +181,7 @@ public class ProfileFragment extends Fragment implements OnClickListener {
 	}
 
 
-	public String getPath(Uri uri) {
+	public static String getPath(Uri uri) {
 		String[] projection = {  MediaColumns.DATA};
 		Cursor cursor = MainActivity.activity.getContentResolver().query(uri, projection, null, null, null);
 		if(cursor != null) {

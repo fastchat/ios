@@ -1,5 +1,7 @@
 package com.fastchat.fastchat.networking;
 
+import java.util.ArrayList;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -27,10 +29,13 @@ public class SocketIoController {
 	
 	private static Future<SocketIOClient> clientFuture;
 	
+	private static ArrayList<Message> multiMediaMessage = new ArrayList<Message>();
+	
 	public static Future<SocketIOClient> connect(){
 		String newURL = NetworkManager.getURL();
 		System.out.println("Socket.io connect:"+newURL+"token:"+NetworkManager.getToken());
 		SocketIORequest request = new SocketIORequest(newURL,null,"token="+NetworkManager.getToken());
+		
 		//request.setHeader("token", NetworkManager.getToken());
 		if(clientFuture !=null){
 			if(!clientFuture.isDone()){
@@ -79,6 +84,26 @@ public class SocketIoController {
 							e.printStackTrace();
 						}
 						
+					}
+		        });
+		        client.on("media_message", new EventCallback() {
+
+					@Override
+					public void onEvent(JSONArray argument,
+							Acknowledge acknowledge) {
+						System.out.println("onEvent:"+argument);
+						try {
+							String messageId = argument.getString(0);
+							
+							Message m = SocketIoController.multiMediaMessage.remove(0);
+							m.setId(messageId);
+							NetworkManager.postMultimediaMessage(m);
+							System.out.println("POSTING data: "+m.getId());
+						} catch (JSONException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
+
 					}
 		        });
 		        client.on("typing",new EventCallback(){
@@ -151,6 +176,9 @@ public class SocketIoController {
 			Utils.makeToast("Couldn't send message. Try again later");
 			MessageFragment.removeMessage(m);
 		}else{
+			if(m.hasMedia()){
+				multiMediaMessage.add(m);
+			}
 			client.emit("message",m.getSendFormat());
 		}
 		

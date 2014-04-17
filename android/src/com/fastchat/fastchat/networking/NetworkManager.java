@@ -2,7 +2,9 @@ package com.fastchat.fastchat.networking;
 
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.net.URI;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -25,6 +27,7 @@ import com.fastchat.fastchat.fragments.MessageFragment;
 import com.fastchat.fastchat.fragments.ProfileFragment;
 import com.fastchat.fastchat.models.Group;
 import com.fastchat.fastchat.models.Message;
+import com.fastchat.fastchat.models.MultiMedia;
 import com.fastchat.fastchat.models.User;
 import com.koushikdutta.async.ByteBufferList;
 import com.koushikdutta.async.future.Future;
@@ -43,7 +46,7 @@ import com.koushikdutta.async.http.body.MultipartFormDataBody;
 public class NetworkManager {
 
 	private static final String url ="http://powerful-cliffs-9562.herokuapp.com:80";
-	//private static final String url ="http://129.21.117.238:3000";
+	//private static final String url ="http://129.21.117.122:3000";
 	private static String currentUserId = "0";
 	private static Group currentGroup;
 	// HashMap <groupId, Groups>
@@ -349,6 +352,80 @@ public class NetworkManager {
 				System.out.println("Avatar result"+result);
 			}
 		});
+	}
+	
+	public static Future<String> postMultimediaMessage(Message m){
+		System.out.println("POSTING multimedia Message: "+url+"/group/"+m.getGroupId()+"/message/"+m.getId()+"/media");
+		AsyncHttpPost post = new AsyncHttpPost(url+"/group/"+m.getGroupId()+"/message/"+m.getId()+"/media");
+		post.setHeader("session-token", getCurrentUser().getSessionToken());
+		MultipartFormDataBody body = new MultipartFormDataBody();
+		FilePart fp = new FilePart(m.getMedia().getFileName(),saveToInternalStorage(m.getMedia().getData()));
+		fp.setContentType(m.getMedia().getMimeType());
+		body.addPart(fp);
+		post.setBody(body);
+		return AsyncHttpClient.getDefaultInstance().executeString(post, new AsyncHttpClient.StringCallback() {
+			@Override
+			public void onCompleted(Exception e, AsyncHttpResponse response,
+					String result) {
+				NetworkManager.handleResponse(e, response,null,"Successfully sent multimedia message");
+			}
+		});
+	}
+	
+	private static final DownloadCallback mediaCallback = new AsyncHttpClient.DownloadCallback() {
+
+		@Override
+		public void onCompleted(Exception e, AsyncHttpResponse source,
+				ByteBufferList result) {
+			int responseCode = handleResponse(e,source);
+			if(responseCode<200 || responseCode>299){
+				return;
+			}
+			String requestUrl = source.getRequest().getUri().toString();
+			String[] urlSplit = requestUrl.split("/");
+			String messageId = urlSplit[urlSplit.length-2];
+			
+			byte[] data = result.getAllByteArray();
+			System.out.println("Media MessageID: "+messageId+ "Length: "+data.length);
+			String content_type = source.getHeaders().getHeaders().get("Content-type");
+			MultiMedia mms = new MultiMedia("test.tmp",content_type,data);
+			for(Message m : getCurrentGroup().getMessages()){
+				if(m.getId().equals(messageId)){
+					m.setMedia(mms);
+					MessageFragment.updateUI();
+					break;
+				}
+			}
+		}
+		
+    };
+	
+	public static synchronized Future<ByteBufferList> getMessageMedia(Message m) {
+		AsyncHttpGet get = new AsyncHttpGet(url+"/group/"+m.getGroupId()+"/message/"+m.getId()+"/media");
+		System.out.println("URL: "+url+"/group/"+m.getGroupId()+"/message/"+m.getId()+"/media");
+		get.setHeader("session-token", getCurrentUser().getSessionToken());
+		return AsyncHttpClient.getDefaultInstance().executeByteBufferList(get,mediaCallback);
+	}
+	
+	private static File saveToInternalStorage(byte[] data){
+		ContextWrapper cw = new ContextWrapper(MainActivity.activity.getApplicationContext());
+        File directory = cw.getDir("directoryName", Context.MODE_PRIVATE);
+        File mypath=new File(directory,"file.tmp");
+
+        FileOutputStream fos = null;
+        try {
+			fos = new FileOutputStream(mypath);
+			fos.write(data);
+	        fos.close();
+		} catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+        
+        return mypath.getAbsoluteFile();
 	}
 	
 	private static String saveToInternalSorage(Bitmap bitmapImage){

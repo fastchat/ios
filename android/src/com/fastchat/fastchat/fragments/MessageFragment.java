@@ -1,8 +1,15 @@
 package com.fastchat.fastchat.fragments;
 
+import java.io.ByteArrayInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
+
 import com.fastchat.fastchat.MainActivity;
 import com.fastchat.fastchat.R;
+import com.fastchat.fastchat.Utils;
 import com.fastchat.fastchat.models.Message;
+import com.fastchat.fastchat.models.MultiMedia;
 import com.fastchat.fastchat.models.User;
 import com.fastchat.fastchat.networking.NetworkManager;
 import com.fastchat.fastchat.networking.SocketIoController;
@@ -11,8 +18,14 @@ import com.google.android.gms.analytics.Tracker;
 
 import android.content.ClipData;
 import android.content.ClipboardManager;
+import android.content.Intent;
+import android.database.Cursor;
+import android.graphics.Bitmap;
+import android.net.Uri;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.ContextMenu;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
@@ -32,6 +45,12 @@ public class MessageFragment extends Fragment implements OnClickListener {
 	private static View rootView;
     
     private static MessageAdapter adapter;
+    
+    private static final int SELECT_FILE=1;
+    
+    private static String selectedFilePath="";
+    
+    private static MultiMedia multiMedia;
     
     
     @Override
@@ -70,6 +89,8 @@ public class MessageFragment extends Fragment implements OnClickListener {
 		rootView = inflater.inflate(R.layout.message, container,
 				false);
 		Button button = (Button) rootView.findViewById(R.id.send_button);
+	     button.setOnClickListener(this);
+	     button = (Button) rootView.findViewById(R.id.attach_button);
 	     button.setOnClickListener(this);
 	     adapter=new MessageAdapter(getActivity(), NetworkManager.getCurrentGroup().getMessages());
 	     final ListView lv = (ListView) rootView.findViewById(R.id.messages_container);
@@ -161,18 +182,65 @@ public class MessageFragment extends Fragment implements OnClickListener {
 
 	@Override
 	public void onClick(View arg0) {
-		
-		EditText messageBox = (EditText) rootView.findViewById(R.id.my_message);
-		String message = messageBox.getText().toString();
-		messageBox.setText("");
-		messageBox.clearFocus();
-		InputMethodManager in = (InputMethodManager) MainActivity.activity.getSystemService(MainActivity.INPUT_METHOD_SERVICE);
-        in.hideSoftInputFromWindow(messageBox.getApplicationWindowToken(),InputMethodManager.HIDE_NOT_ALWAYS);
-        if(message.isEmpty()){
-        	return;
-        }
-        Message messageObject = new Message(message,NetworkManager.getCurrentUser());
-		addMessage(messageObject);
-		SocketIoController.sendMessage(messageObject);
+		if(arg0.getId()==R.id.send_button){
+			EditText messageBox = (EditText) rootView.findViewById(R.id.my_message);
+			String message = messageBox.getText().toString();
+			messageBox.setText("");
+			messageBox.clearFocus();
+			InputMethodManager in = (InputMethodManager) MainActivity.activity.getSystemService(MainActivity.INPUT_METHOD_SERVICE);
+	        in.hideSoftInputFromWindow(messageBox.getApplicationWindowToken(),InputMethodManager.HIDE_NOT_ALWAYS);
+	        if(message.isEmpty()){
+	        	return;
+	        }
+	        Message messageObject = new Message(message,NetworkManager.getCurrentUser(),NetworkManager.getCurrentGroup().getId(),multiMedia);
+	        multiMedia=null;
+			addMessage(messageObject);
+			SocketIoController.sendMessage(messageObject);
+		}else if(arg0.getId()==R.id.attach_button){
+			Intent intent = new Intent();
+	        intent.setType("*/*");
+	        intent.setAction(Intent.ACTION_GET_CONTENT);
+	        startActivityForResult(Intent.createChooser(intent,
+	                "Select File"), SELECT_FILE);
+		}
+	}
+	
+	public void onActivityResult(int requestCode, int resultCode, Intent data) {
+		if (resultCode == MainActivity.RESULT_OK) {
+			if (requestCode == SELECT_FILE) {
+				try {
+					Uri fileUri = data.getData();
+					System.out.println("File Path: "+fileUri.getPath());
+					InputStream input = MainActivity.activity.getContentResolver().openInputStream(data.getData());
+					String[] proj = {MediaStore.Files.FileColumns.DISPLAY_NAME,MediaStore.Files.FileColumns.MIME_TYPE};
+					Cursor cursor = MainActivity.activity.getContentResolver().query(fileUri, proj, null, null, null);
+					 String mime_type="";
+					 String fileName = "";
+					 if (cursor != null && cursor.getCount() != 0) {
+				            int columnIndex = cursor.getColumnIndexOrThrow(MediaStore.Files.FileColumns.DISPLAY_NAME);
+				            cursor.moveToFirst();
+				            fileName = cursor.getString(columnIndex);
+				            columnIndex = cursor.getColumnIndexOrThrow(MediaStore.Files.FileColumns.MIME_TYPE);
+				            cursor.moveToFirst();
+				            mime_type = cursor.getString(columnIndex);
+				            System.out.println("File Name:"+fileName+" MIME Type:"+mime_type);
+				        }
+					byte[] buf = new byte[input.available()];
+				    while (input.read(buf) != -1) {
+				    }
+				    System.out.println("File Size: "+buf.length);
+				    if(fileName==""){
+				    	fileName = fileUri.getLastPathSegment();
+				    }
+				    multiMedia = new MultiMedia(fileName,mime_type,buf);
+				} catch (FileNotFoundException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+		}
 	}
 }
