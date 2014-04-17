@@ -186,6 +186,17 @@ public class NetworkManager {
 	}
 	
 	
+	public static Future<JSONObject> postLogoutAll(){
+		AsyncHttpRequest http = new AsyncHttpRequest(URI.create(url+"/logout?all=true"),"DELETE");
+		http.setHeader("session-token", getCurrentUser().getSessionToken());
+		return AsyncHttpClient.getDefaultInstance().executeJSONObject(http, new AsyncHttpClient.JSONObjectCallback() {
+			public void onCompleted(Exception e, AsyncHttpResponse response, JSONObject result) {
+				handleResponse(e,response,result,"Successfully logged out every device");
+			};
+		});
+	}
+	
+	
 	private static final JSONObjectCallback profileCallback = new AsyncHttpClient.JSONObjectCallback() {
 		public void onCompleted(Exception e, AsyncHttpResponse response, JSONObject result) {
 			handleResponse(e,response,result);

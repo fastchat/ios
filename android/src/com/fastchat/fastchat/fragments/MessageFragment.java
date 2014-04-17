@@ -121,7 +121,6 @@ public class MessageFragment extends Fragment implements OnClickListener {
 		if(rootView==null){
 			return;
 		}
-		System.out.println("Updating message list");
 		final ListView lv = (ListView) rootView.findViewById(R.id.messages_container);
 		MainActivity.activity.runOnUiThread(new Runnable(){
 			public void run(){

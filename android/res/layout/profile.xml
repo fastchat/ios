@@ -58,4 +58,13 @@
 
     </LinearLayout>
 
+    <Button
+        android:id="@+id/logout_all"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/save_avatar"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="22dp"
+        android:text="Logout All Devices" />
+
 </RelativeLayout>

@@ -6,6 +6,7 @@ import com.fastchat.fastchat.MainActivity;
 import com.fastchat.fastchat.R;
 import com.fastchat.fastchat.Utils;
 import com.fastchat.fastchat.networking.NetworkManager;
+import com.fastchat.fastchat.networking.SocketIoController;
 import com.google.android.gms.analytics.HitBuilders;
 import com.google.android.gms.analytics.Tracker;
 
@@ -61,6 +62,8 @@ public class ProfileFragment extends Fragment implements OnClickListener {
 		selectAvatar.setOnClickListener(this);
 		Button saveAvatar = (Button) rootView.findViewById(R.id.save_avatar);
 		saveAvatar.setOnClickListener(this);
+		Button logoutAll= (Button) rootView.findViewById(R.id.logout_all);
+		logoutAll.setOnClickListener(this);
 		return rootView;
 	}
 	
@@ -77,27 +80,33 @@ public class ProfileFragment extends Fragment implements OnClickListener {
 
 		// in onCreate or any event where your want the user to
 		// select a file
-		if(arg0.getId()==R.id.new_avatar){
-			/*Intent intent = new Intent();
-	        intent.setType("image/*");
-	        intent.setAction(Intent.ACTION_GET_CONTENT);
-	        startActivityForResult(Intent.createChooser(intent,
-	                "Select Picture"), SELECT_PICTURE);*/
-			Intent intent = new Intent(Intent.ACTION_PICK, 
-					android.provider.MediaStore.Images.Media.INTERNAL_CONTENT_URI);
+		switch(arg0.getId()){
+			case R.id.new_avatar:
+				Intent intent = new Intent(Intent.ACTION_PICK, 
+						android.provider.MediaStore.Images.Media.INTERNAL_CONTENT_URI);
 
-			intent.setType("image/*");
-			intent.putExtra("crop", "true");
-			intent.putExtra("scale", true);
-			intent.putExtra("outputX", BITMAP_SIZE);
-			intent.putExtra("outputY", BITMAP_SIZE);
-			intent.putExtra("aspectX", 1);
-			intent.putExtra("aspectY", 1);
-			intent.putExtra("return-data", true);
-			startActivityForResult(intent, 1);
-		}else if(arg0.getId()==R.id.save_avatar){
-			NetworkManager.getCurrentUser().setBitmap(currentBitmap);
-			NetworkManager.postAvatar(currentBitmap);
+				intent.setType("image/*");
+				intent.putExtra("crop", "true");
+				intent.putExtra("scale", true);
+				intent.putExtra("outputX", BITMAP_SIZE);
+				intent.putExtra("outputY", BITMAP_SIZE);
+				intent.putExtra("aspectX", 1);
+				intent.putExtra("aspectY", 1);
+				intent.putExtra("return-data", true);
+				startActivityForResult(intent, 1);
+				break;
+			case R.id.save_avatar:
+				NetworkManager.getCurrentUser().setBitmap(currentBitmap);
+				NetworkManager.postAvatar(currentBitmap);
+				break;
+			case R.id.logout_all:
+				MainActivity.clearLoginCredentials();
+				NetworkManager.postLogoutAll();
+				SocketIoController.disconnect();
+				MainActivity.restartFragments(new LoginFragment());
+				break;
+			default:
+				break;
 		}
 	}
 
