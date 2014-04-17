@@ -49,6 +49,7 @@ public class NetworkManager {
 	// HashMap <groupId, Groups>
 	private static HashMap<String,Group> groups = new HashMap<String,Group>();
 	private static HashMap<String, User> users  = new HashMap<String,User>();
+	private static User fastChatUser = new User(null,"FastChat",null);
 
 
 	private static final JSONObjectCallback loginCallback = new AsyncHttpClient.JSONObjectCallback() {
@@ -457,5 +458,8 @@ public class NetworkManager {
 	
 	public static HashMap<String,User> getUsersMap(){
 		return users;
+	}
+	public static User getFastChatUser(){
+		return fastChatUser;
 	}
 }

@@ -32,14 +32,16 @@ public class Message {
 	public Message(JSONObject messageObject){
 		try {
 			this.text=messageObject.getString("text");
-			this.from= NetworkManager.getUsernameFromId(messageObject.getString("from"));
 			this.groupId = messageObject.getString("group");
 			this.sentTime= messageObject.getString("sent");
+			this.from= NetworkManager.getUsernameFromId(messageObject.getString("from"));
 		} catch (JSONException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-
+		if(this.from==null){
+			this.from=NetworkManager.getFastChatUser();
+		}
 		
 	}
 	
