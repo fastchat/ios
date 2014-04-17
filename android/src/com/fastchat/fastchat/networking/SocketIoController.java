@@ -93,7 +93,7 @@ public class SocketIoController {
 			        		boolean isTyping = typingObject.getBoolean("typing");
 			        		String groupId = typingObject.getString("group");
 			        		Group group = NetworkManager.getCurrentGroup();
-			        		if(group==null && !groupId.equals(NetworkManager.getCurrentGroup().getId())){
+			        		if(group==null || !groupId.equals(NetworkManager.getCurrentGroup().getId())){
 			        			return;
 			        		}
 			        		if(isTyping){
