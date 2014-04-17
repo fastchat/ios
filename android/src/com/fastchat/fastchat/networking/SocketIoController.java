@@ -6,8 +6,11 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import android.content.Context;
+import android.os.Vibrator;
 import android.util.Log;
 
+import com.fastchat.fastchat.MainActivity;
 import com.fastchat.fastchat.Utils;
 import com.fastchat.fastchat.fragments.FastChatTextWatcher;
 import com.fastchat.fastchat.fragments.GroupsFragment;
@@ -85,6 +88,8 @@ public class SocketIoController {
 								tempGroup.addMessage(message);
 								tempGroup.addOneToUnreadCount();
 								GroupsFragment.updateUi();
+								Vibrator v = (Vibrator) MainActivity.activity.getSystemService(Context.VIBRATOR_SERVICE);
+								v.vibrate(200);
 							}
 							else{
 								MessageFragment.addMessage(message);
