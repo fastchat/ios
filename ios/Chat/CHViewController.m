@@ -59,6 +59,11 @@
                 // Fire a notification that will be picked up by the groupList controller to refresh
                 [[NSNotificationCenter defaultCenter] postNotificationName:@"ReloadGroupListTable" object:nil];
 
+                CHUser *loggedInAs = [[CHNetworkManager sharedManager] currentUser];
+                
+                [[CHNetworkManager sharedManager] getAvatarOfUser:loggedInAs.userId callback:^(UIImage *avatar) {
+                    [[CHNetworkManager sharedManager] currentUser].avatar = avatar;
+                }];
                 
                 [self dismissViewControllerAnimated:YES completion:nil];
 

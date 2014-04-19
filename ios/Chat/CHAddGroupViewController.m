@@ -36,6 +36,8 @@ UIPanGestureRecognizer* panGesture;
     
     UIBarButtonItem *saveButton = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemSave target:self action:@selector(createGroup)];
     self.navigationItem.rightBarButtonItem = saveButton;
+    
+    [self.groupNameTextField setPlaceholder:@"Group name (optional)"];
 }
 
 - (void)didReceiveMemoryWarning
@@ -58,13 +60,10 @@ UIPanGestureRecognizer* panGesture;
     
     if( members.count >= 1 ) {
         DLog(@"Adding");
-        if( ![self.groupNameTextField.text isEqualToString:@""] && self.groupNameTextField.text != nil) {
-            DLog(@"Test");
-            [[CHNetworkManager sharedManager] createGroupWithName:self.groupNameTextField.text members:members callback:^(bool successful, NSError *error) {
-                [[NSNotificationCenter defaultCenter] postNotificationName:@"ReloadGroupListTable" object:nil];
-                [self.navigationController popViewControllerAnimated:YES];
-            }];
-        }
+        [[CHNetworkManager sharedManager] createGroupWithName:self.groupNameTextField.text members:members callback:^(bool successful, NSError *error) {
+            [[NSNotificationCenter defaultCenter] postNotificationName:@"ReloadGroupListTable" object:nil];
+            [self.navigationController popViewControllerAnimated:YES];
+        }];
     }
 }
 
