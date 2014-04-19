@@ -249,31 +249,6 @@
                                                                           callback(NO, error);
                                                                       }];
     [self.operationQueue addOperation:operation];
-
-    
-    
-////    NSURL * url = [NSURL fileURLWithPath:[imageData
-////                                          objectForKey:UIImagePickerControllerMediaURL]];
-////    NSURL *filePath = [NSURL fileURLWithPath:@"file://path/to/image.png"];
-//    AFHTTPRequestOperation *request = [manager POST:[NSString stringWithFormat:@"%@/user/%@/avatar", BASE_URL, userId] parameters:parameters constructingBodyWithBlock:^(id<AFMultipartFormData> formData) {
-//        [formData appendPartWithFormData:imageData name:@"avatar"];
-//    } success:^(AFHTTPRequestOperation *operation, id responseObject) {
-//        NSLog(@"Success: %@", responseObject);
-//        callback(YES, nil);
-//    } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
-//        NSLog(@"Error: %@", error);
-//        callback(NO, error);
-//    }];
-//    
-
-    /*[self POST:[NSString stringWithFormat:@"/user/%@/avatar",userId] parameters:@{@"avatar" : imageData} success:^(NSURLSessionDataTask *task, id responseObject) {
-        //
-        DLog(@"Success");
-        callback(YES, nil);
-    } failure:^(NSURLSessionDataTask *task, NSError *error) {
-        //
-        callback(NO, error);
-    }];*/
 }
 
 - (void)addNewUsers: (NSArray *)invitees groupId: (NSString *) groupId callback: (void (^)(bool successful, NSError *error))callback;

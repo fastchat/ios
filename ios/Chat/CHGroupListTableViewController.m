@@ -87,18 +87,21 @@
             DLog(@"IN A GROUP");
             for( CHUser *user in group.members ) {
                 DLog(@"GROUP GROUP AVATARfor user %@", user);
-                [[CHNetworkManager sharedManager] getAvatarOfUser:user.userId callback:^(UIImage *avatar) {
-                    DLog(@"Found avatar");
-                    ((CHUser *)group.memberDict[user.userId]).avatar = avatar;
-                }];
+                if( user.avatar == nil ) {
+                    [[CHNetworkManager sharedManager] getAvatarOfUser:user.userId callback:^(UIImage *avatar) {
+                        DLog(@"Found avatar");
+                        ((CHUser *)group.memberDict[user.userId]).avatar = avatar;
+                    }];
+                }
             }
             
             for( CHUser *user in group.pastMembers ) {
-                [[CHNetworkManager sharedManager] getAvatarOfUser:user.userId callback:^(UIImage *avatar) {
-                    ((CHUser *)group.memberDict[user.userId]).avatar = avatar;
-                    DLog(@"Set avatar to %@", ((CHUser *)group.memberDict[user.userId]).avatar);
-                    
-                }];
+                if( user.avatar == nil ) {
+                    [[CHNetworkManager sharedManager] getAvatarOfUser:user.userId callback:^(UIImage *avatar) {
+                        ((CHUser *)group.memberDict[user.userId]).avatar = avatar;
+                        DLog(@"Set avatar to %@", ((CHUser *)group.memberDict[user.userId]).avatar);
+                    }];
+                }
             }
         }
         

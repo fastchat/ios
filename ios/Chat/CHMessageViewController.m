@@ -114,9 +114,9 @@
     NSMutableDictionary *tempIds = [NSMutableDictionary dictionary];
     [members enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
         //NSDictionary *dict = obj;
-        CHUser *currUser = obj;
-        DLog(@"User: %@", currUser);
-        tempIds[currUser.userId] = currUser.username;
+        CHUser *thisUser = obj;
+        DLog(@"User: %@", thisUser);
+        tempIds[thisUser.userId] = thisUser.username;
     }];
     self.userIds = tempIds;
     
@@ -161,10 +161,12 @@
     // Get all member avatars
     NSArray *members = _group.members;
     for( CHUser *user in members ) {
-        [[CHNetworkManager sharedManager] getAvatarOfUser:user.userId callback:^(UIImage *avatar) {
-            user.avatar = avatar;
-            _group.memberDict[user.userId] = user;
-        }];
+        if( user.avatar == nil ) {
+            [[CHNetworkManager sharedManager] getAvatarOfUser:user.userId callback:^(UIImage *avatar) {
+                user.avatar = avatar;
+                _group.memberDict[user.userId] = user;
+            }];
+        }
     }
 }
 
@@ -335,9 +337,9 @@
         cell.messageTextView.attributedText = attrString;
         cell.authorLabel.text = [[NSString alloc] initWithFormat:@"by %@",[self.group usernameFromId:currMessage.author]];
 
-//        if( [_group memberFromId:currMessage.author].avatar != nil ) {
+        if( [_group memberFromId:currMessage.author].avatar != nil ) {
             [cell.avatarImageView setImage:[_group memberFromId:currMessage.author].avatar];
-//        }
+        }
         
         if (currMessage.sent != nil) {
             // Format the timestamp
@@ -366,11 +368,16 @@
         
         cell.messageTextView.attributedText = attrString;
        
-        if ( [_group memberFromId:currMessage.author].avatar != nil) {
+//        if ( [_group memberFromId:currMessage.author].avatar != nil) {
 //            DLog(@"%@ has an avatar: %@", [_group memberFromId:currMessage.author].username, [_group memberFromId:currMessage.author].avatar);
             [cell.avatarImageView setImage:[_group memberFromId:currMessage.author].avatar];
+/*        }
+        else {
+            [[CHNetworkManager sharedManager] getAvatarOfUser:[_group memberFromId:currMessage.author].userId callback:^(UIImage *avatar) {
+                [cell.avatarImageView setImage:avatar];
+            }];
         }
-        
+  */      
         if (currMessage.sent != nil) {
             // Format the timestamp
             cell.timestampLabel.text = [[self timestampFormatter] stringFromDate:currMessage.sent];

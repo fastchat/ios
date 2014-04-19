@@ -40,10 +40,21 @@
             [self.avatarImageView setImage:avatar];
         }];
     }
-    else {
+    /*else {
         DLog(@"Setting the avatar found for user %@", currUser.username);
         [self.avatarImageView setImage:currUser.avatar];
-    }
+    }*/
+}
+
+- (void)viewWillAppear:(BOOL)animated
+{
+    [super viewWillAppear:animated];
+    
+    CHUser *currUser = [[CHNetworkManager sharedManager] currentUser];
+    
+    [[CHNetworkManager sharedManager] getAvatarOfUser:currUser.userId callback:^(UIImage *avatar) {
+        [self.avatarImageView setImage:avatar];
+    }];
 }
 
 /*
