@@ -15,6 +15,7 @@
 #import "CHViewController.h"
 #import "CHMessageTableViewController.h"
 #import "CHGroup.h"
+#import "CHUser.h"
 
 @interface CHGroupListTableViewController ()
 
@@ -57,6 +58,7 @@
         
     }
 
+
     UIBarButtonItem *addButton = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemCompose target:self action:@selector(showAddView)];
     self.navigationItem.rightBarButtonItem = addButton;
     
@@ -69,6 +71,7 @@
 
 -(void) loadGroupsAndRefresh;
 {
+    DLog(@"REFRESHING");
     UIActivityIndicatorView *spinner = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleGray];
     spinner.center = CGPointMake(160, 240);
     spinner.tag = 12;
@@ -78,6 +81,27 @@
     [[CHNetworkManager sharedManager] getGroups:^(NSArray *groups) {
         self.groups = [groups mutableCopy];
 
+        // Get all member avatars
+        DLog(@"Groups: %@", self.groups);
+        for( CHGroup *group in self.groups ) {
+            DLog(@"IN A GROUP");
+            for( CHUser *user in group.members ) {
+                DLog(@"GROUP GROUP AVATARfor user %@", user);
+                [[CHNetworkManager sharedManager] getAvatarOfUser:user.userId callback:^(UIImage *avatar) {
+                    DLog(@"Found avatar");
+                    ((CHUser *)group.memberDict[user.userId]).avatar = avatar;
+                }];
+            }
+            
+            for( CHUser *user in group.pastMembers ) {
+                [[CHNetworkManager sharedManager] getAvatarOfUser:user.userId callback:^(UIImage *avatar) {
+                    ((CHUser *)group.memberDict[user.userId]).avatar = avatar;
+                    DLog(@"Set avatar to %@", ((CHUser *)group.memberDict[user.userId]).avatar);
+                    
+                }];
+            }
+        }
+        
         [self.tableView reloadData];
         [spinner stopAnimating];
         
@@ -86,7 +110,9 @@
     [[CHNetworkManager sharedManager] getProfile:^(CHUser *userProfile) {
         
     }];
-    }
+    
+
+}
 
 -(void) viewWillAppear:(BOOL)animated
 {
@@ -130,6 +156,9 @@
     UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"CHGroupTableViewCell" forIndexPath:indexPath];
 
     cell.textLabel.text = [self.groups[indexPath.row] getGroupName];
+    
+    
+    
     
     return cell;
 }

@@ -8,6 +8,7 @@
 
 #import "CHGroup.h"
 #import "CHUser.h"
+#import "CHNetworkManager.h"
 
 @interface CHGroup ()
 @property (nonatomic, strong) NSMutableDictionary *allUsers;
@@ -19,18 +20,29 @@
 {
     self = [super initWithDictionary:dictionary error:error];
     self.allUsers = [[NSMutableDictionary alloc] init];
+    self.memberDict = [[NSMutableDictionary alloc] init];
+    
     DLog(@"All users%@", self.pastMembers);
     if (self) {
         
         for (CHUser *user in self.members) {
             //DLog(@"dict: %@", dict);
             self.allUsers[user.userId] = user.username;
+            self.memberDict[user.userId] = user;
         }
         
         for (CHUser *user in self.pastMembers) {
             self.allUsers[user.userId] = user.username;
+            if (!self.memberDict[user.userId]) {
+                self.memberDict[user.userId] = user;
+            }
         }
     }
+    
+    
+    
+    
+    DLog("Mbemberdict: %@", self.memberDict);
     
     return self;
 }
@@ -51,8 +63,32 @@
     }
     
     NSMutableString *nameFromMembers = [@"" mutableCopy];
-    for (int i = 0; i < self.members.count; i++) {
-        [nameFromMembers appendString:[NSString stringWithFormat:@"%@,",((CHUser *)self.members[i]).username]];
+    if( self.members.count == 1 ) {
+        [nameFromMembers appendString:[NSString stringWithFormat:@"Empty chat!"]];
+    }
+    else if( self.members.count == 2 ) {
+        if (((CHUser *)self.members[0]).userId == [[CHNetworkManager sharedManager] currentUser].userId) {
+            [nameFromMembers appendString:[NSString stringWithFormat:@"%@", ((CHUser *)self.members[1]).username]];
+        }
+        else {
+            [nameFromMembers appendString:[NSString stringWithFormat:@"%@", ((CHUser *)self.members[0]).username]];
+        }
+    }
+    else {
+        CHUser *currLoggedInUser = [[CHNetworkManager sharedManager] currentUser];
+        for (int i = 0; i < self.members.count; i++) {
+            CHUser *currMember = self.members[i];
+            DLog(@"User 1: %@, user 2: %@",((CHUser *)self.members[i]).userId,[[CHNetworkManager sharedManager] currentUser].userId);
+            
+            if (![currMember.userId isEqualToString:currLoggedInUser.userId]) {
+                if (i == self.members.count - 1) {
+                    [nameFromMembers appendString:[NSString stringWithFormat:@"%@",((CHUser *)self.members[i]).username]];
+                }
+                else {
+                    [nameFromMembers appendString:[NSString stringWithFormat:@"%@,",((CHUser *)self.members[i]).username]];
+                }
+            }
+        }
     }
     return nameFromMembers;
 }
@@ -60,6 +96,17 @@
 - (NSString *)usernameFromId: (NSString *)theId;
 {
     return self.allUsers[theId];
+}
+
+- (CHUser *)memberFromId: (NSString *)theId;
+{
+    CHUser *userToReturn = nil;
+ 
+    if (theId) {
+        userToReturn = self.memberDict[theId];
+    }
+    
+    return userToReturn;
 }
 
 + (MTLValueTransformer *)membersJSONTransformer;

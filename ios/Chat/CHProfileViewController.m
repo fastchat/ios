@@ -12,6 +12,7 @@
 
 @interface CHProfileViewController ()
 
+@property (weak, nonatomic) UIButton *cameraButton;
 @end
 
 @implementation CHProfileViewController
@@ -39,6 +40,9 @@
             [self.avatarImageView setImage:avatar];
         }];
     }
+    else {
+        [self.avatarImageView setImage:currUser.avatar];
+    }
 }
 
 /*
@@ -52,4 +56,24 @@
 }
 */
 
+-(void) imagePickerController:(UIImagePickerController *)picker didFinishPickingMediaWithInfo:(NSDictionary *)info {
+    UIImage *image = [info objectForKey:UIImagePickerControllerOriginalImage];
+    
+    [self.avatarImageView setImage:image];
+    [self dismissViewControllerAnimated:YES completion:^{}];
+}
+
+- (IBAction)cameraButtonTouched:(id)sender {
+    UIImagePickerController *imagePicker = [[UIImagePickerController alloc] init];
+    
+    if([UIImagePickerController isSourceTypeAvailable:UIImagePickerControllerSourceTypeCamera]) {
+        [imagePicker setSourceType:UIImagePickerControllerSourceTypeCamera];
+    }
+    else {
+        [imagePicker setSourceType:UIImagePickerControllerSourceTypePhotoLibrary];
+    }
+    
+    [imagePicker setDelegate:self];
+    [self presentViewController:imagePicker animated:YES completion:^{}];
+}
 @end

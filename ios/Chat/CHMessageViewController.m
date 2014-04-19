@@ -89,16 +89,13 @@
     [self.containerView addSubview:self.textView];
     [self.containerView addSubview:entryImageView];
     
-    UIButton *doneBtn = [UIButton buttonWithType:UIButtonTypeRoundedRect]; //[UIButton buttonWithType:UIButtonTypeCustom];
+    UIButton *doneBtn = [UIButton buttonWithType:UIButtonTypeSystem]; //[UIButton buttonWithType:UIButtonTypeCustom];
 	doneBtn.frame = CGRectMake(self.containerView.frame.size.width - 72, 1, 72, 40);
     doneBtn.autoresizingMask = UIViewAutoresizingFlexibleTopMargin | UIViewAutoresizingFlexibleLeftMargin;
 	[doneBtn setTitle:@"Send" forState:UIControlStateNormal];
-    
-    doneBtn.titleLabel.shadowOffset = CGSizeMake (0.0, -1.0);
-    doneBtn.titleLabel.font = [UIFont systemFontOfSize:18.0f];//[UIFont boldSystemFontOfSize:18.0f];
-    
-    [doneBtn setTitleColor:[UIColor blueColor] forState:UIControlStateNormal];
-	[doneBtn addTarget:self action:@selector(sendMessage) forControlEvents:UIControlEventTouchUpInside];
+
+    [doneBtn addTarget:self action:@selector(sendMessage) forControlEvents:UIControlEventTouchUpInside];
+
  	[self.containerView addSubview:doneBtn];
     self.containerView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleTopMargin;
    
@@ -123,12 +120,7 @@
     }];
     self.userIds = tempIds;
     
-    // Get all member avatars
-    /*for( CHUser *user in members ) {
-        [[CHNetworkManager sharedManager] getAvatarOfUser:user.userId callback:^(UIImage *avatar) {
-            user.avatar = avatar;
-        }];
-    }*/
+    DLog(@"THE MEMBERS: %@", members);
     
     
     _messageArray = [[NSMutableArray alloc] init];
@@ -155,7 +147,7 @@
     /// Load up old messages
     ///
     DLog(@"Group in viewdidload: %@", _group);
-    [[CHNetworkManager sharedManager] getMessagesForGroup:self.group._id page:nil callback:^(NSArray *messages) {
+    [[CHNetworkManager sharedManager] getMessagesForGroup:self.group._id page:0 callback:^(NSArray *messages) {
         self.messageArray = [NSMutableArray arrayWithArray:messages];
 
         self.messageArray = [[[self.messageArray reverseObjectEnumerator] allObjects] mutableCopy];
@@ -163,6 +155,17 @@
         [self.messageTable scrollToRowAtIndexPath:[NSIndexPath indexPathForRow:_messageArray.count - 1 inSection:0] atScrollPosition:UITableViewScrollPositionBottom animated:NO];
     }];
     
+}
+
+-(void)viewWillAppear:(BOOL)animated {
+    // Get all member avatars
+    NSArray *members = _group.members;
+    for( CHUser *user in members ) {
+        [[CHNetworkManager sharedManager] getAvatarOfUser:user.userId callback:^(UIImage *avatar) {
+            user.avatar = avatar;
+            _group.memberDict[user.userId] = user;
+        }];
+    }
 }
 
 -(void)loadMoreMessages;
@@ -332,9 +335,9 @@
         cell.messageTextView.attributedText = attrString;
         cell.authorLabel.text = [[NSString alloc] initWithFormat:@"by %@",[self.group usernameFromId:currMessage.author]];
 
-        if( currUser.avatar ) {
-            [cell.avatarImageView setImage:currUser.avatar];
-        }
+//        if( [_group memberFromId:currMessage.author].avatar != nil ) {
+            [cell.avatarImageView setImage:[_group memberFromId:currMessage.author].avatar];
+//        }
         
         if (currMessage.sent != nil) {
             // Format the timestamp
@@ -363,6 +366,11 @@
         
         cell.messageTextView.attributedText = attrString;
        
+        if ( [_group memberFromId:currMessage.author].avatar != nil) {
+//            DLog(@"%@ has an avatar: %@", [_group memberFromId:currMessage.author].username, [_group memberFromId:currMessage.author].avatar);
+            [cell.avatarImageView setImage:[_group memberFromId:currMessage.author].avatar];
+        }
+        
         if (currMessage.sent != nil) {
             // Format the timestamp
             cell.timestampLabel.text = [[self timestampFormatter] stringFromDate:currMessage.sent];
