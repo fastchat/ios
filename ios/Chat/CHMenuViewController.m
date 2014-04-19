@@ -34,15 +34,6 @@ UIPanGestureRecognizer* panGesture;
 {
     [super viewDidLoad];
     // Do any additional setup after loading the view.
-    
-    tapGesture = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(singleTapScreenShot:)];
-    [self.screenShotImageView addGestureRecognizer:tapGesture];
-    
-    // create a UIPanGestureRecognizer to detect when the screenshot is touched and dragged
-    panGesture = [[UIPanGestureRecognizer alloc] initWithTarget:self action:@selector(panGestureMoveAround:)];
-    [panGesture setMaximumNumberOfTouches:2];
-    [panGesture setDelegate:self];
-    [self.screenShotImageView addGestureRecognizer:panGesture];
 }
 
 - (void)didReceiveMemoryWarning
@@ -82,78 +73,9 @@ UIPanGestureRecognizer* panGesture;
                      completion:^(BOOL finished){  }];
 }
 
--(IBAction)showLogoExpandingViewController
-{
-    // this sets the currentViewController on the app_delegate to the expanding view controller
-    // then slides the screenshot back over
-
-
-    [(CHAppDelegate *)[[UIApplication sharedApplication] delegate] setContentViewControllerWithController:[[CHMenuViewController alloc] initWithNibName:@"CHMenuViewController" bundle:nil]];
-    [self slideThenHide];
-}
-
--(void) slideThenHide
-{
-    // this animates the screenshot back to the left before telling the app delegate to swap out the MenuViewController
-    // it tells the app delegate using the completion block of the animation
-    [UIView animateWithDuration:0.15 delay:0 options:UIViewAnimationOptionCurveEaseInOut animations:^{
-        [self.screenShotImageView setFrame:CGRectMake(0, 0, self.view.frame.size.width, self.view.frame.size.height)];
-    }
-                     completion:^(BOOL finished){ [(CHAppDelegate *)[[UIApplication sharedApplication] delegate] hideSideMenu]; }];
-}
-
 - (void)viewDidUnload
 {
     [super viewDidUnload];
-    
-    // remove the gesture recognizers
-    [self.screenShotImageView removeGestureRecognizer:tapGesture];
-    [self.screenShotImageView removeGestureRecognizer:panGesture];
 }
-
-- (void)singleTapScreenShot:(UITapGestureRecognizer *)gestureRecognizer
-{
-    // on a single tap of the screenshot, assume the user is done viewing the menu
-    // and call the slideThenHide function
-    [self slideThenHide];
-}
-
-/* The following is from http://blog.shoguniphicus.com/2011/06/15/working-with-uigesturerecognizers-uipangesturerecognizer-uipinchgesturerecognizer/ */
--(void)panGestureMoveAround:(UIPanGestureRecognizer *)gesture;
-{
-    UIView *piece = [gesture view];
-    [self adjustAnchorPointForGestureRecognizer:gesture];
-    
-    if ([gesture state] == UIGestureRecognizerStateBegan || [gesture state] == UIGestureRecognizerStateChanged) {
-        
-        CGPoint translation = [gesture translationInView:[piece superview]];
-        
-        // I edited this line so that the image view cannont move vertically
-        [piece setCenter:CGPointMake([piece center].x + translation.x, [piece center].y)];
-        [gesture setTranslation:CGPointZero inView:[piece superview]];
-    }
-    else if ([gesture state] == UIGestureRecognizerStateEnded)
-        [self slideThenHide];
-}
-
-- (void)adjustAnchorPointForGestureRecognizer:(UIGestureRecognizer *)gestureRecognizer {
-    if (gestureRecognizer.state == UIGestureRecognizerStateBegan) {
-        UIView *piece = gestureRecognizer.view;
-        CGPoint locationInView = [gestureRecognizer locationInView:piece];
-        CGPoint locationInSuperview = [gestureRecognizer locationInView:piece.superview];
-        
-        piece.layer.anchorPoint = CGPointMake(locationInView.x / piece.bounds.size.width, locationInView.y / piece.bounds.size.height);
-        piece.center = locationInSuperview;
-    }
-}
-
-
-- (void)showSideMenu;
-{
-    DLog(@"Side menu display");
-    
-}
-
-
 
 @end

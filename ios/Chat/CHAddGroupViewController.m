@@ -36,6 +36,8 @@ UIPanGestureRecognizer* panGesture;
     
     UIBarButtonItem *saveButton = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemSave target:self action:@selector(createGroup)];
     self.navigationItem.rightBarButtonItem = saveButton;
+    
+    [self.groupNameTextField setPlaceholder:@"Group name (optional)"];
 }
 
 - (void)didReceiveMemoryWarning
@@ -45,9 +47,24 @@ UIPanGestureRecognizer* panGesture;
 }
 
 - (void)createGroup {
-    [[CHNetworkManager sharedManager] createGroupWithName:self.groupNameTextField.text callback:^(bool successful, NSError *error) {
-        [self.navigationController popViewControllerAnimated:YES];
-    }];
+    NSMutableArray *members = [[NSMutableArray alloc] init];
+    if (![self.firstMemberTextField.text isEqualToString:@""]) {
+        [members addObject:self.firstMemberTextField.text];
+    }
+    if (![self.secondMemberTextField.text isEqualToString:@""]) {
+        [members addObject:self.secondMemberTextField.text];
+    }
+    if (![self.thirdMemberTextField.text isEqualToString:@""]) {
+        [members addObject:self.thirdMemberTextField.text];
+    }
+    
+    if( members.count >= 1 ) {
+        DLog(@"Adding");
+        [[CHNetworkManager sharedManager] createGroupWithName:self.groupNameTextField.text members:members callback:^(bool successful, NSError *error) {
+            [[NSNotificationCenter defaultCenter] postNotificationName:@"ReloadGroupListTable" object:nil];
+            [self.navigationController popViewControllerAnimated:YES];
+        }];
+    }
 }
 
 /*

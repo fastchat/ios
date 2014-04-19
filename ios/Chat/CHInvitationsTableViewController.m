@@ -53,14 +53,12 @@
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
 {
-#warning Potentially incomplete method implementation.
     // Return the number of sections.
     return 1;
 }
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
-#warning Incomplete method implementation.
     // Return the number of rows in the section.
     return self.pendingInvites.count;
 }
@@ -78,7 +76,7 @@
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
     // Accept invite
-    [[CHNetworkManager sharedManager] acceptInviteAtIndex:[[NSNumber alloc] initWithInt:indexPath.row] callback:^(bool successful, NSError *error) {
+    [[CHNetworkManager sharedManager] acceptInviteAtIndex:@(indexPath.row) callback:^(bool successful, NSError *error) {
         //Do Stuff
     }];
 }

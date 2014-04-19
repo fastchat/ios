@@ -8,6 +8,11 @@
 
 #import "CHSideNavigationTableViewController.h"
 #import "CHInvitationsTableViewController.h"
+#import "CHNetworkManager.h"
+#import "CHViewController.h"
+#import "CHSocketManager.h"
+#import "CHGroupListTableViewController.h"
+#import "CHProfileViewController.h"
 
 @interface CHSideNavigationTableViewController ()
 @property NSArray *menuLabels;
@@ -34,23 +39,21 @@
     // Uncomment the following line to display an Edit button in the navigation bar for this view controller.
     // self.navigationItem.rightBarButtonItem = self.editButtonItem;
     
-    self.menuLabels = @[@"Profile", @"Invitations"];
+    self.menuLabels = @[@"Profile", @"Invitations", @"Sign Out"];
 }
 
 #pragma mark - Table view data source
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
 {
-#warning Potentially incomplete method implementation.
     // Return the number of sections.
     return 1;
 }
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
-#warning Incomplete method implementation.
     // Return the number of rows in the section.
-    return 2;
+    return 3;
 }
 
 
@@ -60,16 +63,34 @@
     
     // Configure the cell...
     cell.textLabel.text = self.menuLabels[indexPath.row];
-    
 
     return cell;
 }
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
+    if( indexPath.row == 0 ) {
+        CHProfileViewController *controller = [self.storyboard instantiateViewControllerWithIdentifier:@"CHProfileViewController"];
+        [self.navigationController pushViewController:controller animated:YES];
+    }
     if( indexPath.row == 1 ) {
         DLog(@"Navigate to invitations screen.");
         CHInvitationsTableViewController *controller = [self.storyboard instantiateViewControllerWithIdentifier:@"CHInvitationsTableViewController"];
         [self.navigationController pushViewController:controller animated:YES];
+    }
+    
+    // Logout
+    else if( indexPath.row == 2 ) {
+        [[CHNetworkManager sharedManager] logoutWithCallback:^(bool successful, NSError *error) {
+            //[self.navigationController popViewControllerAnimated:YES];
+            [[CHSocketManager sharedManager] closeSocket];
+            [self.navigationController popViewControllerAnimated:YES];
+            //[self presentViewController:loginController animated:NO completion:nil];
+            CHViewController *loginController = [self.storyboard instantiateViewControllerWithIdentifier:@"CHViewController"];
+            [self presentViewController:loginController animated:NO completion:nil];
+           // CHGroupListTableViewController *groupController = [self.storyboard instantiateViewControllerWithIdentifier:@"CHGroupListTableViewController"];
+            //[self pushViewController:groupController animated:NO];
+        }];
+        
     }
 }
 

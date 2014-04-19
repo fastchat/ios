@@ -9,14 +9,17 @@
 #import "CHGroupListTableViewController.h"
 #import "CHNetworkManager.h"
 #import "CHAddGroupViewController.h"
-#import "CHGroupTableViewCell.h"
 #import "CHAppDelegate.h"
 #import "CHSideNavigationTableViewController.h"
 #import "CHMessageViewController.h"
+#import "CHViewController.h"
+#import "CHMessageTableViewController.h"
+#import "CHGroup.h"
+#import "CHUser.h"
 
 @interface CHGroupListTableViewController ()
 
-@property NSArray *groups;
+
 
 @end
 
@@ -35,20 +38,40 @@
 {
     [super viewDidLoad];
     
-    // Uncomment the following line to preserve selection between presentations.
-    // self.clearsSelectionOnViewWillAppear = NO;
+    self.navigationItem.title = @"My Groups";
     
-    // Uncomment the following line to display an Edit button in the navigation bar for this view controller.
-    // self.navigationItem.rightBarButtonItem = self.editButtonItem;
-   
-    UIBarButtonItem *addButton = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemAdd target:self action:@selector(showAddView)];
+        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(loadGroupsAndRefresh) name:@"ReloadGroupListTable" object:nil];
+
+    
+    
+    // Check to see if we are logged in
+    if( ![[CHNetworkManager sharedManager] hasStoredSessionToken] ) {
+        DLog(@"Session token not found. We need to login");
+
+        UIViewController *loginController = [self.storyboard instantiateViewControllerWithIdentifier:@"CHViewNavController"];
+        [self presentViewController:loginController animated:NO completion:nil];
+    }
+    
+    else {
+    
+        [self loadGroupsAndRefresh];
+        
+    }
+
+
+    UIBarButtonItem *addButton = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemCompose target:self action:@selector(showAddView)];
     self.navigationItem.rightBarButtonItem = addButton;
     
+    UIBarButtonItem *menuButton = [[UIBarButtonItem alloc] initWithTitle:@"Menu" style:UIBarButtonItemStylePlain target:self action:@selector(displaySideMenu)];
     
-    UIBarButtonItem *test = [[UIBarButtonItem alloc] initWithTitle:@"Menu" style:UIBarButtonItemStylePlain target:self action:@selector(displaySideMenu)];
+    self.navigationItem.leftBarButtonItem = menuButton;
+    
+    
+}
 
-    self.navigationItem.leftBarButtonItem = test;
-
+-(void) loadGroupsAndRefresh;
+{
+    DLog(@"REFRESHING");
     UIActivityIndicatorView *spinner = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleGray];
     spinner.center = CGPointMake(160, 240);
     spinner.tag = 12;
@@ -56,13 +79,52 @@
     [spinner startAnimating];
     
     [[CHNetworkManager sharedManager] getGroups:^(NSArray *groups) {
-        self.groups = groups;
+        self.groups = [groups mutableCopy];
+
+        // Get all member avatars
+        DLog(@"Groups: %@", self.groups);
+        for( CHGroup *group in self.groups ) {
+            DLog(@"IN A GROUP");
+            for( CHUser *user in group.members ) {
+                DLog(@"GROUP GROUP AVATARfor user %@", user);
+                if( user.avatar == nil ) {
+                    [[CHNetworkManager sharedManager] getAvatarOfUser:user.userId callback:^(UIImage *avatar) {
+                        DLog(@"Found avatar");
+                        ((CHUser *)group.memberDict[user.userId]).avatar = avatar;
+                    }];
+                }
+            }
+            
+            for( CHUser *user in group.pastMembers ) {
+                if( user.avatar == nil ) {
+                    [[CHNetworkManager sharedManager] getAvatarOfUser:user.userId callback:^(UIImage *avatar) {
+                        ((CHUser *)group.memberDict[user.userId]).avatar = avatar;
+                        DLog(@"Set avatar to %@", ((CHUser *)group.memberDict[user.userId]).avatar);
+                    }];
+                }
+            }
+        }
         
-        DLog(@"groups: %@",groups);
         [self.tableView reloadData];
         [spinner stopAnimating];
+        
     }];
     
+    [[CHNetworkManager sharedManager] getProfile:^(CHUser *userProfile) {
+        
+    }];
+    
+
+}
+
+-(void) viewWillAppear:(BOOL)animated
+{
+    [super viewWillAppear:animated];
+    //set initial values here
+        
+    [[UIApplication sharedApplication] registerForRemoteNotificationTypes:
+     (UIRemoteNotificationTypeBadge | UIRemoteNotificationTypeSound | UIRemoteNotificationTypeAlert)];
+
 }
 
 - (void)displaySideMenu {
@@ -92,72 +154,42 @@
 }
 
 
-- (CHGroupTableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
+- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    CHGroupTableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"CHGroupTableViewCell" forIndexPath:indexPath];
+    UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"CHGroupTableViewCell" forIndexPath:indexPath];
 
-    // Configure the cell...
-    cell.textLabel.text = [self.groups[indexPath.row] objectForKey:@"name"];
-    DLog(@"group: %@", [self.groups[indexPath.row] objectForKey:@"name"]);
+    cell.textLabel.text = [self.groups[indexPath.row] getGroupName];
+    
+    
+    
     
     return cell;
 }
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
-    // Open messageViewController with proper group id
+    [tableView deselectRowAtIndexPath:indexPath animated:YES];
     
-    CHMessageViewController *controller = [self.storyboard instantiateViewControllerWithIdentifier:@"CHMessageViewController"];
-    [controller setGroupId:[self.groups[indexPath.row] objectForKey:@"name"]];
-//    [self.navigationController pushViewController:controller animated:YES];
+    CHMessageViewController *vc = [self.storyboard instantiateViewControllerWithIdentifier:@"CHMessageViewController"];
+    [vc setGroup:_groups[indexPath.row]];
+    [self.navigationController pushViewController:vc animated:YES];
 }
 
-/*
-// Override to support conditional editing of the table view.
-- (BOOL)tableView:(UITableView *)tableView canEditRowAtIndexPath:(NSIndexPath *)indexPath
-{
-    // Return NO if you do not want the specified item to be editable.
+- (BOOL)tableView:(UITableView *)tableView canEditRowAtIndexPath:(NSIndexPath *)indexPath {
     return YES;
 }
-*/
 
-/*
-// Override to support editing the table view.
-- (void)tableView:(UITableView *)tableView commitEditingStyle:(UITableViewCellEditingStyle)editingStyle forRowAtIndexPath:(NSIndexPath *)indexPath
+- (void)tableView:(UITableView *)tableView commitEditingStyle:(UITableViewCellEditingStyle)editingStyle forRowAtIndexPath:(NSIndexPath *)indexPath;
 {
-    if (editingStyle == UITableViewCellEditingStyleDelete) {
-        // Delete the row from the data source
-        [tableView deleteRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationFade];
-    } else if (editingStyle == UITableViewCellEditingStyleInsert) {
-        // Create a new instance of the appropriate class, insert it into the array, and add a new row to the table view
-    }   
+    [[CHNetworkManager sharedManager] putLeaveGroup:((CHGroup *)self.groups[indexPath.row])._id callback:^(BOOL success, NSError *error) {
+       
+    }];
+    [self.groups removeObjectAtIndex:indexPath.row];
+    [tableView reloadData];
 }
-*/
 
-/*
-// Override to support rearranging the table view.
-- (void)tableView:(UITableView *)tableView moveRowAtIndexPath:(NSIndexPath *)fromIndexPath toIndexPath:(NSIndexPath *)toIndexPath
+- (NSString *)tableView:(UITableView *)tableView titleForDeleteConfirmationButtonForRowAtIndexPath:(NSIndexPath *)indexPath;
 {
+    return @"Leave";
 }
-*/
-
-/*
-// Override to support conditional rearranging of the table view.
-- (BOOL)tableView:(UITableView *)tableView canMoveRowAtIndexPath:(NSIndexPath *)indexPath
-{
-    // Return NO if you do not want the item to be re-orderable.
-    return YES;
-}
-*/
-
-/*
-#pragma mark - Navigation
-
-// In a storyboard-based application, you will often want to do a little preparation before navigation
-- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender
-{
-    // Get the new view controller using [segue destinationViewController].
-    // Pass the selected object to the new view controller.
-}
-*/
 
 @end

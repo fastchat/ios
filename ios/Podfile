@@ -5,6 +5,8 @@ inhibit_all_warnings!
 target "Chat" do
   pod 'socket.IO', '~> 0.5'
   pod 'AFNetworking', '~> 2.2'
+  pod 'HPGrowingTextView', '~> 1.1'
+  pod 'Mantle', '~> 1.4'
 end
 
 target "ChatTests" do
