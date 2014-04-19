@@ -41,6 +41,7 @@
         }];
     }
     else {
+        DLog(@"Setting the avatar found for user %@", currUser.username);
         [self.avatarImageView setImage:currUser.avatar];
     }
 }
@@ -59,21 +60,23 @@
 -(void) imagePickerController:(UIImagePickerController *)picker didFinishPickingMediaWithInfo:(NSDictionary *)info {
     UIImage *image = [info objectForKey:UIImagePickerControllerOriginalImage];
     
-    [self.avatarImageView setImage:image];
+    [[CHNetworkManager sharedManager] pushNewAvatarForUser:[[CHNetworkManager sharedManager] currentUser].userId avatarImage:image callback:^(bool successful, NSError *error) {
+        if( successful ) {
+            DLog(@"Successfully changed");
+            [self.avatarImageView setImage:image];
+        }
+        else {
+            DLog(@"Someething went wrong: %@", error);
+        }
+    }];
     [self dismissViewControllerAnimated:YES completion:^{}];
 }
 
 - (IBAction)cameraButtonTouched:(id)sender {
     UIImagePickerController *imagePicker = [[UIImagePickerController alloc] init];
-    
-    if([UIImagePickerController isSourceTypeAvailable:UIImagePickerControllerSourceTypeCamera]) {
-        [imagePicker setSourceType:UIImagePickerControllerSourceTypeCamera];
-    }
-    else {
-        [imagePicker setSourceType:UIImagePickerControllerSourceTypePhotoLibrary];
-    }
-    
+    [imagePicker setSourceType:UIImagePickerControllerSourceTypeSavedPhotosAlbum];
     [imagePicker setDelegate:self];
+    
     [self presentViewController:imagePicker animated:YES completion:^{}];
 }
 @end
