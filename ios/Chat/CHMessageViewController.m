@@ -322,6 +322,8 @@
     
     if( [self.members[currMessage.author] isEqualToString:self.members[currUser.userId]] ) {
         cell = [tableView dequeueReusableCellWithIdentifier:@"CHOwnMessageTableViewCell" forIndexPath:indexPath];
+        cell.avatarImageView.contentMode = UIViewContentModeScaleAspectFill;
+        
         // Setting to nil as workaround for iOS 7 bug showing links at wrong time
         cell.messageTextView.text = nil;
         [cell.messageTextView setScrollEnabled:NO];
@@ -353,6 +355,8 @@
     
     else {
         cell = [tableView dequeueReusableCellWithIdentifier:cHMessageTableViewCell forIndexPath:indexPath];
+        cell.avatarImageView.contentMode = UIViewContentModeScaleAspectFill;
+
         cell.authorLabel.text = [[NSString alloc] initWithFormat:@"by %@", [self.group usernameFromId:currMessage.author]];
         // Setting to nil as workaround for iOS 7 bug showing links at wrong time
         cell.messageTextView.text = nil;
@@ -368,16 +372,16 @@
         
         cell.messageTextView.attributedText = attrString;
        
-//        if ( [_group memberFromId:currMessage.author].avatar != nil) {
+        if ( [_group memberFromId:currMessage.author].avatar != nil) {
 //            DLog(@"%@ has an avatar: %@", [_group memberFromId:currMessage.author].username, [_group memberFromId:currMessage.author].avatar);
             [cell.avatarImageView setImage:[_group memberFromId:currMessage.author].avatar];
-/*        }
-        else {
+        }
+/*        else {
             [[CHNetworkManager sharedManager] getAvatarOfUser:[_group memberFromId:currMessage.author].userId callback:^(UIImage *avatar) {
                 [cell.avatarImageView setImage:avatar];
             }];
         }
-  */      
+  */
         if (currMessage.sent != nil) {
             // Format the timestamp
             cell.timestampLabel.text = [[self timestampFormatter] stringFromDate:currMessage.sent];
@@ -401,7 +405,7 @@
     CGSize renderedSize = [((CHMessage *)[self.messageArray objectAtIndex:indexPath.row]).text sizeWithFont: [UIFont systemFontOfSize:14.0f] constrainedToSize:CGSizeMake(205, CGFLOAT_MAX) lineBreakMode:NSLineBreakByWordWrapping];
 
     // Adding 45.0 to fix the bug where messages of certain lengths don't size the cell properly.
-    return renderedSize.height + 25.0f;
+    return renderedSize.height + 45.0f;
 
 }
 

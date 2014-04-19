@@ -195,7 +195,7 @@
 
 - (void)getAvatarOfUser: (NSString *)userId callback: (void (^)(UIImage *avatar))callback;
 {
-    
+    DLog(@"User id for avatar call: %@", userId);
     NSMutableURLRequest *request = [[NSMutableURLRequest alloc] initWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"%@/user/%@/avatar",BASE_URL, userId]]];
     [request setValue:self.sessiontoken forHTTPHeaderField:@"session-token"];
     

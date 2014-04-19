@@ -53,10 +53,52 @@
     }
     
     else {
-    
+        // Get the user profile to ensure we have a user
+        [[CHNetworkManager sharedManager] getProfile:^(CHUser *userProfile) {
+            [[CHNetworkManager sharedManager] getAvatarOfUser:[[CHNetworkManager sharedManager] currentUser].userId callback:^(UIImage *avatar) {
+                //
+                [[CHNetworkManager sharedManager] currentUser].avatar = avatar;
+            }];
+        }];
+
         [self loadGroupsAndRefresh];
+
         
     }
+    
+    [[CHNetworkManager sharedManager] getGroups:^(NSArray *groups) {
+        self.groups = [groups mutableCopy];
+        
+        // Get all member avatars
+        DLog(@"Groups: %@", self.groups);
+        for( CHGroup *group in self.groups ) {
+            DLog(@"IN A GROUP");
+            for( CHUser *user in group.members ) {
+                if( user ) {
+                    DLog(@"GROUP GROUP AVATARfor user %@", user);
+                }
+                if( user.avatar == nil ) {
+                    [[CHNetworkManager sharedManager] getAvatarOfUser:user.userId callback:^(UIImage *avatar) {
+                        DLog(@"Found avatar");
+                        ((CHUser *)group.memberDict[user.userId]).avatar = avatar;
+                    }];
+                }
+            }
+            
+            for( CHUser *user in group.pastMembers ) {
+                if( user.avatar == nil ) {
+                    [[CHNetworkManager sharedManager] getAvatarOfUser:user.userId callback:^(UIImage *avatar) {
+                        ((CHUser *)group.memberDict[user.userId]).avatar = avatar;
+                        DLog(@"Set %@'s avatar to %@", ((CHUser *)group.memberDict[user.userId]).username, ((CHUser *)group.memberDict[user.userId]).avatar);
+                    }];
+                }
+            }
+        }
+        [self loadGroupsAndRefresh];
+
+        
+        
+    }];
 
 
     UIBarButtonItem *addButton = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemCompose target:self action:@selector(showAddView)];
@@ -78,41 +120,12 @@
     [self.view addSubview:spinner];
     [spinner startAnimating];
     
-    [[CHNetworkManager sharedManager] getGroups:^(NSArray *groups) {
-        self.groups = [groups mutableCopy];
-
-        // Get all member avatars
-        DLog(@"Groups: %@", self.groups);
-        for( CHGroup *group in self.groups ) {
-            DLog(@"IN A GROUP");
-            for( CHUser *user in group.members ) {
-                DLog(@"GROUP GROUP AVATARfor user %@", user);
-                if( user.avatar == nil ) {
-                    [[CHNetworkManager sharedManager] getAvatarOfUser:user.userId callback:^(UIImage *avatar) {
-                        DLog(@"Found avatar");
-                        ((CHUser *)group.memberDict[user.userId]).avatar = avatar;
-                    }];
-                }
-            }
-            
-            for( CHUser *user in group.pastMembers ) {
-                if( user.avatar == nil ) {
-                    [[CHNetworkManager sharedManager] getAvatarOfUser:user.userId callback:^(UIImage *avatar) {
-                        ((CHUser *)group.memberDict[user.userId]).avatar = avatar;
-                        DLog(@"Set avatar to %@", ((CHUser *)group.memberDict[user.userId]).avatar);
-                    }];
-                }
-            }
-        }
-        
-        [self.tableView reloadData];
-        [spinner stopAnimating];
-        
-    }];
-    
+    [self.tableView reloadData];
+    [spinner stopAnimating];
+    /*
     [[CHNetworkManager sharedManager] getProfile:^(CHUser *userProfile) {
         
-    }];
+    }];*/
     
 
 }
