@@ -221,21 +221,50 @@
 - (void)pushNewAvatarForUser: (NSString *)userId avatarImage: (UIImage *)avatarImage callback: (void (^)(bool successful, NSError *error))callback;
 {
     NSData *imageData = UIImagePNGRepresentation(avatarImage);
-    AFHTTPRequestOperationManager *manager = [AFHTTPRequestOperationManager manager];
     NSDictionary *parameters = nil;
-//    NSURL * url = [NSURL fileURLWithPath:[imageData
-//                                          objectForKey:UIImagePickerControllerMediaURL]];
-//    NSURL *filePath = [NSURL fileURLWithPath:@"file://path/to/image.png"];
-    AFHTTPRequestOperation *request = [manager POST:[NSString stringWithFormat:@"%@/user/%@/avatar", BASE_URL, userId] parameters:parameters constructingBodyWithBlock:^(id<AFMultipartFormData> formData) {
-        [formData appendPartWithFormData:imageData name:@"avatar"];
-    } success:^(AFHTTPRequestOperation *operation, id responseObject) {
-        NSLog(@"Success: %@", responseObject);
-        callback(YES, nil);
-    } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
-        NSLog(@"Error: %@", error);
-        callback(NO, error);
-    }];
     
+    NSString *url = [NSString stringWithFormat:@"%@/user/%@/avatar", BASE_URL, userId];
+    NSError *error = nil;
+    
+    NSMutableURLRequest *request = [self.requestSerializer multipartFormRequestWithMethod:@"POST"
+                                                                                URLString:[[NSURL URLWithString:url relativeToURL:self.baseURL] absoluteString]
+                                                                               parameters:parameters
+                                                                constructingBodyWithBlock:^(id<AFMultipartFormData> formData) {
+                                                                    [formData appendPartWithFileData:imageData
+                                                                                                name:@"avatar"
+                                                                                            fileName:@"myavatar.png"
+                                                                                            mimeType:@"image/png"];
+                                                                } error:&error];
+    
+    DLog(@"Error? %@", error);
+    [request setValue:self.sessiontoken forHTTPHeaderField:@"session-token"];
+//    
+    AFHTTPRequestOperation *operation = [self HTTPRequestOperationWithRequest:request
+                                                                      success:^(AFHTTPRequestOperation *operation, id responseObject) {
+                                                                          NSLog(@"Success: %@", responseObject);
+                                                                          callback(YES, nil);
+                                                                      } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+                                                                          NSLog(@"Error: %@", error);
+                                                                          DLog(@"Response: %@", operation.responseString);
+                                                                          callback(NO, error);
+                                                                      }];
+    [self.operationQueue addOperation:operation];
+
+    
+    
+////    NSURL * url = [NSURL fileURLWithPath:[imageData
+////                                          objectForKey:UIImagePickerControllerMediaURL]];
+////    NSURL *filePath = [NSURL fileURLWithPath:@"file://path/to/image.png"];
+//    AFHTTPRequestOperation *request = [manager POST:[NSString stringWithFormat:@"%@/user/%@/avatar", BASE_URL, userId] parameters:parameters constructingBodyWithBlock:^(id<AFMultipartFormData> formData) {
+//        [formData appendPartWithFormData:imageData name:@"avatar"];
+//    } success:^(AFHTTPRequestOperation *operation, id responseObject) {
+//        NSLog(@"Success: %@", responseObject);
+//        callback(YES, nil);
+//    } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+//        NSLog(@"Error: %@", error);
+//        callback(NO, error);
+//    }];
+//    
 
     /*[self POST:[NSString stringWithFormat:@"/user/%@/avatar",userId] parameters:@{@"avatar" : imageData} success:^(NSURLSessionDataTask *task, id responseObject) {
         //
@@ -321,6 +350,22 @@
     
     return savedValue != nil;
 }
+
+- (AFHTTPRequestOperation *)HTTPRequestOperationWithRequest:(NSURLRequest *)request
+                                                    success:(void (^)(AFHTTPRequestOperation *operation, id responseObject))success
+                                                    failure:(void (^)(AFHTTPRequestOperation *operation, NSError *error))failure
+{
+    AFHTTPRequestOperation *operation = [[AFHTTPRequestOperation alloc] initWithRequest:request];
+    operation.responseSerializer = self.responseSerializer;
+    operation.shouldUseCredentialStorage = NO;
+    operation.securityPolicy = self.securityPolicy;
+    
+    [operation setCompletionBlockWithSuccess:success failure:failure];
+    
+    return operation;
+}
+                                         
+                                         
 
 
 @end
