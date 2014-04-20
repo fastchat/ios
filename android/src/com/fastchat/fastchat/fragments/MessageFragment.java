@@ -80,7 +80,11 @@ public class MessageFragment extends Fragment implements OnClickListener {
     }
     
     private boolean isMessagesUpToDate(){
-    	ArrayList<Message> mess = NetworkManager.getCurrentGroup().getMessages();
+    	Group currGroup = NetworkManager.getCurrentGroup();
+    	if(currGroup == null){
+    		return false;
+    	}
+    	ArrayList<Message> mess = currGroup.getMessages();
     	if(mess==null || mess.isEmpty()){
     		return false;
     	}
