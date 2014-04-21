@@ -11,40 +11,42 @@ public class FastChatTextWatcher implements TextWatcher{
    	 private static Long lastTyping=null;
    	 private static Thread typingThread;
    	 private static Group currGroup;
+   	 private static final long RESET_TIME = 2000L;
    	 
    	private static final String TAG=FastChatTextWatcher.class.getName();
    	
-   	public FastChatTextWatcher(Group g){
-   		this.currGroup=g;
+   	public FastChatTextWatcher(){
    	}
    	 
         @Override
         public void onTextChanged(CharSequence s, int start, int before, int count) {
         	if(lastTyping==null){
+        		lastTyping = System.currentTimeMillis();
+        		currGroup = NetworkManager.getCurrentGroup();
         		SocketIoController.sendStartTyping();
         		typingThread = new Thread(new Runnable(){
         			public void run(){
         				while(true){
-        					if(FastChatTextWatcher.getLastTyping()==null){
-        						lastTyping=System.currentTimeMillis();
-        					}
         					Long timeDifference = System.currentTimeMillis()-FastChatTextWatcher.getLastTyping();
-        					if(timeDifference>2000){//If the user has stopped typing for 2 seconds. Send stop typing.
+        					if(timeDifference>=RESET_TIME){//If the user has stopped typing for 1 seconds. Send stop typing.
         						SocketIoController.sendStopTyping(currGroup);
         						break;
         					}
         					try {
-								Thread.sleep(150);
+								Thread.sleep(RESET_TIME-timeDifference+5);
 							} catch (InterruptedException e) {
 								// TODO Auto-generated catch block
+								SocketIoController.sendStopTyping(currGroup);
 								e.printStackTrace();
-							}//Sleep for 250 ms
+								break;
+							}
         				}
         			}
         		});
         		typingThread.start();
-        	}
+        	}else{
            	 lastTyping=System.currentTimeMillis();
+        	}
         }
 
         @Override

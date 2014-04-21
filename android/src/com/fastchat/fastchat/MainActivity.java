@@ -205,14 +205,14 @@ public class MainActivity extends ActionBarActivity {
 		GoogleAnalytics.getInstance(this).reportActivityStop(this);
 		SocketIoController.disconnect();
 		GroupsFragment.setUnliveData();
-		if(NetworkManager.getCurrentGroup()!=null){
+		/*if(NetworkManager.getCurrentGroup()!=null){
 			NetworkManager.getCurrentGroup().getMessages().clear();
 		}
 		HashMap<String,Group> groups = NetworkManager.getAllGroups();
 		for(Group g : groups.values()){
 			g.getMessages().clear();
 		}
-		groups.clear();
+		groups.clear();*/
 		super.onStop();
 	}
 	

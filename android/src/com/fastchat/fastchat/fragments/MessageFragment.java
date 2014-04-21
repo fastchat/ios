@@ -89,7 +89,8 @@ public class MessageFragment extends Fragment implements OnClickListener {
     		return false;
     	}
     	Message latestWeHave = mess.get(mess.size()-1);
-    	Message latestFromGroup = NetworkManager.getCurrentGroup().getLastMessage();
+    	
+    	Message latestFromGroup = currGroup.getLastMessage();
     	User currUser = NetworkManager.getCurrentUser();
     	if((latestWeHave.getId()==null || latestWeHave.getId().isEmpty()) && latestFromGroup.getFrom()==currUser){
     		return true;
@@ -124,7 +125,7 @@ public class MessageFragment extends Fragment implements OnClickListener {
 			 }
 		 });
 	     EditText messageBox = (EditText) rootView.findViewById(R.id.my_message);
-	     messageBox.addTextChangedListener(new FastChatTextWatcher(NetworkManager.getCurrentGroup()));
+	     messageBox.addTextChangedListener(new FastChatTextWatcher());
 	     registerForContextMenu(lv);
 		return rootView;
 	}
@@ -194,7 +195,7 @@ public class MessageFragment extends Fragment implements OnClickListener {
 			public void run() {
 				TextView tv = (TextView) rootView.findViewById(R.id.typing_box);
 				tv.setText("");
-				tv.setVisibility(View.INVISIBLE);
+				tv.setVisibility(View.GONE);
 			}
 			
 		});

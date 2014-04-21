@@ -132,15 +132,15 @@ public class SocketIoController {
 			        		String userId = typingObject.getString("from");
 			        		boolean isTyping = typingObject.getBoolean("typing");
 			        		String groupId = typingObject.getString("group");
-			        		Group group = NetworkManager.getCurrentGroup();
-			        		if(group==null || !groupId.equals(NetworkManager.getCurrentGroup().getId())){
+			        		Group currGroup = NetworkManager.getCurrentGroup();
+			        		if(currGroup==null || !groupId.equals(currGroup.getId())){
 			        			return;
 			        		}
 			        		if(isTyping){
 			        			MessageFragment.showTyping(NetworkManager.getUsernameFromId(userId));
 			        		}
 			        		else{
-			        			MessageFragment.showTyping(NetworkManager.getUsernameFromId(userId));
+			        			MessageFragment.hideTyping(NetworkManager.getUsernameFromId(userId));
 			        		}
 						} catch (JSONException e) {
 							e.printStackTrace();
