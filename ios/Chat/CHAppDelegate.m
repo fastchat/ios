@@ -10,6 +10,7 @@
 #import "CHNetworkManager.h"
 #import "CHSocketManager.h"
 #import "CHUser.h"
+#import "TSMessage.h"
 
 @implementation CHAppDelegate
 
@@ -63,6 +64,7 @@ void uncaughtExceptionHandler(NSException *exception) {
 {
     // Restart any tasks that were paused (or not yet started) while the application was inactive. If the application was previously in the background, optionally refresh the user interface.
     //[[NSNotificationCenter defaultCenter] postNotificationName:@"ReloadAppDelegateTable" object:nil];
+    [[CHSocketManager sharedManager] openSocket];
     if ( [[CHNetworkManager sharedManager] sessiontoken] != nil ) {
         if ( [[CHNetworkManager sharedManager] currentUser] == nil ) {
             [[CHNetworkManager sharedManager] getProfile:^(CHUser *userProfile) {
@@ -94,6 +96,11 @@ void uncaughtExceptionHandler(NSException *exception) {
     
     
 }
+
+- (void)application:(UIApplication *)application didReceiveLocalNotification:(UILocalNotification *)notification {
+    DLog(@"Received a lcoal notification! %@", notification);
+}
+
 
 - (void)application:(UIApplication*)application didFailToRegisterForRemoteNotificationsWithError:(NSError*)error
 {

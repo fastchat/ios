@@ -37,11 +37,11 @@
     
    self.avatarImageView.contentMode = UIViewContentModeScaleAspectFill;
     
-    if( !currUser.avatar ) {
+    /*if( !currUser.avatar ) {
         [[CHNetworkManager sharedManager] getAvatarOfUser:currUser.userId callback:^(UIImage *avatar) {
             [self.avatarImageView setImage:avatar];
         }];
-    }
+    }*/
     /*else {
         DLog(@"Setting the avatar found for user %@", currUser.username);
         [self.avatarImageView setImage:currUser.avatar];
@@ -56,7 +56,7 @@
     
     if( currUser.avatar == nil ) {
         [[CHNetworkManager sharedManager] getAvatarOfUser:currUser.userId callback:^(UIImage *avatar) {
-            DLog(@"Called avatar of %@ and got %@", currUser.username, avatar);
+            DLog(@"Called avatar of %@ (id: %@) and got %@", currUser.username, currUser.userId, avatar);
             if( avatar == nil ) {
                 [self.avatarImageView setImage:[UIImage imageWithContentsOfFile:@"profile-dark.png"]];
             }
@@ -66,7 +66,7 @@
         }];
     }
     else {
-        DLog(@"For user %@ we found avatar %@", currUser.username, currUser.avatar);
+        DLog(@"For user %@ (id: %@) we found avatar %@", currUser.username, currUser.userId, currUser.avatar);
         [self.avatarImageView setImage:currUser.avatar];
     }
 }

@@ -57,6 +57,7 @@
         [[CHNetworkManager sharedManager] getProfile:^(CHUser *userProfile) {
             [[CHNetworkManager sharedManager] getAvatarOfUser:[[CHNetworkManager sharedManager] currentUser].userId callback:^(UIImage *avatar) {
                 //
+                DLog(@"User %@ (id: %@) has avatar %@", [[CHNetworkManager sharedManager] currentUser].username, [[CHNetworkManager sharedManager] currentUser].userId, avatar );
                 [[CHNetworkManager sharedManager] currentUser].avatar = avatar;
             }];
         }];

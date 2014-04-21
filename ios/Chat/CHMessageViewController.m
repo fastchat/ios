@@ -38,6 +38,9 @@
 {
     [super viewDidLoad];
     // Do any additional setup after loading the view.
+    
+
+    
     self.title = [_group getGroupName];
     self.messageEntryField.hidden = YES;
     
@@ -158,6 +161,19 @@
 }
 
 -(void)viewWillAppear:(BOOL)animated {
+    
+    if (self.group == nil) {
+        DLog(@"Using group id %@", self.groupId);
+        [[CHNetworkManager sharedManager] getGroups:^(NSArray *groups) {
+            for (CHGroup *group in groups) {
+                DLog(@"Comparing %@ to %@", group._id, self.groupId);
+                if( [group._id isEqualToString:self.groupId] ) {
+                    DLog(@"Found a matching group!");
+                    self.group = group;
+                }
+            }
+        }];
+    }
     // Get all member avatars
     NSArray *members = _group.members;
     for( CHUser *user in members ) {

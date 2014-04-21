@@ -18,6 +18,7 @@ PODS:
   - AFNetworking/UIKit (2.2.1):
     - AFNetworking/NSURLConnection
     - AFNetworking/NSURLSession
+  - HexColors (2.2.1)
   - HPGrowingTextView (1.1)
   - Mantle (1.4.1):
     - Mantle/extobjc
@@ -25,18 +26,23 @@ PODS:
   - socket.IO (0.5):
     - SocketRocket (~> 0.2)
   - SocketRocket (0.3.1-beta2)
+  - TSMessages (0.9.7):
+    - HexColors
 
 DEPENDENCIES:
   - AFNetworking (~> 2.2)
   - HPGrowingTextView (~> 1.1)
   - Mantle (~> 1.4)
   - socket.IO (~> 0.5)
+  - TSMessages (~> 0.9)
 
 SPEC CHECKSUMS:
   AFNetworking: 0121f4b69be3fa58d1ab317866e036e12ac9651d
+  HexColors: 99211502e17904af7891fc8f687d0e4958a6d66e
   HPGrowingTextView: 4318f557b33c19def1c53ec275d6e2a2d6589cd0
   Mantle: 0714cdb2b8559d9e6c2410d6a8529e3307bff189
   socket.IO: 627782f3c7713a27dcf55679b5d4839f50428fe6
   SocketRocket: 7ac946bcce46287a791dfff3c1f8daa692821dae
+  TSMessages: 9dd053bcf1a8985275177ebe0fb8c0f1416e92f7
 
-COCOAPODS: 0.31.1
+COCOAPODS: 0.32.1
