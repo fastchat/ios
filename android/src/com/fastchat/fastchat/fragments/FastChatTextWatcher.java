@@ -35,7 +35,6 @@ public class FastChatTextWatcher implements TextWatcher{
         					try {
 								Thread.sleep(RESET_TIME-timeDifference+5);
 							} catch (InterruptedException e) {
-								// TODO Auto-generated catch block
 								SocketIoController.sendStopTyping(currGroup);
 								e.printStackTrace();
 								break;

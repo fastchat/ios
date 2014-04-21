@@ -80,23 +80,27 @@ public class MessageFragment extends Fragment implements OnClickListener {
     }
     
     private boolean isMessagesUpToDate(){
-    	Group currGroup = NetworkManager.getCurrentGroup();
-    	if(currGroup == null){
+    	try{
+    		Group currGroup = NetworkManager.getCurrentGroup();
+	    	if(currGroup == null){
+	    		return false;
+	    	}
+	    	ArrayList<Message> mess = currGroup.getMessages();
+	    	if(mess==null || mess.isEmpty()){
+	    		return false;
+	    	}
+	    	Message latestWeHave = mess.get(mess.size()-1);
+	    	
+	    	Message latestFromGroup = currGroup.getLastMessage();
+	    	User currUser = NetworkManager.getCurrentUser();
+	    	if((latestWeHave.getId()==null || latestWeHave.getId().isEmpty()) && latestFromGroup.getFrom()==currUser){
+	    		return true;
+	    	}
+	    	else if(latestWeHave.getId().equals(latestFromGroup.getId())){ //TODO: FIX null pointer exception
+	    		return true;
+	    	}
+    	}catch(NullPointerException e){
     		return false;
-    	}
-    	ArrayList<Message> mess = currGroup.getMessages();
-    	if(mess==null || mess.isEmpty()){
-    		return false;
-    	}
-    	Message latestWeHave = mess.get(mess.size()-1);
-    	
-    	Message latestFromGroup = currGroup.getLastMessage();
-    	User currUser = NetworkManager.getCurrentUser();
-    	if((latestWeHave.getId()==null || latestWeHave.getId().isEmpty()) && latestFromGroup.getFrom()==currUser){
-    		return true;
-    	}
-    	else if(latestWeHave.getId().equals(latestFromGroup.getId())){
-    		return true;
     	}
     	return false;
     }

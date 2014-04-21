@@ -1,18 +1,13 @@
 package com.fastchat.fastchat.fragments;
 
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 
-import com.fastchat.fastchat.MainActivity;
 import com.fastchat.fastchat.R;
 import com.fastchat.fastchat.models.Message;
 import com.fastchat.fastchat.models.MultiMedia;
-import com.fastchat.fastchat.networking.NetworkManager;
 
 import android.content.Context;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.text.Spannable;
@@ -24,7 +19,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
-import android.widget.ImageView.ScaleType;
 import android.widget.LinearLayout;
 import android.widget.LinearLayout.LayoutParams;
 import android.widget.BaseAdapter;
