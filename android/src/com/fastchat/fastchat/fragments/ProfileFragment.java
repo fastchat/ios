@@ -217,12 +217,13 @@ public class ProfileFragment extends Fragment implements OnClickListener {
 		final Paint paint = new Paint();
 		final Rect rect = new Rect(0, 0, bitmap.getWidth(), bitmap.getHeight());
 		final RectF rectF = new RectF(rect);
-		final float roundPx = bitmap.getWidth();
+		final float roundPxWidth = bitmap.getWidth();
+		final float roundPxHeight = bitmap.getHeight();
 
 		paint.setAntiAlias(true);
 		canvas.drawARGB(0, 0, 0, 0);
 		paint.setColor(color);
-		canvas.drawRoundRect(rectF, roundPx, roundPx, paint);
+		canvas.drawRoundRect(rectF, roundPxWidth, roundPxHeight, paint);
 
 		paint.setXfermode(new PorterDuffXfermode(android.graphics.PorterDuff.Mode.SRC_IN));
 		canvas.drawBitmap(bitmap, rect, rect, paint);
