@@ -19,6 +19,8 @@ public class Group {
 	private Message lastMessage;
 	private int unreadMessages=0;
 	
+	private ArrayList<User> typingUsers=new ArrayList<User>();
+	
 	private static final String TAG=Group.class.getName();
 	
 	public Group(JSONObject groupObject){
@@ -90,5 +92,17 @@ public class Group {
 	
 	public void resetUnreadCount(){
 		this.unreadMessages=0;
+	}
+	
+	public void addTypingUser(User u){
+		this.typingUsers.add(u);
+	}
+	
+	public void removeTypingUser(User u){
+		this.typingUsers.remove(u);
+	}
+
+	public ArrayList<User> getTypingUsers() {
+		return this.typingUsers;
 	}
 }

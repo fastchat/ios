@@ -133,14 +133,16 @@ public class SocketIoController {
 			        		boolean isTyping = typingObject.getBoolean("typing");
 			        		String groupId = typingObject.getString("group");
 			        		Group currGroup = NetworkManager.getCurrentGroup();
-			        		if(currGroup==null || !groupId.equals(currGroup.getId())){
-			        			return;
-			        		}
+			        		Group isTypingGroup = NetworkManager.getAllGroups().get(groupId);
 			        		if(isTyping){
-			        			MessageFragment.showTyping(NetworkManager.getUsernameFromId(userId));
+			        			
+			        			isTypingGroup.addTypingUser(NetworkManager.getUsernameFromId(userId));
 			        		}
 			        		else{
-			        			MessageFragment.hideTyping(NetworkManager.getUsernameFromId(userId));
+			        			isTypingGroup.removeTypingUser(NetworkManager.getUsernameFromId(userId));
+			        		}
+			        		if(currGroup!=null && groupId.equals(currGroup.getId())){
+			        			MessageFragment.typingUpdated();
 			        		}
 						} catch (JSONException e) {
 							e.printStackTrace();

@@ -138,6 +138,7 @@ public class MessageFragment extends Fragment implements OnClickListener {
         // Send a screen view.
         t.send(new HitBuilders.AppViewBuilder().build());
         super.onStart();
+        typingUpdated();
 	}
 	
 	public static void updateUI(){
@@ -151,12 +152,13 @@ public class MessageFragment extends Fragment implements OnClickListener {
 				lv.setSelection(adapter.getCount() - 1);
 			}
 		});
+		typingUpdated();
 	}
 	
 	public static void addMessage(final Message message){
 		MainActivity.activity.runOnUiThread(new Runnable(){
 			public void run(){
-				NetworkManager.getCurrentGroup().getMessages().add(message);
+				NetworkManager.getAllGroups().get(message.getGroupId()).getMessages().add(message);
 				updateUI();
 			}
 		});
@@ -166,20 +168,33 @@ public class MessageFragment extends Fragment implements OnClickListener {
 	public static void removeMessage(final Message m){
 		MainActivity.activity.runOnUiThread(new Runnable(){
 			public void run(){
-				NetworkManager.getCurrentGroup().getMessages().remove(m);
+				NetworkManager.getAllGroups().get(m.getGroupId()).getMessages().remove(m);
 				updateUI();
 			}
 		});
 	}
 	
-	public static void showTyping(final User u){
+	public static void showTyping(){
 		MainActivity.activity.runOnUiThread(new Runnable(){
 			@Override
 			public void run() {
 				TextView tv = (TextView) rootView.findViewById(R.id.typing_box);
 				tv.setVisibility(View.VISIBLE);
+				String text = "";
+				Group currGroup = NetworkManager.getCurrentGroup();
+				if(currGroup==null){
+					return;
+				}
+				
+				for(User user : currGroup.getTypingUsers()){
+					if(text.isEmpty()){
+						text+=user.getUsername();
+					}else{
+						text+=", "+user.getUsername();
+					}
+				}
 				try{
-					tv.setText(u.getUsername()+" is typing...");
+					tv.setText(text+" is typing...");
 				}catch(NullPointerException e){
 					e.printStackTrace();
 				}
@@ -189,13 +204,36 @@ public class MessageFragment extends Fragment implements OnClickListener {
 		
 	}
 	
-	public static void hideTyping(final User u){
+	public static void typingUpdated(){
 		MainActivity.activity.runOnUiThread(new Runnable(){
 			@Override
 			public void run() {
 				TextView tv = (TextView) rootView.findViewById(R.id.typing_box);
-				tv.setText("");
-				tv.setVisibility(View.GONE);
+				Group currGroup = NetworkManager.getCurrentGroup();
+				if(currGroup==null){
+					return;
+				}
+				if(currGroup.getTypingUsers().isEmpty()){
+					tv.setText("");
+					tv.setVisibility(View.GONE);
+				}else{
+					tv.setVisibility(View.VISIBLE);
+					String text = "";
+
+					
+					for(User user : currGroup.getTypingUsers()){
+						if(text.isEmpty()){
+							text+=user.getUsername();
+						}else{
+							text+=", "+user.getUsername();
+						}
+					}
+					try{
+						tv.setText(text+" is typing...");
+					}catch(NullPointerException e){
+						e.printStackTrace();
+					}
+				}
 			}
 			
 		});
