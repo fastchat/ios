@@ -31,9 +31,6 @@
     
     UIBarButtonItem *cancelButton = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemCancel target:self action:@selector(cancelWasTouched)];
     self.navigationItem.leftBarButtonItem = cancelButton;
-
-
-    
 }
 
 - (void)cancelWasTouched;

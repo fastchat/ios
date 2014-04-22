@@ -39,7 +39,7 @@
     // Uncomment the following line to display an Edit button in the navigation bar for this view controller.
     // self.navigationItem.rightBarButtonItem = self.editButtonItem;
     
-    self.menuLabels = @[@"Profile", @"Invitations", @"Sign Out"];
+    self.menuLabels = @[@"Profile", @"Sign Out"];
 }
 
 #pragma mark - Table view data source
@@ -53,7 +53,7 @@
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
     // Return the number of rows in the section.
-    return 3;
+    return self.menuLabels.count;
 }
 
 
@@ -72,14 +72,9 @@
         CHProfileViewController *controller = [self.storyboard instantiateViewControllerWithIdentifier:@"CHProfileViewController"];
         [self.navigationController pushViewController:controller animated:YES];
     }
-    if( indexPath.row == 1 ) {
-        DLog(@"Navigate to invitations screen.");
-        CHInvitationsTableViewController *controller = [self.storyboard instantiateViewControllerWithIdentifier:@"CHInvitationsTableViewController"];
-        [self.navigationController pushViewController:controller animated:YES];
-    }
     
     // Logout
-    else if( indexPath.row == 2 ) {
+    else if( indexPath.row == 1 ) {
         [[CHNetworkManager sharedManager] logoutWithCallback:^(bool successful, NSError *error) {
             //[self.navigationController popViewControllerAnimated:YES];
             [[CHSocketManager sharedManager] closeSocket];
