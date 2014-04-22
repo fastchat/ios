@@ -29,6 +29,7 @@
 @property float heightOfKeyboard;
 @property int currPage;
 @property UIRefreshControl *refresh;
+@property BOOL shouldSlide;
 
 @end
 
@@ -38,6 +39,9 @@
 {
     [super viewDidLoad];
     // Do any additional setup after loading the view.
+    
+
+    self.shouldSlide = YES;
     self.title = [_group getGroupName];
     self.messageEntryField.hidden = YES;
     
@@ -158,6 +162,19 @@
 }
 
 -(void)viewWillAppear:(BOOL)animated {
+    
+    if (self.group == nil) {
+        DLog(@"Using group id %@", self.groupId);
+        [[CHNetworkManager sharedManager] getGroups:^(NSArray *groups) {
+            for (CHGroup *group in groups) {
+                DLog(@"Comparing %@ to %@", group._id, self.groupId);
+                if( [group._id isEqualToString:self.groupId] ) {
+                    DLog(@"Found a matching group!");
+                    self.group = group;
+                }
+            }
+        }];
+    }
     // Get all member avatars
     NSArray *members = _group.members;
     for( CHUser *user in members ) {
@@ -237,74 +254,82 @@
     [self.messageTable scrollToRowAtIndexPath:[NSIndexPath indexPathForRow:_messageArray.count - 1 inSection:0] atScrollPosition:UITableViewScrollPositionBottom animated:YES];
     
     self.textView.text = @"";
+    self.shouldSlide = NO;
+    [self.textView setKeyboardType:UIKeyboardTypeAlphabet];
+    [self.textView resignFirstResponder];
+    [self.textView becomeFirstResponder];
+//    [self.textView reloadInputViews];
 
 }
 
 - (void) keyboardWillShow: (NSNotification*) notification
 {
-    NSDictionary* keyboardInfo = [notification userInfo];
-    NSValue* keyboardFrameEnded = [keyboardInfo valueForKey:UIKeyboardFrameBeginUserInfoKey];
-    CGRect keyboardFrameEndedRect = [keyboardFrameEnded CGRectValue];
+    if( self.shouldSlide ) {
+        NSDictionary* keyboardInfo = [notification userInfo];
+        NSValue* keyboardFrameEnded = [keyboardInfo valueForKey:UIKeyboardFrameBeginUserInfoKey];
+        CGRect keyboardFrameEndedRect = [keyboardFrameEnded CGRectValue];
     
-    NSInteger keyboardHeight = keyboardFrameEndedRect.size.height;
+        NSInteger keyboardHeight = keyboardFrameEndedRect.size.height;
     
-    // Need to access keyboard height in textViewDidGrow. Using global for now, should refactor
-    self.heightOfKeyboard = keyboardHeight;
+        // Need to access keyboard height in textViewDidGrow. Using global for now, should refactor
+        self.heightOfKeyboard = keyboardHeight;
     
     
-    // get keyboard size and loctaion
-	CGRect keyboardBounds;
-    [[notification.userInfo valueForKey:UIKeyboardFrameEndUserInfoKey] getValue: &keyboardBounds];
+        // get keyboard size and loctaion
+        CGRect keyboardBounds;
+        [[notification.userInfo valueForKey:UIKeyboardFrameEndUserInfoKey] getValue: &keyboardBounds];
   
-    // Need to translate the bounds to account for rotation.
-    keyboardBounds = [self.view convertRect:keyboardBounds toView:nil];
+        // Need to translate the bounds to account for rotation.
+        keyboardBounds = [self.view convertRect:keyboardBounds toView:nil];
 
     
     
-    NSTimeInterval animationDuration = [[notification.userInfo objectForKey:UIKeyboardAnimationDurationUserInfoKey] floatValue];
-    UIViewAnimationCurve animationCurve = [[notification.userInfo objectForKey:UIKeyboardAnimationCurveUserInfoKey] intValue];
+        NSTimeInterval animationDuration = [[notification.userInfo objectForKey:UIKeyboardAnimationDurationUserInfoKey] floatValue];
+        UIViewAnimationCurve animationCurve = [[notification.userInfo objectForKey:UIKeyboardAnimationCurveUserInfoKey] intValue];
     
-    [UIView setAnimationCurve:animationCurve];
+        [UIView setAnimationCurve:animationCurve];
     
-    [UIView animateWithDuration:animationDuration animations:^{
-        CGRect containerFrame = self.containerView.frame;
-        self.messageTable.contentInset = UIEdgeInsetsMake(kDefaultContentOffset, 0, keyboardHeight+containerFrame.size.height, 0);
-        self.messageTable.scrollIndicatorInsets = UIEdgeInsetsZero;
+        [UIView animateWithDuration:animationDuration animations:^{
+            CGRect containerFrame = self.containerView.frame;
+            self.messageTable.contentInset = UIEdgeInsetsMake(kDefaultContentOffset, 0, keyboardHeight+containerFrame.size.height, 0);
+            self.messageTable.scrollIndicatorInsets = UIEdgeInsetsZero;
         
-            [self.messageTable scrollToRowAtIndexPath:[NSIndexPath indexPathForRow:_messageArray.count - 1 inSection:0] atScrollPosition:UITableViewScrollPositionBottom animated:YES];
+                [self.messageTable scrollToRowAtIndexPath:[NSIndexPath indexPathForRow:_messageArray.count - 1 inSection:0] atScrollPosition:UITableViewScrollPositionBottom animated:YES];
         
         
-        containerFrame.origin.y = self.view.bounds.size.height - (keyboardBounds.size.height + containerFrame.size.height);
+            containerFrame.origin.y = self.view.bounds.size.height - (keyboardBounds.size.height + containerFrame.size.height);
         
-        // set views with new info
-        self.containerView.frame = containerFrame;
+            // set views with new info
+            self.containerView.frame = containerFrame;
         
-    }];
+        }];
+    }
 
 }
 
 - (void) keyboardWillHide: (NSNotification*) notification
 {
+    if (self.shouldSlide) {
+        NSTimeInterval animationDuration = [[notification.userInfo objectForKey:UIKeyboardAnimationDurationUserInfoKey] floatValue];
+        UIViewAnimationCurve animationCurve = [[notification.userInfo objectForKey:UIKeyboardAnimationCurveUserInfoKey] intValue];
     
-    NSTimeInterval animationDuration = [[notification.userInfo objectForKey:UIKeyboardAnimationDurationUserInfoKey] floatValue];
-    UIViewAnimationCurve animationCurve = [[notification.userInfo objectForKey:UIKeyboardAnimationCurveUserInfoKey] intValue];
+        [UIView setAnimationCurve:animationCurve];
     
-    [UIView setAnimationCurve:animationCurve];
-    
-    [UIView animateWithDuration:animationDuration animations:^{
-        CGRect containerFrame = self.containerView.frame;
-        self.messageTable.contentInset = UIEdgeInsetsMake(kDefaultContentOffset, 0, containerFrame.size.height, 0);
-        self.messageTable.scrollIndicatorInsets = UIEdgeInsetsZero;
+        [UIView animateWithDuration:animationDuration animations:^{
+            CGRect containerFrame = self.containerView.frame;
+            self.messageTable.contentInset = UIEdgeInsetsMake(kDefaultContentOffset, 0, containerFrame.size.height, 0);
+            self.messageTable.scrollIndicatorInsets = UIEdgeInsetsZero;
         
         
-        containerFrame.origin.y = self.view.bounds.size.height - containerFrame.size.height;
+            containerFrame.origin.y = self.view.bounds.size.height - containerFrame.size.height;
         
-        // set views with new info
-        self.containerView.frame = containerFrame;
+            // set views with new info
+            self.containerView.frame = containerFrame;
 
-    }];
+        }];
     
-    [self.messageTable scrollToRowAtIndexPath:[NSIndexPath indexPathForRow:_messageArray.count - 1 inSection:0] atScrollPosition:UITableViewScrollPositionBottom animated:YES];
+        [self.messageTable scrollToRowAtIndexPath:[NSIndexPath indexPathForRow:_messageArray.count - 1 inSection:0] atScrollPosition:UITableViewScrollPositionBottom animated:YES];
+    }
 }
 
 #pragma mark - TableView DataSource Implementation
@@ -397,6 +422,7 @@
 -(void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath;
 {
     DLog(@"Selected a row");
+    self.shouldSlide = YES;
     [self resignTextView];
 }
 

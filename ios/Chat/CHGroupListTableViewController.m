@@ -57,6 +57,7 @@
         [[CHNetworkManager sharedManager] getProfile:^(CHUser *userProfile) {
             [[CHNetworkManager sharedManager] getAvatarOfUser:[[CHNetworkManager sharedManager] currentUser].userId callback:^(UIImage *avatar) {
                 //
+                DLog(@"User %@ (id: %@) has avatar %@", [[CHNetworkManager sharedManager] currentUser].username, [[CHNetworkManager sharedManager] currentUser].userId, avatar );
                 [[CHNetworkManager sharedManager] currentUser].avatar = avatar;
             }];
         }];
@@ -65,6 +66,27 @@
 
         
     }
+    
+    [[CHNetworkManager sharedManager] getProfile:^(CHUser *userProfile) {
+        
+    }];
+    
+    
+    UIBarButtonItem *addButton = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemCompose target:self action:@selector(showAddView)];
+    self.navigationItem.rightBarButtonItem = addButton;
+    
+    UIBarButtonItem *menuButton = [[UIBarButtonItem alloc] initWithTitle:@"Menu" style:UIBarButtonItemStylePlain target:self action:@selector(displaySideMenu)];
+    
+    self.navigationItem.leftBarButtonItem = menuButton;
+}
+
+-(void) viewWillAppear:(BOOL)animated
+{
+    [super viewWillAppear:animated];
+    //set initial values here
+        
+    [[UIApplication sharedApplication] registerForRemoteNotificationTypes:
+     (UIRemoteNotificationTypeBadge | UIRemoteNotificationTypeSound | UIRemoteNotificationTypeAlert)];
     
     [[CHNetworkManager sharedManager] getGroups:^(NSArray *groups) {
         self.groups = [groups mutableCopy];
@@ -95,19 +117,8 @@
             }
         }
         [self loadGroupsAndRefresh];
-
-        
         
     }];
-
-
-    UIBarButtonItem *addButton = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemCompose target:self action:@selector(showAddView)];
-    self.navigationItem.rightBarButtonItem = addButton;
-    
-    UIBarButtonItem *menuButton = [[UIBarButtonItem alloc] initWithTitle:@"Menu" style:UIBarButtonItemStylePlain target:self action:@selector(displaySideMenu)];
-    
-    self.navigationItem.leftBarButtonItem = menuButton;
-    
     
 }
 
@@ -127,16 +138,6 @@
         
     }];*/
     
-
-}
-
--(void) viewWillAppear:(BOOL)animated
-{
-    [super viewWillAppear:animated];
-    //set initial values here
-        
-    [[UIApplication sharedApplication] registerForRemoteNotificationTypes:
-     (UIRemoteNotificationTypeBadge | UIRemoteNotificationTypeSound | UIRemoteNotificationTypeAlert)];
 
 }
 
@@ -170,8 +171,15 @@
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
     UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"CHGroupTableViewCell" forIndexPath:indexPath];
-
-    cell.textLabel.text = [self.groups[indexPath.row] getGroupName];
+    NSMutableString *cellText = [[self.groups[indexPath.row] getGroupName] mutableCopy];
+    
+    if( [[self.groups[indexPath.row] unread] intValue] > 0 ) {
+        cell.detailTextLabel.text = [NSString stringWithFormat:@"%@", [self.groups[indexPath.row] unread]];
+    }
+    else {
+        cell.detailTextLabel.text = @"";
+    }
+    cell.textLabel.text = cellText;
     
     
     
@@ -184,7 +192,11 @@
     
     CHMessageViewController *vc = [self.storyboard instantiateViewControllerWithIdentifier:@"CHMessageViewController"];
     [vc setGroup:_groups[indexPath.row]];
+    [self.groups[indexPath.row] setUnread:[NSNumber numberWithInt:0]];
+
     [self.navigationController pushViewController:vc animated:YES];
+    
+    [self.tableView reloadData];
 }
 
 - (BOOL)tableView:(UITableView *)tableView canEditRowAtIndexPath:(NSIndexPath *)indexPath {
