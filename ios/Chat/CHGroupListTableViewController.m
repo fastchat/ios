@@ -77,9 +77,6 @@
     UIBarButtonItem *menuButton = [[UIBarButtonItem alloc] initWithTitle:@"Menu" style:UIBarButtonItemStylePlain target:self action:@selector(displaySideMenu)];
     
     self.navigationItem.leftBarButtonItem = menuButton;
-    
-    
-
 }
 
 -(void) viewWillAppear:(BOOL)animated
