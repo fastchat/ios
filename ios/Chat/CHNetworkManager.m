@@ -11,6 +11,7 @@
 #import "CHGroup.h"
 #import "CHMessage.h"
 #import "AFNetworking.h"
+#import "CHGroupsCollectionAccessor.h"
 
 //#define BASE_URL @"http://10.0.0.10:3000"
 #define BASE_URL @"http://powerful-cliffs-9562.herokuapp.com:80"
@@ -105,7 +106,9 @@
     [self GET:[NSString stringWithFormat:@"/group"] parameters:nil success:^(NSURLSessionDataTask *task, id responseObject) {
         if( callback ) {
             NSArray *groups = [CHGroup objectsFromJSON:responseObject];
-            DLog("Group array: %@", groups);
+
+            [[CHGroupsCollectionAccessor sharedAccessor] addGroupsWithArray:groups];
+            
             callback(groups);
         }
     } failure:^(NSURLSessionDataTask *task, NSError *error) {
