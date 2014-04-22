@@ -14,6 +14,7 @@
 #import "CHGroupListTableViewController.h"
 #import "CHMessageViewController.h"
 #import "CHAppDelegate.h"
+#import "CHGroupsCollectionAccessor.h"
 
 @class SocketIO;
 
@@ -97,7 +98,9 @@
                                                      DLog(@"CALLBACK");
                                                      UIStoryboard *storyboard = [UIStoryboard storyboardWithName:@"Main_iPhone" bundle:nil];
                                                      CHMessageViewController *vc = [storyboard instantiateViewControllerWithIdentifier:@"CHMessageViewController"];
+                                                     [vc setGroup:[[CHGroupsCollectionAccessor sharedAccessor] getGroupWithId:message.group]];
                                                      [vc setGroupId:message.group];
+                                                     [((UINavigationController*)root) popViewControllerAnimated:NO];
                                                      [((UINavigationController*)root) pushViewController:vc animated:YES];
                                                      DLog(@"hmmmm");
                                                  }
