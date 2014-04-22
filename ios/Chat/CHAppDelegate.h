@@ -7,14 +7,13 @@
 //
 
 #import <UIKit/UIKit.h>
-#import "CHMenuViewController.h"
 #import "CHSideNavigationTableViewController.h"
 
 @interface CHAppDelegate : UIResponder <UIApplicationDelegate>
 
 @property (strong, nonatomic) UIWindow *window;
 @property (strong, nonatomic) UIViewController *contentViewController;
-@property (strong, nonatomic) CHMenuViewController *menuViewController;
+
 
 -(void)setContentViewControllerWithController: (CHSideNavigationTableViewController*)controller;
 -(void)showSideMenu;

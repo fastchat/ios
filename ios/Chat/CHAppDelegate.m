@@ -109,23 +109,23 @@ void uncaughtExceptionHandler(NSException *exception) {
 
 #pragma mark - Side Menu
 
--(void)showSideMenu;
-{
-    DLog(@"Showing side menu");
-    // before swaping the views, we'll take a "screenshot" of the current view
-    // by rendering its CALayer into the an ImageContext then saving that off to a UIImage
-    CGSize viewSize = self.contentViewController.view.bounds.size;
-    UIGraphicsBeginImageContextWithOptions(viewSize, NO, 1.0);
-    [self.contentViewController.view.layer renderInContext:UIGraphicsGetCurrentContext()];
-    
-    // Read the UIImage object
-    UIImage *image = UIGraphicsGetImageFromCurrentImageContext();
-    UIGraphicsEndImageContext();
-    
-    // pass this image off to the MenuViewController then swap it in as the rootViewController
-    self.menuViewController.screenShotImage = image;
-    self.window.rootViewController = self.menuViewController;
-}
+//-(void)showSideMenu;
+//{
+//    DLog(@"Showing side menu");
+//    // before swaping the views, we'll take a "screenshot" of the current view
+//    // by rendering its CALayer into the an ImageContext then saving that off to a UIImage
+//    CGSize viewSize = self.contentViewController.view.bounds.size;
+//    UIGraphicsBeginImageContextWithOptions(viewSize, NO, 1.0);
+//    [self.contentViewController.view.layer renderInContext:UIGraphicsGetCurrentContext()];
+//    
+//    // Read the UIImage object
+//    UIImage *image = UIGraphicsGetImageFromCurrentImageContext();
+//    UIGraphicsEndImageContext();
+//    
+//    // pass this image off to the MenuViewController then swap it in as the rootViewController
+//    self.menuViewController.screenShotImage = image;
+//    self.window.rootViewController = self.menuViewController;
+//}
 
 -(void)hideSideMenu;
 {
