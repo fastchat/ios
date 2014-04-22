@@ -315,7 +315,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="0Ui-X7-fik" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="1226" y="757"/>
+            <point key="canvasLocation" x="1752" y="757"/>
         </scene>
         <!--Message Table View Controller-->
         <scene sceneID="Hbd-KC-pBr">
@@ -343,7 +343,7 @@
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="vBQ-W0-M2V" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="1630" y="757"/>
+            <point key="canvasLocation" x="2156" y="757"/>
         </scene>
         <!--Add Group View Controller-->
         <scene sceneID="Yyw-gc-GC0">
@@ -434,7 +434,7 @@
                         <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                         <subviews>
-                            <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="Add a user" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="gsP-WO-oNJ">
+                            <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="Add a user" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="gsP-WO-oNJ">
                                 <rect key="frame" x="100" y="89" width="120" height="21"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="17"/>
@@ -460,13 +460,14 @@
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
                     </view>
+                    <navigationItem key="navigationItem" id="i2e-Bf-Rd1"/>
                     <connections>
                         <outlet property="usernameTextField" destination="fHE-oO-Hbx" id="Sfi-xg-f7b"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="ueo-ZA-24e" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="395" y="757"/>
+            <point key="canvasLocation" x="921" y="757"/>
         </scene>
         <!--Register View Controller-->
         <scene sceneID="nPp-gB-YOs">
@@ -698,6 +699,24 @@
                 <placeholder placeholderIdentifier="IBFirstResponder" id="QFJ-db-lrb" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="-155" y="3"/>
+        </scene>
+        <!--Navigation Controller-->
+        <scene sceneID="WXs-NF-9Pa">
+            <objects>
+                <navigationController storyboardIdentifier="InviteNavigationController" automaticallyAdjustsScrollViewInsets="NO" id="8J5-GT-ziE" sceneMemberID="viewController">
+                    <toolbarItems/>
+                    <navigationBar key="navigationBar" contentMode="scaleToFill" id="WWU-mq-Q91">
+                        <rect key="frame" x="0.0" y="0.0" width="320" height="44"/>
+                        <autoresizingMask key="autoresizingMask"/>
+                    </navigationBar>
+                    <nil name="viewControllers"/>
+                    <connections>
+                        <segue destination="ogu-gw-X3F" kind="relationship" relationship="rootViewController" id="Orr-TC-FId"/>
+                    </connections>
+                </navigationController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="Bco-zr-9OA" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="395" y="757"/>
         </scene>
     </scenes>
     <resources>

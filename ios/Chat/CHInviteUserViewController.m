@@ -28,6 +28,19 @@
 {
     [super viewDidLoad];
     // Do any additional setup after loading the view.
+    
+    UIBarButtonItem *cancelButton = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemCancel target:self action:@selector(cancelWasTouched)];
+    self.navigationItem.leftBarButtonItem = cancelButton;
+
+
+    
+}
+
+- (void)cancelWasTouched;
+{
+    [self dismissViewControllerAnimated:YES completion:^{
+        
+    }];
 }
 
 

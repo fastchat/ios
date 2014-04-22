@@ -206,10 +206,10 @@
 }
 
 -(void)addUser {
-    CHInviteUserViewController *inviteController = [self.storyboard instantiateViewControllerWithIdentifier:@"CHInviteUserViewController"];
-    [inviteController setGroupId:self.group._id];
-    [self.navigationController presentViewController:inviteController animated:YES completion:^{
-        
+
+    UINavigationController *addController = [self.storyboard instantiateViewControllerWithIdentifier:@"InviteNavigationController"];
+    [self presentViewController:addController animated:YES completion:^{
+       
     }];
 }
 
@@ -398,7 +398,6 @@
         cell.messageTextView.attributedText = attrString;
        
         if ( [_group memberFromId:currMessage.author].avatar != nil) {
-//            DLog(@"%@ has an avatar: %@", [_group memberFromId:currMessage.author].username, [_group memberFromId:currMessage.author].avatar);
             [cell.avatarImageView setImage:[_group memberFromId:currMessage.author].avatar];
         }
 /*        else {
