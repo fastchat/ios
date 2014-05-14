@@ -145,10 +145,10 @@
 {
     DLog(@"The group id is %@", group);
     if( !page ) {
-        [self GET:[NSString stringWithFormat:@"/group/%@/messages", group] parameters:nil success:^(NSURLSessionDataTask *task, id responseObject) {
+        [self GET:[NSString stringWithFormat:@"/group/%@/message", group] parameters:nil success:^(NSURLSessionDataTask *task, id responseObject) {
             if( callback ) {
                 NSArray *messages = [CHMessage objectsFromJSON:responseObject];
-            
+    
                 callback(messages);
             }
         } failure:^(NSURLSessionDataTask *task, NSError *error) {

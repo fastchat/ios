@@ -152,13 +152,18 @@
     ///
     DLog(@"Group in viewdidload: %@", _group);
     [[CHNetworkManager sharedManager] getMessagesForGroup:self.group._id page:0 callback:^(NSArray *messages) {
-        self.messageArray = [NSMutableArray arrayWithArray:messages];
+        if( messages ) {
+            self.messageArray = [NSMutableArray arrayWithArray:messages];
 
-        self.messageArray = [[[self.messageArray reverseObjectEnumerator] allObjects] mutableCopy];
-        [self.messageTable reloadData];
-        [self.messageTable scrollToRowAtIndexPath:[NSIndexPath indexPathForRow:_messageArray.count - 1 inSection:0] atScrollPosition:UITableViewScrollPositionBottom animated:NO];
+            self.messageArray = [[[self.messageArray reverseObjectEnumerator] allObjects] mutableCopy];
+            [self.messageTable reloadData];
+            [self.messageTable scrollToRowAtIndexPath:[NSIndexPath indexPathForRow:_messageArray.count - 1 inSection:0] atScrollPosition:UITableViewScrollPositionBottom animated:NO];
+        }
     }];
     
+    if( !self.messageArray ) {
+        self.messageArray = [@[] mutableCopy];
+    }
 }
 
 -(void)viewWillAppear:(BOOL)animated {
@@ -206,10 +211,10 @@
 }
 
 -(void)addUser {
-    CHInviteUserViewController *inviteController = [self.storyboard instantiateViewControllerWithIdentifier:@"CHInviteUserViewController"];
-    [inviteController setGroupId:self.group._id];
-    [self.navigationController presentViewController:inviteController animated:YES completion:^{
-        
+
+    UINavigationController *addController = [self.storyboard instantiateViewControllerWithIdentifier:@"InviteNavigationController"];
+    [self presentViewController:addController animated:YES completion:^{
+       
     }];
 }
 
@@ -398,7 +403,6 @@
         cell.messageTextView.attributedText = attrString;
        
         if ( [_group memberFromId:currMessage.author].avatar != nil) {
-//            DLog(@"%@ has an avatar: %@", [_group memberFromId:currMessage.author].username, [_group memberFromId:currMessage.author].avatar);
             [cell.avatarImageView setImage:[_group memberFromId:currMessage.author].avatar];
         }
 /*        else {

@@ -16,7 +16,6 @@
 		2768EAAB18D8E02B006D14BB /* CHAddGroupViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2768EAAA18D8E02B006D14BB /* CHAddGroupViewController.m */; };
 		2768EAAE18D9138D006D14BB /* CHMessageViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2768EAAD18D9138D006D14BB /* CHMessageViewController.m */; };
 		2768EAB318DB119A006D14BB /* CHSocketManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 2768EAB218DB119A006D14BB /* CHSocketManager.m */; };
-		2768EAB618DB1965006D14BB /* CHMenuViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2768EAB518DB1965006D14BB /* CHMenuViewController.m */; };
 		2768EAB918DB1F57006D14BB /* CHSideNavigationTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2768EAB818DB1F57006D14BB /* CHSideNavigationTableViewController.m */; };
 		2768EABF18DE43F2006D14BB /* CHInvitationsTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2768EABE18DE43F2006D14BB /* CHInvitationsTableViewController.m */; };
 		2769B04618E7820A00CCE470 /* CHMessageTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 2769B04518E7820A00CCE470 /* CHMessageTableViewCell.m */; };
@@ -83,8 +82,6 @@
 		2768EAAD18D9138D006D14BB /* CHMessageViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CHMessageViewController.m; sourceTree = "<group>"; };
 		2768EAB118DB119A006D14BB /* CHSocketManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CHSocketManager.h; sourceTree = "<group>"; };
 		2768EAB218DB119A006D14BB /* CHSocketManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CHSocketManager.m; sourceTree = "<group>"; };
-		2768EAB418DB1965006D14BB /* CHMenuViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CHMenuViewController.h; sourceTree = "<group>"; };
-		2768EAB518DB1965006D14BB /* CHMenuViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CHMenuViewController.m; sourceTree = "<group>"; };
 		2768EAB718DB1F57006D14BB /* CHSideNavigationTableViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CHSideNavigationTableViewController.h; sourceTree = "<group>"; };
 		2768EAB818DB1F57006D14BB /* CHSideNavigationTableViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CHSideNavigationTableViewController.m; sourceTree = "<group>"; };
 		2768EABD18DE43F2006D14BB /* CHInvitationsTableViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CHInvitationsTableViewController.h; sourceTree = "<group>"; };
@@ -220,8 +217,6 @@
 				2768EAB018D91538006D14BB /* Authentication */,
 				279CF22518E2198800C82399 /* Groups */,
 				279CF22418E2196900C82399 /* Messaging */,
-				2768EAB418DB1965006D14BB /* CHMenuViewController.h */,
-				2768EAB518DB1965006D14BB /* CHMenuViewController.m */,
 				2768EAB718DB1F57006D14BB /* CHSideNavigationTableViewController.h */,
 				2768EAB818DB1F57006D14BB /* CHSideNavigationTableViewController.m */,
 			);
@@ -511,7 +506,6 @@
 				2769B04F18EDD40800CCE470 /* CHOwnMessageTableViewCell.m in Sources */,
 				2769B06818F47E5E00CCE470 /* CHFastChatObject.m in Sources */,
 				2768EABF18DE43F2006D14BB /* CHInvitationsTableViewController.m in Sources */,
-				2768EAB618DB1965006D14BB /* CHMenuViewController.m in Sources */,
 				2768EAB318DB119A006D14BB /* CHSocketManager.m in Sources */,
 				2762622218F82B08001F7754 /* CHCircleImageView.m in Sources */,
 				279CF21D18DF777500C82399 /* CHUser.m in Sources */,
