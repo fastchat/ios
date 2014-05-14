@@ -160,7 +160,8 @@
             [self.messageTable scrollToRowAtIndexPath:[NSIndexPath indexPathForRow:_messageArray.count - 1 inSection:0] atScrollPosition:UITableViewScrollPositionBottom animated:NO];
         }
     }];
-    
+
+    /// Don't crash if we don't have messages pl0x
     if( !self.messageArray ) {
         self.messageArray = [@[] mutableCopy];
     }
@@ -185,8 +186,13 @@
     for( CHUser *user in members ) {
         if( user.avatar == nil ) {
             [[CHNetworkManager sharedManager] getAvatarOfUser:user.userId callback:^(UIImage *avatar) {
-                user.avatar = avatar;
-                _group.memberDict[user.userId] = user;
+                if( avatar ) {
+                    user.avatar = avatar;
+                    _group.memberDict[user.userId] = user;
+                }
+                else {
+                    user.avatar = [UIImage imageNamed:@"profile-dark.png"];
+                }
             }];
         }
     }
