@@ -14,6 +14,7 @@ import com.fastchat.fastchat.R;
 import com.fastchat.fastchat.models.Group;
 import com.fastchat.fastchat.networking.NetworkManager;
 import com.fastchat.fastchat.networking.SocketIoController;
+import com.fastchat.fastchat.networking.SocketIoReconnector;
 import com.google.android.gms.analytics.HitBuilders;
 import com.google.android.gms.analytics.Tracker;
 
@@ -136,7 +137,9 @@ public class GroupsFragment extends Fragment {
 		}
 		NetworkManager.setCurrentRoom(null);
 		if(!SocketIoController.isConnected()){
-			SocketIoController.connect();
+			//SocketIoReconnector reconnect = new SocketIoReconnector();
+			//new Thread(reconnect).start();
+			//SocketIoController.connect();
 		}
 		Tracker t = MainActivity.tracker;
 		t.setScreenName("Groups View");

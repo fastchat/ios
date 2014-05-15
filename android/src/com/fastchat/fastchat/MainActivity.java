@@ -13,6 +13,7 @@ import com.fastchat.fastchat.fragments.ProfileFragment;
 import com.fastchat.fastchat.models.User;
 import com.fastchat.fastchat.networking.NetworkManager;
 import com.fastchat.fastchat.networking.SocketIoController;
+import com.fastchat.fastchat.networking.SocketIoReconnector;
 import com.google.android.gms.analytics.GoogleAnalytics;
 import com.google.android.gms.analytics.Tracker;
 import com.google.android.gms.common.ConnectionResult;
@@ -181,7 +182,9 @@ public class MainActivity extends ActionBarActivity {
 		checkPlayServices();
 		ArrayList<String> credentials = getLoginCredentials();
 		if(credentials.size()==3){
-			SocketIoController.connect();
+			SocketIoReconnector reconnector = new SocketIoReconnector();
+			new Thread(reconnector).start();
+			//SocketIoController.connect();
 		}
 		if(NetworkManager.getCurrentGroup()!=null){
 			NetworkManager.getCurrentGroupMessages();
@@ -201,6 +204,7 @@ public class MainActivity extends ActionBarActivity {
 	
 	protected void onStop(){
 		GoogleAnalytics.getInstance(this).reportActivityStop(this);
+		SocketIoReconnector.stopReconnect();
 		SocketIoController.disconnect();
 		GroupsFragment.setUnliveData();
 		/*if(NetworkManager.getCurrentGroup()!=null){

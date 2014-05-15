@@ -20,6 +20,7 @@ import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Intent;
 import android.database.Cursor;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
@@ -206,6 +207,26 @@ public class MessageFragment extends Fragment implements OnClickListener {
 			
 		});
 		
+	}
+	
+	public static void changeServerStatus(final String text,final int color){
+		MainActivity.activity.runOnUiThread(new Runnable(){
+			public void run(){
+				if(rootView==null){
+					return;
+				}
+				TextView tv = (TextView) rootView.findViewById(R.id.server_status);
+				if(text==null || text.isEmpty()){
+					tv.setText("");
+					tv.setVisibility(View.GONE);
+					tv.setBackgroundColor(Color.WHITE);
+				}else{
+					tv.setText(text);
+					tv.setBackgroundColor(color);
+					tv.setVisibility(View.VISIBLE);
+				}
+			}
+		});
 	}
 	
 	public static void typingUpdated(){

@@ -411,7 +411,10 @@ public class NetworkManager {
 			Log.d(TAG,"Media MessageID: "+messageId+ "Length: "+data.length);
 			String content_type = source.getHeaders().getHeaders().get("Content-type");
 			MultiMedia mms = new MultiMedia("test.tmp",content_type,data);
-			for(Message m : getCurrentGroup().getMessages()){
+			if(currentGroup==null){
+				return;
+			}
+			for(Message m : currentGroup.getMessages()){
 				if(m.getId().equals(messageId)){
 					m.setMedia(mms);
 					MessageFragment.updateUI();

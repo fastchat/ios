@@ -48,10 +48,10 @@ public class SocketIoController {
 				return clientFuture;
 			}
 		}
-		if(client!=null){
-			if(client.isConnected())
+		if(getClient()!=null){
+			if(getClient().isConnected())
 			{
-				client.disconnect();
+				getClient().disconnect();
 			}
 		}
 		clientFuture = SocketIOClient.connect(AsyncHttpClient.getDefaultInstance(), request, new ConnectCallback() {
@@ -136,18 +136,18 @@ public class SocketIoController {
 						
 					}
 		        });
-		        SocketIoController.client=client;
+		        SocketIoController.setClient(client);
 		        client.setDisconnectCallback(new DisconnectCallback(){
 					@Override
 					public void onDisconnect(Exception e) {
-						Utils.makeToast("Lost connection with the server");
+						//Utils.makeToast("Lost connection with the server");
 						GroupsFragment.setUnliveData();
 					}
 		        });
 		        client.setReconnectCallback(new ReconnectCallback(){
 					@Override
 					public void onReconnect() {
-						Utils.makeToast("Reconnected to the server");
+						//Utils.makeToast("Reconnected to the server");
 					}
 		        });
 		    }
@@ -160,14 +160,13 @@ public class SocketIoController {
 		if(clientFuture!=null){
 			clientFuture.cancel();
 		}
-		if(client!=null){
-			client.setDisconnectCallback(null);
-			client.disconnect();
+		if(getClient()!=null){
+			getClient().disconnect();
 		}
 	}
 	
 	public static void sendMessage(final Message m){
-		if(client==null || !client.isConnected()){
+		if(getClient()==null || !getClient().isConnected()){
 			Utils.makeToast("Couldn't send message. Try again later");
 			MessageFragment.removeMessage(m);
 			SocketIoController.connect();
@@ -176,7 +175,7 @@ public class SocketIoController {
 				NetworkManager.postMultimediaMessage(m);
 				return;
 			}
-			client.emit("message",m.getSendFormat());
+			getClient().emit("message",m.getSendFormat());
 		}
 		
 	}
@@ -193,8 +192,8 @@ public class SocketIoController {
 			e.printStackTrace();
 		}
 		array.put(object);
-		if(client!=null){
-			client.emit("typing",array);
+		if(getClient()!=null){
+			getClient().emit("typing",array);
 		}
 	}
 	
@@ -211,15 +210,23 @@ public class SocketIoController {
 			e.printStackTrace();
 		}
 		array.put(object);
-		if(client!=null){
-			client.emit("typing",array);
+		if(getClient()!=null){
+			getClient().emit("typing",array);
 		}
 	}
 
 	public static boolean isConnected() {
-		if(client==null){
+		if(getClient()==null){
 			return false;
 		}
-		return client.isConnected();
+		return getClient().isConnected();
+	}
+
+	public static SocketIOClient getClient() {
+		return client;
+	}
+
+	public static void setClient(SocketIOClient client) {
+		SocketIoController.client = client;
 	}
 }
