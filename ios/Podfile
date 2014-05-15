@@ -7,6 +7,7 @@ target "Chat" do
   pod 'AFNetworking', '~> 2.2'
   pod 'HPGrowingTextView', '~> 1.1'
   pod 'Mantle', '~> 1.4'
+  pod 'TSMessages', '~> 0.9'
 end
 
 target "ChatTests" do

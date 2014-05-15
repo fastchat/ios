@@ -10,6 +10,8 @@
 #import "CHUser.h"
 #import "CHGroup.h"
 #import "CHMessage.h"
+#import "AFNetworking.h"
+#import "CHGroupsCollectionAccessor.h"
 
 //#define BASE_URL @"http://10.0.0.10:3000"
 #define BASE_URL @"http://powerful-cliffs-9562.herokuapp.com:80"
@@ -104,7 +106,9 @@
     [self GET:[NSString stringWithFormat:@"/group"] parameters:nil success:^(NSURLSessionDataTask *task, id responseObject) {
         if( callback ) {
             NSArray *groups = [CHGroup objectsFromJSON:responseObject];
-            DLog("Group array: %@", groups);
+
+            [[CHGroupsCollectionAccessor sharedAccessor] addGroupsWithArray:groups];
+            
             callback(groups);
         }
     } failure:^(NSURLSessionDataTask *task, NSError *error) {
@@ -137,21 +141,38 @@
     }];
 }
 
-- (void)getMessagesForGroup:(NSString *)group callback:(void (^)(NSArray *messages))callback;
+- (void)getMessagesForGroup:(NSString *)group page:(int)page callback:(void (^)(NSArray *messages))callback;
 {
     DLog(@"The group id is %@", group);
-    [self GET:[NSString stringWithFormat:@"/group/%@/messages", group] parameters:nil success:^(NSURLSessionDataTask *task, id responseObject) {
-        if( callback ) {
-            NSArray *messages = [CHMessage objectsFromJSON:responseObject];
-            
-            callback(messages);
-        }
-    } failure:^(NSURLSessionDataTask *task, NSError *error) {
-        DLog(@"Error retrieving messages: %@", error);
-        if (callback) {
-            callback(nil);
-        }
-    }];
+    if( !page ) {
+        [self GET:[NSString stringWithFormat:@"/group/%@/message", group] parameters:nil success:^(NSURLSessionDataTask *task, id responseObject) {
+            if( callback ) {
+                NSArray *messages = [CHMessage objectsFromJSON:responseObject];
+    
+                callback(messages);
+            }
+        } failure:^(NSURLSessionDataTask *task, NSError *error) {
+            DLog(@"Error retrieving messages: %@", error);
+            if (callback) {
+                callback(nil);
+            }
+        }];
+    }
+    else {
+        DLog(@"Using page: %d", page);
+        [self GET:[NSString stringWithFormat:@"/group/%@/messages?page=%d", group, page] parameters:nil success:^(NSURLSessionDataTask *task, id responseObject) {
+            if( callback ) {
+                NSArray *messages = [CHMessage objectsFromJSON:responseObject];
+                
+                callback(messages);
+            }
+        } failure:^(NSURLSessionDataTask *task, NSError *error) {
+            DLog(@"Error retrieving messages: %@", error);
+            if (callback) {
+                callback(nil);
+            }
+        }];
+    }
 }
 
 - (void)getProfile: (void (^)(CHUser *userProfile))callback;
@@ -175,9 +196,62 @@
 
 }
 
-- (void)getProfileOfUser: (NSString *)username callback: (void (^)(CHUser *userProfile))callback;
+- (void)getAvatarOfUser: (NSString *)userId callback: (void (^)(UIImage *avatar))callback;
 {
-    //Return the users profile
+    DLog(@"User id for avatar call: %@", userId);
+    NSMutableURLRequest *request = [[NSMutableURLRequest alloc] initWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"%@/user/%@/avatar",BASE_URL, userId]]];
+    [request setValue:self.sessiontoken forHTTPHeaderField:@"session-token"];
+    
+    AFHTTPRequestOperation *requestOperation = [[AFHTTPRequestOperation alloc] initWithRequest:request];
+    requestOperation.responseSerializer = [AFImageResponseSerializer serializer];
+    [requestOperation setCompletionBlockWithSuccess:^(AFHTTPRequestOperation *operation, id responseObject) {
+        NSLog(@"Response: %@", responseObject);
+
+        if (self.currentUser) {
+            self.currentUser.avatar = responseObject;
+        }
+        if(callback) {
+            callback(responseObject);
+        }
+        
+    } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+        NSLog(@"Image error: %@", error);
+    }];
+    
+    [requestOperation start];
+}
+
+- (void)pushNewAvatarForUser: (NSString *)userId avatarImage: (UIImage *)avatarImage callback: (void (^)(bool successful, NSError *error))callback;
+{
+    NSData *imageData = UIImagePNGRepresentation(avatarImage);
+    NSDictionary *parameters = nil;
+    
+    NSString *url = [NSString stringWithFormat:@"%@/user/%@/avatar", BASE_URL, userId];
+    NSError *error = nil;
+    
+    NSMutableURLRequest *request = [self.requestSerializer multipartFormRequestWithMethod:@"POST"
+                                                                                URLString:[[NSURL URLWithString:url relativeToURL:self.baseURL] absoluteString]
+                                                                               parameters:parameters
+                                                                constructingBodyWithBlock:^(id<AFMultipartFormData> formData) {
+                                                                    [formData appendPartWithFileData:imageData
+                                                                                                name:@"avatar"
+                                                                                            fileName:@"myavatar.png"
+                                                                                            mimeType:@"image/png"];
+                                                                } error:&error];
+    
+    DLog(@"Error? %@", error);
+    [request setValue:self.sessiontoken forHTTPHeaderField:@"session-token"];
+//    
+    AFHTTPRequestOperation *operation = [self HTTPRequestOperationWithRequest:request
+                                                                      success:^(AFHTTPRequestOperation *operation, id responseObject) {
+                                                                          NSLog(@"Success: %@", responseObject);
+                                                                          callback(YES, nil);
+                                                                      } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+                                                                          NSLog(@"Error: %@", error);
+                                                                          DLog(@"Response: %@", operation.responseString);
+                                                                          callback(NO, error);
+                                                                      }];
+    [self.operationQueue addOperation:operation];
 }
 
 - (void)addNewUsers: (NSArray *)invitees groupId: (NSString *) groupId callback: (void (^)(bool successful, NSError *error))callback;
@@ -255,6 +329,21 @@
     return savedValue != nil;
 }
 
+- (AFHTTPRequestOperation *)HTTPRequestOperationWithRequest:(NSURLRequest *)request
+                                                    success:(void (^)(AFHTTPRequestOperation *operation, id responseObject))success
+                                                    failure:(void (^)(AFHTTPRequestOperation *operation, NSError *error))failure
+{
+    AFHTTPRequestOperation *operation = [[AFHTTPRequestOperation alloc] initWithRequest:request];
+    operation.responseSerializer = self.responseSerializer;
+    operation.shouldUseCredentialStorage = NO;
+    operation.securityPolicy = self.securityPolicy;
+    
+    [operation setCompletionBlockWithSuccess:success failure:failure];
+    
+    return operation;
+}
+                                         
+                                         
 
 
 @end

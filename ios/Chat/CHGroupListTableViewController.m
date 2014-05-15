@@ -15,6 +15,7 @@
 #import "CHViewController.h"
 #import "CHMessageTableViewController.h"
 #import "CHGroup.h"
+#import "CHUser.h"
 
 @interface CHGroupListTableViewController ()
 
@@ -52,41 +53,32 @@
     }
     
     else {
-    
+        // Get the user profile to ensure we have a user
+        [[CHNetworkManager sharedManager] getProfile:^(CHUser *userProfile) {
+            [[CHNetworkManager sharedManager] getAvatarOfUser:[[CHNetworkManager sharedManager] currentUser].userId callback:^(UIImage *avatar) {
+                //
+                DLog(@"User %@ (id: %@) has avatar %@", [[CHNetworkManager sharedManager] currentUser].username, [[CHNetworkManager sharedManager] currentUser].userId, avatar );
+                [[CHNetworkManager sharedManager] currentUser].avatar = avatar;
+            }];
+        }];
+
         [self loadGroupsAndRefresh];
+
         
     }
-
+    
+    [[CHNetworkManager sharedManager] getProfile:^(CHUser *userProfile) {
+        
+    }];
+    
+    
     UIBarButtonItem *addButton = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemCompose target:self action:@selector(showAddView)];
     self.navigationItem.rightBarButtonItem = addButton;
     
     UIBarButtonItem *menuButton = [[UIBarButtonItem alloc] initWithTitle:@"Menu" style:UIBarButtonItemStylePlain target:self action:@selector(displaySideMenu)];
     
     self.navigationItem.leftBarButtonItem = menuButton;
-    
-    
 }
-
--(void) loadGroupsAndRefresh;
-{
-    UIActivityIndicatorView *spinner = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleGray];
-    spinner.center = CGPointMake(160, 240);
-    spinner.tag = 12;
-    [self.view addSubview:spinner];
-    [spinner startAnimating];
-    
-    [[CHNetworkManager sharedManager] getGroups:^(NSArray *groups) {
-        self.groups = [groups mutableCopy];
-
-        [self.tableView reloadData];
-        [spinner stopAnimating];
-        
-    }];
-    
-    [[CHNetworkManager sharedManager] getProfile:^(CHUser *userProfile) {
-        
-    }];
-    }
 
 -(void) viewWillAppear:(BOOL)animated
 {
@@ -95,6 +87,57 @@
         
     [[UIApplication sharedApplication] registerForRemoteNotificationTypes:
      (UIRemoteNotificationTypeBadge | UIRemoteNotificationTypeSound | UIRemoteNotificationTypeAlert)];
+    
+    [[CHNetworkManager sharedManager] getGroups:^(NSArray *groups) {
+        self.groups = [groups mutableCopy];
+        
+        // Get all member avatars
+        DLog(@"Groups: %@", self.groups);
+        for( CHGroup *group in self.groups ) {
+            DLog(@"IN A GROUP");
+            for( CHUser *user in group.members ) {
+                if( user ) {
+                    DLog(@"GROUP GROUP AVATARfor user %@", user);
+                }
+                if( user.avatar == nil ) {
+                    [[CHNetworkManager sharedManager] getAvatarOfUser:user.userId callback:^(UIImage *avatar) {
+                        DLog(@"Found avatar");
+                        ((CHUser *)group.memberDict[user.userId]).avatar = avatar;
+                    }];
+                }
+            }
+            
+            for( CHUser *user in group.pastMembers ) {
+                if( user.avatar == nil ) {
+                    [[CHNetworkManager sharedManager] getAvatarOfUser:user.userId callback:^(UIImage *avatar) {
+                        ((CHUser *)group.memberDict[user.userId]).avatar = avatar;
+                        DLog(@"Set %@'s avatar to %@", ((CHUser *)group.memberDict[user.userId]).username, ((CHUser *)group.memberDict[user.userId]).avatar);
+                    }];
+                }
+            }
+        }
+        [self loadGroupsAndRefresh];
+        
+    }];
+    
+}
+
+-(void) loadGroupsAndRefresh;
+{
+    DLog(@"REFRESHING");
+    UIActivityIndicatorView *spinner = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleGray];
+    spinner.center = CGPointMake(160, 240);
+    spinner.tag = 12;
+    [self.view addSubview:spinner];
+    [spinner startAnimating];
+    
+    [self.tableView reloadData];
+    [spinner stopAnimating];
+    /*
+    [[CHNetworkManager sharedManager] getProfile:^(CHUser *userProfile) {
+        
+    }];*/
+    
 
 }
 
@@ -128,8 +171,18 @@
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
     UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"CHGroupTableViewCell" forIndexPath:indexPath];
-
-    cell.textLabel.text = [self.groups[indexPath.row] getGroupName];
+    NSMutableString *cellText = [[self.groups[indexPath.row] getGroupName] mutableCopy];
+    
+    if( [[self.groups[indexPath.row] unread] intValue] > 0 ) {
+        cell.detailTextLabel.text = [NSString stringWithFormat:@"%@", [self.groups[indexPath.row] unread]];
+    }
+    else {
+        cell.detailTextLabel.text = @"";
+    }
+    cell.textLabel.text = cellText;
+    
+    
+    
     
     return cell;
 }
@@ -139,7 +192,11 @@
     
     CHMessageViewController *vc = [self.storyboard instantiateViewControllerWithIdentifier:@"CHMessageViewController"];
     [vc setGroup:_groups[indexPath.row]];
+    [self.groups[indexPath.row] setUnread:[NSNumber numberWithInt:0]];
+
     [self.navigationController pushViewController:vc animated:YES];
+    
+    [self.tableView reloadData];
 }
 
 - (BOOL)tableView:(UITableView *)tableView canEditRowAtIndexPath:(NSIndexPath *)indexPath {

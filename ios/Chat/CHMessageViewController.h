@@ -16,6 +16,7 @@
 @interface CHMessageViewController : UIViewController <UITextFieldDelegate, SocketIODelegate, UITableViewDataSource,UITableViewDelegate, CHSocketManagerDelegate, UITextViewDelegate, HPGrowingTextViewDelegate>
 
 @property (nonatomic, strong) CHGroup *group;
+@property (nonatomic, strong) NSString *groupId;
 @property (nonatomic, strong) NSDictionary *userIds;
 @property (weak, nonatomic) IBOutlet UITextField *messageField;
 @property (weak, nonatomic) IBOutlet UITextView *messageEntryField;

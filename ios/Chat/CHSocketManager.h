@@ -21,6 +21,8 @@
 @property (nonatomic, weak) id <CHSocketManagerDelegate> delegate;
 @property (nonatomic, strong) SocketIO *socket;
 
+@property (nonatomic, strong) UIViewController *_defaultViewController;
+
 + (CHSocketManager *)sharedManager;
 -(SocketIO *)getSocket;
 -(void)openSocket;

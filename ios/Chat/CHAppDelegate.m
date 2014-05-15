@@ -9,6 +9,8 @@
 #import "CHAppDelegate.h"
 #import "CHNetworkManager.h"
 #import "CHSocketManager.h"
+#import "CHUser.h"
+#import "TSMessage.h"
 
 @implementation CHAppDelegate
 
@@ -60,9 +62,21 @@ void uncaughtExceptionHandler(NSException *exception) {
 
 - (void)applicationDidBecomeActive:(UIApplication *)application
 {
-    DLog(@"");
     // Restart any tasks that were paused (or not yet started) while the application was inactive. If the application was previously in the background, optionally refresh the user interface.
     //[[NSNotificationCenter defaultCenter] postNotificationName:@"ReloadAppDelegateTable" object:nil];
+    [[CHSocketManager sharedManager] openSocket];
+    if ( [[CHNetworkManager sharedManager] sessiontoken] != nil ) {
+        if ( [[CHNetworkManager sharedManager] currentUser] == nil ) {
+            [[CHNetworkManager sharedManager] getProfile:^(CHUser *userProfile) {
+                CHUser *user = [[CHNetworkManager sharedManager] currentUser];
+                
+                [[CHNetworkManager sharedManager] getAvatarOfUser:user.userId callback:^(UIImage *avatar) {
+                    user.avatar = avatar;
+                    [[CHNetworkManager sharedManager] setCurrentUser:user];
+                }];
+            }];
+        }
+    }
 }
 
 - (void)applicationWillTerminate:(UIApplication *)application
@@ -83,6 +97,11 @@ void uncaughtExceptionHandler(NSException *exception) {
     
 }
 
+- (void)application:(UIApplication *)application didReceiveLocalNotification:(UILocalNotification *)notification {
+    DLog(@"Received a lcoal notification! %@", notification);
+}
+
+
 - (void)application:(UIApplication*)application didFailToRegisterForRemoteNotificationsWithError:(NSError*)error
 {
 	NSLog(@"Failed to get token, error: %@", error);
@@ -90,23 +109,23 @@ void uncaughtExceptionHandler(NSException *exception) {
 
 #pragma mark - Side Menu
 
--(void)showSideMenu;
-{
-    DLog(@"Showing side menu");
-    // before swaping the views, we'll take a "screenshot" of the current view
-    // by rendering its CALayer into the an ImageContext then saving that off to a UIImage
-    CGSize viewSize = self.contentViewController.view.bounds.size;
-    UIGraphicsBeginImageContextWithOptions(viewSize, NO, 1.0);
-    [self.contentViewController.view.layer renderInContext:UIGraphicsGetCurrentContext()];
-    
-    // Read the UIImage object
-    UIImage *image = UIGraphicsGetImageFromCurrentImageContext();
-    UIGraphicsEndImageContext();
-    
-    // pass this image off to the MenuViewController then swap it in as the rootViewController
-    self.menuViewController.screenShotImage = image;
-    self.window.rootViewController = self.menuViewController;
-}
+//-(void)showSideMenu;
+//{
+//    DLog(@"Showing side menu");
+//    // before swaping the views, we'll take a "screenshot" of the current view
+//    // by rendering its CALayer into the an ImageContext then saving that off to a UIImage
+//    CGSize viewSize = self.contentViewController.view.bounds.size;
+//    UIGraphicsBeginImageContextWithOptions(viewSize, NO, 1.0);
+//    [self.contentViewController.view.layer renderInContext:UIGraphicsGetCurrentContext()];
+//    
+//    // Read the UIImage object
+//    UIImage *image = UIGraphicsGetImageFromCurrentImageContext();
+//    UIGraphicsEndImageContext();
+//    
+//    // pass this image off to the MenuViewController then swap it in as the rootViewController
+//    self.menuViewController.screenShotImage = image;
+//    self.window.rootViewController = self.menuViewController;
+//}
 
 -(void)hideSideMenu;
 {
