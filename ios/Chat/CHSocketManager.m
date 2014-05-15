@@ -29,7 +29,6 @@
     
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
-        DLog(@"Creating socket manager");
         _sharedManager = [[CHSocketManager alloc] init];
     });
     
@@ -50,7 +49,6 @@
     if( [[CHNetworkManager sharedManager] hasStoredSessionToken]) {
         [_socket connectToHost:@"powerful-cliffs-9562.herokuapp.com" onPort:80 withParams:@{@"token": [CHNetworkManager sharedManager].sessiontoken}];
     }
-    DLog(@"CONNECTED!");
 }
 
 // Socket io stuff
@@ -66,19 +64,17 @@
 
 - (void) socketIO:(SocketIO *)socket didReceiveMessage:(SocketIOPacket *)packet;
 {
-    DLog(@"Messsage: %@", packet.data);
+
 }
 
 - (void) socketIO:(SocketIO *)socket didReceiveJSON:(SocketIOPacket *)packet;
 {
-    DLog(@"JSON: %@", packet.data);
+
 }
 
 // THIS NEEDS TO BE REFACTORED
 - (void) socketIO:(SocketIO *)socket didReceiveEvent:(SocketIOPacket *)packet;
 {
-    DLog(@"IN THIS EVENT RECEIVE");
-    DLog(@"Event: %@", packet.dataAsJSON);
     if ([packet.dataAsJSON[@"name"] isEqualToString:@"message"]) {
         NSDictionary *data = [packet.dataAsJSON[@"args"] firstObject];
         CHMessage *message = [[CHMessage objectsFromJSON:@[data]] firstObject];
@@ -94,22 +90,15 @@
                                                     title:[NSString stringWithFormat:@"%@: %@", message.author, message.text]
                                                  subtitle:nil image:nil type:TSMessageNotificationTypeMessage duration:3.0
                                                  callback:^{
-                                                     // DO stuff
-                                                     DLog(@"CALLBACK");
                                                      UIStoryboard *storyboard = [UIStoryboard storyboardWithName:@"Main_iPhone" bundle:nil];
                                                      CHMessageViewController *vc = [storyboard instantiateViewControllerWithIdentifier:@"CHMessageViewController"];
                                                      [vc setGroup:[[CHGroupsCollectionAccessor sharedAccessor] getGroupWithId:message.group]];
                                                      [vc setGroupId:message.group];
                                                      [((UINavigationController*)root) popViewControllerAnimated:NO];
                                                      [((UINavigationController*)root) pushViewController:vc animated:YES];
-                                                     DLog(@"hmmmm");
                                                  }
                                               buttonTitle:nil buttonCallback:nil
                                                atPosition:TSMessageNotificationPositionTop canBeDismissedByUser:YES];
-                
-  
-                
-//                [TSMessage showNotificationWithTitle:[NSString stringWithFormat:@"%@: %@", message.author, message.text] type:TSMessageNotificationTypeMessage];
             
             }
         }
@@ -119,7 +108,6 @@
 
 -(void) sendMessageWithEvent: (NSString *)message data: (NSDictionary *)data;
 {
-    DLog(@"Sending message: %@", _socket);
     [_socket sendEvent:message withData: data];
 }
 

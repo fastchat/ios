@@ -30,6 +30,7 @@
 @property int currPage;
 @property UIRefreshControl *refresh;
 @property BOOL shouldSlide;
+@property BOOL keyboardIsVisible;
 
 @end
 
@@ -117,15 +118,10 @@
     NSArray *members = _group.members;
     NSMutableDictionary *tempIds = [NSMutableDictionary dictionary];
     [members enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
-        //NSDictionary *dict = obj;
         CHUser *thisUser = obj;
-        DLog(@"User: %@", thisUser);
         tempIds[thisUser.userId] = thisUser.username;
     }];
     self.userIds = tempIds;
-    
-    DLog(@"THE MEMBERS: %@", members);
-    
     
     _messageArray = [[NSMutableArray alloc] init];
 
@@ -150,7 +146,6 @@
     ///
     /// Load up old messages
     ///
-    DLog(@"Group in viewdidload: %@", _group);
     [[CHNetworkManager sharedManager] getMessagesForGroup:self.group._id page:0 callback:^(NSArray *messages) {
         if( messages ) {
             self.messageArray = [NSMutableArray arrayWithArray:messages];
@@ -165,17 +160,16 @@
     if( !self.messageArray ) {
         self.messageArray = [@[] mutableCopy];
     }
+    
+    self.keyboardIsVisible = NO;
 }
 
 -(void)viewWillAppear:(BOOL)animated {
     
     if (self.group == nil) {
-        DLog(@"Using group id %@", self.groupId);
         [[CHNetworkManager sharedManager] getGroups:^(NSArray *groups) {
             for (CHGroup *group in groups) {
-                DLog(@"Comparing %@ to %@", group._id, self.groupId);
                 if( [group._id isEqualToString:self.groupId] ) {
-                    DLog(@"Found a matching group!");
                     self.group = group;
                 }
             }
@@ -203,12 +197,10 @@
     self.currPage = self.currPage + 1;
     
     [[CHNetworkManager sharedManager] getMessagesForGroup:self.group._id page:self.currPage callback:^(NSArray *messages) {
-//        [self.messageArray addObjectsFromArray:messages];
         messages = [[[messages reverseObjectEnumerator] allObjects] mutableCopy];
         NSRange range = NSMakeRange(0, messages.count);
         NSIndexSet *indexSet = [NSIndexSet indexSetWithIndexesInRange:range];
         [self.messageArray insertObjects:messages atIndexes:indexSet];
-//        self.messageArray = [[[self.messageArray reverseObjectEnumerator] allObjects] mutableCopy];
         [self.messageTable reloadData];
         [self.messageTable scrollToRowAtIndexPath:[NSIndexPath indexPathForRow:_messageArray.count - 1 inSection:0] atScrollPosition:UITableViewScrollPositionBottom animated:NO];
         
@@ -257,7 +249,6 @@
     [self.messageTable beginUpdates];
     
     // Magically add rows to table view
-    DLog(@"Message array size: %d", _messageArray.count);
     [self.messageTable insertRowsAtIndexPaths:@[[NSIndexPath indexPathForRow:_messageArray.count - 1 inSection:0]] withRowAnimation:UITableViewRowAnimationAutomatic];
     
     [self.messageTable endUpdates];
@@ -266,16 +257,19 @@
     
     self.textView.text = @"";
     self.shouldSlide = NO;
-    [self.textView setKeyboardType:UIKeyboardTypeAlphabet];
-    [self.textView resignFirstResponder];
-    [self.textView becomeFirstResponder];
-//    [self.textView reloadInputViews];
+
+    if( self.shouldSlide ) {
+        [self.textView setKeyboardType:UIKeyboardTypeAlphabet];
+        [self.textView resignFirstResponder];
+        [self.textView becomeFirstResponder];
+    }
 
 }
 
 - (void) keyboardWillShow: (NSNotification*) notification
 {
-    if( self.shouldSlide ) {
+//    if( self.shouldSlide ) {
+        self.keyboardIsVisible = YES;
         NSDictionary* keyboardInfo = [notification userInfo];
         NSValue* keyboardFrameEnded = [keyboardInfo valueForKey:UIKeyboardFrameBeginUserInfoKey];
         CGRect keyboardFrameEndedRect = [keyboardFrameEnded CGRectValue];
@@ -314,13 +308,14 @@
             self.containerView.frame = containerFrame;
         
         }];
-    }
+ //   }
 
 }
 
 - (void) keyboardWillHide: (NSNotification*) notification
 {
     if (self.shouldSlide) {
+        self.keyboardIsVisible = NO;
         NSTimeInterval animationDuration = [[notification.userInfo objectForKey:UIKeyboardAnimationDurationUserInfoKey] floatValue];
         UIViewAnimationCurve animationCurve = [[notification.userInfo objectForKey:UIKeyboardAnimationCurveUserInfoKey] intValue];
     
@@ -411,12 +406,7 @@
         if ( [_group memberFromId:currMessage.author].avatar != nil) {
             [cell.avatarImageView setImage:[_group memberFromId:currMessage.author].avatar];
         }
-/*        else {
-            [[CHNetworkManager sharedManager] getAvatarOfUser:[_group memberFromId:currMessage.author].userId callback:^(UIImage *avatar) {
-                [cell.avatarImageView setImage:avatar];
-            }];
-        }
-  */
+
         if (currMessage.sent != nil) {
             // Format the timestamp
             cell.timestampLabel.text = [[self timestampFormatter] stringFromDate:currMessage.sent];
@@ -431,7 +421,6 @@
 
 -(void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath;
 {
-    DLog(@"Selected a row");
     self.shouldSlide = YES;
     [self resignTextView];
 }
@@ -492,7 +481,6 @@
 
 - (void)growingTextView:(HPGrowingTextView *)growingTextView willChangeHeight:(float)height
 {
-    DLog(@"change size");
     float diff = (growingTextView.frame.size.height - height);
     
 	CGRect r = self.containerView.frame;

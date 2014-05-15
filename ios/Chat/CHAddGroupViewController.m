@@ -59,7 +59,6 @@ UIPanGestureRecognizer* panGesture;
     }
     
     if( members.count >= 1 ) {
-        DLog(@"Adding");
         [[CHNetworkManager sharedManager] createGroupWithName:self.groupNameTextField.text members:members callback:^(bool successful, NSError *error) {
             [[NSNotificationCenter defaultCenter] postNotificationName:@"ReloadGroupListTable" object:nil];
             [self.navigationController popViewControllerAnimated:YES];

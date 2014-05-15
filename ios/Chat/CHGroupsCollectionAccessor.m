@@ -34,15 +34,9 @@
     if (!self.groups) {
         self.groups = [[NSMutableDictionary alloc] init];
     }
-    DLog(@"group is null? %@", self.groups);
     for (CHGroup *group in arrayOfGroups) {
-        DLog(@"new group %@", group);
         self.groups[group._id] = group;
     }
-
-    DLog(@"Made global groups: %@", self.groups);
-
-
 }
 
 - (void) addGroupWithId: (NSString *)groupId group: (CHGroup *)group;
