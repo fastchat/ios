@@ -129,14 +129,20 @@ public class MessageAdapter extends BaseAdapter {
 		//Check whether message is mine to show green background and align to right
 		if(message.isMine())
 		{
-			holder.layout.setBackgroundResource(R.drawable.speech_bubble_green);
+			LinearLayout ll = (LinearLayout) convertView.findViewById(R.id.innerLayout);
+			ll.removeView(holder.image);
+			ll.addView(holder.image);
+			//holder.layout.setBackgroundResource(R.drawable.speech_bubble_green);
 			lp.gravity = Gravity.RIGHT;
 			lp.setMargins(MARGINS, 0, 0, 0);
 		}
 		//If not mine then it is from sender to show orange background and align to left
 		else
 		{
-			holder.layout.setBackgroundResource(R.drawable.speech_bubble_orange);
+			LinearLayout ll = (LinearLayout) convertView.findViewById(R.id.innerLayout);
+			ll.removeView(holder.image);
+			ll.addView(holder.image,0);
+			//holder.layout.setBackgroundResource(R.drawable.speech_bubble_orange);
 			lp.gravity = Gravity.LEFT;
 			lp.setMargins(0, 0, MARGINS, 0);
 		}

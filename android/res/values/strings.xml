@@ -11,4 +11,5 @@
 	<string name="profile">Profile</string>
 	<string name="invitations">Invitations</string>
 	<string name="new_group">New Group</string>
+	<color name="grey">#D0D0D0</color>
 </resources>
