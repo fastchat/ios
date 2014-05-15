@@ -82,12 +82,4 @@ public class MultiMedia {
 	public boolean isImage(){
 		return this.isImage;
 	}
-	
-	private void galleryAddPic() {
-	    Intent mediaScanIntent = new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE);
-	    File f = Utils.saveToInternalSorage(this.bitmap);
-	    Uri contentUri = Uri.fromFile(f);
-	    mediaScanIntent.setData(contentUri);
-	    MainActivity.activity.sendBroadcast(mediaScanIntent);
-	}
 }

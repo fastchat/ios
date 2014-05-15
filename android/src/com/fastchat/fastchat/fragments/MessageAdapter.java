@@ -10,6 +10,7 @@ import com.fastchat.fastchat.models.Message;
 import com.fastchat.fastchat.models.MultiMedia;
 import com.fastchat.fastchat.models.User;
 
+import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -28,6 +29,7 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.view.ViewParent;
+import android.webkit.MimeTypeMap;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ImageView.ScaleType;
@@ -71,6 +73,7 @@ public class MessageAdapter extends BaseAdapter {
 			holder.message = (TextView) convertView.findViewById(R.id.message_text);
 			holder.image = (ImageView) convertView.findViewById(R.id.imageView1);
 			holder.layout = (LinearLayout) convertView.findViewById(R.id.sms_layout);
+			holder.description = (TextView) convertView.findViewById(R.id.multi_media_description);
 			convertView.setTag(holder);
 		}
 		else{
@@ -80,6 +83,31 @@ public class MessageAdapter extends BaseAdapter {
 		holder.multiMedia.setImageDrawable(null);
 		holder.multiMedia.setVisibility(View.GONE);
 		if(message.hasMedia()){
+			holder.multiMedia.setTag(message);
+			holder.multiMedia.setOnClickListener(new OnClickListener(){
+
+				@Override
+				public void onClick(View arg0) {
+					Message message = (Message) arg0.getTag();
+					MultiMedia mms = message.getMedia();
+					byte[] data = mms.getData();
+					String extension = MimeTypeMap.getSingleton().getExtensionFromMimeType(mms.getMimeType());
+					if(extension==null){
+						extension="tmp";
+					}
+				    File f = Utils.saveImageToInternalSorage(data,message.getId()+"."+extension);
+				    
+				    Intent intent = new Intent();
+				    intent.setAction(android.content.Intent.ACTION_VIEW);
+				    intent.setDataAndType(Uri.fromFile(f),mms.getMimeType());
+				    try{
+				    	MainActivity.activity.startActivityForResult(intent, 10);
+				    }catch(ActivityNotFoundException e){
+				    	Log.d(TAG,"No Activity found to handle intent");
+				    }
+				}
+				
+			});
 			MultiMedia mms = message.getMedia();
 			if(mms!=null && mms.isImage()){
 				holder.multiMedia.setVisibility(View.VISIBLE);
@@ -89,25 +117,21 @@ public class MessageAdapter extends BaseAdapter {
 				holder.message.setText("");
 				//android.view.ViewGroup.LayoutParams imageParams = holder.multiMedia.getLayoutParams();
 				holder.multiMedia.setImageBitmap(mms.getBitmap(width));
-				
-				holder.multiMedia.setOnClickListener(new OnClickListener(){
-
-					@Override
-					public void onClick(View arg0) {
-					    Intent mediaScanIntent = new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE);
-					    ImageView v = (ImageView) arg0;
-					    Bitmap bm=((BitmapDrawable)v.getDrawable()).getBitmap();
-					    File f = Utils.saveToInternalSorage(bm);
-					    Uri contentUri = Uri.fromFile(f);
-					    mediaScanIntent.setData(contentUri);
-					    MainActivity.activity.sendBroadcast(mediaScanIntent);
-						Log.d(TAG,"Sending image to Gallery: "+contentUri.toString());
-						Utils.makeToast("Saved Image to Gallery");
-					}
-					
-				});
-				
-				
+				holder.description.setVisibility(View.GONE);
+			}
+			else if(mms!=null && !mms.isImage()){
+				holder.description.setVisibility(View.VISIBLE);
+				holder.multiMedia.setVisibility(View.VISIBLE);
+				holder.multiMedia.setImageResource(R.drawable.paperclip2_black);
+				String extension = MimeTypeMap.getSingleton().getExtensionFromMimeType(mms.getMimeType());
+				if(extension==null){
+					extension=mms.getMimeType();
+				}
+				holder.description.setText(extension + " File");
+			}
+			else{
+				holder.description.setVisibility(View.GONE);
+				holder.multiMedia.setVisibility(View.GONE);
 			}
 		}
 		SpannableString out0 = new SpannableString(message.getText()+"\n"+message.getFrom().getUsername()+" "+message.getDateString());
@@ -152,6 +176,7 @@ public class MessageAdapter extends BaseAdapter {
 	}
 	private static class ViewHolder
 	{
+		public TextView description;
 		public ImageView multiMedia;
 		public LinearLayout layout;
 		public ImageView image;

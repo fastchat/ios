@@ -29,7 +29,7 @@ public class Utils {
     	});
 	}
 	
-	public static File saveToInternalSorage(Bitmap bitmapImage){
+	public static File saveImageToInternalSorage(byte[] data,String filename){
 		
 		String appDirectoryName = "Fast_Chat";
 		File directory = new File(Environment.getExternalStoragePublicDirectory(
@@ -38,7 +38,7 @@ public class Utils {
 		{
 		    directory.mkdirs();//if not, create it
 		}
-        File mypath=new File(directory,System.currentTimeMillis()+"fastChat.jpeg");
+        File mypath=new File(directory,filename);
 
         FileOutputStream fos = null;
         try {
@@ -47,7 +47,7 @@ public class Utils {
             fos = new FileOutputStream(mypath);
 
             // Use the compress method on the BitMap object to write image to the OutputStream
-            bitmapImage.compress(Bitmap.CompressFormat.JPEG, 80, fos);
+            fos.write(data);
             fos.close();
         } catch (Exception e) {
             e.printStackTrace();

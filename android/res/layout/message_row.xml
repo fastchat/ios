@@ -43,11 +43,23 @@
 
         </LinearLayout>
 
-        <ImageView
-            android:id="@+id/multi_media"
+        <LinearLayout
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:adjustViewBounds="true" />
+            android:layout_height="wrap_content" >
+
+            <ImageView
+                android:id="@+id/multi_media"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:adjustViewBounds="true" />
+
+            <TextView
+                android:id="@+id/multi_media_description"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:visibility="gone" />
+
+        </LinearLayout>
 
     </LinearLayout>
 
