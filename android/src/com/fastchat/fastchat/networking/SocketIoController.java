@@ -35,8 +35,6 @@ public class SocketIoController {
 	
 	private static Future<SocketIOClient> clientFuture;
 	
-	private static ArrayList<Message> multiMediaMessage = new ArrayList<Message>();
-	
 	private static final String TAG=SocketIoController.class.getName();
 	
 	public static Future<SocketIOClient> connect(){
@@ -99,26 +97,6 @@ public class SocketIoController {
 							e.printStackTrace();
 						}
 						
-					}
-		        });
-		        client.on("media_message", new EventCallback() {
-
-					@Override
-					public void onEvent(JSONArray argument,
-							Acknowledge acknowledge) {
-						Log.d(TAG,"onEvent media_message:"+argument);
-						try {
-							String messageId = argument.getString(0);
-							
-							Message m = SocketIoController.multiMediaMessage.remove(0);
-							m.setId(messageId);
-							NetworkManager.postMultimediaMessage(m);
-							Log.d(TAG,"POSTING data: "+m.getId());
-						} catch (JSONException e) {
-							Utils.makeToast(e);
-							e.printStackTrace();
-						}
-
 					}
 		        });
 		        client.on("typing",new EventCallback(){
@@ -192,9 +170,11 @@ public class SocketIoController {
 		if(client==null || !client.isConnected()){
 			Utils.makeToast("Couldn't send message. Try again later");
 			MessageFragment.removeMessage(m);
+			SocketIoController.connect();
 		}else{
 			if(m.hasMedia()){
-				multiMediaMessage.add(m);
+				NetworkManager.postMultimediaMessage(m);
+				return;
 			}
 			client.emit("message",m.getSendFormat());
 		}

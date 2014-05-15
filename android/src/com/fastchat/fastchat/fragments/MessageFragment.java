@@ -96,7 +96,7 @@ public class MessageFragment extends Fragment implements OnClickListener {
 	    	if((latestWeHave.getId()==null || latestWeHave.getId().isEmpty()) && latestFromGroup.getFrom()==currUser){
 	    		return true;
 	    	}
-	    	else if(latestWeHave.getId().equals(latestFromGroup.getId())){ //TODO: FIX null pointer exception
+	    	else if(latestWeHave.getId().equals(latestFromGroup.getId())){ 
 	    		return true;
 	    	}
     	}catch(NullPointerException e){

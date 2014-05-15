@@ -171,11 +171,13 @@ public class NetworkManager {
 
 	public static Future<JSONArray> getCurrentGroupMessages()
 	{
+		if(currentGroup==null){
+			return null;
+		}
 		String groupId = currentGroup.getId();
-		AsyncHttpGet get = new AsyncHttpGet(url+"/group/"+groupId+"/messages");
+		AsyncHttpGet get = new AsyncHttpGet(url+"/group/"+groupId+"/message");
 		get.setHeader("session-token", getCurrentUser().getSessionToken());
 		return AsyncHttpClient.getDefaultInstance().executeJSONArray(get,groupMessagesCallback);
-
 	}
 
 	
@@ -369,19 +371,25 @@ public class NetworkManager {
 	}
 	
 	public static Future<String> postMultimediaMessage(Message m){
-		Log.d(TAG,"POSTING multimedia Message: "+url+"/group/"+m.getGroupId()+"/message/"+m.getId()+"/media");
-		AsyncHttpPost post = new AsyncHttpPost(url+"/group/"+m.getGroupId()+"/message/"+m.getId()+"/media");
+		Log.d(TAG,"POSTING multimedia Message: "+url+"/group/"+m.getGroupId()+"/message");
+		AsyncHttpPost post = new AsyncHttpPost(url+"/group/"+m.getGroupId()+"/message");
 		post.setHeader("session-token", getCurrentUser().getSessionToken());
 		MultipartFormDataBody body = new MultipartFormDataBody();
-		FilePart fp = new FilePart(m.getMedia().getFileName(),saveToInternalStorage(m.getMedia().getData()));
+		
+		FilePart fp = new FilePart("media",saveToInternalStorage(m.getMedia().getData()));
 		fp.setContentType(m.getMedia().getMimeType());
 		body.addPart(fp);
 		post.setBody(body);
+		body.addStringPart("text", m.getText());
+		
 		return AsyncHttpClient.getDefaultInstance().executeString(post, new AsyncHttpClient.StringCallback() {
 			@Override
 			public void onCompleted(Exception e, AsyncHttpResponse response,
 					String result) {
-				NetworkManager.handleResponse(e, response,null,"Successfully sent multimedia message");
+				int responseCode = NetworkManager.handleResponse(e, response,null,"Successfully sent multimedia message");
+				if(responseCode<200 || responseCode>300){
+					Log.e(TAG,responseCode+": "+result);
+				}
 			}
 		});
 	}
@@ -491,11 +499,13 @@ public class NetworkManager {
 			if(result!=null){
 				try {
 					errorMessage = result.getString("error");
+					
 				} catch (JSONException e1) {
 					e1.printStackTrace();
 				}
 			}
-			Utils.makeToast(responseCode+": "+errorMessage);
+			//Utils.makeToast(responseCode+": "+errorMessage);
+			Log.e(TAG,responseCode+": "+errorMessage);
 		}
 		return responseCode;
 		

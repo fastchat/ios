@@ -1,25 +1,36 @@
 package com.fastchat.fastchat.fragments;
 
+import java.io.File;
 import java.util.ArrayList;
 
+import com.fastchat.fastchat.MainActivity;
 import com.fastchat.fastchat.R;
+import com.fastchat.fastchat.Utils;
 import com.fastchat.fastchat.models.Message;
 import com.fastchat.fastchat.models.MultiMedia;
+import com.fastchat.fastchat.models.User;
 
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.Typeface;
+import android.graphics.drawable.BitmapDrawable;
+import android.net.Uri;
 import android.text.Spannable;
 import android.text.SpannableString;
 import android.text.style.RelativeSizeSpan;
 import android.text.style.StyleSpan;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.view.ViewGroup;
+import android.view.ViewParent;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ImageView.ScaleType;
 import android.widget.LinearLayout.LayoutParams;
 import android.widget.BaseAdapter;
 import android.widget.TextView;
@@ -71,9 +82,32 @@ public class MessageAdapter extends BaseAdapter {
 		if(message.hasMedia()){
 			MultiMedia mms = message.getMedia();
 			if(mms!=null && mms.isImage()){
-				//holder.multiMedia.setScaleType(ScaleType.CENTER_INSIDE);
-				holder.multiMedia.setImageBitmap(mms.getBitmap());
 				holder.multiMedia.setVisibility(View.VISIBLE);
+				holder.message.setText("TEXT TO MAKE VIEW MAXIMUM LENGTH");
+				convertView.measure(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
+				int width = convertView.getMeasuredWidth();
+				holder.message.setText("");
+				//android.view.ViewGroup.LayoutParams imageParams = holder.multiMedia.getLayoutParams();
+				holder.multiMedia.setImageBitmap(mms.getBitmap(width));
+				
+				holder.multiMedia.setOnClickListener(new OnClickListener(){
+
+					@Override
+					public void onClick(View arg0) {
+					    Intent mediaScanIntent = new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE);
+					    ImageView v = (ImageView) arg0;
+					    Bitmap bm=((BitmapDrawable)v.getDrawable()).getBitmap();
+					    File f = Utils.saveToInternalSorage(bm);
+					    Uri contentUri = Uri.fromFile(f);
+					    mediaScanIntent.setData(contentUri);
+					    MainActivity.activity.sendBroadcast(mediaScanIntent);
+						Log.d(TAG,"Sending image to Gallery: "+contentUri.toString());
+						Utils.makeToast("Saved Image to Gallery");
+					}
+					
+				});
+				
+				
 			}
 		}
 		SpannableString out0 = new SpannableString(message.getText()+"\n"+message.getFrom().getUsername()+" "+message.getDateString());
@@ -121,4 +155,6 @@ public class MessageAdapter extends BaseAdapter {
 	public long getItemId(int position) {
 		return position;
 	}
+	
+	
 }
