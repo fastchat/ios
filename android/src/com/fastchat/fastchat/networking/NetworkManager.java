@@ -35,6 +35,7 @@ import com.koushikdutta.async.ByteBufferList;
 import com.koushikdutta.async.future.Future;
 import com.koushikdutta.async.http.AsyncHttpClient;
 import com.koushikdutta.async.http.AsyncHttpClient.DownloadCallback;
+import com.koushikdutta.async.http.AsyncHttpClient.FileCallback;
 import com.koushikdutta.async.http.AsyncHttpClient.JSONArrayCallback;
 import com.koushikdutta.async.http.AsyncHttpClient.JSONObjectCallback;
 import com.koushikdutta.async.http.AsyncHttpGet;
@@ -157,7 +158,7 @@ public class NetworkManager {
 			String requestUrl = response.getRequest().getUri().toString();
 			String[] urlSplit = requestUrl.split("/");
 			String groupId = urlSplit[urlSplit.length-2];
-			groups.get(groupId).getMessages().clear();
+			MessageFragment.removeAllMessages(groupId);
 			for(int i=0;i<result.length();i++){
 				int j = result.length()-i-1;
 				try {
@@ -382,7 +383,7 @@ public class NetworkManager {
 		post.setHeader("session-token", getCurrentUser().getSessionToken());
 		MultipartFormDataBody body = new MultipartFormDataBody();
 		
-		FilePart fp = new FilePart("media",saveToInternalStorage(m.getMedia().getData()));
+		FilePart fp = new FilePart("media",m.getMedia().getData());
 		fp.setContentType(m.getMedia().getMimeType());
 		body.addPart(fp);
 		post.setBody(body);
@@ -400,7 +401,35 @@ public class NetworkManager {
 		});
 	}
 	
-	private static final DownloadCallback mediaCallback = new AsyncHttpClient.DownloadCallback() {
+	private static final FileCallback mediaCallback2 = new AsyncHttpClient.FileCallback() {
+		
+		@Override
+		public void onCompleted(Exception e, AsyncHttpResponse source, File result) {
+			int responseCode = handleResponse(e,source);
+			if(responseCode<200 || responseCode>299){
+				return;
+			}
+			String requestUrl = source.getRequest().getUri().toString();
+			String[] urlSplit = requestUrl.split("/");
+			String messageId = urlSplit[urlSplit.length-2];
+			String groupId = urlSplit[urlSplit.length-4];
+			
+			Log.d(TAG,"Media MessageID: "+messageId+ " Group Id: "+groupId+" Length: "+result.length());
+			String content_type = source.getHeaders().getHeaders().get("Content-type");
+			MultiMedia mms = new MultiMedia("test.tmp",content_type,result);
+			ArrayList<Message> messagesList = groups.get(groupId).getMessages();
+			for(Message m : messagesList){
+				if(m.getId().equals(messageId)){
+					m.setMedia(mms);
+					MessageFragment.updateUI();
+					break;
+				}
+			}
+		}
+		
+	};
+	
+	/*private static final DownloadCallback mediaCallback = new AsyncHttpClient.DownloadCallback() {
 
 		@Override
 		public void onCompleted(Exception e, AsyncHttpResponse source,
@@ -413,7 +442,6 @@ public class NetworkManager {
 			String[] urlSplit = requestUrl.split("/");
 			String messageId = urlSplit[urlSplit.length-2];
 			String groupId = urlSplit[urlSplit.length-4];
-			
 			byte[] data = result.getAllByteArray();
 			Log.d(TAG,"Media MessageID: "+messageId+ " Group Id: "+groupId+" Length: "+data.length);
 			String content_type = source.getHeaders().getHeaders().get("Content-type");
@@ -428,34 +456,13 @@ public class NetworkManager {
 			}
 		}
 		
-    };
+    };*/
 	
-	public static synchronized Future<ByteBufferList> getMessageMedia(Message m) {
+	public static synchronized Future<File> getMessageMedia(Message m) {
 		AsyncHttpGet get = new AsyncHttpGet(url+"/group/"+m.getGroupId()+"/message/"+m.getId()+"/media");
 		Log.d(TAG,"URL: "+url+"/group/"+m.getGroupId()+"/message/"+m.getId()+"/media");
 		get.setHeader("session-token", getCurrentUser().getSessionToken());
-		return AsyncHttpClient.getDefaultInstance().executeByteBufferList(get,mediaCallback);
-	}
-	
-	private static File saveToInternalStorage(byte[] data){
-		ContextWrapper cw = new ContextWrapper(MainActivity.activity.getApplicationContext());
-        File directory = cw.getDir("directoryName", Context.MODE_PRIVATE);
-        File mypath=new File(directory,"file.tmp");
-
-        FileOutputStream fos = null;
-        try {
-			fos = new FileOutputStream(mypath);
-			fos.write(data);
-	        fos.close();
-		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-        
-        return mypath.getAbsoluteFile();
+		return AsyncHttpClient.getDefaultInstance().executeFile(get,m.getFullFilePath(),mediaCallback2); // TODO Add file path
 	}
 	
 	private static String saveToInternalSorage(Bitmap bitmapImage){

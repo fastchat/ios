@@ -58,7 +58,10 @@ public class MessageAdapter extends BaseAdapter {
 		return mMessages.size();
 	}
 	@Override
-	public Object getItem(int position) {		
+	public Object getItem(int position) {
+		if(position>mMessages.size()){
+			return null;
+		}
 		return mMessages.get(position);
 	}
 
@@ -96,16 +99,10 @@ public class MessageAdapter extends BaseAdapter {
 						NetworkManager.getMessageMedia(message);
 						return;
 					}
-					byte[] data = mms.getData();
-					String extension = MimeTypeMap.getSingleton().getExtensionFromMimeType(mms.getMimeType());
-					if(extension==null){
-						extension="tmp";
-					}
-				    File f = Utils.saveImageToInternalSorage(data,message.getId()+"."+extension);
 				    
 				    Intent intent = new Intent();
 				    intent.setAction(android.content.Intent.ACTION_VIEW);
-				    intent.setDataAndType(Uri.fromFile(f),mms.getMimeType());
+				    intent.setDataAndType(Uri.fromFile(mms.getData()),mms.getMimeType());
 				    try{
 				    	MainActivity.activity.startActivityForResult(intent, 10);
 				    }catch(ActivityNotFoundException e){

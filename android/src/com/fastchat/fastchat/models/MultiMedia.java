@@ -16,35 +16,35 @@ import android.webkit.MimeTypeMap;
 
 public class MultiMedia {
 	
-	private static List<String> imageMime = Arrays.asList("image/jpeg","image/bmp","image/png", "image/jpg");
-	
 	private String fileName;
 	
 	private String mime_type;
 	
-	private byte[] data;
+	private File data;
 	
 	private Bitmap bitmap;
 	
 	private boolean isImage=false;
 	
-	private static final String TAG=MultiMedia.class.getName();
+	private static final String TAG=MultiMedia.class.getSimpleName();
+	
+	private static final String IMAGE_TYPE="image";
 	
 	private boolean isResized = false;
 
-	public MultiMedia(String fileName,String mime_type,byte[] data){
+	public MultiMedia(String fileName,String mime_type,File data){
 		this.fileName=fileName;
 		this.mime_type=mime_type;
-		this.data=data;
+		this.data = data;
 		
 		if(mime_type.isEmpty()){
 			String extension = MimeTypeMap.getFileExtensionFromUrl(fileName);
 			this.mime_type=MimeTypeMap.getSingleton().getMimeTypeFromExtension(extension);
 		}
-		Log.d(TAG,"File Name: "+this.fileName+" MIME_TYPE: "+this.mime_type+" Data Length:"+this.data.length);
-		if(imageMime.contains(this.mime_type)){
+		Log.d(TAG,"File Name: "+this.fileName+" MIME_TYPE: "+this.mime_type+" Data Length:"+this.data.length());
+		if(getType(this.mime_type).equals("image")){
 			BitmapFactory.Options opts = new BitmapFactory.Options();
-			this.bitmap=BitmapFactory.decodeByteArray(this.data, 0,this.data.length,opts);
+			this.bitmap=BitmapFactory.decodeFile(this.data.getAbsolutePath(),opts);
 			this.isImage=true;
 		}
 		
@@ -59,7 +59,7 @@ public class MultiMedia {
 		return this.mime_type;
 	}
 	
-	public byte[] getData(){
+	public File getData(){
 		return this.data;
 	}
 	
@@ -81,5 +81,12 @@ public class MultiMedia {
 	}
 	public boolean isImage(){
 		return this.isImage;
+	}
+	
+	public static String getType(String mime_type){
+		String[] array = mime_type.split("/");
+		String type = array[0];
+		Log.d(TAG,"mime_type: "+mime_type+" Type: "+type);
+		return type;
 	}
 }
