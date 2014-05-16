@@ -25,6 +25,8 @@ public class Message {
 	private String sentTime;
 	private boolean hasMedia;
 	private MultiMedia media;
+	private long media_size;
+	private String content_type;
 	private static final String TAG=Message.class.getName();
 	
 	public Message(String text,User from){
@@ -38,6 +40,8 @@ public class Message {
 		this.media=media;
 		this.groupId=groupId;
 		if(media!=null && media.getData().length>0){
+			this.media_size=media.getData().length;
+			this.content_type = media.getMimeType();
 			hasMedia=true;
 		}
 	}
@@ -58,7 +62,14 @@ public class Message {
 			this.from=NetworkManager.getFastChatUser();
 		}
 		if(this.hasMedia){
-			NetworkManager.getMessageMedia(this);
+			try {
+				this.media_size = messageObject.getJSONArray("media_size").getLong(0);
+				this.content_type = messageObject.getJSONArray("mediaHeader").getString(0);
+			} catch (JSONException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			//NetworkManager.getMessageMedia(this);
 		}
 		
 	}
@@ -121,7 +132,6 @@ public class Message {
 	
 	public void setMedia(MultiMedia m){
 		this.media=m;
-		this.hasMedia=true;
 	}
 	public JSONArray getSendFormat(){
 		JSONObject message = new JSONObject();
@@ -138,5 +148,13 @@ public class Message {
 		}
 		Log.i(this.getClass().getName(),"Send Message:"+array);
 		return array;
+	}
+	
+	public long getMedia_size() {
+		return media_size;
+	}
+
+	public String getContent_type() {
+		return content_type;
 	}
 }

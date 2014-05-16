@@ -9,6 +9,7 @@ import com.fastchat.fastchat.Utils;
 import com.fastchat.fastchat.models.Message;
 import com.fastchat.fastchat.models.MultiMedia;
 import com.fastchat.fastchat.models.User;
+import com.fastchat.fastchat.networking.NetworkManager;
 
 import android.content.ActivityNotFoundException;
 import android.content.Context;
@@ -90,6 +91,11 @@ public class MessageAdapter extends BaseAdapter {
 				public void onClick(View arg0) {
 					Message message = (Message) arg0.getTag();
 					MultiMedia mms = message.getMedia();
+					if(mms==null){
+						((ImageView) arg0).setImageResource(R.drawable.downloading);
+						NetworkManager.getMessageMedia(message);
+						return;
+					}
 					byte[] data = mms.getData();
 					String extension = MimeTypeMap.getSingleton().getExtensionFromMimeType(mms.getMimeType());
 					if(extension==null){
@@ -108,8 +114,24 @@ public class MessageAdapter extends BaseAdapter {
 				}
 				
 			});
+			
+			holder.multiMedia.setImageDrawable(null);
+			holder.multiMedia.setVisibility(View.GONE);
+			holder.description.setText("");
+			holder.description.setVisibility(View.GONE);
 			MultiMedia mms = message.getMedia();
-			if(mms!=null && mms.isImage()){
+			if(mms==null){ // Haven't downloaded attachment yet.
+				holder.multiMedia.setVisibility(View.VISIBLE);
+				holder.multiMedia.setImageResource(R.drawable.download);
+				String extension = MimeTypeMap.getSingleton().getExtensionFromMimeType(message.getContent_type());
+				if(extension==null){
+					extension=message.getContent_type();
+				}
+				holder.description.setVisibility(View.VISIBLE);
+				String dataSize = Utils.readableFileSize(message.getMedia_size());
+				holder.description.setText(extension + " file \n Size: "+dataSize);
+			}
+			else if(mms.isImage()){ // Attachment is downloaded and is image
 				holder.multiMedia.setVisibility(View.VISIBLE);
 				holder.message.setText("TEXT TO MAKE VIEW MAXIMUM LENGTH");
 				convertView.measure(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
@@ -119,7 +141,7 @@ public class MessageAdapter extends BaseAdapter {
 				holder.multiMedia.setImageBitmap(mms.getBitmap(width));
 				holder.description.setVisibility(View.GONE);
 			}
-			else if(mms!=null && !mms.isImage()){
+			else{ // Attachment is downloaded and is not image
 				holder.description.setVisibility(View.VISIBLE);
 				holder.multiMedia.setVisibility(View.VISIBLE);
 				holder.multiMedia.setImageResource(R.drawable.paperclip2_black);
@@ -128,10 +150,6 @@ public class MessageAdapter extends BaseAdapter {
 					extension=mms.getMimeType();
 				}
 				holder.description.setText(extension + " File");
-			}
-			else{
-				holder.description.setVisibility(View.GONE);
-				holder.multiMedia.setVisibility(View.GONE);
 			}
 		}
 		SpannableString out0 = new SpannableString(message.getText()+"\n"+message.getFrom().getUsername()+" "+message.getDateString());

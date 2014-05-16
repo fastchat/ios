@@ -8,6 +8,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import com.fastchat.fastchat.R;
 import com.fastchat.fastchat.fragments.GroupsFragment;
 import com.fastchat.fastchat.fragments.LoginFragment;
+import com.fastchat.fastchat.fragments.MessageFragment;
 import com.fastchat.fastchat.fragments.NewGroupFragment;
 import com.fastchat.fastchat.fragments.ProfileFragment;
 import com.fastchat.fastchat.models.User;

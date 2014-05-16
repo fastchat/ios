@@ -6,6 +6,7 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.net.URI;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -47,7 +48,7 @@ import com.koushikdutta.async.http.body.MultipartFormDataBody;
 public class NetworkManager {
 
 	private static final String url ="http://powerful-cliffs-9562.herokuapp.com:80";
-	//private static final String url ="http://129.21.117.122:3000";
+	//private static final String url ="http://129.21.118.49:3000";
 	private static String currentUserId = "0";
 	private static Group currentGroup;
 	// HashMap <groupId, Groups>
@@ -153,10 +154,15 @@ public class NetworkManager {
 				Utils.makeToast("Unable to retrieve groups");
 				return;
 			}
+			String requestUrl = response.getRequest().getUri().toString();
+			String[] urlSplit = requestUrl.split("/");
+			String groupId = urlSplit[urlSplit.length-2];
+			groups.get(groupId).getMessages().clear();
 			for(int i=0;i<result.length();i++){
 				int j = result.length()-i-1;
 				try {
 					JSONObject messageObject = result.getJSONObject(j);
+					
 					MessageFragment.addMessage(new Message(messageObject));
 				} catch (JSONException e1) {
 					e1.printStackTrace();
@@ -406,15 +412,14 @@ public class NetworkManager {
 			String requestUrl = source.getRequest().getUri().toString();
 			String[] urlSplit = requestUrl.split("/");
 			String messageId = urlSplit[urlSplit.length-2];
+			String groupId = urlSplit[urlSplit.length-4];
 			
 			byte[] data = result.getAllByteArray();
-			Log.d(TAG,"Media MessageID: "+messageId+ "Length: "+data.length);
+			Log.d(TAG,"Media MessageID: "+messageId+ " Group Id: "+groupId+" Length: "+data.length);
 			String content_type = source.getHeaders().getHeaders().get("Content-type");
 			MultiMedia mms = new MultiMedia("test.tmp",content_type,data);
-			if(currentGroup==null){
-				return;
-			}
-			for(Message m : currentGroup.getMessages()){
+			ArrayList<Message> messagesList = groups.get(groupId).getMessages();
+			for(Message m : messagesList){
 				if(m.getId().equals(messageId)){
 					m.setMedia(mms);
 					MessageFragment.updateUI();
