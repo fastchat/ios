@@ -409,12 +409,14 @@ public class NetworkManager {
 			if(responseCode<200 || responseCode>299){
 				return;
 			}
+			Log.d(TAG,"Finished Downloading File");
 			String requestUrl = source.getRequest().getUri().toString();
 			String[] urlSplit = requestUrl.split("/");
 			String messageId = urlSplit[urlSplit.length-2];
 			String groupId = urlSplit[urlSplit.length-4];
 			
 			Log.d(TAG,"Media MessageID: "+messageId+ " Group Id: "+groupId+" Length: "+result.length());
+			
 			String content_type = source.getHeaders().getHeaders().get("Content-type");
 			MultiMedia mms = new MultiMedia("test.tmp",content_type,result);
 			ArrayList<Message> messagesList = groups.get(groupId).getMessages();
@@ -425,6 +427,10 @@ public class NetworkManager {
 					break;
 				}
 			}
+		}
+		
+		public void onProgress(AsyncHttpResponse response, long downloaded, long total){
+			Log.d(TAG, "Progress:"+downloaded+" out of "+total + " "+(100.0*downloaded/total)+"%");
 		}
 		
 	};
@@ -458,12 +464,20 @@ public class NetworkManager {
 		
     };*/
 	
-	public static synchronized Future<File> getMessageMedia(Message m) {
+	public static Future<File> getMessageMedia(Message m) {
 		AsyncHttpGet get = new AsyncHttpGet(url+"/group/"+m.getGroupId()+"/message/"+m.getId()+"/media");
 		Log.d(TAG,"URL: "+url+"/group/"+m.getGroupId()+"/message/"+m.getId()+"/media");
 		get.setHeader("session-token", getCurrentUser().getSessionToken());
-		return AsyncHttpClient.getDefaultInstance().executeFile(get,m.getFullFilePath(),mediaCallback2); // TODO Add file path
+		return AsyncHttpClient.getDefaultInstance().executeFile(get,m.getFullFilePath(),mediaCallback2);
 	}
+	
+	/*public static Future<File> getBigTestFile(){
+		AsyncHttpGet get = new AsyncHttpGet("http://mirrors.arsc.edu/centos/6.5/isos/x86_64/CentOS-6.5-x86_64-bin-DVD1.iso");
+		Log.d(TAG,"Getting Big Test File");
+		//Log.d(TAG,"URL: "+url+"/group/"+m.getGroupId()+"/message/"+m.getId()+"/media");
+		//get.setHeader("session-token", getCurrentUser().getSessionToken());
+		return AsyncHttpClient.getDefaultInstance().executeFile(get,"/sdcard/test2.iso",mediaCallback2);
+	}*/
 	
 	private static String saveToInternalSorage(Bitmap bitmapImage){
         ContextWrapper cw = new ContextWrapper(MainActivity.activity.getApplicationContext());

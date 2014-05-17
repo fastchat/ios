@@ -185,7 +185,13 @@ public class Message {
 		}else{
 			path+=Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS);
 		}
-		path+="/Fast Chat/"+getFileName();
+		path+="/Fast Chat";
+		File directory = new File(path);
+		if(!directory.exists())//check if file already exists
+		{
+		   directory.mkdirs();//if not, create it
+		}
+		path+="/"+getFileName();
 		Log.d(TAG,"Full File PAth: "+path);
 		return path;
 	}

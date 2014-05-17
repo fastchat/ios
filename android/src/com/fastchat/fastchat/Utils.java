@@ -44,64 +44,6 @@ public class Utils {
     	});
 	}
 	
-	public static File saveImageToInternalSorage(byte[] data,String filename){
-		
-		String appDirectoryName = "Fast Chat";
-		File directory = new File(Environment.getExternalStoragePublicDirectory(
-		        Environment.DIRECTORY_PICTURES), appDirectoryName);
-		if(!directory.exists())//check if file already exists
-		{
-		    directory.mkdirs();//if not, create it
-		}
-        File mypath=new File(directory,filename);
-        if(mypath.exists()){
-        	return mypath;
-        }
-        FileOutputStream fos = null;
-        try {
-           // fos = openFileOutput(filename, Context.MODE_PRIVATE);
-
-            fos = new FileOutputStream(mypath);
-
-            // Use the compress method on the BitMap object to write image to the OutputStream
-            fos.write(data);
-            fos.close();
-        } catch (Exception e) {
-            e.printStackTrace();
-            Utils.makeToast(e);
-        }
-        return mypath;
-	}
-	
-	public static File saveFileToDownloads(byte[] data,String filename){
-		
-		String appDirectoryName = "Fast Chat";
-		File directory = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS),
-				appDirectoryName);
-		if(!directory.exists())//check if directory already exists
-		{
-		    directory.mkdirs();//if not, create it
-		}
-        File mypath=new File(directory,filename);
-        if(mypath.exists()){
-        	return mypath;
-        }
-        FileOutputStream fos = null;
-        try {
-           // fos = openFileOutput(filename, Context.MODE_PRIVATE);
-
-            fos = new FileOutputStream(mypath);
-
-            // Use the compress method on the BitMap object to write image to the OutputStream
-            fos.write(data);
-            fos.close();
-        } catch (Exception e) {
-            e.printStackTrace();
-            Utils.makeToast(e);
-        }
-        return mypath;
-	}
-	
 	public static File saveToInternalStorage(byte[] data){
 		ContextWrapper cw = new ContextWrapper(MainActivity.activity.getApplicationContext());
         File directory = cw.getDir("directoryName", Context.MODE_PRIVATE);
