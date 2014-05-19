@@ -146,9 +146,8 @@ public class Message {
 		JSONObject message = new JSONObject();
 		JSONArray array = new JSONArray();
 		try {
-			message.put("text", text);
-			message.put("group", NetworkManager.getCurrentGroup().getId());
-			message.put("hasMedia", hasMedia);
+			message.put("text", this.text);
+			message.put("group", this.groupId);
 			array.put(message);
 		} catch (JSONException e) {
 			// TODO Auto-generated catch block

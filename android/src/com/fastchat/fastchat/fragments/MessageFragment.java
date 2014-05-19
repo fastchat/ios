@@ -1,6 +1,7 @@
 package com.fastchat.fastchat.fragments;
 
 import java.io.File;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 
 import com.fastchat.fastchat.MainActivity;
@@ -275,6 +276,27 @@ public class MessageFragment extends Fragment implements OnClickListener {
 			
 		});
 		
+	}
+	
+	public static void getIndividiualView(final int position, final long downloaded){
+		final ListView lv = (ListView) rootView.findViewById(R.id.messages_container);
+		
+		MainActivity.activity.runOnUiThread(new Runnable(){
+			public void run(){
+				int visiblePosition = lv.getFirstVisiblePosition();
+				View view = lv.getChildAt(position - visiblePosition);
+			    lv.getAdapter().getView(position, view, lv);
+			    Button b = (Button) view.findViewById(R.id.multi_media_button);
+				Message m = (Message) b.getTag();
+				long total = m.getMedia_size();
+				double percentage = 100.0*downloaded/total;
+				DecimalFormat df = new DecimalFormat("#.00");
+				String percentageText = df.format(percentage);
+				b.setText("Downloading.. "+percentageText+"%");
+				Log.d(TAG, "Progress:"+downloaded+" out of "+total + " "+(100.0*downloaded/total)+"%");
+			}
+		});
+	    
 	}
 
 	@Override

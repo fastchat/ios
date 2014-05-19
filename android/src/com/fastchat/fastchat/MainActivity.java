@@ -49,7 +49,7 @@ public class MainActivity extends ActionBarActivity {
 	private final static int PLAY_SERVICES_RESOLUTION_REQUEST = 9000;
 	
 	
-	private static final String TAG=MainActivity.class.getName();
+	private static final String TAG=MainActivity.class.getSimpleName();
 	
 
 	/**

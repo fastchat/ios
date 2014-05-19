@@ -20,11 +20,16 @@ import android.content.ContextWrapper;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.util.Log;
+import android.view.View;
+import android.widget.Button;
 
 import com.fastchat.fastchat.MainActivity;
+import com.fastchat.fastchat.R;
 import com.fastchat.fastchat.Utils;
 import com.fastchat.fastchat.fragments.GroupsFragment;
 import com.fastchat.fastchat.fragments.LoginFragment;
+import com.fastchat.fastchat.fragments.MessageAdapter;
+import com.fastchat.fastchat.fragments.MessageAdapter.ViewHolder;
 import com.fastchat.fastchat.fragments.MessageFragment;
 import com.fastchat.fastchat.fragments.ProfileFragment;
 import com.fastchat.fastchat.models.Group;
@@ -430,7 +435,24 @@ public class NetworkManager {
 		}
 		
 		public void onProgress(AsyncHttpResponse response, long downloaded, long total){
-			Log.d(TAG, "Progress:"+downloaded+" out of "+total + " "+(100.0*downloaded/total)+"%");
+			
+			String requestUrl = response.getRequest().getUri().toString();
+			String[] urlSplit = requestUrl.split("/");
+			String messageId = urlSplit[urlSplit.length-2];
+			String groupId = urlSplit[urlSplit.length-4];
+			if(groupId!=currentGroup.getId()){
+				return;
+			}
+			ArrayList<Message> messagesList = groups.get(groupId).getMessages();
+			int position = 0;
+			for(Message m : messagesList){
+				if(m.getId().equals(messageId)){
+					break;
+				}
+				position+=1;
+			}
+			MessageFragment.getIndividiualView(position,downloaded);
+			
 		}
 		
 	};

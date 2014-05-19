@@ -89,4 +89,9 @@ public class MultiMedia {
 		Log.d(TAG,"mime_type: "+mime_type+" Type: "+type);
 		return type;
 	}
+
+
+	public boolean isResized() {
+		return this.isResized;
+	}
 }

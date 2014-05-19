@@ -31,6 +31,7 @@ import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.view.ViewParent;
 import android.webkit.MimeTypeMap;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ImageView.ScaleType;
@@ -45,6 +46,33 @@ public class MessageAdapter extends BaseAdapter {
 	private static final int MARGINS = 30;
 	
 	private static final String TAG=MessageAdapter.class.getName();
+	
+	
+	private static final OnClickListener ocl = new OnClickListener(){
+
+		@Override
+		public void onClick(View arg0) {
+			Message message = (Message) arg0.getTag();
+			MultiMedia mms = message.getMedia();
+			if(mms==null){
+				((Button) arg0).setText("Downloading...");
+				((Button) arg0).setEnabled(false);
+				NetworkManager.getMessageMedia(message);
+				return;
+			}
+		    
+		    Intent intent = new Intent();
+		    intent.setAction(android.content.Intent.ACTION_VIEW);
+		    intent.setDataAndType(Uri.fromFile(mms.getData()),mms.getMimeType());
+		    try{
+		    	MainActivity.activity.startActivityForResult(intent, 10);
+		    }catch(ActivityNotFoundException e){
+		    	Log.d(TAG,"No Activity found to handle intent");
+		    }
+		}
+		
+	};
+	
 	
 	
 	public MessageAdapter(Context context, ArrayList<Message> messages) {
@@ -78,48 +106,32 @@ public class MessageAdapter extends BaseAdapter {
 			holder.image = (ImageView) convertView.findViewById(R.id.imageView1);
 			holder.layout = (LinearLayout) convertView.findViewById(R.id.sms_layout);
 			holder.description = (TextView) convertView.findViewById(R.id.multi_media_description);
+			holder.button= (Button) convertView.findViewById(R.id.multi_media_button);
+			holder.multiMedia= (ImageView) convertView.findViewById(R.id.multi_media);
 			convertView.setTag(holder);
 		}
 		else{
 			holder = (ViewHolder) convertView.getTag();
 		}
-		holder.multiMedia = (ImageView) convertView.findViewById(R.id.multi_media);
-		holder.multiMedia.setImageDrawable(null);
+		
+		holder.button.setText("");
+		holder.button.setVisibility(View.GONE);
 		holder.multiMedia.setVisibility(View.GONE);
+		holder.multiMedia.setImageDrawable(null);
+		holder.description.setText("");
+		holder.description.setVisibility(View.GONE);
+		holder.button.setEnabled(true);
 		if(message.hasMedia()){
+			holder.button.setTag(message);
 			holder.multiMedia.setTag(message);
-			holder.multiMedia.setOnClickListener(new OnClickListener(){
-
-				@Override
-				public void onClick(View arg0) {
-					Message message = (Message) arg0.getTag();
-					MultiMedia mms = message.getMedia();
-					if(mms==null){
-						((ImageView) arg0).setImageResource(R.drawable.downloading);
-						NetworkManager.getMessageMedia(message);
-						return;
-					}
-				    
-				    Intent intent = new Intent();
-				    intent.setAction(android.content.Intent.ACTION_VIEW);
-				    intent.setDataAndType(Uri.fromFile(mms.getData()),mms.getMimeType());
-				    try{
-				    	MainActivity.activity.startActivityForResult(intent, 10);
-				    }catch(ActivityNotFoundException e){
-				    	Log.d(TAG,"No Activity found to handle intent");
-				    }
-				}
-				
-			});
 			
-			holder.multiMedia.setImageDrawable(null);
-			holder.multiMedia.setVisibility(View.GONE);
-			holder.description.setText("");
-			holder.description.setVisibility(View.GONE);
+			holder.multiMedia.setOnClickListener(ocl);
+			holder.button.setOnClickListener(ocl);
+			
 			MultiMedia mms = message.getMedia();
 			if(mms==null){ // Haven't downloaded attachment yet.
-				holder.multiMedia.setVisibility(View.VISIBLE);
-				holder.multiMedia.setImageResource(R.drawable.download);
+				holder.button.setVisibility(View.VISIBLE);
+				holder.button.setText("Download");
 				String extension = MimeTypeMap.getSingleton().getExtensionFromMimeType(message.getContent_type());
 				if(extension==null){
 					extension=message.getContent_type();
@@ -130,18 +142,21 @@ public class MessageAdapter extends BaseAdapter {
 			}
 			else if(mms.isImage()){ // Attachment is downloaded and is image
 				holder.multiMedia.setVisibility(View.VISIBLE);
-				holder.message.setText("TEXT TO MAKE VIEW MAXIMUM LENGTH");
-				convertView.measure(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
-				int width = convertView.getMeasuredWidth();
-				holder.message.setText("");
-				//android.view.ViewGroup.LayoutParams imageParams = holder.multiMedia.getLayoutParams();
+				int width = 0;
+				if(!mms.isResized()){
+					holder.message.setText("TEXT TO MAKE VIEW MAXIMUM LENGTH");
+					convertView.measure(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
+					width = convertView.getMeasuredWidth();
+					holder.message.setText("");
+					//android.view.ViewGroup.LayoutParams imageParams = holder.multiMedia.getLayoutParams();
+				}
 				holder.multiMedia.setImageBitmap(mms.getBitmap(width));
-				holder.description.setVisibility(View.GONE);
+				
 			}
 			else{ // Attachment is downloaded and is not image
 				holder.description.setVisibility(View.VISIBLE);
-				holder.multiMedia.setVisibility(View.VISIBLE);
-				holder.multiMedia.setImageResource(R.drawable.paperclip2_black);
+				holder.button.setVisibility(View.VISIBLE);
+				holder.button.setText("Open File");
 				String extension = MimeTypeMap.getSingleton().getExtensionFromMimeType(mms.getMimeType());
 				if(extension==null){
 					extension=mms.getMimeType();
@@ -189,12 +204,13 @@ public class MessageAdapter extends BaseAdapter {
 		holder.message.setTextColor(Color.BLACK);	
 		return convertView;
 	}
-	private static class ViewHolder
+	public static class ViewHolder
 	{
 		public TextView description;
-		public ImageView multiMedia;
 		public LinearLayout layout;
 		public ImageView image;
+		public ImageView multiMedia;
+		public Button button;
 		TextView message;
 	}
 	@Override
