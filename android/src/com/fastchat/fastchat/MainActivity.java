@@ -100,6 +100,8 @@ public class MainActivity extends ActionBarActivity {
 			if (regid.isEmpty()) {
 				//registerInBackground();
 				registerInBackground();
+			}else{
+				NetworkManager.postDeviceId(regid);
 			}
 		}
 
@@ -130,6 +132,7 @@ public class MainActivity extends ActionBarActivity {
 			break;
 		case R.id.sign_out:
 			clearLoginCredentials();
+			SocketIoReconnector.stopReconnect();
 			SocketIoController.disconnect();
 			NetworkManager.postLogout();
 			restartFragments(new LoginFragment());
@@ -347,6 +350,7 @@ public class MainActivity extends ActionBarActivity {
 	 * using the 'from' address in the message.
 	 */
 	private void sendRegistrationIdToBackend() {
+		NetworkManager.postDeviceId(MainActivity.regid);
 	}
 
 	private void registerInBackground(){

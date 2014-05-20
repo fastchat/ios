@@ -43,18 +43,18 @@ import android.widget.TextView;
 public class MessageFragment extends Fragment implements OnClickListener {
 
 	private static View rootView;
-    
-    private static MessageAdapter adapter;
-    
-    private static final int SELECT_FILE=1;
-    
-    
-    private static MultiMedia multiMedia;
-    
-    private static final String TAG=MessageFragment.class.getName();
-    
-    
-    @Override
+
+	private static MessageAdapter adapter;
+
+	private static final int SELECT_FILE=1;
+
+
+	private static MultiMedia multiMedia;
+
+	private static final String TAG=MessageFragment.class.getName();
+
+
+	@Override
 	public void onCreateContextMenu(ContextMenu menu, View v,
 			ContextMenuInfo menuInfo) {
 		if(v.getId()==R.id.messages_container){
@@ -67,49 +67,49 @@ public class MessageFragment extends Fragment implements OnClickListener {
 			});
 			menu.add("Copy Text");
 		}
-    }
-	
-    @Override
+	}
+
+	@Override
 	public boolean onContextItemSelected(MenuItem item) {
-    	AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo)item.getMenuInfo();
+		AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo)item.getMenuInfo();
 		//int menuItemIndex = item.getItemId();
 		final Message selectedMessage = NetworkManager.getCurrentGroup().getMessages().get(info.position);
 		ClipboardManager clipboard = (ClipboardManager) MainActivity.activity.getSystemService(MainActivity.CLIPBOARD_SERVICE); 
-		 ClipData clip = ClipData.newPlainText("FastChat copied message", selectedMessage.getText());
-		 clipboard.setPrimaryClip(clip);
-    	return true;
-    }
-    
-    private boolean isMessagesUpToDate(){
-    	try{
-    		Group currGroup = NetworkManager.getCurrentGroup();
-	    	if(currGroup == null){
-	    		return false;
-	    	}
-	    	ArrayList<Message> mess = currGroup.getMessages();
-	    	if(mess==null || mess.isEmpty()){
-	    		return false;
-	    	}
-	    	Message latestWeHave = mess.get(mess.size()-1);
-	    	
-	    	Message latestFromGroup = currGroup.getLastMessage();
-	    	User currUser = NetworkManager.getCurrentUser();
-	    	if((latestWeHave.getId()==null || latestWeHave.getId().isEmpty()) && latestFromGroup.getFrom()==currUser){
-	    		return true;
-	    	}
-	    	else if(latestWeHave.getId().equals(latestFromGroup.getId())){ 
-	    		return true;
-	    	}
-    	}catch(NullPointerException e){
-    		return false;
-    	}
-    	return false;
-    }
-    
+		ClipData clip = ClipData.newPlainText("FastChat copied message", selectedMessage.getText());
+		clipboard.setPrimaryClip(clip);
+		return true;
+	}
+
+	private boolean isMessagesUpToDate(){
+		try{
+			Group currGroup = NetworkManager.getCurrentGroup();
+			if(currGroup == null){
+				return false;
+			}
+			ArrayList<Message> mess = currGroup.getMessages();
+			if(mess==null || mess.isEmpty()){
+				return false;
+			}
+			Message latestWeHave = mess.get(mess.size()-1);
+
+			Message latestFromGroup = currGroup.getLastMessage();
+			User currUser = NetworkManager.getCurrentUser();
+			if((latestWeHave.getId()==null || latestWeHave.getId().isEmpty()) && latestFromGroup.getFrom()==currUser){
+				return true;
+			}
+			else if(latestWeHave.getId().equals(latestFromGroup.getId())){ 
+				return true;
+			}
+		}catch(NullPointerException e){
+			return false;
+		}
+		return false;
+	}
+
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
-		
-		
+
+
 		if(!isMessagesUpToDate()){
 			NetworkManager.getCurrentGroupMessages();
 		}
@@ -117,35 +117,35 @@ public class MessageFragment extends Fragment implements OnClickListener {
 		rootView = inflater.inflate(R.layout.message, container,
 				false);
 		Button button = (Button) rootView.findViewById(R.id.send_button);
-	     button.setOnClickListener(this);
-	     button = (Button) rootView.findViewById(R.id.attach_button);
-	     button.setOnClickListener(this);
-	     adapter=new MessageAdapter(getActivity(), NetworkManager.getCurrentGroup().getMessages());
-	     final ListView lv = (ListView) rootView.findViewById(R.id.messages_container);
-	     MainActivity.activity.runOnUiThread(new Runnable(){
-			 public void run(){
-				 
-				 lv.setAdapter(adapter);
-				 
-			 }
-		 });
-	     EditText messageBox = (EditText) rootView.findViewById(R.id.my_message);
-	     messageBox.addTextChangedListener(new FastChatTextWatcher());
-	     registerForContextMenu(lv);
+		button.setOnClickListener(this);
+		button = (Button) rootView.findViewById(R.id.attach_button);
+		button.setOnClickListener(this);
+		adapter=new MessageAdapter(getActivity(), NetworkManager.getCurrentGroup().getMessages());
+		final ListView lv = (ListView) rootView.findViewById(R.id.messages_container);
+		MainActivity.activity.runOnUiThread(new Runnable(){
+			public void run(){
+
+				lv.setAdapter(adapter);
+
+			}
+		});
+		EditText messageBox = (EditText) rootView.findViewById(R.id.my_message);
+		messageBox.addTextChangedListener(new FastChatTextWatcher());
+		registerForContextMenu(lv);
 		return rootView;
 	}
-	
+
 	public void onStart(){
 		updateUI();
 		Tracker t = MainActivity.tracker;
 		t.setScreenName("Message View");
 
-        // Send a screen view.
-        t.send(new HitBuilders.AppViewBuilder().build());
-        super.onStart();
-        typingUpdated();
+		// Send a screen view.
+		t.send(new HitBuilders.AppViewBuilder().build());
+		super.onStart();
+		typingUpdated();
 	}
-	
+
 	public static void updateUI(){
 		if(rootView==null){
 			return;
@@ -159,7 +159,7 @@ public class MessageFragment extends Fragment implements OnClickListener {
 		});
 		typingUpdated();
 	}
-	
+
 	public static void addMessage(final Message message){
 		MainActivity.activity.runOnUiThread(new Runnable(){
 			public void run(){
@@ -167,9 +167,9 @@ public class MessageFragment extends Fragment implements OnClickListener {
 				updateUI();
 			}
 		});
-		
+
 	}
-	
+
 	public static void removeAllMessages(final String groupId){
 		Group g = NetworkManager.getAllGroups().get(groupId);
 		if(g==null){ //Check for null pointer exception
@@ -182,7 +182,7 @@ public class MessageFragment extends Fragment implements OnClickListener {
 			}
 		});
 	}
-	
+
 	public static void removeMessage(final Message m){
 		MainActivity.activity.runOnUiThread(new Runnable(){
 			public void run(){
@@ -191,7 +191,7 @@ public class MessageFragment extends Fragment implements OnClickListener {
 			}
 		});
 	}
-	
+
 	public static void showTyping(){
 		MainActivity.activity.runOnUiThread(new Runnable(){
 			@Override
@@ -203,7 +203,7 @@ public class MessageFragment extends Fragment implements OnClickListener {
 				if(currGroup==null){
 					return;
 				}
-				
+
 				for(User user : currGroup.getTypingUsers()){
 					if(text.isEmpty()){
 						text+=user.getUsername();
@@ -217,11 +217,11 @@ public class MessageFragment extends Fragment implements OnClickListener {
 					e.printStackTrace();
 				}
 			}
-			
+
 		});
-		
+
 	}
-	
+
 	public static void changeServerStatus(final String text,final int color){
 		MainActivity.activity.runOnUiThread(new Runnable(){
 			public void run(){
@@ -241,7 +241,7 @@ public class MessageFragment extends Fragment implements OnClickListener {
 			}
 		});
 	}
-	
+
 	public static void typingUpdated(){
 		MainActivity.activity.runOnUiThread(new Runnable(){
 			@Override
@@ -258,7 +258,7 @@ public class MessageFragment extends Fragment implements OnClickListener {
 					tv.setVisibility(View.VISIBLE);
 					String text = "";
 
-					
+
 					for(User user : currGroup.getTypingUsers()){
 						if(text.isEmpty()){
 							text+=user.getUsername();
@@ -273,30 +273,28 @@ public class MessageFragment extends Fragment implements OnClickListener {
 					}
 				}
 			}
-			
+
 		});
-		
+
 	}
-	
-	public static void getIndividiualView(final int position, final long downloaded){
+
+	public static void getIndividiualView(final int position, final long downloaded, final long total){
 		final ListView lv = (ListView) rootView.findViewById(R.id.messages_container);
-		
+		Log.d(TAG, "Progress:"+downloaded+" out of "+total + " "+(100.0*downloaded/total)+"%");
+		final double percentage = 100.0*downloaded/total;
+		final DecimalFormat df = new DecimalFormat("#.00");
 		MainActivity.activity.runOnUiThread(new Runnable(){
 			public void run(){
 				int visiblePosition = lv.getFirstVisiblePosition();
 				View view = lv.getChildAt(position - visiblePosition);
-			    lv.getAdapter().getView(position, view, lv);
-			    Button b = (Button) view.findViewById(R.id.multi_media_button);
-				Message m = (Message) b.getTag();
-				long total = m.getMedia_size();
-				double percentage = 100.0*downloaded/total;
-				DecimalFormat df = new DecimalFormat("#.00");
+				lv.getAdapter().getView(position, view, lv);
+				Button b = (Button) view.findViewById(R.id.multi_media_button);
 				String percentageText = df.format(percentage);
 				b.setText("Downloading.. "+percentageText+"%");
-				Log.d(TAG, "Progress:"+downloaded+" out of "+total + " "+(100.0*downloaded/total)+"%");
+
 			}
 		});
-	    
+
 	}
 
 	@Override
@@ -307,23 +305,23 @@ public class MessageFragment extends Fragment implements OnClickListener {
 			messageBox.setText("");
 			messageBox.clearFocus();
 			InputMethodManager in = (InputMethodManager) MainActivity.activity.getSystemService(MainActivity.INPUT_METHOD_SERVICE);
-	        in.hideSoftInputFromWindow(messageBox.getApplicationWindowToken(),InputMethodManager.HIDE_NOT_ALWAYS);
-	        if(message.isEmpty()){
-	        	return;
-	        }
-	        Message messageObject = new Message(message,NetworkManager.getCurrentUser(),NetworkManager.getCurrentGroup().getId(),multiMedia);
-	        multiMedia=null;
+			in.hideSoftInputFromWindow(messageBox.getApplicationWindowToken(),InputMethodManager.HIDE_NOT_ALWAYS);
+			if(message.isEmpty()){
+				return;
+			}
+			Message messageObject = new Message(message,NetworkManager.getCurrentUser(),NetworkManager.getCurrentGroup().getId(),multiMedia);
+			multiMedia=null;
 			addMessage(messageObject);
 			SocketIoController.sendMessage(messageObject);
 		}else if(arg0.getId()==R.id.attach_button){
 			Intent intent = new Intent();
-	        intent.setType("*/*");
-	        intent.setAction(Intent.ACTION_GET_CONTENT);
-	        startActivityForResult(Intent.createChooser(intent,
-	                "Select File"), SELECT_FILE);
+			intent.setType("*/*");
+			intent.setAction(Intent.ACTION_GET_CONTENT);
+			startActivityForResult(Intent.createChooser(intent,
+					"Select File"), SELECT_FILE);
 		}
 	}
-	
+
 	public void onActivityResult(int requestCode, int resultCode, Intent data) {
 		if (resultCode == MainActivity.RESULT_OK) {
 			if (requestCode == SELECT_FILE) {
@@ -332,26 +330,26 @@ public class MessageFragment extends Fragment implements OnClickListener {
 				//InputStream input = MainActivity.activity.getContentResolver().openInputStream(data.getData());
 				String[] proj = {MediaStore.Files.FileColumns.DISPLAY_NAME,MediaStore.Files.FileColumns.MIME_TYPE,MediaStore.Files.FileColumns.DATA};
 				Cursor cursor = MainActivity.activity.getContentResolver().query(fileUri, proj, null, null, null);
-				 String mime_type="";
-				 String fileName = "";
-				 String filePath = "";
-				 if (cursor != null && cursor.getCount() != 0) {
-				        int columnIndex = cursor.getColumnIndexOrThrow(MediaStore.Files.FileColumns.DISPLAY_NAME);
-				        cursor.moveToFirst();
-				        fileName = cursor.getString(columnIndex);
-				        columnIndex = cursor.getColumnIndexOrThrow(MediaStore.Files.FileColumns.MIME_TYPE);
-				        cursor.moveToFirst();
-				        mime_type = cursor.getString(columnIndex);
-				        columnIndex = cursor.getColumnIndexOrThrow(MediaStore.Files.FileColumns.DATA);
-				        cursor.moveToFirst();
-				        filePath = cursor.getString(columnIndex);
-				        Log.d(TAG,"File Name:"+fileName+" MIME Type:"+mime_type+" File Path:"+filePath);
-				    }
+				String mime_type="";
+				String fileName = "";
+				String filePath = "";
+				if (cursor != null && cursor.getCount() != 0) {
+					int columnIndex = cursor.getColumnIndexOrThrow(MediaStore.Files.FileColumns.DISPLAY_NAME);
+					cursor.moveToFirst();
+					fileName = cursor.getString(columnIndex);
+					columnIndex = cursor.getColumnIndexOrThrow(MediaStore.Files.FileColumns.MIME_TYPE);
+					cursor.moveToFirst();
+					mime_type = cursor.getString(columnIndex);
+					columnIndex = cursor.getColumnIndexOrThrow(MediaStore.Files.FileColumns.DATA);
+					cursor.moveToFirst();
+					filePath = cursor.getString(columnIndex);
+					Log.d(TAG,"File Name:"+fileName+" MIME Type:"+mime_type+" File Path:"+filePath);
+				}
 				//byte[] buf = new byte[input.available()];
 				//while (input.read(buf) != -1) {
 				//}
 				//Log.d(TAG,"File Size: "+buf.length);
-				 
+
 				if(fileName==""){
 					fileName = fileUri.getLastPathSegment();
 				}

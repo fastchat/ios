@@ -78,7 +78,6 @@ public class NetworkManager {
 				getCurrentUser().setToken(result.getString("session-token"));
 				getProfile();
 				NetworkManager.postDeviceId(MainActivity.regid);
-				
 			} catch (JSONException e1) {
 				e1.printStackTrace();
 				Utils.makeToast(e1);
@@ -129,6 +128,11 @@ public class NetworkManager {
 		if(reg_id==null || reg_id.equals("")){
 			return null;
 		}
+		if(getCurrentUser()==null || getCurrentUser().getSessionToken()==null){
+			return null;
+		}
+		Log.d(TAG,"Posting device registration token"+getCurrentUser().getSessionToken());
+		Log.d(TAG,"REGID: "+reg_id);
 		AsyncHttpPost post = new AsyncHttpPost(url+"/user/device");
 		post.setHeader("session-token", getCurrentUser().getSessionToken());
 		JSONObject object = new JSONObject();
@@ -145,7 +149,8 @@ public class NetworkManager {
 		return AsyncHttpClient.getDefaultInstance().executeJSONObject(post, new AsyncHttpClient.JSONObjectCallback() {
 			// Callback is invoked with any exceptions/errors, and the result, if available.
 			public void onCompleted(Exception e, AsyncHttpResponse response, JSONObject result) {
-				handleResponse(e,response,result);
+				int responseCode = handleResponse(e,response,result);
+				Log.d(TAG,"code:"+responseCode+" result:"+result);
 			}
 		});
 	}
@@ -440,7 +445,8 @@ public class NetworkManager {
 			String[] urlSplit = requestUrl.split("/");
 			String messageId = urlSplit[urlSplit.length-2];
 			String groupId = urlSplit[urlSplit.length-4];
-			if(groupId!=currentGroup.getId()){
+			//Log.d(TAG,"GroupId: "+groupId+" Downloaded:"+downloaded+" Total: "+total);
+			if(!groupId.equals(currentGroup.getId())){
 				return;
 			}
 			ArrayList<Message> messagesList = groups.get(groupId).getMessages();
@@ -451,7 +457,7 @@ public class NetworkManager {
 				}
 				position+=1;
 			}
-			MessageFragment.getIndividiualView(position,downloaded);
+			MessageFragment.getIndividiualView(position,downloaded, total);
 			
 		}
 		
