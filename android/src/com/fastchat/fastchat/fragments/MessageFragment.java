@@ -345,10 +345,6 @@ public class MessageFragment extends Fragment implements OnClickListener {
 					filePath = cursor.getString(columnIndex);
 					Log.d(TAG,"File Name:"+fileName+" MIME Type:"+mime_type+" File Path:"+filePath);
 				}
-				//byte[] buf = new byte[input.available()];
-				//while (input.read(buf) != -1) {
-				//}
-				//Log.d(TAG,"File Size: "+buf.length);
 
 				if(fileName==""){
 					fileName = fileUri.getLastPathSegment();

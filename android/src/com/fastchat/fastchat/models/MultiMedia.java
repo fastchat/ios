@@ -74,6 +74,9 @@ public class MultiMedia {
 			double ratio = this.bitmap.getHeight()/bitmapWidth;
 			int height = (int) Math.floor(ratio * width);
 			Log.d(TAG,"Ratio: "+ratio+" New Width: "+width+" New Height: "+height);
+			this.bitmap.recycle();
+			this.bitmap=null;
+			System.gc();
 			this.bitmap=Bitmap.createScaledBitmap(this.bitmap, width, height, false);
 		}
 		
