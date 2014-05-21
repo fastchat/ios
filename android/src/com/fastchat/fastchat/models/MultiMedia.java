@@ -82,6 +82,11 @@ public class MultiMedia {
 		
 		return this.bitmap;
 	}
+	
+	public Bitmap getBitmap(){
+		return this.bitmap;
+	}
+	
 	public boolean isImage(){
 		return this.isImage;
 	}

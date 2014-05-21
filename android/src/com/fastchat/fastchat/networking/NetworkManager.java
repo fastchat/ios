@@ -53,8 +53,9 @@ import com.koushikdutta.async.http.body.MultipartFormDataBody;
 
 public class NetworkManager {
 
-	private static final String url ="http://powerful-cliffs-9562.herokuapp.com:80";
+	//protected static String url ="http://powerful-cliffs-9562.herokuapp.com:80";
 	//private static final String url ="http://129.21.118.49:3000";
+	protected static String url = "http://localhost:3000";
 	private static String currentUserId = "0";
 	private static Group currentGroup;
 	// HashMap <groupId, Groups>
@@ -92,8 +93,8 @@ public class NetworkManager {
 		AsyncHttpPost post = new AsyncHttpPost(url+"/login");
 		JSONObject object = new JSONObject();
 		try {
-			object.put("username", username);
 			object.put("password", password);
+			object.put("username", username);
 		} catch (JSONException e) {
 			Utils.makeToast(e);
 			e.printStackTrace();
