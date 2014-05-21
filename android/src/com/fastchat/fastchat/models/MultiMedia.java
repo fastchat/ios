@@ -31,6 +31,9 @@ public class MultiMedia {
 	private static final String IMAGE_TYPE="image";
 	
 	private boolean isResized = false;
+	
+	private int width = 0;
+	private int height = 0;
 
 	public MultiMedia(String fileName,String mime_type,File data){
 		this.fileName=fileName;
@@ -44,7 +47,10 @@ public class MultiMedia {
 		Log.d(TAG,"File Name: "+this.fileName+" MIME_TYPE: "+this.mime_type+" Data Length:"+this.data.length());
 		if(getType(this.mime_type).equals("image")){
 			BitmapFactory.Options opts = new BitmapFactory.Options();
+			opts.inJustDecodeBounds=true;
 			this.bitmap=BitmapFactory.decodeFile(this.data.getAbsolutePath(),opts);
+			this.width = opts.outWidth;
+			this.height= opts.outHeight;
 			this.isImage=true;
 		}
 		
@@ -63,21 +69,27 @@ public class MultiMedia {
 		return this.data;
 	}
 	
-	public Bitmap getBitmap(int width){
-		if(this.bitmap==null){
-			return this.bitmap;
-		}
+	public Bitmap getBitmap(int widthParam){
 		if(isResized==false){
 			isResized=true;
-			Log.d(TAG,"Width: "+width+" B Width: "+this.bitmap.getWidth()+" B Height: "+this.bitmap.getHeight());
-			double bitmapWidth = this.bitmap.getWidth()*1.0;
-			double ratio = this.bitmap.getHeight()/bitmapWidth;
-			int height = (int) Math.floor(ratio * width);
-			Log.d(TAG,"Ratio: "+ratio+" New Width: "+width+" New Height: "+height);
-			this.bitmap.recycle();
-			this.bitmap=null;
-			System.gc();
-			this.bitmap=Bitmap.createScaledBitmap(this.bitmap, width, height, false);
+			Log.d(TAG,"Width: "+widthParam+" B Width: "+this.width+" B Height: "+this.height);
+			double bitmapWidth = this.width*1.0;
+			double ratio = this.height/bitmapWidth;
+			int height_new = (int) Math.floor(ratio * widthParam);
+			
+			if(this.bitmap!=null){
+				this.bitmap.recycle();
+				this.bitmap=null;
+				System.gc();
+			}
+			BitmapFactory.Options opts= new BitmapFactory.Options();
+			opts.outHeight=this.height;
+			opts.outWidth=this.width;
+			opts.inSampleSize=calculateInSampleSize(opts,widthParam,height_new);
+			Log.d(TAG,"Sample Size:"+opts.inSampleSize);
+			this.bitmap=BitmapFactory.decodeFile(this.data.getAbsolutePath(), opts);
+			Log.d(TAG,"Ratio: "+ratio+" New Width: "+this.bitmap.getWidth()+" New Height: "+this.bitmap.getHeight());
+			//this.bitmap=Bitmap.createScaledBitmap(this.bitmap, widthParam, height, false);
 		}
 		
 		return this.bitmap;
@@ -97,6 +109,30 @@ public class MultiMedia {
 		Log.d(TAG,"mime_type: "+mime_type+" Type: "+type);
 		return type;
 	}
+	
+	
+	public static int calculateInSampleSize(
+            BitmapFactory.Options options, int reqWidth, int reqHeight) {
+    // Raw height and width of image
+    final int height = options.outHeight;
+    final int width = options.outWidth;
+    int inSampleSize = 1;
+
+    if (height > reqHeight || width > reqWidth) {
+
+        final int halfHeight = height / 2;
+        final int halfWidth = width / 2;
+
+        // Calculate the largest inSampleSize value that is a power of 2 and keeps both
+        // height and width larger than the requested height and width.
+        while ((halfHeight / inSampleSize) > reqHeight
+                && (halfWidth / inSampleSize) > reqWidth) {
+            inSampleSize *= 2;
+        }
+    }
+
+    return inSampleSize;
+}
 
 
 	public boolean isResized() {

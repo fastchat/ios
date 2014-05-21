@@ -7,5 +7,6 @@
 	<classpathentry combineaccessrules="false" exported="true" kind="src" path="/FastChat"/>
 	<classpathentry exported="true" kind="lib" path="libs/lmockwebserver.jar"/>
 	<classpathentry exported="true" kind="con" path="com.android.ide.eclipse.adt.DEPENDENCIES"/>
+	<classpathentry kind="src" path="/AndroidAsync"/>
 	<classpathentry kind="output" path="bin/classes"/>
 </classpath>

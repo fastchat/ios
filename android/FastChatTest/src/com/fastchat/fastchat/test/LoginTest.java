@@ -18,7 +18,7 @@ import com.squareup.okhttp.mockwebserver.RecordedRequest;
 public class LoginTest extends TestCase {
 	
 	public void setUp(){
-	
+		NetworkManager.setUrl("http://localhost:3000");
 	}
 	
 	public void testLogin_Request(){

@@ -18,6 +18,7 @@ public class RegisterTest extends TestCase {
 
 	protected void setUp() throws Exception {
 		super.setUp();
+		NetworkManager.setUrl("http://localhost:3000");
 	}
 
 	protected void tearDown() throws Exception {
