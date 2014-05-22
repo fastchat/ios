@@ -37,6 +37,7 @@
 		27BAD7A1192BF56500C8569A /* CHMediaMessageTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 27BAD7A0192BF56500C8569A /* CHMediaMessageTableViewCell.m */; };
 		27BAD7A4192CED4F00C8569A /* CHMediaOwnTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 27BAD7A3192CED4F00C8569A /* CHMediaOwnTableViewCell.m */; };
 		27BAD7A7192CF7FB00C8569A /* CHExpandedImageViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 27BAD7A6192CF7FB00C8569A /* CHExpandedImageViewController.m */; };
+		27BAD7A9192E3B6600C8569A /* inprogress.png in Resources */ = {isa = PBXBuildFile; fileRef = 27BAD7A8192E3B6600C8569A /* inprogress.png */; };
 		27BEB10D18F85D82003BB97C /* profile-dark.png in Resources */ = {isa = PBXBuildFile; fileRef = 27BEB10C18F85D82003BB97C /* profile-dark.png */; };
 		2C7FD1E6FB44435B8A225753 /* libPods-Chat.a in Frameworks */ = {isa = PBXBuildFile; fileRef = ED86F54EC1C64B14950512A1 /* libPods-Chat.a */; };
 		AA7759DA18D54D3000E4E7AB /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = AA7759D918D54D3000E4E7AB /* Foundation.framework */; };
@@ -119,6 +120,7 @@
 		27BAD7A3192CED4F00C8569A /* CHMediaOwnTableViewCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CHMediaOwnTableViewCell.m; sourceTree = "<group>"; };
 		27BAD7A5192CF7FB00C8569A /* CHExpandedImageViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CHExpandedImageViewController.h; sourceTree = "<group>"; };
 		27BAD7A6192CF7FB00C8569A /* CHExpandedImageViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CHExpandedImageViewController.m; sourceTree = "<group>"; };
+		27BAD7A8192E3B6600C8569A /* inprogress.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = inprogress.png; sourceTree = "<group>"; };
 		27BEB10C18F85D82003BB97C /* profile-dark.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "profile-dark.png"; sourceTree = "<group>"; };
 		7EC6EF7B5FC54E4BA2B855D4 /* Pods-Chat.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Chat.xcconfig"; path = "Pods/Pods-Chat.xcconfig"; sourceTree = "<group>"; };
 		AA7759D618D54D3000E4E7AB /* Chat.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Chat.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -334,6 +336,7 @@
 		AA7759E018D54D3000E4E7AB /* Supporting Files */ = {
 			isa = PBXGroup;
 			children = (
+				27BAD7A8192E3B6600C8569A /* inprogress.png */,
 				27BEB10C18F85D82003BB97C /* profile-dark.png */,
 				AA7759F418D54D3000E4E7AB /* Images.xcassets */,
 				2769B05318F1258A00CCE470 /* MessageEntryBackground@2x.png */,
@@ -461,6 +464,7 @@
 				AA7759F518D54D3000E4E7AB /* Images.xcassets in Resources */,
 				2769B05E18F1258A00CCE470 /* MessageEntryInputField@2x.png in Resources */,
 				AA7759ED18D54D3000E4E7AB /* Main_iPhone.storyboard in Resources */,
+				27BAD7A9192E3B6600C8569A /* inprogress.png in Resources */,
 				2769B06218F1258A00CCE470 /* MessageEntrySendButtonPressed@2x.png in Resources */,
 				2769B05F18F1258A00CCE470 /* MessageEntrySendButton.png in Resources */,
 				AA7759E418D54D3000E4E7AB /* InfoPlist.strings in Resources */,

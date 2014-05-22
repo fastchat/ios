@@ -114,10 +114,21 @@
     ALAssetsGroupEnumerationResultsBlock assetsEnumerator = ^(ALAsset *result, NSUInteger index, BOOL *stop) {
         if ( result ) {
             if( [[result valueForProperty:ALAssetPropertyType] isEqualToString:ALAssetTypePhoto] ) {
-                [items addObject:[[result defaultRepresentation] url]];
+                NSURL *url = [[result defaultRepresentation] url];
+                if( url ) {
+                    [items addObject:url];
+                }
+                //[items addObject:[[result defaultRepresentation] url]];
                 assetResult = result;
             }
         }
+        
+        /*
+         NSURL *url = [[result defaultRepresentation] url];
+         if( url ) {
+         [items addObject:url];
+         }
+         */
         
         if ( index == (NSInteger)[selfBlock.usedGroup numberOfAssets] - 1) {
             *stop = YES;

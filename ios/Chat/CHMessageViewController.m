@@ -193,7 +193,7 @@
      [items addObject:url];
      }
      
-     Add this to their file. at the line it crashes at (somewhere downloading assets).
+     Add this to their file. at the line it crashes at DBLibraryManager.
      */
     UINavigationController *nav = [[UINavigationController alloc] initWithRootViewController:[[DBCameraContainerViewController alloc] initWithDelegate:self]];
     [nav setNavigationBarHidden:YES];
@@ -407,10 +407,18 @@
         if( [currMessage.hasMedia floatValue] ) {
             cell = [tableView dequeueReusableCellWithIdentifier:@"CHMediaOwnTableViewCell" forIndexPath:indexPath];
             
-            [[CHNetworkManager sharedManager] getMediaForMessage:currMessage._id groupId:self.group._id callback:^(UIImage *messageMedia) {
+            if( currMessage.theMediaSent == nil ) {
+                [((CHMediaMessageTableViewCell *)cell).mediaMessageImageView setImage:[UIImage imageNamed:@"inprogress.png"]];
+                [[CHNetworkManager sharedManager] getMediaForMessage:currMessage._id groupId:self.group._id callback:^(UIImage *messageMedia) {
 
-                [ ((CHMediaMessageTableViewCell *)cell).mediaMessageImageView setImage:messageMedia];
-            }];
+                    [currMessage setTheMediaSent:messageMedia];
+                    [self.messageArray replaceObjectAtIndex:indexPath.row withObject:currMessage];
+                    [ ((CHMediaMessageTableViewCell *)cell).mediaMessageImageView setImage:messageMedia];
+                }];
+            }
+            else {
+                [((CHMediaMessageTableViewCell *)cell).mediaMessageImageView setImage:currMessage.theMediaSent];
+            }
             
         }
         else {
