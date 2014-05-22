@@ -1,0 +1,1 @@
+PODS_CHAT_DBCAMERA_OTHER_LDFLAGS = -framework AVFoundation -framework CoreMedia

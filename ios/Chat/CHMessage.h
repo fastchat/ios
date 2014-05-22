@@ -16,5 +16,8 @@
 @property (nonatomic, strong) NSDate *sent;
 @property (nonatomic, copy) NSString *author;
 @property (nonatomic, copy) NSString *group;
+@property (nonatomic, strong) NSNumber *hasMedia;
+@property (nonatomic, strong) NSNumber *mediaHeight;
+@property (nonatomic, strong) NSNumber *mediaWidth;
 
 @end

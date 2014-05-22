@@ -126,7 +126,7 @@
 
 - (void)getMessagesFromDate: (NSDate *)date group:(NSString *)group callback:(void (^)(NSArray *messages))callback;
 {
-    [self GET:[NSString stringWithFormat:@"/group/%@/messages?20140101", group/*, date*/] parameters:nil success:^(NSURLSessionDataTask *task, id responseObject) {
+    [self GET:[NSString stringWithFormat:@"/group/%@/message?20140101", group/*, date*/] parameters:nil success:^(NSURLSessionDataTask *task, id responseObject) {
         if( callback ) {
 
         }
@@ -135,13 +135,32 @@
     }];
 }
 
+- (void)getMediaForMessage:(NSString *)messageId groupId:(NSString *)groupId callback:(void (^)(UIImage *messageMedia))callback;
+{
+    NSMutableURLRequest *request = [[NSMutableURLRequest alloc] initWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"%@/group/%@/message/%@/media",BASE_URL, groupId, messageId]]];
+    [request setValue:self.sessiontoken forHTTPHeaderField:@"session-token"];
+    
+    AFHTTPRequestOperation *requestOperation = [[AFHTTPRequestOperation alloc] initWithRequest:request];
+    requestOperation.responseSerializer = [AFImageResponseSerializer serializer];
+    [requestOperation setCompletionBlockWithSuccess:^(AFHTTPRequestOperation *operation, id responseObject) {
+        if(callback) {
+            callback(responseObject);
+        }
+        
+    } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+        NSLog(@"Image error: %@", error);
+    }];
+    
+    [requestOperation start];
+}
+
 - (void)getMessagesForGroup:(NSString *)group page:(int)page callback:(void (^)(NSArray *messages))callback;
 {
     if( !page ) {
         [self GET:[NSString stringWithFormat:@"/group/%@/message", group] parameters:nil success:^(NSURLSessionDataTask *task, id responseObject) {
             if( callback ) {
                 NSArray *messages = [CHMessage objectsFromJSON:responseObject];
-    
+                DLog(@"Messages returned: %@", messages);
                 callback(messages);
             }
         } failure:^(NSURLSessionDataTask *task, NSError *error) {
@@ -152,7 +171,7 @@
         }];
     }
     else {
-        [self GET:[NSString stringWithFormat:@"/group/%@/messages?page=%d", group, page] parameters:nil success:^(NSURLSessionDataTask *task, id responseObject) {
+        [self GET:[NSString stringWithFormat:@"/group/%@/message?page=%d", group, page] parameters:nil success:^(NSURLSessionDataTask *task, id responseObject) {
             if( callback ) {
                 NSArray *messages = [CHMessage objectsFromJSON:responseObject];
                 
@@ -284,12 +303,47 @@
 
 - (void)putLeaveGroup:(NSString *)groupId callback:(void (^)(BOOL success, NSError *error))callback;
 {
-    NSString *url = [NSString stringWithFormat:@"/group/%@/leave", groupId];
+    NSString *url = [NSString stringWithFormat:@"%@/group/%@/leave", BASE_URL, groupId];
     [self PUT:url parameters:nil success:^(NSURLSessionDataTask *task, id responseObject) {
         callback(YES, nil);
     } failure:^(NSURLSessionDataTask *task, NSError *error) {
         callback(NO, error);
     }];
+}
+
+- (void)postMediaMessageWithImage:(UIImage *)image groupId:(NSString *)groupId message:(NSString *)message callback:(void (^)(BOOL success, NSError *error))callback;
+{
+
+    NSData *imageData = UIImagePNGRepresentation(image);
+    NSDictionary *parameters = nil;
+    
+    NSString *url = [NSString stringWithFormat:@"%@/group/%@/message", BASE_URL, groupId];
+    NSError *error = nil;
+    
+    NSMutableURLRequest *request = [self.requestSerializer multipartFormRequestWithMethod:@"POST"
+                                                                                URLString:[[NSURL URLWithString:url relativeToURL:self.baseURL] absoluteString]
+                                                                               parameters:parameters
+                                                                constructingBodyWithBlock:^(id<AFMultipartFormData> formData) {
+                                                                    [formData appendPartWithFileData:imageData
+                                                                                                name:@"media"
+                                                                                            fileName:@"test_media_ios.png"
+                                                                                            mimeType:@"image/png"
+                                                                                            ];
+                                                                    [formData appendPartWithFormData:[message dataUsingEncoding:NSUTF8StringEncoding] name:@"text"];
+                                                                } error:&error];
+    
+    [request setValue:self.sessiontoken forHTTPHeaderField:@"session-token"];
+    
+    AFHTTPRequestOperation *operation = [self HTTPRequestOperationWithRequest:request
+                                                                      success:^(AFHTTPRequestOperation *operation, id responseObject) {
+                                                                          DLog(@"Successfully posted the image!");
+                                                                          callback(YES, nil);
+                                                                      } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+                                                                          NSLog(@"Error: %@", error);
+                                                                          callback(NO, error);
+                                                                      }];
+    [self.operationQueue addOperation:operation];
+    
 }
 
 

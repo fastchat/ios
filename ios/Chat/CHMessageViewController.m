@@ -16,6 +16,9 @@
 #import "CHGroup.h"
 #import "CHMessage.h"
 #import "CHCircleImageView.h"
+#import "CHMediaMessageTableViewCell.h"
+#import "CHMediaOwnTableViewCell.h"
+#import "CHExpandedImageViewController.h"
 
 #define kDefaultContentOffset 70
 
@@ -31,6 +34,8 @@
 @property UIRefreshControl *refresh;
 @property BOOL shouldSlide;
 @property BOOL keyboardIsVisible;
+@property BOOL mediaWasAdded;
+@property UIImage *media;
 
 @end
 
@@ -58,9 +63,18 @@
     
     self.containerView = [[UIView alloc] initWithFrame:CGRectMake(0, self.view.frame.size.height - 40, 320, 40)];
     
-    self.textView = [[HPGrowingTextView alloc] initWithFrame:CGRectMake(6, 3, 240, 40)];
+    UIButton *cameraBtn = [UIButton buttonWithType:UIButtonTypeSystem]; //[UIButton buttonWithType:UIButtonTypeCustom];
+    
+	cameraBtn.frame = CGRectMake(0, 1, 50, 40);
+    cameraBtn.autoresizingMask = UIViewAutoresizingFlexibleTopMargin | UIViewAutoresizingFlexibleLeftMargin;
+	[cameraBtn setTitle:@"Pic" forState:UIControlStateNormal];
+    
+    [cameraBtn addTarget:self action:@selector(loadCamera) forControlEvents:UIControlEventTouchUpInside];
+    [self.containerView addSubview:cameraBtn];
+    
+    self.textView = [[HPGrowingTextView alloc] initWithFrame:CGRectMake(56, 3, 190, 40)];
     self.textView.isScrollable = NO;
-    self.textView.contentInset = UIEdgeInsetsMake(0, 5, 0, 5);
+    self.textView.contentInset = UIEdgeInsetsMake(50, 5, 0, 5);
     
 	self.textView.minNumberOfLines = 1;
 	self.textView.maxNumberOfLines = 6;
@@ -69,22 +83,24 @@
 	self.textView.returnKeyType = UIReturnKeyDefault; //just as an example
 	self.textView.font = [UIFont systemFontOfSize:14.0f];
 	self.textView.delegate = self;
-    self.textView.internalTextView.scrollIndicatorInsets = UIEdgeInsetsMake(5, 0, 5, 0);
+    self.textView.internalTextView.scrollIndicatorInsets = UIEdgeInsetsMake(55, 0, 5, 0);
     self.textView.backgroundColor = [UIColor whiteColor];
     self.textView.placeholder = @"Send a message...";
     
+
     [self.view addSubview:self.containerView];
+    
     
     UIImage *rawEntryBackground = [UIImage imageNamed:@"MessageEntryInputField.png"];
     UIImage *entryBackground = [rawEntryBackground stretchableImageWithLeftCapWidth:13 topCapHeight:22];
     UIImageView *entryImageView = [[UIImageView alloc] initWithImage:entryBackground];
-    entryImageView.frame = CGRectMake(5, 0, 248, 40);
+    entryImageView.frame = CGRectMake(55, 0, 198, 40);
     entryImageView.autoresizingMask = UIViewAutoresizingFlexibleHeight | UIViewAutoresizingFlexibleWidth;
     
     UIImage *rawBackground = [UIImage imageNamed:@"MessageEntryBackground.png"];
     UIImage *background = [rawBackground stretchableImageWithLeftCapWidth:13 topCapHeight:22];
     UIImageView *imageView = [[UIImageView alloc] initWithImage:background];
-    imageView.frame = CGRectMake(0, 0, self.containerView.frame.size.width, self.containerView.frame.size.height);
+    imageView.frame = CGRectMake(50, 0, self.containerView.frame.size.width - 50, self.containerView.frame.size.height);
     imageView.autoresizingMask = UIViewAutoresizingFlexibleHeight | UIViewAutoresizingFlexibleWidth;
 
     
@@ -126,7 +142,7 @@
     _messageArray = [[NSMutableArray alloc] init];
 
     self.messages = @"";
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(keyboardWillShow:) name:UIKeyboardWillShowNotification object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(keyboardWillShow:) name:UIKeyboardWillShowNotification object:self.view.window];
     
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(keyboardWillHide:) name:UIKeyboardWillHideNotification object:nil];
     
@@ -141,7 +157,7 @@
         self.members[aMember.userId] = aMember.username;
     }
     
-
+    self.mediaWasAdded = NO;
     
     ///
     /// Load up old messages
@@ -162,6 +178,26 @@
     }
     
     self.keyboardIsVisible = NO;
+
+
+}
+
+-(void)loadCamera;
+{
+    
+    /*
+     Fix for DBCamera crashing when you open your photo library:
+     
+     NSURL *url = [[result defaultRepresentation] url];
+     if( url ) {
+     [items addObject:url];
+     }
+     
+     Add this to their file. at the line it crashes at (somewhere downloading assets).
+     */
+    UINavigationController *nav = [[UINavigationController alloc] initWithRootViewController:[[DBCameraContainerViewController alloc] initWithDelegate:self]];
+    [nav setNavigationBarHidden:YES];
+    [self presentViewController:nav animated:YES completion:nil];
 }
 
 -(void)viewWillAppear:(BOOL)animated {
@@ -225,7 +261,8 @@
 - (void)sendMessage;
 {
     
-   NSString *msg = self.textView.text;
+    DLog(@"We should send message: %hhd", self.mediaWasAdded);
+    NSString *msg = self.textView.text;
     
     if ( [msg isEqualToString:@""] || msg == nil ) {
         return;
@@ -257,18 +294,34 @@
     
     self.textView.text = @"";
     self.shouldSlide = NO;
+    
+    if( self.mediaWasAdded ) {
+        [[CHNetworkManager sharedManager] postMediaMessageWithImage:self.media groupId:[self.group _id] message:self.textView.text callback:^(BOOL success, NSError *error) {
+            if( success ) {
+                DLog(@"Successful post!");
+            }
+            else {
+                DLog(@"Error posting image");
+            }
+            //[self resignTextView];
+        }];
+    }
 
-    if( self.shouldSlide ) {
-        [self.textView setKeyboardType:UIKeyboardTypeAlphabet];
+    if( self.keyboardIsVisible ) {
+        [self.textView setKeyboardType:UIKeyboardTypeDefault];
         [self.textView resignFirstResponder];
         [self.textView becomeFirstResponder];
     }
+    
+    self.media = nil;
+    self.mediaWasAdded = NO;
 
 }
 
 - (void) keyboardWillShow: (NSNotification*) notification
 {
-//    if( self.shouldSlide ) {
+    DLog(@"Keyboard WILL SHOW");
+//    if( self.shouldSlide) {
         self.keyboardIsVisible = YES;
         NSDictionary* keyboardInfo = [notification userInfo];
         NSValue* keyboardFrameEnded = [keyboardInfo valueForKey:UIKeyboardFrameBeginUserInfoKey];
@@ -308,13 +361,12 @@
             self.containerView.frame = containerFrame;
         
         }];
- //   }
-
+   // }
 }
 
 - (void) keyboardWillHide: (NSNotification*) notification
 {
-    if (self.shouldSlide) {
+//    if (self.shouldSlide) {
         self.keyboardIsVisible = NO;
         NSTimeInterval animationDuration = [[notification.userInfo objectForKey:UIKeyboardAnimationDurationUserInfoKey] floatValue];
         UIViewAnimationCurve animationCurve = [[notification.userInfo objectForKey:UIKeyboardAnimationCurveUserInfoKey] intValue];
@@ -335,7 +387,7 @@
         }];
     
         [self.messageTable scrollToRowAtIndexPath:[NSIndexPath indexPathForRow:_messageArray.count - 1 inSection:0] atScrollPosition:UITableViewScrollPositionBottom animated:YES];
-    }
+ //   }
 }
 
 #pragma mark - TableView DataSource Implementation
@@ -350,9 +402,20 @@
     CHMessage *currMessage = (CHMessage *)[self.messageArray objectAtIndex:indexPath.row];
     CHMessageTableViewCell *cell = nil;
     CHUser *currUser = [[CHNetworkManager sharedManager] currentUser];
-    
+
     if( [self.members[currMessage.author] isEqualToString:self.members[currUser.userId]] ) {
-        cell = [tableView dequeueReusableCellWithIdentifier:@"CHOwnMessageTableViewCell" forIndexPath:indexPath];
+        if( [currMessage.hasMedia floatValue] ) {
+            cell = [tableView dequeueReusableCellWithIdentifier:@"CHMediaOwnTableViewCell" forIndexPath:indexPath];
+            
+            [[CHNetworkManager sharedManager] getMediaForMessage:currMessage._id groupId:self.group._id callback:^(UIImage *messageMedia) {
+
+                [ ((CHMediaMessageTableViewCell *)cell).mediaMessageImageView setImage:messageMedia];
+            }];
+            
+        }
+        else {
+            cell = [tableView dequeueReusableCellWithIdentifier:@"CHOwnMessageTableViewCell" forIndexPath:indexPath];
+        }
         cell.avatarImageView.contentMode = UIViewContentModeScaleAspectFill;
         
         // Setting to nil as workaround for iOS 7 bug showing links at wrong time
@@ -373,6 +436,9 @@
         if( [_group memberFromId:currMessage.author].avatar != nil ) {
             [cell.avatarImageView setImage:[_group memberFromId:currMessage.author].avatar];
         }
+        else {
+            [cell.avatarImageView setImage:[UIImage imageNamed:@"profile-dark.png"]];
+        }
         
         if (currMessage.sent != nil) {
             // Format the timestamp
@@ -385,7 +451,20 @@
     }
     
     else {
-        cell = [tableView dequeueReusableCellWithIdentifier:cHMessageTableViewCell forIndexPath:indexPath];
+        if( [currMessage.hasMedia floatValue] ) {
+            cell = [tableView dequeueReusableCellWithIdentifier:@"CHMediaMessageTableViewCell" forIndexPath:indexPath];
+            
+            [[CHNetworkManager sharedManager] getMediaForMessage:currMessage._id groupId:self.group._id callback:^(UIImage *messageMedia) {
+                [ ((CHMediaMessageTableViewCell *)cell).mediaMessageImageView setImage:messageMedia];
+            }];
+            
+            [((CHMediaMessageTableViewCell *)cell) setupGestureWithTableView:self];
+            
+        }
+        else {
+            cell = [tableView dequeueReusableCellWithIdentifier:cHMessageTableViewCell forIndexPath:indexPath];
+        }
+
         cell.avatarImageView.contentMode = UIViewContentModeScaleAspectFill;
 
         cell.authorLabel.text = [[NSString alloc] initWithFormat:@"by %@", [self.group usernameFromId:currMessage.author]];
@@ -406,6 +485,9 @@
         if ( [_group memberFromId:currMessage.author].avatar != nil) {
             [cell.avatarImageView setImage:[_group memberFromId:currMessage.author].avatar];
         }
+        else {
+            [cell.avatarImageView setImage:[UIImage imageNamed:@"profile-dark.png"]];
+        }
 
         if (currMessage.sent != nil) {
             // Format the timestamp
@@ -419,6 +501,16 @@
     return cell;
 }
 
+-(void)expandImage:(UIImage *)image;
+{
+    CHExpandedImageViewController *expandedImageController = [self.storyboard instantiateViewControllerWithIdentifier:@"CHExpandedImageViewController"];
+    DLog(@"Image: %@", image);
+    DLog(@"image view: %@", expandedImageController.expandedImageView);
+    //[self presentViewController:expandedImage animated:NO completion:nil];
+    [expandedImageController setImage:image];
+    [self.navigationController pushViewController:expandedImageController animated:YES];
+}
+
 -(void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath;
 {
     self.shouldSlide = YES;
@@ -430,6 +522,9 @@
     CGSize renderedSize = [((CHMessage *)[self.messageArray objectAtIndex:indexPath.row]).text sizeWithFont: [UIFont systemFontOfSize:14.0f] constrainedToSize:CGSizeMake(205, CGFLOAT_MAX) lineBreakMode:NSLineBreakByWordWrapping];
 
     // Adding 45.0 to fix the bug where messages of certain lengths don't size the cell properly.
+    if( [[[self.messageArray objectAtIndex:indexPath.row] hasMedia] floatValue]) {
+        renderedSize.height += 110.0f;
+    }
     return renderedSize.height + 45.0f;
 
 }
@@ -476,7 +571,7 @@
 -(void)viewDidDisappear:(BOOL)animated;
 {
     [super viewDidDisappear:animated];
-    [[NSNotificationCenter defaultCenter] removeObserver:self];
+//    [[NSNotificationCenter defaultCenter] removeObserver:self];
 }
 
 - (void)growingTextView:(HPGrowingTextView *)growingTextView willChangeHeight:(float)height
@@ -504,5 +599,26 @@
     timestampFormatter.dateFormat = @"MMMM dd, HH:mm";
     return timestampFormatter;
 }
+
+
+//Use your captured image
+#pragma mark - DBCameraViewControllerDelegate
+
+- (void) captureImageDidFinish:(UIImage *)image withMetadata:(NSDictionary *)metadata
+{
+    self.mediaWasAdded = YES;
+    self.media = image;
+    
+    self.shouldSlide = NO;
+
+    [self.presentedViewController dismissViewControllerAnimated:YES completion:^{
+       
+    }];
+    
+    if( self.keyboardIsVisible ) {
+        DLog(@"Keyboard should be visible");
+    }
+}
+
 
 @end
