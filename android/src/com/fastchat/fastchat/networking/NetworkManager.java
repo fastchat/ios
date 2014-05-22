@@ -54,7 +54,6 @@ import com.koushikdutta.async.http.body.MultipartFormDataBody;
 public class NetworkManager {
 
 	private static String url ="http://powerful-cliffs-9562.herokuapp.com:80";
-	
 	public static void setUrl(String url) {
 		NetworkManager.url = url;
 	}
@@ -70,7 +69,7 @@ public class NetworkManager {
 	private static HashMap<String, User> users  = new HashMap<String,User>();
 	private static User fastChatUser = new User(null,"FastChat",null);
 	
-	private static final String TAG=NetworkManager.class.getName();
+	private static final String TAG=NetworkManager.class.getSimpleName();
 
 
 	private static final JSONObjectCallback loginCallback = new AsyncHttpClient.JSONObjectCallback() {
@@ -81,11 +80,8 @@ public class NetworkManager {
 			if(responseCode<200 || responseCode>299){
 				return;
 			}
-			
 			try {
 				getCurrentUser().setToken(result.getString("session-token"));
-				getProfile();
-				NetworkManager.postDeviceId(MainActivity.regid);
 			} catch (JSONException e1) {
 				e1.printStackTrace();
 				Utils.makeToast(e1);
@@ -238,10 +234,7 @@ public class NetworkManager {
 				tempUser.setToken(getToken());
 				Log.d(TAG,"currentUser: "+tempUser.getId()+":"+tempUser.getUsername()+":"+tempUser.getSessionToken());
 				NetworkManager.setCurrentUser(tempUser);
-
 				MainActivity.saveLoginCredentials(tempUser);
-				NetworkManager.getAvatar(tempUser.getId());
-				MainActivity.restartFragments(new GroupsFragment());
 			} catch (JSONException e1) {
 				e1.printStackTrace();
 				Utils.makeToast(e1);

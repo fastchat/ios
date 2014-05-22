@@ -8,6 +8,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import com.fastchat.fastchat.R;
 import com.fastchat.fastchat.fragments.GroupsFragment;
 import com.fastchat.fastchat.fragments.LoginFragment;
+import com.fastchat.fastchat.fragments.LoginSuccessWatcher;
 import com.fastchat.fastchat.fragments.MessageFragment;
 import com.fastchat.fastchat.fragments.NewGroupFragment;
 import com.fastchat.fastchat.fragments.ProfileFragment;
@@ -208,6 +209,7 @@ public class MainActivity extends ActionBarActivity {
 	
 	protected void onStop(){
 		GoogleAnalytics.getInstance(this).reportActivityStop(this);
+		LoginSuccessWatcher.stopRunning();
 		SocketIoReconnector.stopReconnect();
 		SocketIoController.disconnect();
 		GroupsFragment.setUnliveData();
@@ -289,6 +291,9 @@ public class MainActivity extends ActionBarActivity {
 	}
 	
 	public static void saveLoginCredentials(User user){
+		if(MainActivity.activity==null){
+			return;
+		}
 		final SharedPreferences prefs = getGCMPreferences(MainActivity.activity.getApplicationContext());
 		SharedPreferences.Editor editor = prefs.edit();
 		editor.putString(USER_ID, user.getId());

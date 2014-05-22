@@ -8,7 +8,9 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.text.DecimalFormat;
+
 import com.fastchat.fastchat.models.Message;
+
 import android.annotation.TargetApi;
 import android.content.ContentUris;
 import android.content.Context;
@@ -20,14 +22,22 @@ import android.os.Build;
 import android.os.Environment;
 import android.provider.DocumentsContract;
 import android.provider.MediaStore;
+import android.util.Log;
 import android.webkit.MimeTypeMap;
 import android.widget.Toast;
+
 
 @TargetApi(Build.VERSION_CODES.KITKAT)
 public class Utils {
 
+	private static final String TAG = Utils.class.getSimpleName();
+	
 	public static void makeToast(Exception e){
 		final String message = e.getMessage();
+		if(MainActivity.activity==null){
+			Log.e(TAG,message);
+			return;
+		}
     	(MainActivity.activity).runOnUiThread(new Runnable(){
     		public void run(){
     			Toast.makeText(MainActivity.activity.getApplicationContext(), message, Toast.LENGTH_LONG).show();
