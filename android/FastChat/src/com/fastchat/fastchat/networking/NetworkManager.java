@@ -19,6 +19,7 @@ import android.content.Context;
 import android.content.ContextWrapper;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.net.Uri;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -203,7 +204,7 @@ public class NetworkManager {
 
 	
 	public static Future<JSONObject> postLogout(){
-		AsyncHttpRequest http = new AsyncHttpRequest(URI.create(url+"/logout"),"DELETE");
+		AsyncHttpRequest http = new AsyncHttpRequest(Uri.parse(url+"/logout"),"DELETE");
 		http.setHeader("session-token", getCurrentUser().getSessionToken());
 		return AsyncHttpClient.getDefaultInstance().executeJSONObject(http, new AsyncHttpClient.JSONObjectCallback() {
 			public void onCompleted(Exception e, AsyncHttpResponse response, JSONObject result) {
@@ -214,7 +215,7 @@ public class NetworkManager {
 	
 	
 	public static Future<JSONObject> postLogoutAll(){
-		AsyncHttpRequest http = new AsyncHttpRequest(URI.create(url+"/logout?all=true"),"DELETE");
+		AsyncHttpRequest http = new AsyncHttpRequest(Uri.parse(url+"/logout?all=true"),"DELETE");
 		http.setHeader("session-token", getCurrentUser().getSessionToken());
 		return AsyncHttpClient.getDefaultInstance().executeJSONObject(http, new AsyncHttpClient.JSONObjectCallback() {
 			public void onCompleted(Exception e, AsyncHttpResponse response, JSONObject result) {
@@ -252,7 +253,7 @@ public class NetworkManager {
 	}
 	
 	public static Future<JSONObject> putLeaveGroup(Group g){
-		AsyncHttpRequest http = new AsyncHttpRequest(URI.create(url+"/group/"+g.getId()+"/leave"),"PUT");
+		AsyncHttpRequest http = new AsyncHttpRequest(Uri.parse(url+"/group/"+g.getId()+"/leave"),"PUT");
 		http.setHeader("session-token", getCurrentUser().getSessionToken());
 		groups.remove(g);
 		return AsyncHttpClient.getDefaultInstance().executeJSONObject(http, new AsyncHttpClient.JSONObjectCallback() {
@@ -290,7 +291,7 @@ public class NetworkManager {
 	
 	
 	public static Future<JSONObject> putInviteUser(String username, Group g){
-		AsyncHttpRequest http = new AsyncHttpRequest(URI.create(url+"/group/"+g.getId()+"/add"),"PUT");
+		AsyncHttpRequest http = new AsyncHttpRequest(Uri.parse(url+"/group/"+g.getId()+"/add"),"PUT");
 		http.setHeader("session-token", getCurrentUser().getSessionToken());
 		JSONObject object = new JSONObject();
 		try {
