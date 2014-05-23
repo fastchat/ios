@@ -1,3 +1,6 @@
 [submodule "android/AndroidAsync"]
 	path = android/AndroidAsync
 	url = https://github.com/koush/AndroidAsync.git
+[submodule "android/chips-edittext-library"]
+	path = android/chips-edittext-library
+	url = https://github.com/kpbird/chips-edittext-library.git
