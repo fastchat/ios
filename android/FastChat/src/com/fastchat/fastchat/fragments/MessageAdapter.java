@@ -170,7 +170,7 @@ public class MessageAdapter extends BaseAdapter {
         out0.setSpan(boldSpan, 0, message.getText().length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
         out0.setSpan(smallSpan, message.getText().length(), out0.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
         holder.message.setText(out0);
-        Bitmap avatar = message.getFrom().getBitmap();
+        Bitmap avatar = message.getFrom().getAvatarBitmap();
         if(avatar!=null){
         	holder.image.setImageBitmap(avatar);
         	

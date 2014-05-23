@@ -6,7 +6,6 @@ import org.json.JSONObject;
 import android.graphics.Bitmap;
 
 import com.fastchat.fastchat.Utils;
-import com.fastchat.fastchat.networking.NetworkManager;
 
 public class User {
 	
@@ -58,11 +57,15 @@ public class User {
 		return this.sessiontoken;
 	}
 	
-	public Bitmap getBitmap(){
+	public Bitmap getAvatarBitmap(){
 		return this.avatar;
 	}
 	
-	public void setBitmap(Bitmap b){
+	public void setAvatarBitmap(Bitmap b){
+		if(this.avatar!=null){
+			this.avatar.recycle();
+			this.avatar=null;
+		}
 		this.avatar=b;
 	}
 

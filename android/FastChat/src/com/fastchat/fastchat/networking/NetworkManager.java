@@ -2,12 +2,14 @@ package com.fastchat.fastchat.networking;
 
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.net.URI;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
@@ -19,18 +21,15 @@ import android.content.Context;
 import android.content.ContextWrapper;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Bitmap.CompressFormat;
 import android.net.Uri;
 import android.util.Log;
-import android.view.View;
-import android.widget.Button;
 
+import com.fastchat.fastchat.CacheManager;
 import com.fastchat.fastchat.MainActivity;
-import com.fastchat.fastchat.R;
 import com.fastchat.fastchat.Utils;
 import com.fastchat.fastchat.fragments.GroupsFragment;
 import com.fastchat.fastchat.fragments.LoginFragment;
-import com.fastchat.fastchat.fragments.MessageAdapter;
-import com.fastchat.fastchat.fragments.MessageAdapter.ViewHolder;
 import com.fastchat.fastchat.fragments.MessageFragment;
 import com.fastchat.fastchat.fragments.ProfileFragment;
 import com.fastchat.fastchat.models.Group;
@@ -349,6 +348,11 @@ public class NetworkManager {
 			String userId = urlSplit[urlSplit.length-2];
 			
 			byte[] data = result.getAllByteArray();
+			/*try {
+				CacheManager.cacheData(MainActivity.activity, data, userId+".jpeg");
+			} catch (IOException e1) {
+				e1.printStackTrace();
+			}*/
 			Log.d(TAG,"Avatar UserID: "+userId+ "Length: "+data.length);
 			Bitmap avatar = BitmapFactory.decodeByteArray(data, 0, data.length);
 			
@@ -357,13 +361,27 @@ public class NetworkManager {
 				return;
 			}
 			avatar = ProfileFragment.getRoundedCornerBitmap(avatar);
-			NetworkManager.getUsernameFromId(userId).setBitmap(avatar);
+			NetworkManager.getUsernameFromId(userId).setAvatarBitmap(avatar);
 		}
 		
     };
 	
 	public static synchronized Future<ByteBufferList> getAvatar(String id) {
+		/*File file = null;
+		try {
+			file = CacheManager.retrieveData(MainActivity.activity, id+".jpeg");
+		} catch (IOException e) {
+		}*/
+		
 		AsyncHttpGet get = new AsyncHttpGet(url+"/user/"+id+"/avatar");
+		/*if(file!=null){
+			long lastModified = file.lastModified();
+			Date date = new Date(lastModified);
+			SimpleDateFormat format = new SimpleDateFormat("EEE, dd MMM yyyy HH:mm:ss zzz");
+			String modifiedHeader= format.format(date);
+			get.setHeader("If-Modified-Since", modifiedHeader);
+			Log.d(TAG,"lastModied:" + modifiedHeader);
+		}*/
 		get.setHeader("session-token", getCurrentUser().getSessionToken());
 		return AsyncHttpClient.getDefaultInstance().executeByteBufferList(get,dataCallback);
 	}
@@ -373,8 +391,15 @@ public class NetworkManager {
 		AsyncHttpPost post = new AsyncHttpPost(url+"/user/"+getCurrentUser().getId()+"/avatar");
 		post.setHeader("session-token", getCurrentUser().getSessionToken());
 		MultipartFormDataBody body = new MultipartFormDataBody();
-		String fileDirectory = saveToInternalSorage(bitmap)+"/avatar.jpeg";
-		FilePart fp = new FilePart("avatar",new File(fileDirectory));
+		File file;
+		try {
+			file = CacheManager.cacheData(MainActivity.activity, bitmap, getCurrentUser().getId()+".jpeg");
+		} catch (IOException e1) {
+			e1.printStackTrace();
+			return null;
+		}
+		//String fileDirectory = saveToInternalSorage(bitmap)+"/avatar.jpeg";
+		FilePart fp = new FilePart("avatar",file);
 		fp.setContentType("image/jpeg");
 		body.addPart(fp);
 		post.setBody(body);
@@ -465,71 +490,12 @@ public class NetworkManager {
 		
 	};
 	
-	/*private static final DownloadCallback mediaCallback = new AsyncHttpClient.DownloadCallback() {
-
-		@Override
-		public void onCompleted(Exception e, AsyncHttpResponse source,
-				ByteBufferList result) {
-			int responseCode = handleResponse(e,source);
-			if(responseCode<200 || responseCode>299){
-				return;
-			}
-			String requestUrl = source.getRequest().getUri().toString();
-			String[] urlSplit = requestUrl.split("/");
-			String messageId = urlSplit[urlSplit.length-2];
-			String groupId = urlSplit[urlSplit.length-4];
-			byte[] data = result.getAllByteArray();
-			Log.d(TAG,"Media MessageID: "+messageId+ " Group Id: "+groupId+" Length: "+data.length);
-			String content_type = source.getHeaders().getHeaders().get("Content-type");
-			MultiMedia mms = new MultiMedia("test.tmp",content_type,data);
-			ArrayList<Message> messagesList = groups.get(groupId).getMessages();
-			for(Message m : messagesList){
-				if(m.getId().equals(messageId)){
-					m.setMedia(mms);
-					MessageFragment.updateUI();
-					break;
-				}
-			}
-		}
-		
-    };*/
-	
 	public static Future<File> getMessageMedia(Message m) {
 		AsyncHttpGet get = new AsyncHttpGet(url+"/group/"+m.getGroupId()+"/message/"+m.getId()+"/media");
 		Log.d(TAG,"URL: "+url+"/group/"+m.getGroupId()+"/message/"+m.getId()+"/media");
 		get.setHeader("session-token", getCurrentUser().getSessionToken());
 		return AsyncHttpClient.getDefaultInstance().executeFile(get,m.getFullFilePath(),mediaCallback2);
 	}
-	
-	/*public static Future<File> getBigTestFile(){
-		AsyncHttpGet get = new AsyncHttpGet("http://mirrors.arsc.edu/centos/6.5/isos/x86_64/CentOS-6.5-x86_64-bin-DVD1.iso");
-		Log.d(TAG,"Getting Big Test File");
-		//Log.d(TAG,"URL: "+url+"/group/"+m.getGroupId()+"/message/"+m.getId()+"/media");
-		//get.setHeader("session-token", getCurrentUser().getSessionToken());
-		return AsyncHttpClient.getDefaultInstance().executeFile(get,"/sdcard/test2.iso",mediaCallback2);
-	}*/
-	
-	private static String saveToInternalSorage(Bitmap bitmapImage){
-        ContextWrapper cw = new ContextWrapper(MainActivity.activity.getApplicationContext());
-        File directory = cw.getDir("directoryName", Context.MODE_PRIVATE);
-        File mypath=new File(directory,"avatar.jpeg");
-
-        FileOutputStream fos = null;
-        try {
-           // fos = openFileOutput(filename, Context.MODE_PRIVATE);
-
-            fos = new FileOutputStream(mypath);
-
-            // Use the compress method on the BitMap object to write image to the OutputStream
-            bitmapImage.compress(Bitmap.CompressFormat.JPEG, 80, fos);
-            fos.close();
-        } catch (Exception e) {
-            e.printStackTrace();
-            Utils.makeToast(e);
-        }
-        return directory.getAbsolutePath();
-    }
-	
 	
 	
 	

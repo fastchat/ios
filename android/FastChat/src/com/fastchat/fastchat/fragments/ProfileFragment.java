@@ -56,7 +56,7 @@ public class ProfileFragment extends Fragment implements OnClickListener {
 		rootView = inflater.inflate(R.layout.profile, container,
 				false);
 		avatarView = (ImageView) rootView.findViewById(R.id.avatar);
-		currentBitmap = NetworkManager.getCurrentUser().getBitmap();
+		currentBitmap = NetworkManager.getCurrentUser().getAvatarBitmap();
 		avatarView.setImageBitmap(currentBitmap);
 		TextView tv = (TextView) rootView.findViewById(R.id.profile_username);
 		tv.setText(NetworkManager.getCurrentUser().getUsername());
@@ -98,7 +98,7 @@ public class ProfileFragment extends Fragment implements OnClickListener {
 				startActivityForResult(intent, 1);
 				break;
 			case R.id.save_avatar:
-				NetworkManager.getCurrentUser().setBitmap(currentBitmap);
+				NetworkManager.getCurrentUser().setAvatarBitmap(currentBitmap);
 				NetworkManager.postAvatar(currentBitmap);
 				break;
 			case R.id.logout_all:
