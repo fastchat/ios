@@ -46,10 +46,12 @@
     
     [[CHNetworkManager sharedManager] registerWithUsername:self.usernameTextField.text password:self.passwordTextField.text callback:^(NSArray *userData) {
         DLog(@"Registered user: %@",userData);
+
         [self dismissViewControllerAnimated:YES completion:nil];
     }];
      
 /*        CHGroupListTableViewController *controller = [self.storyboard instantiateViewControllerWithIdentifier:@"CHGroupListTableViewController"];
+
         [self.navigationController pushViewController:controller animated:YES];
     }];
  */

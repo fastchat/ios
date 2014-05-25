@@ -4,9 +4,19 @@
     tools:context="com.example.fastchat.MainActivity" >
 
     <item
-        android:id="@+id/action_settings"
-        android:orderInCategory="100"
-        android:title="@string/action_settings"
+        android:id="@+id/new_group"
+        android:orderInCategory="1"
+        android:title="@string/new_group"
+        app:showAsAction="ifRoom"/>
+    <item
+        android:id="@+id/profile"
+        android:orderInCategory="5"
+        android:title="@string/profile"
+        app:showAsAction="never"/>
+    <item
+        android:id="@+id/sign_out"
+        android:orderInCategory="10"
+        android:title="@string/sign_out"
         app:showAsAction="never"/>
 
 </menu>
