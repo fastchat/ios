@@ -39,7 +39,6 @@
     self.title = @"Pending Invitations";
     
     [[CHNetworkManager sharedManager] getProfile:^(CHUser *userProfile) {
-        DLog(@"Got user profile: %@", userProfile.invites);
         self.pendingInvites = userProfile.invites;
         [self.tableView reloadData];
     }];

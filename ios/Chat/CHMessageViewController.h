@@ -10,10 +10,12 @@
 #import "SocketIO.h"
 #import "CHSocketManager.h"
 #import "HPGrowingTextView.h"
+#import "DBCameraViewController.h"
+#import "DBCameraContainerViewController.h"
 
 @class CHGroup;
 
-@interface CHMessageViewController : UIViewController <UITextFieldDelegate, SocketIODelegate, UITableViewDataSource,UITableViewDelegate, CHSocketManagerDelegate, UITextViewDelegate, HPGrowingTextViewDelegate>
+@interface CHMessageViewController : UIViewController <UITextFieldDelegate, SocketIODelegate, UITableViewDataSource,UITableViewDelegate, CHSocketManagerDelegate, UITextViewDelegate, HPGrowingTextViewDelegate, DBCameraViewControllerDelegate>
 
 @property (nonatomic, strong) CHGroup *group;
 @property (nonatomic, strong) NSString *groupId;
@@ -26,5 +28,7 @@
 
 @property UIView *containerView;
 @property HPGrowingTextView *textView;
+
+-(void)expandImage:(UIImage *)image;
 
 @end

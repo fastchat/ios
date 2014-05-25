@@ -1,48 +1,51 @@
 PODS:
-  - AFNetworking (2.2.1):
+  - AFNetworking (2.2.4):
     - AFNetworking/NSURLConnection
     - AFNetworking/NSURLSession
     - AFNetworking/Reachability
     - AFNetworking/Security
     - AFNetworking/Serialization
     - AFNetworking/UIKit
-  - AFNetworking/NSURLConnection (2.2.1):
+  - AFNetworking/NSURLConnection (2.2.4):
     - AFNetworking/Reachability
     - AFNetworking/Security
     - AFNetworking/Serialization
-  - AFNetworking/NSURLSession (2.2.1):
+  - AFNetworking/NSURLSession (2.2.4):
     - AFNetworking/NSURLConnection
-  - AFNetworking/Reachability (2.2.1)
-  - AFNetworking/Security (2.2.1)
-  - AFNetworking/Serialization (2.2.1)
-  - AFNetworking/UIKit (2.2.1):
+  - AFNetworking/Reachability (2.2.4)
+  - AFNetworking/Security (2.2.4)
+  - AFNetworking/Serialization (2.2.4)
+  - AFNetworking/UIKit (2.2.4):
     - AFNetworking/NSURLConnection
     - AFNetworking/NSURLSession
+  - DBCamera (2.0)
   - HexColors (2.2.1)
   - HPGrowingTextView (1.1)
-  - Mantle (1.4.1):
+  - Mantle (1.5):
     - Mantle/extobjc
-  - Mantle/extobjc (1.4.1)
-  - socket.IO (0.5):
+  - Mantle/extobjc (1.5)
+  - socket.IO (0.5.2):
     - SocketRocket (~> 0.2)
   - SocketRocket (0.3.1-beta2)
-  - TSMessages (0.9.7):
+  - TSMessages (0.9.9):
     - HexColors
 
 DEPENDENCIES:
   - AFNetworking (~> 2.2)
+  - DBCamera (~> 2.0)
   - HPGrowingTextView (~> 1.1)
   - Mantle (~> 1.4)
   - socket.IO (~> 0.5)
   - TSMessages (~> 0.9)
 
 SPEC CHECKSUMS:
-  AFNetworking: 0121f4b69be3fa58d1ab317866e036e12ac9651d
-  HexColors: 99211502e17904af7891fc8f687d0e4958a6d66e
-  HPGrowingTextView: 4318f557b33c19def1c53ec275d6e2a2d6589cd0
-  Mantle: 0714cdb2b8559d9e6c2410d6a8529e3307bff189
-  socket.IO: 627782f3c7713a27dcf55679b5d4839f50428fe6
-  SocketRocket: 7ac946bcce46287a791dfff3c1f8daa692821dae
-  TSMessages: 9dd053bcf1a8985275177ebe0fb8c0f1416e92f7
+  AFNetworking: ab63e259fe91eef4519b371ef0a4955af0e73e64
+  DBCamera: 512ab24fca498ffb9e603c78dfba47bd08a315bb
+  HexColors: 01384d2bbe8dc4ffa43c3b4135db6e976952d153
+  HPGrowingTextView: 07d5ab1f1e867acfb7a6f498b819948c9e97d07c
+  Mantle: c67a7e45e14196ed42b2a7cbb98ff6a9920e6b92
+  socket.IO: db3e71805c862038ab73209dda2b0ad6babc54b2
+  SocketRocket: 79a68ae186063c65e1fe6f638b1ae2927aa5f304
+  TSMessages: 2999ef55e532378692e9d14d32da2bb60e285129
 
 COCOAPODS: 0.32.1

@@ -46,8 +46,6 @@
     
     // Check to see if we are logged in
     if( ![[CHNetworkManager sharedManager] hasStoredSessionToken] ) {
-        DLog(@"Session token not found. We need to login");
-
         UIViewController *loginController = [self.storyboard instantiateViewControllerWithIdentifier:@"CHViewNavController"];
         [self presentViewController:loginController animated:NO completion:nil];
     }
@@ -56,8 +54,7 @@
         // Get the user profile to ensure we have a user
         [[CHNetworkManager sharedManager] getProfile:^(CHUser *userProfile) {
             [[CHNetworkManager sharedManager] getAvatarOfUser:[[CHNetworkManager sharedManager] currentUser].userId callback:^(UIImage *avatar) {
-                //
-                DLog(@"User %@ (id: %@) has avatar %@", [[CHNetworkManager sharedManager] currentUser].username, [[CHNetworkManager sharedManager] currentUser].userId, avatar );
+
                 [[CHNetworkManager sharedManager] currentUser].avatar = avatar;
             }];
         }];
@@ -92,16 +89,10 @@
         self.groups = [groups mutableCopy];
         
         // Get all member avatars
-        DLog(@"Groups: %@", self.groups);
         for( CHGroup *group in self.groups ) {
-            DLog(@"IN A GROUP");
             for( CHUser *user in group.members ) {
-                if( user ) {
-                    DLog(@"GROUP GROUP AVATARfor user %@", user);
-                }
                 if( user.avatar == nil ) {
                     [[CHNetworkManager sharedManager] getAvatarOfUser:user.userId callback:^(UIImage *avatar) {
-                        DLog(@"Found avatar");
                         ((CHUser *)group.memberDict[user.userId]).avatar = avatar;
                     }];
                 }
@@ -111,7 +102,6 @@
                 if( user.avatar == nil ) {
                     [[CHNetworkManager sharedManager] getAvatarOfUser:user.userId callback:^(UIImage *avatar) {
                         ((CHUser *)group.memberDict[user.userId]).avatar = avatar;
-                        DLog(@"Set %@'s avatar to %@", ((CHUser *)group.memberDict[user.userId]).username, ((CHUser *)group.memberDict[user.userId]).avatar);
                     }];
                 }
             }
@@ -124,7 +114,6 @@
 
 -(void) loadGroupsAndRefresh;
 {
-    DLog(@"REFRESHING");
     UIActivityIndicatorView *spinner = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleGray];
     spinner.center = CGPointMake(160, 240);
     spinner.tag = 12;
@@ -133,12 +122,6 @@
     
     [self.tableView reloadData];
     [spinner stopAnimating];
-    /*
-    [[CHNetworkManager sharedManager] getProfile:^(CHUser *userProfile) {
-        
-    }];*/
-    
-
 }
 
 - (void)displaySideMenu {

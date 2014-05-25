@@ -22,11 +22,9 @@
     self.allUsers = [[NSMutableDictionary alloc] init];
     self.memberDict = [[NSMutableDictionary alloc] init];
     
-    DLog(@"All users%@", self.pastMembers);
     if (self) {
         
         for (CHUser *user in self.members) {
-            //DLog(@"dict: %@", dict);
             self.allUsers[user.userId] = user.username;
             self.memberDict[user.userId] = user;
         }
@@ -38,11 +36,6 @@
             }
         }
     }
-    
-    
-    
-    
-    DLog("Mbemberdict: %@", self.memberDict);
     
     return self;
 }
@@ -78,7 +71,6 @@
         CHUser *currLoggedInUser = [[CHNetworkManager sharedManager] currentUser];
         for (int i = 0; i < self.members.count; i++) {
             CHUser *currMember = self.members[i];
-            DLog(@"User 1: %@, user 2: %@",((CHUser *)self.members[i]).userId,[[CHNetworkManager sharedManager] currentUser].userId);
             
             if (![currMember.userId isEqualToString:currLoggedInUser.userId]) {
                 if (i == self.members.count - 1) {

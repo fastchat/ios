@@ -42,12 +42,9 @@
 
 
 - (IBAction)sendInviteTouched:(id)sender {
-    DLog(@"Sending invite");
-
     NSArray *invitees = @[self.usernameTextField.text];
     
     [[CHNetworkManager sharedManager] addNewUsers:invitees groupId:self.groupId callback:^(bool successful, NSError *error) {
-        DLog(@"Inviting finished!");
         [self dismissViewControllerAnimated:YES completion:^{
             
         }];

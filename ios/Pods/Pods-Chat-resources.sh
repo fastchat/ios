@@ -41,6 +41,10 @@ install_resource()
       ;;
   esac
 }
+install_resource "DBCamera/DBCamera/Resources/DBCameraImages.xcassets"
+install_resource "DBCamera/DBCamera/Localizations/en.lproj"
+install_resource "DBCamera/DBCamera/Localizations/es.lproj"
+install_resource "DBCamera/DBCamera/Localizations/it.lproj"
 install_resource "TSMessages/TSMessages/Resources/Images/NotificationBackgroundError.png"
 install_resource "TSMessages/TSMessages/Resources/Images/NotificationBackgroundError@2x.png"
 install_resource "TSMessages/TSMessages/Resources/Images/NotificationBackgroundErrorIcon.png"

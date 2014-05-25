@@ -34,6 +34,10 @@
 		2769B06B18F495FD00CCE470 /* CHMessage.m in Sources */ = {isa = PBXBuildFile; fileRef = 2769B06A18F495FD00CCE470 /* CHMessage.m */; };
 		279CF21D18DF777500C82399 /* CHUser.m in Sources */ = {isa = PBXBuildFile; fileRef = 279CF21C18DF777400C82399 /* CHUser.m */; };
 		279CF22118DFD74D00C82399 /* CHInviteUserViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 279CF22018DFD74D00C82399 /* CHInviteUserViewController.m */; };
+		27BAD7A1192BF56500C8569A /* CHMediaMessageTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 27BAD7A0192BF56500C8569A /* CHMediaMessageTableViewCell.m */; };
+		27BAD7A4192CED4F00C8569A /* CHMediaOwnTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 27BAD7A3192CED4F00C8569A /* CHMediaOwnTableViewCell.m */; };
+		27BAD7A7192CF7FB00C8569A /* CHExpandedImageViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 27BAD7A6192CF7FB00C8569A /* CHExpandedImageViewController.m */; };
+		27BAD7A9192E3B6600C8569A /* inprogress.png in Resources */ = {isa = PBXBuildFile; fileRef = 27BAD7A8192E3B6600C8569A /* inprogress.png */; };
 		27BEB10D18F85D82003BB97C /* profile-dark.png in Resources */ = {isa = PBXBuildFile; fileRef = 27BEB10C18F85D82003BB97C /* profile-dark.png */; };
 		2C7FD1E6FB44435B8A225753 /* libPods-Chat.a in Frameworks */ = {isa = PBXBuildFile; fileRef = ED86F54EC1C64B14950512A1 /* libPods-Chat.a */; };
 		AA7759DA18D54D3000E4E7AB /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = AA7759D918D54D3000E4E7AB /* Foundation.framework */; };
@@ -110,6 +114,13 @@
 		279CF21C18DF777400C82399 /* CHUser.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CHUser.m; sourceTree = "<group>"; };
 		279CF21F18DFD74D00C82399 /* CHInviteUserViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CHInviteUserViewController.h; sourceTree = "<group>"; };
 		279CF22018DFD74D00C82399 /* CHInviteUserViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CHInviteUserViewController.m; sourceTree = "<group>"; };
+		27BAD79F192BF56500C8569A /* CHMediaMessageTableViewCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CHMediaMessageTableViewCell.h; sourceTree = "<group>"; };
+		27BAD7A0192BF56500C8569A /* CHMediaMessageTableViewCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CHMediaMessageTableViewCell.m; sourceTree = "<group>"; };
+		27BAD7A2192CED4F00C8569A /* CHMediaOwnTableViewCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CHMediaOwnTableViewCell.h; sourceTree = "<group>"; };
+		27BAD7A3192CED4F00C8569A /* CHMediaOwnTableViewCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CHMediaOwnTableViewCell.m; sourceTree = "<group>"; };
+		27BAD7A5192CF7FB00C8569A /* CHExpandedImageViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CHExpandedImageViewController.h; sourceTree = "<group>"; };
+		27BAD7A6192CF7FB00C8569A /* CHExpandedImageViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CHExpandedImageViewController.m; sourceTree = "<group>"; };
+		27BAD7A8192E3B6600C8569A /* inprogress.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = inprogress.png; sourceTree = "<group>"; };
 		27BEB10C18F85D82003BB97C /* profile-dark.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "profile-dark.png"; sourceTree = "<group>"; };
 		7EC6EF7B5FC54E4BA2B855D4 /* Pods-Chat.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Chat.xcconfig"; path = "Pods/Pods-Chat.xcconfig"; sourceTree = "<group>"; };
 		AA7759D618D54D3000E4E7AB /* Chat.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Chat.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -234,6 +245,12 @@
 				2769B04818E782B600CCE470 /* CHMessageTableViewController.m */,
 				2769B04D18EDD40800CCE470 /* CHOwnMessageTableViewCell.h */,
 				2769B04E18EDD40800CCE470 /* CHOwnMessageTableViewCell.m */,
+				27BAD79F192BF56500C8569A /* CHMediaMessageTableViewCell.h */,
+				27BAD7A0192BF56500C8569A /* CHMediaMessageTableViewCell.m */,
+				27BAD7A2192CED4F00C8569A /* CHMediaOwnTableViewCell.h */,
+				27BAD7A3192CED4F00C8569A /* CHMediaOwnTableViewCell.m */,
+				27BAD7A5192CF7FB00C8569A /* CHExpandedImageViewController.h */,
+				27BAD7A6192CF7FB00C8569A /* CHExpandedImageViewController.m */,
 			);
 			name = Messaging;
 			sourceTree = "<group>";
@@ -319,6 +336,7 @@
 		AA7759E018D54D3000E4E7AB /* Supporting Files */ = {
 			isa = PBXGroup;
 			children = (
+				27BAD7A8192E3B6600C8569A /* inprogress.png */,
 				27BEB10C18F85D82003BB97C /* profile-dark.png */,
 				AA7759F418D54D3000E4E7AB /* Images.xcassets */,
 				2769B05318F1258A00CCE470 /* MessageEntryBackground@2x.png */,
@@ -446,6 +464,7 @@
 				AA7759F518D54D3000E4E7AB /* Images.xcassets in Resources */,
 				2769B05E18F1258A00CCE470 /* MessageEntryInputField@2x.png in Resources */,
 				AA7759ED18D54D3000E4E7AB /* Main_iPhone.storyboard in Resources */,
+				27BAD7A9192E3B6600C8569A /* inprogress.png in Resources */,
 				2769B06218F1258A00CCE470 /* MessageEntrySendButtonPressed@2x.png in Resources */,
 				2769B05F18F1258A00CCE470 /* MessageEntrySendButton.png in Resources */,
 				AA7759E418D54D3000E4E7AB /* InfoPlist.strings in Resources */,
@@ -506,6 +525,8 @@
 				2769B04F18EDD40800CCE470 /* CHOwnMessageTableViewCell.m in Sources */,
 				2769B06818F47E5E00CCE470 /* CHFastChatObject.m in Sources */,
 				2768EABF18DE43F2006D14BB /* CHInvitationsTableViewController.m in Sources */,
+				27BAD7A7192CF7FB00C8569A /* CHExpandedImageViewController.m in Sources */,
+				27BAD7A1192BF56500C8569A /* CHMediaMessageTableViewCell.m in Sources */,
 				2768EAB318DB119A006D14BB /* CHSocketManager.m in Sources */,
 				2762622218F82B08001F7754 /* CHCircleImageView.m in Sources */,
 				279CF21D18DF777500C82399 /* CHUser.m in Sources */,
@@ -514,6 +535,7 @@
 				2768EAA218D888B6006D14BB /* CHGroupListTableViewController.m in Sources */,
 				2769B04618E7820A00CCE470 /* CHMessageTableViewCell.m in Sources */,
 				2742F9991905A3DB00A879E8 /* CHGroupsCollectionAccessor.m in Sources */,
+				27BAD7A4192CED4F00C8569A /* CHMediaOwnTableViewCell.m in Sources */,
 				AA7759E618D54D3000E4E7AB /* main.m in Sources */,
 				AA7759EA18D54D3000E4E7AB /* CHAppDelegate.m in Sources */,
 				2762621B18F706FA001F7754 /* CHProfileViewController.m in Sources */,

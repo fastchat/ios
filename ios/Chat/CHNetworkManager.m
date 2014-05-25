@@ -55,7 +55,6 @@
             [self GET:@"/user" parameters:nil success:^(NSURLSessionDataTask *task, id responseObject) {
                 if( callback ) {
                     CHUser *user = [[CHUser alloc] init];
-                    DLog(@"Invites: %@", responseObject[@"profile"][@"invites"]);
                     [user setUsername:responseObject[@"profile"][@"username"]];
                     [user setGroups:responseObject[@"profile"][@"groups"]];
                     [user setInvites:responseObject[@"profile"][@"invites"]];
@@ -79,7 +78,6 @@
 -(void)logoutWithCallback: (void (^)(bool successful, NSError *error))callback;
 {
     [self DELETE:@"/logout" parameters:nil success:^(NSURLSessionDataTask *task, id responseObject) {
-        DLog(@"Logged out successfully");
         self.sessiontoken = nil;
         self.currentUser = nil;
         callback(YES, nil);
@@ -91,7 +89,6 @@
 
 - (void)registerWithUsername: (NSString *)username password:(NSString *)password callback:(void (^)(NSArray *userData))callback;
 {
-    DLog(@"username: %@, password: %@", username, password);
     [self POST:@"/user" parameters:@{@"username" : username, @"password" : password} success:^(NSURLSessionDataTask *task, id responseObject) {
         if( callback ) {
             callback(responseObject);
@@ -102,7 +99,6 @@
 }
 
 - (void)getGroups: (void (^)(NSArray *groups))callback {
-    DLog(@"Using session token %@", self.sessiontoken);
     [self GET:[NSString stringWithFormat:@"/group"] parameters:nil success:^(NSURLSessionDataTask *task, id responseObject) {
         if( callback ) {
             NSArray *groups = [CHGroup objectsFromJSON:responseObject];
@@ -118,9 +114,7 @@
 
 - (void)createGroupWithName: (NSString *)groupName members: (NSArray *)members callback: (void (^)(bool successful, NSError *error))callback;
 {
-    DLog(@"HERE");
     [self POST:@"/group" parameters:@{@"name" : groupName, @"members" : members, @"text" : @"Group created"} success:^(NSURLSessionDataTask *task, id responseObject) {
-        DLog(@"Making call");
         if( callback ) {
             callback(YES,nil);
         }
@@ -132,23 +126,41 @@
 
 - (void)getMessagesFromDate: (NSDate *)date group:(NSString *)group callback:(void (^)(NSArray *messages))callback;
 {
-    [self GET:[NSString stringWithFormat:@"/group/%@/messages?20140101", group/*, date*/] parameters:nil success:^(NSURLSessionDataTask *task, id responseObject) {
+    [self GET:[NSString stringWithFormat:@"/group/%@/message?20140101", group/*, date*/] parameters:nil success:^(NSURLSessionDataTask *task, id responseObject) {
         if( callback ) {
-            DLog(@"Received response from messages: %@", responseObject[@"messages"]);
+
         }
     } failure:^(NSURLSessionDataTask *task, NSError *error) {
         DLog(@"Error retrieving messages: %@", error);
     }];
 }
 
+- (void)getMediaForMessage:(NSString *)messageId groupId:(NSString *)groupId callback:(void (^)(UIImage *messageMedia))callback;
+{
+    NSMutableURLRequest *request = [[NSMutableURLRequest alloc] initWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"%@/group/%@/message/%@/media",BASE_URL, groupId, messageId]]];
+    [request setValue:self.sessiontoken forHTTPHeaderField:@"session-token"];
+    
+    AFHTTPRequestOperation *requestOperation = [[AFHTTPRequestOperation alloc] initWithRequest:request];
+    requestOperation.responseSerializer = [AFImageResponseSerializer serializer];
+    [requestOperation setCompletionBlockWithSuccess:^(AFHTTPRequestOperation *operation, id responseObject) {
+        if(callback) {
+            callback(responseObject);
+        }
+        
+    } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+        NSLog(@"Image error: %@", error);
+    }];
+    
+    [requestOperation start];
+}
+
 - (void)getMessagesForGroup:(NSString *)group page:(int)page callback:(void (^)(NSArray *messages))callback;
 {
-    DLog(@"The group id is %@", group);
     if( !page ) {
         [self GET:[NSString stringWithFormat:@"/group/%@/message", group] parameters:nil success:^(NSURLSessionDataTask *task, id responseObject) {
             if( callback ) {
                 NSArray *messages = [CHMessage objectsFromJSON:responseObject];
-    
+                DLog(@"Messages returned: %@", messages);
                 callback(messages);
             }
         } failure:^(NSURLSessionDataTask *task, NSError *error) {
@@ -159,8 +171,7 @@
         }];
     }
     else {
-        DLog(@"Using page: %d", page);
-        [self GET:[NSString stringWithFormat:@"/group/%@/messages?page=%d", group, page] parameters:nil success:^(NSURLSessionDataTask *task, id responseObject) {
+        [self GET:[NSString stringWithFormat:@"/group/%@/message?page=%d", group, page] parameters:nil success:^(NSURLSessionDataTask *task, id responseObject) {
             if( callback ) {
                 NSArray *messages = [CHMessage objectsFromJSON:responseObject];
                 
@@ -180,7 +191,6 @@
     [self GET:@"/user" parameters:nil success:^(NSURLSessionDataTask *task, id responseObject) {
         if( callback ) {
             CHUser *user = [[CHUser alloc] init];
-            DLog(@"Invites: %@", responseObject[@"profile"][@"invites"]);
             [user setUsername:responseObject[@"profile"][@"username"]];
             [user setGroups:responseObject[@"profile"][@"groups"]];
             [user setInvites:responseObject[@"profile"][@"invites"]];
@@ -198,15 +208,12 @@
 
 - (void)getAvatarOfUser: (NSString *)userId callback: (void (^)(UIImage *avatar))callback;
 {
-    DLog(@"User id for avatar call: %@", userId);
     NSMutableURLRequest *request = [[NSMutableURLRequest alloc] initWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"%@/user/%@/avatar",BASE_URL, userId]]];
     [request setValue:self.sessiontoken forHTTPHeaderField:@"session-token"];
     
     AFHTTPRequestOperation *requestOperation = [[AFHTTPRequestOperation alloc] initWithRequest:request];
     requestOperation.responseSerializer = [AFImageResponseSerializer serializer];
     [requestOperation setCompletionBlockWithSuccess:^(AFHTTPRequestOperation *operation, id responseObject) {
-        NSLog(@"Response: %@", responseObject);
-
         if (self.currentUser) {
             self.currentUser.avatar = responseObject;
         }
@@ -239,16 +246,13 @@
                                                                                             mimeType:@"image/png"];
                                                                 } error:&error];
     
-    DLog(@"Error? %@", error);
     [request setValue:self.sessiontoken forHTTPHeaderField:@"session-token"];
-//    
+
     AFHTTPRequestOperation *operation = [self HTTPRequestOperationWithRequest:request
                                                                       success:^(AFHTTPRequestOperation *operation, id responseObject) {
-                                                                          NSLog(@"Success: %@", responseObject);
                                                                           callback(YES, nil);
                                                                       } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
                                                                           NSLog(@"Error: %@", error);
-                                                                          DLog(@"Response: %@", operation.responseString);
                                                                           callback(NO, error);
                                                                       }];
     [self.operationQueue addOperation:operation];
@@ -272,10 +276,8 @@
 - (void)acceptInviteAtIndex: (NSNumber *)index callback: (void (^)(bool successful, NSError *error))callback;
 {
     [self POST:@"/user/accept" parameters:@{@"invite" : index} success:^(NSURLSessionDataTask *task, id responseObject) {
-        DLog(@"Accepted!");
         callback(YES, nil);
     } failure:^(NSURLSessionDataTask *task, NSError *error) {
-        DLog(@"Invite not accepted");
         callback(NO, error);
     }];
 }
@@ -286,11 +288,7 @@
     NSRegularExpression *regex = [NSRegularExpression regularExpressionWithPattern:@"(<|\\s|>)" options:NSRegularExpressionCaseInsensitive error:nil];
     tokenString = [regex stringByReplacingMatchesInString:tokenString options:0 range:NSMakeRange(0, [tokenString length]) withTemplate:@""];
     
-    DLog(@"MADE TOKEN: %@", tokenString);
-    
     [self POST:@"/user/device" parameters:@{@"token": tokenString, @"type" : @"ios"} success:^(NSURLSessionDataTask *task, id responseObject) {
-        
-        DLog(@"Response: %@", responseObject);
         
         if (callback) {
             callback(YES, nil);
@@ -305,12 +303,47 @@
 
 - (void)putLeaveGroup:(NSString *)groupId callback:(void (^)(BOOL success, NSError *error))callback;
 {
-    NSString *url = [NSString stringWithFormat:@"/group/%@/leave", groupId];
+    NSString *url = [NSString stringWithFormat:@"%@/group/%@/leave", BASE_URL, groupId];
     [self PUT:url parameters:nil success:^(NSURLSessionDataTask *task, id responseObject) {
         callback(YES, nil);
     } failure:^(NSURLSessionDataTask *task, NSError *error) {
         callback(NO, error);
     }];
+}
+
+- (void)postMediaMessageWithImage:(UIImage *)image groupId:(NSString *)groupId message:(NSString *)message callback:(void (^)(BOOL success, NSError *error))callback;
+{
+
+    NSData *imageData = UIImagePNGRepresentation(image);
+    NSDictionary *parameters = nil;
+    
+    NSString *url = [NSString stringWithFormat:@"%@/group/%@/message", BASE_URL, groupId];
+    NSError *error = nil;
+    
+    NSMutableURLRequest *request = [self.requestSerializer multipartFormRequestWithMethod:@"POST"
+                                                                                URLString:[[NSURL URLWithString:url relativeToURL:self.baseURL] absoluteString]
+                                                                               parameters:parameters
+                                                                constructingBodyWithBlock:^(id<AFMultipartFormData> formData) {
+                                                                    [formData appendPartWithFileData:imageData
+                                                                                                name:@"media"
+                                                                                            fileName:@"test_media_ios.png"
+                                                                                            mimeType:@"image/png"
+                                                                                            ];
+                                                                    [formData appendPartWithFormData:[message dataUsingEncoding:NSUTF8StringEncoding] name:@"text"];
+                                                                } error:&error];
+    
+    [request setValue:self.sessiontoken forHTTPHeaderField:@"session-token"];
+    
+    AFHTTPRequestOperation *operation = [self HTTPRequestOperationWithRequest:request
+                                                                      success:^(AFHTTPRequestOperation *operation, id responseObject) {
+                                                                          DLog(@"Successfully posted the image!");
+                                                                          callback(YES, nil);
+                                                                      } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+                                                                          NSLog(@"Error: %@", error);
+                                                                          callback(NO, error);
+                                                                      }];
+    [self.operationQueue addOperation:operation];
+    
 }
 
 
@@ -321,7 +354,6 @@
                             stringForKey:@"session-token"];
     
     if( savedValue != nil ) {
-        DLog(@"Setting session token to %@", savedValue);
         self.sessiontoken = savedValue;
         [self.requestSerializer setValue:self.sessiontoken forHTTPHeaderField:@"session-token"];
     }
