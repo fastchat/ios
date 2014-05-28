@@ -124,7 +124,13 @@
                             <outlet property="delegate" destination="XBv-ZM-NJH" id="l8z-VS-XXN"/>
                         </connections>
                     </tableView>
-                    <navigationItem key="navigationItem" id="ecR-oG-DDs"/>
+                    <navigationItem key="navigationItem" id="ecR-oG-DDs">
+                        <barButtonItem key="rightBarButtonItem" systemItem="compose" id="Ruj-gk-kLm">
+                            <connections>
+                                <segue destination="Nfa-iP-SEa" kind="push" id="pc8-Qc-lut"/>
+                            </connections>
+                        </barButtonItem>
+                    </navigationItem>
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="QlX-OV-zLX" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
@@ -595,6 +601,7 @@
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
                     </view>
+                    <navigationItem key="navigationItem" id="NkM-vd-q6Y"/>
                     <connections>
                         <outlet property="firstMemberTextField" destination="9w1-2B-U6k" id="Pjq-n4-reX"/>
                         <outlet property="groupNameTextField" destination="Cj7-tU-nx0" id="dbm-Ej-OaG"/>
@@ -604,7 +611,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="R4L-bU-Txy" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="968" y="33"/>
+            <point key="canvasLocation" x="958" y="176"/>
         </scene>
         <!--Invite User View Controller-->
         <scene sceneID="OXX-ED-a1k">

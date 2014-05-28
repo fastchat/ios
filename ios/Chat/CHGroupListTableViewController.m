@@ -28,40 +28,38 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-    
     self.navigationItem.title = @"Groups";
     
-        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(loadGroupsAndRefresh) name:@"ReloadGroupListTable" object:nil];
-
-    
-    
-    // Check to see if we are logged in
+    ///
+    /// Check to see if we are logged in. If we are not, login and stop.
+    ///
     if( ![[CHNetworkManager sharedManager] hasStoredSessionToken] ) {
         UIViewController *loginController = [self.storyboard instantiateViewControllerWithIdentifier:@"CHViewNavController"];
         [self presentViewController:loginController animated:NO completion:nil];
+        return;
     }
     
-    else {
-        // Get the user profile to ensure we have a user
-        [[CHNetworkManager sharedManager] getProfile:^(CHUser *userProfile) {
-            [[CHNetworkManager sharedManager] getAvatarOfUser:[[CHNetworkManager sharedManager] currentUser].userId callback:^(UIImage *avatar) {
-
-                [[CHNetworkManager sharedManager] currentUser].avatar = avatar;
-            }];
-        }];
-
-        [self loadGroupsAndRefresh];
-
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(loadGroupsAndRefresh) name:@"ReloadGroupListTable" object:nil];
+    
+    ///
+    /// Get the user profile to ensure we have a user
+    ///
+    CHNetworkManager *manager = [CHNetworkManager sharedManager];
+    [manager getProfile:^(CHUser *userProfile) {
         
-    }
+        [manager getAvatarOfUser:[[CHNetworkManager sharedManager] currentUser].userId callback:^(UIImage *avatar) {
+            
+            [manager currentUser].avatar = avatar;
+        }];
+    }];
+    
+    [self loadGroupsAndRefresh];
+    
     
     [[CHNetworkManager sharedManager] getProfile:^(CHUser *userProfile) {
         
     }];
-    
-    
-    UIBarButtonItem *addButton = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemCompose target:self action:@selector(showAddView)];
-    self.navigationItem.rightBarButtonItem = addButton;
+
 }
 
 - (void)viewWillAppear:(BOOL)animated;
@@ -99,7 +97,7 @@
     
 }
 
--(void) loadGroupsAndRefresh;
+- (void)loadGroupsAndRefresh;
 {
     UIActivityIndicatorView *spinner = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleGray];
     spinner.center = CGPointMake(160, 240);
@@ -111,25 +109,10 @@
     [spinner stopAnimating];
 }
 
-
-- (void)showAddView {
-    CHAddGroupViewController *controller = [self.storyboard instantiateViewControllerWithIdentifier:@"CHAddGroupViewController"];
-    
-    [[self navigationController] pushViewController:controller animated:YES];
-}
-
 #pragma mark - Table view data source
 
-- (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
+- (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section;
 {
-
-    // Return the number of sections.
-    return 1;
-}
-
-- (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
-{
-    // Return the number of rows in the section.
     return self.groups.count;
 }
 
@@ -146,9 +129,6 @@
         cell.detailTextLabel.text = @"";
     }
     cell.textLabel.text = cellText;
-    
-    
-    
     
     return cell;
 }

@@ -10,6 +10,7 @@ target "Chat" do
   pod 'TSMessages', '~> 0.9'
   pod 'DBCamera', '~> 2.0'
   pod 'CRNavigationController', '~> 1.1'
+  pod 'MBProgressHUD', '~> 0.8'
 end
 
 target "ChatTests" do
