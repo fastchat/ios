@@ -25,6 +25,7 @@ PODS:
   - Mantle (1.5):
     - Mantle/extobjc
   - Mantle/extobjc (1.5)
+  - MBProgressHUD (0.8)
   - socket.IO (0.5.2):
     - SocketRocket (~> 0.2)
   - SocketRocket (0.3.1-beta2)
@@ -37,6 +38,7 @@ DEPENDENCIES:
   - DBCamera (~> 2.0)
   - HPGrowingTextView (~> 1.1)
   - Mantle (~> 1.4)
+  - MBProgressHUD (~> 0.8)
   - socket.IO (~> 0.5)
   - TSMessages (~> 0.9)
 
@@ -47,6 +49,7 @@ SPEC CHECKSUMS:
   HexColors: 01384d2bbe8dc4ffa43c3b4135db6e976952d153
   HPGrowingTextView: 07d5ab1f1e867acfb7a6f498b819948c9e97d07c
   Mantle: c67a7e45e14196ed42b2a7cbb98ff6a9920e6b92
+  MBProgressHUD: c356980b0cd097f19acec959b49dca5eb8ec31be
   socket.IO: db3e71805c862038ab73209dda2b0ad6babc54b2
   SocketRocket: 79a68ae186063c65e1fe6f638b1ae2927aa5f304
   TSMessages: 2999ef55e532378692e9d14d32da2bb60e285129
