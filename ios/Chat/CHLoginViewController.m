@@ -19,7 +19,6 @@
 
 @interface CHLoginViewController ()
 
-//@property (nonatomic, strong) SocketIO *socket;
 @property (nonatomic, strong) UIView *view;
 
 @end
@@ -31,20 +30,36 @@
     [super viewDidLoad];
     
     self.title = @"Login";
-    
     self.errorLabel.text = @"";
+
+    [self updateTextFieldLooks:@[_emailTextField, _passwordTextField]];
 }
 
+- (void)updateTextFieldLooks:(NSArray *)textfields;
+{
+    for (UITextField *field in textfields) {
+        field.layer.borderColor = [[UIColor lightGrayColor] CGColor];
+        field.layer.borderWidth = 0.5;
+        field.backgroundColor = [UIColor colorWithRed:(250.0/255.0) green:(250.0/255.0) blue:(250.0/255.0) alpha:1.0];
+        field.layer.cornerRadius = 3.0;
+        field.layer.masksToBounds = YES;
+    }
+}
 
-#pragma mark - Socket IO
+- (void)viewDidLayoutSubviews;
+{
+    [super viewDidLayoutSubviews];
+    [self.emailTextField becomeFirstResponder];
+}
+
 
 - (IBAction)registerWasTouched:(id)sender {
     CHRegisterViewController *registerViewController = [self.storyboard instantiateViewControllerWithIdentifier:@"CHRegisterViewController"];
 
     [self presentViewController:registerViewController animated:YES completion:nil];
-
 }
 
+#pragma mark - Login
 
 - (IBAction)loginWasTouched:(id)sender {
     self.errorLabel.text = @"";
@@ -71,4 +86,5 @@
             }
         }];
 }
+
 @end

@@ -40,6 +40,8 @@
 		27BAD7A9192E3B6600C8569A /* inprogress.png in Resources */ = {isa = PBXBuildFile; fileRef = 27BAD7A8192E3B6600C8569A /* inprogress.png */; };
 		27BEB10D18F85D82003BB97C /* profile-dark.png in Resources */ = {isa = PBXBuildFile; fileRef = 27BEB10C18F85D82003BB97C /* profile-dark.png */; };
 		2C7FD1E6FB44435B8A225753 /* libPods-Chat.a in Frameworks */ = {isa = PBXBuildFile; fileRef = ED86F54EC1C64B14950512A1 /* libPods-Chat.a */; };
+		AA46331B193659EB00513578 /* CHTextField.m in Sources */ = {isa = PBXBuildFile; fileRef = AA46331A193659EB00513578 /* CHTextField.m */; };
+		AA46331E19365BB700513578 /* CHColors.m in Sources */ = {isa = PBXBuildFile; fileRef = AA46331D19365BB700513578 /* CHColors.m */; };
 		AA7759DA18D54D3000E4E7AB /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = AA7759D918D54D3000E4E7AB /* Foundation.framework */; };
 		AA7759DC18D54D3000E4E7AB /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = AA7759DB18D54D3000E4E7AB /* CoreGraphics.framework */; };
 		AA7759DE18D54D3000E4E7AB /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = AA7759DD18D54D3000E4E7AB /* UIKit.framework */; };
@@ -123,6 +125,10 @@
 		27BAD7A8192E3B6600C8569A /* inprogress.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = inprogress.png; sourceTree = "<group>"; };
 		27BEB10C18F85D82003BB97C /* profile-dark.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "profile-dark.png"; sourceTree = "<group>"; };
 		7EC6EF7B5FC54E4BA2B855D4 /* Pods-Chat.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Chat.xcconfig"; path = "Pods/Pods-Chat.xcconfig"; sourceTree = "<group>"; };
+		AA463319193659EB00513578 /* CHTextField.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CHTextField.h; sourceTree = "<group>"; };
+		AA46331A193659EB00513578 /* CHTextField.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CHTextField.m; sourceTree = "<group>"; };
+		AA46331C19365BB700513578 /* CHColors.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CHColors.h; sourceTree = "<group>"; };
+		AA46331D19365BB700513578 /* CHColors.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CHColors.m; sourceTree = "<group>"; };
 		AA7759D618D54D3000E4E7AB /* Chat.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Chat.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		AA7759D918D54D3000E4E7AB /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		AA7759DB18D54D3000E4E7AB /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
@@ -224,6 +230,9 @@
 		279CF22218E218E000C82399 /* UI files */ = {
 			isa = PBXGroup;
 			children = (
+				AA46331C19365BB700513578 /* CHColors.h */,
+				AA46331D19365BB700513578 /* CHColors.m */,
+				AA463318193659DB00513578 /* UI Elements */,
 				2762621818F706DF001F7754 /* User Info */,
 				2768EAB018D91538006D14BB /* Authentication */,
 				279CF22518E2198800C82399 /* Groups */,
@@ -268,6 +277,15 @@
 				2768EAAA18D8E02B006D14BB /* CHAddGroupViewController.m */,
 			);
 			name = Groups;
+			sourceTree = "<group>";
+		};
+		AA463318193659DB00513578 /* UI Elements */ = {
+			isa = PBXGroup;
+			children = (
+				AA463319193659EB00513578 /* CHTextField.h */,
+				AA46331A193659EB00513578 /* CHTextField.m */,
+			);
+			name = "UI Elements";
 			sourceTree = "<group>";
 		};
 		AA71AE8118E0ECA900CDE1E2 /* App Delegate */ = {
@@ -536,8 +554,10 @@
 				2769B04618E7820A00CCE470 /* CHMessageTableViewCell.m in Sources */,
 				2742F9991905A3DB00A879E8 /* CHGroupsCollectionAccessor.m in Sources */,
 				27BAD7A4192CED4F00C8569A /* CHMediaOwnTableViewCell.m in Sources */,
+				AA46331B193659EB00513578 /* CHTextField.m in Sources */,
 				AA7759E618D54D3000E4E7AB /* main.m in Sources */,
 				AA7759EA18D54D3000E4E7AB /* CHAppDelegate.m in Sources */,
+				AA46331E19365BB700513578 /* CHColors.m in Sources */,
 				2762621B18F706FA001F7754 /* CHProfileViewController.m in Sources */,
 				2768EAAB18D8E02B006D14BB /* CHAddGroupViewController.m in Sources */,
 				2769B06518F479CC00CCE470 /* CHGroup.m in Sources */,

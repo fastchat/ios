@@ -26,8 +26,11 @@
     ///
     /// Bar Color
     ///
-    [[UINavigationBar appearance] setBarTintColor:[UIColor colorWithRed:(87.0/255.0) green:(0.0/255.0) blue:(143.0/255.0) alpha:1.0]];
-    [[UINavigationBar appearance] setTitleTextAttributes:@{NSForegroundColorAttributeName:[UIColor whiteColor]}];g
+    [[UINavigationBar appearance] setBarTintColor:kPurpleAppColor];
+    [[UINavigationBar appearance] setTitleTextAttributes:@{NSForegroundColorAttributeName:[UIColor whiteColor]}];
+    [[UINavigationBar appearance] setTintColor:[UIColor whiteColor]];
+    
+    [[UIButton appearance] setTintColor:kPurpleAppColor];
     
     return YES;
 }
