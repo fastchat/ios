@@ -16,7 +16,6 @@
 		2768EAAB18D8E02B006D14BB /* CHAddGroupViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2768EAAA18D8E02B006D14BB /* CHAddGroupViewController.m */; };
 		2768EAAE18D9138D006D14BB /* CHMessageViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2768EAAD18D9138D006D14BB /* CHMessageViewController.m */; };
 		2768EAB318DB119A006D14BB /* CHSocketManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 2768EAB218DB119A006D14BB /* CHSocketManager.m */; };
-		2768EAB918DB1F57006D14BB /* CHSideNavigationTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2768EAB818DB1F57006D14BB /* CHSideNavigationTableViewController.m */; };
 		2768EABF18DE43F2006D14BB /* CHInvitationsTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2768EABE18DE43F2006D14BB /* CHInvitationsTableViewController.m */; };
 		2769B04618E7820A00CCE470 /* CHMessageTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 2769B04518E7820A00CCE470 /* CHMessageTableViewCell.m */; };
 		2769B04F18EDD40800CCE470 /* CHOwnMessageTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 2769B04E18EDD40800CCE470 /* CHOwnMessageTableViewCell.m */; };
@@ -35,7 +34,6 @@
 		279CF22118DFD74D00C82399 /* CHInviteUserViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 279CF22018DFD74D00C82399 /* CHInviteUserViewController.m */; };
 		27BAD7A1192BF56500C8569A /* CHMediaMessageTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 27BAD7A0192BF56500C8569A /* CHMediaMessageTableViewCell.m */; };
 		27BAD7A4192CED4F00C8569A /* CHMediaOwnTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 27BAD7A3192CED4F00C8569A /* CHMediaOwnTableViewCell.m */; };
-		27BAD7A7192CF7FB00C8569A /* CHExpandedImageViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 27BAD7A6192CF7FB00C8569A /* CHExpandedImageViewController.m */; };
 		27BAD7A9192E3B6600C8569A /* inprogress.png in Resources */ = {isa = PBXBuildFile; fileRef = 27BAD7A8192E3B6600C8569A /* inprogress.png */; };
 		27BEB10D18F85D82003BB97C /* profile-dark.png in Resources */ = {isa = PBXBuildFile; fileRef = 27BEB10C18F85D82003BB97C /* profile-dark.png */; };
 		2C7FD1E6FB44435B8A225753 /* libPods-Chat.a in Frameworks */ = {isa = PBXBuildFile; fileRef = ED86F54EC1C64B14950512A1 /* libPods-Chat.a */; };
@@ -90,8 +88,6 @@
 		2768EAAD18D9138D006D14BB /* CHMessageViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CHMessageViewController.m; sourceTree = "<group>"; };
 		2768EAB118DB119A006D14BB /* CHSocketManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CHSocketManager.h; sourceTree = "<group>"; };
 		2768EAB218DB119A006D14BB /* CHSocketManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CHSocketManager.m; sourceTree = "<group>"; };
-		2768EAB718DB1F57006D14BB /* CHSideNavigationTableViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CHSideNavigationTableViewController.h; sourceTree = "<group>"; };
-		2768EAB818DB1F57006D14BB /* CHSideNavigationTableViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CHSideNavigationTableViewController.m; sourceTree = "<group>"; };
 		2768EABD18DE43F2006D14BB /* CHInvitationsTableViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CHInvitationsTableViewController.h; sourceTree = "<group>"; };
 		2768EABE18DE43F2006D14BB /* CHInvitationsTableViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CHInvitationsTableViewController.m; sourceTree = "<group>"; };
 		2769B04418E7820A00CCE470 /* CHMessageTableViewCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CHMessageTableViewCell.h; sourceTree = "<group>"; };
@@ -120,8 +116,6 @@
 		27BAD7A0192BF56500C8569A /* CHMediaMessageTableViewCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CHMediaMessageTableViewCell.m; sourceTree = "<group>"; };
 		27BAD7A2192CED4F00C8569A /* CHMediaOwnTableViewCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CHMediaOwnTableViewCell.h; sourceTree = "<group>"; };
 		27BAD7A3192CED4F00C8569A /* CHMediaOwnTableViewCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CHMediaOwnTableViewCell.m; sourceTree = "<group>"; };
-		27BAD7A5192CF7FB00C8569A /* CHExpandedImageViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CHExpandedImageViewController.h; sourceTree = "<group>"; };
-		27BAD7A6192CF7FB00C8569A /* CHExpandedImageViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CHExpandedImageViewController.m; sourceTree = "<group>"; };
 		27BAD7A8192E3B6600C8569A /* inprogress.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = inprogress.png; sourceTree = "<group>"; };
 		27BEB10C18F85D82003BB97C /* profile-dark.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "profile-dark.png"; sourceTree = "<group>"; };
 		7EC6EF7B5FC54E4BA2B855D4 /* Pods-Chat.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Chat.xcconfig"; path = "Pods/Pods-Chat.xcconfig"; sourceTree = "<group>"; };
@@ -245,8 +239,6 @@
 				2768EAB018D91538006D14BB /* Authentication */,
 				279CF22518E2198800C82399 /* Groups */,
 				279CF22418E2196900C82399 /* Messaging */,
-				2768EAB718DB1F57006D14BB /* CHSideNavigationTableViewController.h */,
-				2768EAB818DB1F57006D14BB /* CHSideNavigationTableViewController.m */,
 			);
 			name = "UI files";
 			sourceTree = "<group>";
@@ -258,8 +250,6 @@
 				2768EAAD18D9138D006D14BB /* CHMessageViewController.m */,
 				AA4633291936933000513578 /* Message Views */,
 				AA4633281936902600513578 /* Message Cells */,
-				27BAD7A5192CF7FB00C8569A /* CHExpandedImageViewController.h */,
-				27BAD7A6192CF7FB00C8569A /* CHExpandedImageViewController.m */,
 			);
 			name = Messaging;
 			sourceTree = "<group>";
@@ -570,12 +560,10 @@
 				2768EABF18DE43F2006D14BB /* CHInvitationsTableViewController.m in Sources */,
 				AA4633241936735F00513578 /* CHGroupTableViewCell.m in Sources */,
 				AA46332719367A5F00513578 /* CHUnreadView.m in Sources */,
-				27BAD7A7192CF7FB00C8569A /* CHExpandedImageViewController.m in Sources */,
 				27BAD7A1192BF56500C8569A /* CHMediaMessageTableViewCell.m in Sources */,
 				2768EAB318DB119A006D14BB /* CHSocketManager.m in Sources */,
 				2762622218F82B08001F7754 /* CHCircleImageView.m in Sources */,
 				279CF21D18DF777500C82399 /* CHUser.m in Sources */,
-				2768EAB918DB1F57006D14BB /* CHSideNavigationTableViewController.m in Sources */,
 				2768EAAE18D9138D006D14BB /* CHMessageViewController.m in Sources */,
 				2768EAA218D888B6006D14BB /* CHGroupListTableViewController.m in Sources */,
 				2769B04618E7820A00CCE470 /* CHMessageTableViewCell.m in Sources */,

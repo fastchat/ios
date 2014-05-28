@@ -7,7 +7,6 @@
 //
 
 #import <UIKit/UIKit.h>
-#import "CHSideNavigationTableViewController.h"
 
 @interface CHAppDelegate : UIResponder <UIApplicationDelegate>
 

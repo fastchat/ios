@@ -18,7 +18,6 @@
 #import "CHCircleImageView.h"
 #import "CHMediaMessageTableViewCell.h"
 #import "CHMediaOwnTableViewCell.h"
-#import "CHExpandedImageViewController.h"
 #import "URBMediaFocusViewController.h"
 
 #define kDefaultContentOffset self.navigationController.navigationBar.frame.size.height + 20
@@ -119,8 +118,13 @@
     self.containerView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleTopMargin;
     
     self.previousMessageTextViewRect = CGRectZero;
-//    [self setTableViewInsetsFromBottom:0];
-
+    
+    UIEdgeInsets insets = UIEdgeInsetsMake(0,
+                                           0,
+                                           self.containerView.frame.size.height,
+                                           0);
+    self.messageTable.contentInset = insets;
+    self.messageTable.scrollIndicatorInsets = insets;
     
     ///
     /// Data

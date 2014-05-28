@@ -9,7 +9,6 @@
 #import "CHAddGroupViewController.h"
 #import "CHNetworkManager.h"
 #include "CHAppDelegate.h"
-#include "CHSideNavigationTableViewController.h"
 
 @interface CHAddGroupViewController ()
 

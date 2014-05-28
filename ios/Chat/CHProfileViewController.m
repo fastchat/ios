@@ -82,7 +82,8 @@
     [self dismissViewControllerAnimated:YES completion:^{}];
 }
 
-- (IBAction)cameraButtonTouched:(id)sender {
+- (IBAction)cameraButtonTouched:(id)sender;
+{
     UIImagePickerController *imagePicker = [[UIImagePickerController alloc] init];
     [imagePicker setSourceType:UIImagePickerControllerSourceTypeSavedPhotosAlbum];
     [imagePicker setDelegate:self];

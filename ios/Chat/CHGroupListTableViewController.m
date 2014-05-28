@@ -10,7 +10,6 @@
 #import "CHNetworkManager.h"
 #import "CHAddGroupViewController.h"
 #import "CHAppDelegate.h"
-#import "CHSideNavigationTableViewController.h"
 #import "CHMessageViewController.h"
 #import "CHLoginViewController.h"
 #import "CHGroup.h"
