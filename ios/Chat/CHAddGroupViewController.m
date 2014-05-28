@@ -17,14 +17,11 @@
 
 @implementation CHAddGroupViewController
 
-UITapGestureRecognizer* tapGesture;
-UIPanGestureRecognizer* panGesture;
-
 - (void)viewDidLoad;
 {
     [super viewDidLoad];
-    
     self.title = @"Create Group";
+    
     
     UIBarButtonItem *saveButton = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemSave target:self action:@selector(createGroup)];
     self.navigationItem.rightBarButtonItem = saveButton;
@@ -32,13 +29,9 @@ UIPanGestureRecognizer* panGesture;
     [self.groupNameTextField setPlaceholder:@"Group name (optional)"];
 }
 
-- (void)didReceiveMemoryWarning
-{
-    [super didReceiveMemoryWarning];
-    // Dispose of any resources that can be recreated.
-}
 
-- (void)createGroup {
+- (void)createGroup;
+{
     NSMutableArray *members = [[NSMutableArray alloc] init];
     if (![self.firstMemberTextField.text isEqualToString:@""]) {
         [members addObject:self.firstMemberTextField.text];
@@ -58,15 +51,5 @@ UIPanGestureRecognizer* panGesture;
     }
 }
 
-
-
-- (void)viewDidUnload
-{
-    [super viewDidUnload];
-    
-    // remove the gesture recognizers
-    [self.screenShotImageView removeGestureRecognizer:tapGesture];
-    [self.screenShotImageView removeGestureRecognizer:panGesture];
-}
 
 @end
