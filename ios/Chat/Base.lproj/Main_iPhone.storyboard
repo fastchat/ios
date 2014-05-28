@@ -135,6 +135,7 @@
                                     <outlet property="groupDetailLabel" destination="mT8-iw-lBJ" id="Kec-dH-amY"/>
                                     <outlet property="groupRightDetailLabel" destination="6wo-cq-Xbh" id="Fjn-YJ-jdm"/>
                                     <outlet property="groupTextLabel" destination="yH6-FE-gmL" id="Tqr-He-edC"/>
+                                    <segue destination="Ve0-ai-wJa" kind="push" identifier="push CHMessageViewControllerFrom CHGroupListTableViewController" id="OxZ-ON-fzm"/>
                                 </connections>
                             </tableViewCell>
                         </prototypes>
@@ -185,7 +186,7 @@
         <!--Message View Controller-->
         <scene sceneID="2Rb-w1-2yq">
             <objects>
-                <viewController storyboardIdentifier="CHMessageViewController" id="Ve0-ai-wJa" customClass="CHMessageViewController" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="CHMessageViewController" hidesBottomBarWhenPushed="YES" id="Ve0-ai-wJa" customClass="CHMessageViewController" sceneMemberID="viewController">
                     <layoutGuides>
                         <viewControllerLayoutGuide type="top" id="aa3-9b-3XX"/>
                         <viewControllerLayoutGuide type="bottom" id="X8i-cc-XnL"/>
@@ -200,7 +201,7 @@
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                 <prototypes>
                                     <tableViewCell contentMode="scaleToFill" restorationIdentifier="CHMessageTableViewCell" selectionStyle="none" indentationWidth="10" reuseIdentifier="CHMessageTableViewCell" rowHeight="49" id="PP4-jQ-ZmT" customClass="CHMessageTableViewCell">
-                                        <rect key="frame" x="0.0" y="22" width="320" height="49"/>
+                                        <rect key="frame" x="0.0" y="86" width="320" height="49"/>
                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="PP4-jQ-ZmT" id="wai-cv-thj">
                                             <rect key="frame" x="0.0" y="0.0" width="320" height="49"/>
@@ -268,7 +269,7 @@
                                         </connections>
                                     </tableViewCell>
                                     <tableViewCell contentMode="scaleToFill" selectionStyle="none" indentationWidth="10" reuseIdentifier="CHOwnMessageTableViewCell" rowHeight="49" id="5sh-HX-n57" customClass="CHOwnMessageTableViewCell">
-                                        <rect key="frame" x="0.0" y="71" width="320" height="49"/>
+                                        <rect key="frame" x="0.0" y="135" width="320" height="49"/>
                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="5sh-HX-n57" id="CqB-QS-s35">
                                             <rect key="frame" x="0.0" y="0.0" width="320" height="49"/>
@@ -336,7 +337,7 @@
                                         </connections>
                                     </tableViewCell>
                                     <tableViewCell contentMode="scaleToFill" restorationIdentifier="CHMediaMessageTableViewCell" selectionStyle="none" indentationWidth="10" reuseIdentifier="CHMediaMessageTableViewCell" rowHeight="184" id="tAY-VZ-kge" customClass="CHMediaMessageTableViewCell">
-                                        <rect key="frame" x="0.0" y="120" width="320" height="184"/>
+                                        <rect key="frame" x="0.0" y="184" width="320" height="184"/>
                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="tAY-VZ-kge" id="H3D-m0-sNp">
                                             <rect key="frame" x="0.0" y="0.0" width="320" height="184"/>
@@ -414,7 +415,7 @@
                                         </connections>
                                     </tableViewCell>
                                     <tableViewCell contentMode="scaleToFill" selectionStyle="none" indentationWidth="10" reuseIdentifier="CHMediaOwnTableViewCell" rowHeight="184" id="TA6-Rd-aII" customClass="CHMediaOwnTableViewCell">
-                                        <rect key="frame" x="0.0" y="304" width="320" height="184"/>
+                                        <rect key="frame" x="0.0" y="368" width="320" height="184"/>
                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="TA6-Rd-aII" id="vtQ-NJ-glw">
                                             <rect key="frame" x="0.0" y="0.0" width="320" height="184"/>
@@ -524,7 +525,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="0Ui-X7-fik" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="1752" y="757"/>
+            <point key="canvasLocation" x="1049" y="447"/>
         </scene>
         <!--Message Table View Controller-->
         <scene sceneID="Hbd-KC-pBr">
@@ -630,7 +631,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="R4L-bU-Txy" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="958" y="176"/>
+            <point key="canvasLocation" x="1049" y="-235"/>
         </scene>
         <!--Invite User View Controller-->
         <scene sceneID="OXX-ED-a1k">
@@ -878,6 +879,7 @@
                 <navigationController automaticallyAdjustsScrollViewInsets="NO" id="IsZ-yr-CFu" sceneMemberID="viewController">
                     <tabBarItem key="tabBarItem" title="Chat" image="ChatTabIcon" id="DgD-Cf-cql"/>
                     <toolbarItems/>
+                    <simulatedNavigationBarMetrics key="simulatedTopBarMetrics" prompted="NO"/>
                     <navigationBar key="navigationBar" contentMode="scaleToFill" id="0nh-6k-5KS">
                         <rect key="frame" x="0.0" y="0.0" width="320" height="44"/>
                         <autoresizingMask key="autoresizingMask"/>

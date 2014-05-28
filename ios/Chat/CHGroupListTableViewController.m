@@ -170,23 +170,9 @@
     [groupCell.groupDetailLabel sizeThatFits:groupCell.groupDetailLabel.frame.size];
 }
 
-- (void)tableView:(UITableView *)tableView didEndDisplayingCell:(UITableViewCell *)cell forRowAtIndexPath:(NSIndexPath *)indexPath;
+- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath;
 {
-    CHGroupTableViewCell *groupCell = (CHGroupTableViewCell *)cell;
-    DLog(@"Text Frame: %@", NSStringFromCGRect(groupCell.groupDetailLabel.frame));
-}
-
-- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
     [tableView deselectRowAtIndexPath:indexPath animated:YES];
-    
-    CHGroup *group = _groups[indexPath.row];
-    group.unread = @0;
-    
-    CHMessageViewController *vc = [self.storyboard instantiateViewControllerWithIdentifier:@"CHMessageViewController"];
-    [vc setGroup:group];
-    [self.navigationController pushViewController:vc animated:YES];
-    
-    [self.tableView reloadData];
 }
 
 - (BOOL)tableView:(UITableView *)tableView canEditRowAtIndexPath:(NSIndexPath *)indexPath {
@@ -205,6 +191,22 @@
 - (NSString *)tableView:(UITableView *)tableView titleForDeleteConfirmationButtonForRowAtIndexPath:(NSIndexPath *)indexPath;
 {
     return @"Leave";
+}
+
+#pragma mark - Navigation
+
+- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender;
+{
+    if ([segue.identifier isEqualToString:@"push CHMessageViewControllerFrom CHGroupListTableViewController"]) {
+        NSIndexPath *indexPath = [self.tableView indexPathForSelectedRow];
+        CHMessageViewController *vc = segue.destinationViewController;
+        
+        CHGroup *group = _groups[indexPath.row];
+        group.unread = @0;
+        [vc setGroup:group];
+        
+        [self.tableView reloadData];
+    }
 }
 
 @end
