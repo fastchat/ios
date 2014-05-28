@@ -32,6 +32,9 @@
     self.navigationItem.title = @"Groups";
     self.view.backgroundColor = kLightBackgroundColor;
     
+    UIEdgeInsets insets = UIEdgeInsetsMake(5, 0, 0, 0);
+    self.tableView.contentInset = insets;
+    
     ///
     /// Check to see if we are logged in. If we are not, login and stop.
     ///
