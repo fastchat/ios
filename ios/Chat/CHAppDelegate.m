@@ -100,17 +100,4 @@ void uncaughtExceptionHandler(NSException *exception) {
     
 }
 
-#pragma mark - Side Menu
-
--(void)hideSideMenu;
-{
-    // all animation takes place elsewhere. When this gets called just swap the contentViewController in
-    self.window.rootViewController = self.contentViewController;
-}
-
--(void)setContentViewControllerWithController: (CHSideNavigationTableViewController*)controller;
-{
-    self.contentViewController = controller;
-}
-
 @end

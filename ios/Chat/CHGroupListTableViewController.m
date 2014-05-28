@@ -25,20 +25,11 @@
 
 @implementation CHGroupListTableViewController
 
-//- (id)initWithStyle:(UITableViewStyle)style
-//{
-//    self = [super initWithStyle:style];
-//    if (self) {
-//        // Custom initialization
-//    }
-//    return self;
-//}
-
 - (void)viewDidLoad
 {
     [super viewDidLoad];
     
-    self.navigationItem.title = @"My Groups";
+    self.navigationItem.title = @"Groups";
     
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(loadGroupsAndRefresh) name:@"ReloadGroupListTable" object:nil];
 
@@ -71,13 +62,9 @@
     
     UIBarButtonItem *addButton = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemCompose target:self action:@selector(showAddView)];
     self.navigationItem.rightBarButtonItem = addButton;
-    
-    UIBarButtonItem *menuButton = [[UIBarButtonItem alloc] initWithTitle:@"Menu" style:UIBarButtonItemStylePlain target:self action:@selector(displaySideMenu)];
-    
-    self.navigationItem.leftBarButtonItem = menuButton;
 }
 
--(void) viewWillAppear:(BOOL)animated
+- (void)viewWillAppear:(BOOL)animated;
 {
     [super viewWillAppear:animated];
     //set initial values here
@@ -124,10 +111,6 @@
     [spinner stopAnimating];
 }
 
-- (void)displaySideMenu {
-    CHSideNavigationTableViewController *controller = [self.storyboard instantiateViewControllerWithIdentifier:@"CHSideNavigationTableViewController"];
-    [[self navigationController] pushViewController:controller animated:YES];
-}
 
 - (void)showAddView {
     CHAddGroupViewController *controller = [self.storyboard instantiateViewControllerWithIdentifier:@"CHAddGroupViewController"];

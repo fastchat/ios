@@ -923,8 +923,8 @@
         </scene>
     </scenes>
     <resources>
-        <image name="ChatTabIcon" width="50" height="37"/>
-        <image name="ProfileTabIcon" width="50" height="38"/>
+        <image name="ChatTabIcon" width="37" height="28"/>
+        <image name="ProfileTabIcon" width="37" height="28"/>
         <image name="profile-dark.png" width="240" height="240"/>
     </resources>
     <simulatedMetricsContainer key="defaultSimulatedMetrics">

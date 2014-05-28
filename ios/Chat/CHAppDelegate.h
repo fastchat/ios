@@ -12,11 +12,5 @@
 @interface CHAppDelegate : UIResponder <UIApplicationDelegate>
 
 @property (strong, nonatomic) UIWindow *window;
-@property (strong, nonatomic) UIViewController *contentViewController;
-
-
--(void)setContentViewControllerWithController: (CHSideNavigationTableViewController*)controller;
-//-(void)showSideMenu;
--(void)hideSideMenu;
 
 @end
