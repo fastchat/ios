@@ -260,7 +260,7 @@
                                                     <dataDetectorType key="dataDetectorTypes" phoneNumber="YES" link="YES" address="YES" calendarEvent="YES"/>
                                                 </textView>
                                                 <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Time" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="MiQ-B8-fYS">
-                                                    <rect key="frame" x="39" y="30" width="70" height="19"/>
+                                                    <rect key="frame" x="80" y="30" width="70" height="19"/>
                                                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                                     <constraints>
                                                         <constraint firstAttribute="width" constant="70" id="bPq-Si-H0u"/>
@@ -279,7 +279,7 @@
                                                     </constraints>
                                                 </imageView>
                                                 <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Author" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="hkV-wY-dtL">
-                                                    <rect key="frame" x="110" y="28" width="142" height="21"/>
+                                                    <rect key="frame" x="151" y="28" width="142" height="21"/>
                                                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                                     <constraints>
                                                         <constraint firstAttribute="height" constant="21" id="OEB-K1-zPQ"/>
@@ -296,7 +296,7 @@
                                                 <constraint firstAttribute="bottom" secondItem="hkV-wY-dtL" secondAttribute="bottom" id="4HK-yc-JFH"/>
                                                 <constraint firstItem="NYG-2q-ytz" firstAttribute="leading" secondItem="CqB-QS-s35" secondAttribute="leading" constant="68" id="Ezu-7q-ePJ"/>
                                                 <constraint firstAttribute="bottom" secondItem="MiQ-B8-fYS" secondAttribute="bottom" id="T9B-AL-zdL"/>
-                                                <constraint firstItem="MiQ-B8-fYS" firstAttribute="leading" secondItem="CqB-QS-s35" secondAttribute="leading" constant="39" id="eFJ-OV-vjR"/>
+                                                <constraint firstItem="MiQ-B8-fYS" firstAttribute="leading" secondItem="CqB-QS-s35" secondAttribute="leading" constant="80" id="eFJ-OV-vjR"/>
                                                 <constraint firstItem="NYG-2q-ytz" firstAttribute="top" secondItem="CqB-QS-s35" secondAttribute="top" constant="5" id="fbd-hk-BUR"/>
                                                 <constraint firstItem="hkV-wY-dtL" firstAttribute="leading" secondItem="MiQ-B8-fYS" secondAttribute="trailing" constant="1" id="paA-BP-d9A"/>
                                                 <constraint firstItem="R9j-gL-A3a" firstAttribute="leading" secondItem="NYG-2q-ytz" secondAttribute="trailing" constant="5" id="vPL-sJ-8CN"/>
@@ -404,7 +404,7 @@
                                                     </constraints>
                                                 </imageView>
                                                 <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" editable="NO" translatesAutoresizingMaskIntoConstraints="NO" id="BSG-7w-2sz">
-                                                    <rect key="frame" x="68" y="14" width="205" height="157"/>
+                                                    <rect key="frame" x="68" y="24" width="205" height="157"/>
                                                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                                     <color key="backgroundColor" red="0.47058823529999999" green="0.20000000000000001" blue="0.64705882349999999" alpha="1" colorSpace="calibratedRGB"/>
                                                     <constraints>
@@ -415,7 +415,7 @@
                                                     <textInputTraits key="textInputTraits" autocapitalizationType="sentences"/>
                                                 </textView>
                                                 <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Time" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="q6R-6h-1OG">
-                                                    <rect key="frame" x="20" y="163" width="88" height="21"/>
+                                                    <rect key="frame" x="80" y="163" width="88" height="21"/>
                                                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                                     <constraints>
                                                         <constraint firstAttribute="height" constant="21" id="XPF-at-KBi"/>
@@ -425,7 +425,7 @@
                                                     <nil key="highlightedColor"/>
                                                 </label>
                                                 <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Author" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="IPz-Sb-q72">
-                                                    <rect key="frame" x="116" y="163" width="115" height="21"/>
+                                                    <rect key="frame" x="176" y="163" width="115" height="21"/>
                                                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                                     <constraints>
                                                         <constraint firstAttribute="height" constant="21" id="bbd-7X-oG0"/>
@@ -450,10 +450,10 @@
                                                 <constraint firstAttribute="trailing" secondItem="BSG-7w-2sz" secondAttribute="trailing" constant="47" id="Gxs-Ek-Qtl"/>
                                                 <constraint firstAttribute="bottom" secondItem="q6R-6h-1OG" secondAttribute="bottom" id="MLM-BM-Go1"/>
                                                 <constraint firstItem="E33-aJ-rfa" firstAttribute="leading" secondItem="vtQ-NJ-glw" secondAttribute="leading" constant="120" id="e1n-Bi-5Cd"/>
-                                                <constraint firstItem="q6R-6h-1OG" firstAttribute="leading" secondItem="vtQ-NJ-glw" secondAttribute="leading" constant="20" id="fn2-Ry-O0w"/>
+                                                <constraint firstItem="q6R-6h-1OG" firstAttribute="leading" secondItem="vtQ-NJ-glw" secondAttribute="leading" constant="80" id="fn2-Ry-O0w"/>
                                                 <constraint firstAttribute="bottom" secondItem="QTF-lm-zGW" secondAttribute="bottom" id="hpJ-mh-R7M"/>
                                                 <constraint firstAttribute="bottom" secondItem="E33-aJ-rfa" secondAttribute="bottom" constant="28" id="l5y-0y-Eu3"/>
-                                                <constraint firstItem="BSG-7w-2sz" firstAttribute="top" secondItem="vtQ-NJ-glw" secondAttribute="top" constant="14" id="yp6-ep-bVP"/>
+                                                <constraint firstItem="BSG-7w-2sz" firstAttribute="top" secondItem="vtQ-NJ-glw" secondAttribute="top" constant="24" id="yp6-ep-bVP"/>
                                             </constraints>
                                         </tableViewCellContentView>
                                         <connections>
