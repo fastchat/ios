@@ -7,11 +7,17 @@
 //
 
 #import <UIKit/UIKit.h>
-#import "SocketIO.h"
 
-@interface CHRegisterViewController : UIViewController <UITextFieldDelegate, SocketIODelegate>
+@interface CHRegisterViewController : UIViewController <UITextFieldDelegate>
+
 @property (weak, nonatomic) IBOutlet UITextField *usernameTextField;
 @property (weak, nonatomic) IBOutlet UITextField *passwordTextField;
-@property (weak, nonatomic) IBOutlet UITextField *emailTextField;
+@property (weak, nonatomic) IBOutlet UITextField *repeatPasswordTextField;
+@property (weak, nonatomic) IBOutlet UIButton *registerButton;
+
+- (IBAction)createAccount:(id)sender;
+- (IBAction)textfieldChanged:(UITextField *)sender;
+
+
 
 @end

@@ -13,46 +13,65 @@
 #import "CHGroupListTableViewController.h"
 #import "CHUser.h"
 
-#define URL @"localhost" //localhost
-
 @interface CHRegisterViewController ()
-
-@property (nonatomic, strong) SocketIO *socket;
 
 @end
 
 @implementation CHRegisterViewController
 
-- (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
-{
-    self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
-    if (self) {
-        // Custom initialization
-    }
-    return self;
-}
-
-- (void)viewDidLoad
+- (void)viewDidLoad;
 {
     [super viewDidLoad];
-    // Do any additional setup after loading the view.
-    
-    UIBarButtonItem *finishButton = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemDone target:self action:@selector(finishRegistration)];
-    self.navigationItem.rightBarButtonItem = finishButton;
+    self.title = @"Register";
 }
 
--(void)finishRegistration {
-    [[CHNetworkManager sharedManager] registerWithUsername:self.usernameTextField.text password:self.passwordTextField.text callback:^(NSArray *userData) {
-        DLog(@"Registered user: %@",userData);
-
-        [self dismissViewControllerAnimated:YES completion:nil];
-    }];
-}
-
--(BOOL)textFieldShouldReturn:(UITextField *)textField
+- (void)viewDidLayoutSubviews;
 {
-    [textField resignFirstResponder];
-    return YES;
+    [super viewDidLayoutSubviews];
+    [self.usernameTextField becomeFirstResponder];
 }
+
+- (BOOL)textFieldShouldReturn:(UITextField *)textField;
+{
+    NSInteger tag = textField.tag;
+    UITextField *next = (UITextField *)[self.view viewWithTag:++tag];
+    if (next) {
+        [next becomeFirstResponder];
+        return NO;
+    } else {
+        [self createAccount:nil];
+        return NO;
+    }
+}
+
+- (IBAction)createAccount:(id)sender;
+{
+    if ([self canRegister]) {
+        [[CHNetworkManager sharedManager] registerWithUsername:self.usernameTextField.text password:self.passwordTextField.text callback:^(NSArray *userData) {
+            DLog(@"Registered user: %@", userData);
+            
+            [self dismissViewControllerAnimated:YES completion:nil];
+        }];
+    }
+}
+
+- (void)setRegisterButtonEnabled:(BOOL)enabled;
+{
+    self.registerButton.enabled = enabled;
+}
+
+- (IBAction)textfieldChanged:(UITextField *)sender;
+{
+    [self setRegisterButtonEnabled:[self canRegister]];
+}
+
+- (BOOL)canRegister;
+{
+    return _usernameTextField.text.length &&
+    _passwordTextField.text.length &&
+    _repeatPasswordTextField.text.length &&
+    [_passwordTextField.text isEqualToString:_repeatPasswordTextField.text];
+}
+
 
 @end
