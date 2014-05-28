@@ -41,6 +41,8 @@
 
 @implementation CHMessageViewController
 
+#pragma mark - View Lifecycle
+
 - (void)viewDidLoad;
 {
     [super viewDidLoad];
@@ -133,9 +135,6 @@
     self.messageArray = [NSMutableArray array];
     self.messages = @"";
     
-    UIBarButtonItem *addButton = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemAdd target:self action:@selector(addUser)];
-    self.navigationItem.rightBarButtonItem = addButton;
-    
     //
     // make a memebrs hash
     //
@@ -181,6 +180,9 @@
     
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(reloadTableViewData) name:@"ReloadAppDelegateTable" object:nil];
     
+    ///
+    /// This all needs to be refactored. AKA, it should never happen
+    ///8
     if (self.group == nil) {
         [[CHNetworkManager sharedManager] getGroups:^(NSArray *groups) {
             for (CHGroup *group in groups) {
@@ -213,28 +215,9 @@
     [[NSNotificationCenter defaultCenter] removeObserver:self];
 }
 
-#pragma mark - Camera 
+#pragma mark - Message Methods
 
--(void)loadCamera;
-{
-    /*
-     Fix for DBCamera crashing when you open your photo library:
-     
-     NSURL *url = [[result defaultRepresentation] url];
-     if( url ) {
-     [items addObject:url];
-     }
-     
-     Add this to their file. at the line it crashes at DBLibraryManager.
-     */
-    UINavigationController *nav = [[UINavigationController alloc] initWithRootViewController:[[DBCameraContainerViewController alloc] initWithDelegate:self]];
-    [nav setNavigationBarHidden:YES];
-    [self presentViewController:nav animated:YES completion:nil];
-}
-
-
-
--(void)loadMoreMessages;
+- (void)loadMoreMessages;
 {
     self.currPage = self.currPage + 1;
     
@@ -242,19 +225,13 @@
         messages = [[[messages reverseObjectEnumerator] allObjects] mutableCopy];
         NSRange range = NSMakeRange(0, messages.count);
         NSIndexSet *indexSet = [NSIndexSet indexSetWithIndexesInRange:range];
+        
+#warning Do not use reload Data
         [self.messageArray insertObjects:messages atIndexes:indexSet];
         [self.messageTable reloadData];
         [self.messageTable scrollToRowAtIndexPath:[NSIndexPath indexPathForRow:_messageArray.count - 1 inSection:0] atScrollPosition:UITableViewScrollPositionBottom animated:NO];
         
         [self.refresh endRefreshing];
-    }];
-}
-
--(void)addUser;
-{
-    UINavigationController *addController = [self.storyboard instantiateViewControllerWithIdentifier:@"InviteNavigationController"];
-    [self presentViewController:addController animated:YES completion:^{
-       
     }];
 }
 
@@ -324,79 +301,52 @@
 
 }
 
+#pragma mark - Keyboard Methods
+
 - (void)keyboardWillShow:(NSNotification *)notification;
 {
-    DLog(@"Keyboard WILL SHOW");
-//    if( self.shouldSlide) {
-        self.keyboardIsVisible = YES;
-        NSDictionary* keyboardInfo = [notification userInfo];
-        NSValue* keyboardFrameEnded = [keyboardInfo valueForKey:UIKeyboardFrameBeginUserInfoKey];
-        CGRect keyboardFrameEndedRect = [keyboardFrameEnded CGRectValue];
+    CGFloat keyboardHeight = [[notification.userInfo valueForKey:UIKeyboardFrameEndUserInfoKey] CGRectValue].size.height;
+    NSTimeInterval animationDuration = [[notification.userInfo objectForKey:UIKeyboardAnimationDurationUserInfoKey] floatValue];
+    NSInteger curve = [[notification.userInfo valueForKey:UIKeyboardAnimationCurveUserInfoKey] integerValue];
     
-        NSInteger keyboardHeight = keyboardFrameEndedRect.size.height;
-    
-        // Need to access keyboard height in textViewDidGrow. Using global for now, should refactor
-        self.heightOfKeyboard = keyboardHeight;
-    
-    
-        // get keyboard size and loctaion
-        CGRect keyboardBounds;
-        [[notification.userInfo valueForKey:UIKeyboardFrameEndUserInfoKey] getValue: &keyboardBounds];
-  
-        // Need to translate the bounds to account for rotation.
-        keyboardBounds = [self.view convertRect:keyboardBounds toView:nil];
-
-    
-    
-        NSTimeInterval animationDuration = [[notification.userInfo objectForKey:UIKeyboardAnimationDurationUserInfoKey] floatValue];
-        UIViewAnimationCurve animationCurve = [[notification.userInfo objectForKey:UIKeyboardAnimationCurveUserInfoKey] intValue];
-    
-        [UIView setAnimationCurve:animationCurve];
-    
-        [UIView animateWithDuration:animationDuration animations:^{
-            CGRect containerFrame = self.containerView.frame;
-            self.messageTable.contentInset = UIEdgeInsetsMake(kDefaultContentOffset, 0, keyboardHeight+containerFrame.size.height, 0);
-            self.messageTable.scrollIndicatorInsets = UIEdgeInsetsZero;
-        
-                [self.messageTable scrollToRowAtIndexPath:[NSIndexPath indexPathForRow:_messageArray.count - 1 inSection:0] atScrollPosition:UITableViewScrollPositionBottom animated:YES];
-        
-        
-            containerFrame.origin.y = self.view.bounds.size.height - (keyboardBounds.size.height + containerFrame.size.height);
-        
-            // set views with new info
-            self.containerView.frame = containerFrame;
-        
-        }];
-   // }
+    [UIView animateWithDuration:animationDuration
+                          delay:0.0
+                        options:curve
+                     animations:^{
+                         [self setTableViewInsetsFromBottom:keyboardHeight];
+                         
+                         [self.messageTable scrollToRowAtIndexPath:[NSIndexPath indexPathForRow:_messageArray.count - 1 inSection:0]
+                                                  atScrollPosition:UITableViewScrollPositionBottom
+                                                          animated:YES];
+                         
+                         CGRect containerFrame = self.containerView.frame;
+                         containerFrame.origin.y = self.view.bounds.size.height - (keyboardHeight + containerFrame.size.height);
+                         self.containerView.frame = containerFrame;
+                     } completion:nil];
 }
 
 - (void)keyboardWillHide:(NSNotification *)notification;
 {
-//    if (self.shouldSlide) {
-        self.keyboardIsVisible = NO;
-        NSTimeInterval animationDuration = [[notification.userInfo objectForKey:UIKeyboardAnimationDurationUserInfoKey] floatValue];
-        UIViewAnimationCurve animationCurve = [[notification.userInfo objectForKey:UIKeyboardAnimationCurveUserInfoKey] intValue];
+    NSTimeInterval animationDuration = [[notification.userInfo objectForKey:UIKeyboardAnimationDurationUserInfoKey] floatValue];
+    NSInteger animationCurve = [[notification.userInfo objectForKey:UIKeyboardAnimationCurveUserInfoKey] integerValue];
     
-        [UIView setAnimationCurve:animationCurve];
+    [UIView animateWithDuration:animationDuration
+                          delay:0.0
+                        options:animationCurve
+                     animations:^{
+                         [self setTableViewInsetsFromBottom:0];
+                         
+                         CGRect containerFrame = self.containerView.frame;
+                         containerFrame.origin.y = self.view.bounds.size.height - containerFrame.size.height;
+                         self.containerView.frame = containerFrame;
+                     } completion:nil];
     
-        [UIView animateWithDuration:animationDuration animations:^{
-            CGRect containerFrame = self.containerView.frame;
-            self.messageTable.contentInset = UIEdgeInsetsMake(kDefaultContentOffset, 0, containerFrame.size.height, 0);
-            self.messageTable.scrollIndicatorInsets = UIEdgeInsetsZero;
-        
-        
-            containerFrame.origin.y = self.view.bounds.size.height - containerFrame.size.height;
-        
-            // set views with new info
-            self.containerView.frame = containerFrame;
-
-        }];
-    
-        [self.messageTable scrollToRowAtIndexPath:[NSIndexPath indexPathForRow:_messageArray.count - 1 inSection:0] atScrollPosition:UITableViewScrollPositionBottom animated:YES];
- //   }
+    [self.messageTable scrollToRowAtIndexPath:[NSIndexPath indexPathForRow:_messageArray.count - 1 inSection:0]
+                             atScrollPosition:UITableViewScrollPositionBottom
+                                     animated:YES];
 }
 
-#pragma mark - TableView DataSource Implementation
+#pragma mark - TableView
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section;
 {
@@ -627,9 +577,24 @@
     self.messageTable.scrollIndicatorInsets = insets;
 }
 
+#pragma mark - Camera
 
-//Use your captured image
-#pragma mark - DBCameraViewControllerDelegate
+-(void)loadCamera;
+{
+    /*
+     Fix for DBCamera crashing when you open your photo library:
+     
+     NSURL *url = [[result defaultRepresentation] url];
+     if( url ) {
+     [items addObject:url];
+     }
+     
+     Add this to their file. at the line it crashes at DBLibraryManager.
+     */
+    UINavigationController *nav = [[UINavigationController alloc] initWithRootViewController:[[DBCameraContainerViewController alloc] initWithDelegate:self]];
+    [nav setNavigationBarHidden:YES];
+    [self presentViewController:nav animated:YES completion:nil];
+}
 
 - (void) captureImageDidFinish:(UIImage *)image withMetadata:(NSDictionary *)metadata
 {
