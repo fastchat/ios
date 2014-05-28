@@ -39,16 +39,27 @@
     [self.emailTextField becomeFirstResponder];
 }
 
-
-- (IBAction)registerWasTouched:(id)sender {
-    CHRegisterViewController *registerViewController = [self.storyboard instantiateViewControllerWithIdentifier:@"CHRegisterViewController"];
-
-    [self presentViewController:registerViewController animated:YES completion:nil];
+- (BOOL)textFieldShouldReturn:(UITextField *)textField;
+{
+    NSInteger tag = textField.tag;
+    UITextField *next = (UITextField *)[self.view viewWithTag:++tag];
+    if (next) {
+        [next becomeFirstResponder];
+        return NO;
+    } else {
+        [self loginWasTouched:nil];
+        return NO;
+    }
 }
 
 #pragma mark - Login
 
-- (IBAction)loginWasTouched:(id)sender {
+- (IBAction)loginWasTouched:(id)sender;
+{
+    if (![self canLogin]) {
+        return;
+    }
+    
     self.errorLabel.text = @"";
     
     [[CHNetworkManager sharedManager] postLoginWithUsername:self.emailTextField.text password:self.passwordTextField.text
@@ -72,6 +83,21 @@
                 self.errorLabel.text = error.localizedDescription;
             }
         }];
+}
+
+- (IBAction)textfieldChanged:(UITextField *)sender;
+{
+    [self enableLoginButton:[self canLogin]];
+}
+
+- (void)enableLoginButton:(BOOL)enabled;
+{
+    self.loginButton.enabled = enabled;
+}
+
+- (BOOL)canLogin;
+{
+    return _emailTextField.text.length && _passwordTextField.text.length;
 }
 
 @end
