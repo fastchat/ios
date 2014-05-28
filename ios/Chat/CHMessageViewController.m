@@ -19,10 +19,13 @@
 #import "CHMediaMessageTableViewCell.h"
 #import "CHMediaOwnTableViewCell.h"
 #import "CHExpandedImageViewController.h"
+#import "URBMediaFocusViewController.h"
 
 #define kDefaultContentOffset self.navigationController.navigationBar.frame.size.height + 20
 
 @interface CHMessageViewController ()
+
+@property (nonatomic, strong) URBMediaFocusViewController *mediaFocus;
 
 @property NSString *messages;
 @property NSMutableArray *messageArray;
@@ -116,7 +119,7 @@
     self.containerView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleTopMargin;
     
     self.previousMessageTextViewRect = CGRectZero;
-    [self setTableViewInsetsFromBottom:0];
+//    [self setTableViewInsetsFromBottom:0];
 
     
     ///
@@ -308,6 +311,7 @@
     CGFloat keyboardHeight = [[notification.userInfo valueForKey:UIKeyboardFrameEndUserInfoKey] CGRectValue].size.height;
     NSTimeInterval animationDuration = [[notification.userInfo objectForKey:UIKeyboardAnimationDurationUserInfoKey] floatValue];
     NSInteger curve = [[notification.userInfo valueForKey:UIKeyboardAnimationCurveUserInfoKey] integerValue];
+    self.heightOfKeyboard = keyboardHeight;
     
     [UIView animateWithDuration:animationDuration
                           delay:0.0
@@ -327,6 +331,7 @@
 
 - (void)keyboardWillHide:(NSNotification *)notification;
 {
+    self.heightOfKeyboard = 0;
     NSTimeInterval animationDuration = [[notification.userInfo objectForKey:UIKeyboardAnimationDurationUserInfoKey] floatValue];
     NSInteger animationCurve = [[notification.userInfo objectForKey:UIKeyboardAnimationCurveUserInfoKey] integerValue];
     
@@ -469,12 +474,8 @@
 
 - (void)expandImage:(UIImage *)image;
 {
-    CHExpandedImageViewController *expandedImageController = [self.storyboard instantiateViewControllerWithIdentifier:@"CHExpandedImageViewController"];
-    DLog(@"Image: %@", image);
-    DLog(@"image view: %@", expandedImageController.expandedImageView);
-    //[self presentViewController:expandedImage animated:NO completion:nil];
-    [expandedImageController setImage:image];
-    [self.navigationController pushViewController:expandedImageController animated:YES];
+    self.mediaFocus = [[URBMediaFocusViewController alloc] init];
+    [self.mediaFocus showImage:image fromView:self.view];
 }
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath;
@@ -519,7 +520,7 @@
     ///
     /// Load up old messages
     ///
-    [[CHNetworkManager sharedManager] getMessagesForGroup:self.group._id page:nil callback:^(NSArray *messages) {
+    [[CHNetworkManager sharedManager] getMessagesForGroup:self.group._id page:_currPage callback:^(NSArray *messages) {
         self.messageArray = nil;
         self.messageArray = [[NSMutableArray alloc] init];
         
@@ -543,13 +544,12 @@
     r.origin.y += diff;
 	self.containerView.frame = r;
 
-    
     // Resize table
-    self.messageTable.contentInset = UIEdgeInsetsMake(kDefaultContentOffset, 0, self.containerView.frame.size.height + self.heightOfKeyboard, 0);
-    self.messageTable.scrollIndicatorInsets = UIEdgeInsetsZero;
-    
+    [self setTableViewInsetsFromBottom:self.heightOfKeyboard];
 
-    [self.messageTable scrollToRowAtIndexPath:[NSIndexPath indexPathForRow:_messageArray.count - 1 inSection:0] atScrollPosition:UITableViewScrollPositionBottom animated:YES];
+    [self.messageTable scrollToRowAtIndexPath:[NSIndexPath indexPathForRow:_messageArray.count - 1 inSection:0]
+                             atScrollPosition:UITableViewScrollPositionBottom
+                                     animated:YES];
 }
 
 - (NSDateFormatter *)timestampFormatter;

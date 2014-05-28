@@ -31,6 +31,7 @@ PODS:
   - SocketRocket (0.3.1-beta2)
   - TSMessages (0.9.9):
     - HexColors
+  - URBMediaFocusViewController (0.5.5)
 
 DEPENDENCIES:
   - AFNetworking (~> 2.2)
@@ -41,6 +42,7 @@ DEPENDENCIES:
   - MBProgressHUD (~> 0.8)
   - socket.IO (~> 0.5)
   - TSMessages (~> 0.9)
+  - URBMediaFocusViewController (~> 0.5)
 
 SPEC CHECKSUMS:
   AFNetworking: ab63e259fe91eef4519b371ef0a4955af0e73e64
@@ -53,5 +55,6 @@ SPEC CHECKSUMS:
   socket.IO: db3e71805c862038ab73209dda2b0ad6babc54b2
   SocketRocket: 79a68ae186063c65e1fe6f638b1ae2927aa5f304
   TSMessages: 2999ef55e532378692e9d14d32da2bb60e285129
+  URBMediaFocusViewController: 4dff9de3767e60b96ba325c897d4ffa7131a122e
 
 COCOAPODS: 0.33.1

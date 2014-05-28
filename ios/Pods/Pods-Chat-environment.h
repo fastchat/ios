@@ -102,6 +102,12 @@
 #define COCOAPODS_VERSION_MINOR_TSMessages 9
 #define COCOAPODS_VERSION_PATCH_TSMessages 9
 
+// URBMediaFocusViewController
+#define COCOAPODS_POD_AVAILABLE_URBMediaFocusViewController
+#define COCOAPODS_VERSION_MAJOR_URBMediaFocusViewController 0
+#define COCOAPODS_VERSION_MINOR_URBMediaFocusViewController 5
+#define COCOAPODS_VERSION_PATCH_URBMediaFocusViewController 5
+
 // socket.IO
 #define COCOAPODS_POD_AVAILABLE_socket_IO
 #define COCOAPODS_VERSION_MAJOR_socket_IO 0
