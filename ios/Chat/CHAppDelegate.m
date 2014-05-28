@@ -29,7 +29,7 @@
     [[UINavigationBar appearance] setBarTintColor:kPurpleAppColor];
     [[UINavigationBar appearance] setTitleTextAttributes:@{NSForegroundColorAttributeName:[UIColor whiteColor]}];
     [[UINavigationBar appearance] setTintColor:[UIColor whiteColor]];
-    
+    [[UITabBar appearance] setTintColor:kPurpleAppColor];
     [[UIButton appearance] setTintColor:kPurpleAppColor];
     
     return YES;
