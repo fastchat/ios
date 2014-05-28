@@ -15,7 +15,7 @@
 - (instancetype)initWithUnread:(BOOL)unread;
 {
     if ( (self = [super initWithFrame:CGRectMake(0, 0, kSize, kSize)]) ) {
-        self.backgroundColor = [UIColor whiteColor];
+        self.backgroundColor = kLightBackgroundColor;
         self.unread = unread;
     }
     return self;
@@ -27,7 +27,7 @@
     // Drawing code
     CGContextRef ctx = UIGraphicsGetCurrentContext();
     CGContextAddEllipseInRect(ctx, self.bounds);
-    CGContextSetFillColor(ctx, CGColorGetComponents(_unread ? [kPurpleAppColor CGColor] : [[UIColor whiteColor] CGColor]));
+    CGContextSetFillColor(ctx, CGColorGetComponents(_unread ? [kPurpleAppColor CGColor] : [kLightBackgroundColor CGColor]));
     CGContextFillPath(ctx);
 }
 

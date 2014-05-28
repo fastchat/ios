@@ -14,6 +14,7 @@
 
 - (void)awakeFromNib
 {
+    self.backgroundColor = kLightBackgroundColor;
     if (!_unreadView) {
         self.unreadView = [[CHUnreadView alloc] initWithUnread:NO];
         self.unreadView.center = CGPointMake(8, self.frame.size.height / 2.0);

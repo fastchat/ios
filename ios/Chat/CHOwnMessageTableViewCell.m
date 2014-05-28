@@ -10,13 +10,10 @@
 
 @implementation CHOwnMessageTableViewCell
 
-- (id)initWithFrame:(CGRect)frame
+- (void)awakeFromNib;
 {
-    self = [super initWithFrame:frame];
-    if (self) {
-        // Initialization code
-    }
-    return self;
+    [super awakeFromNib];
+    self.backgroundColor = kLightBackgroundColor;
 }
 
 - (void)layoutSubviews {

@@ -19,7 +19,6 @@
 		2768EAB918DB1F57006D14BB /* CHSideNavigationTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2768EAB818DB1F57006D14BB /* CHSideNavigationTableViewController.m */; };
 		2768EABF18DE43F2006D14BB /* CHInvitationsTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2768EABE18DE43F2006D14BB /* CHInvitationsTableViewController.m */; };
 		2769B04618E7820A00CCE470 /* CHMessageTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 2769B04518E7820A00CCE470 /* CHMessageTableViewCell.m */; };
-		2769B04918E782B600CCE470 /* CHMessageTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2769B04818E782B600CCE470 /* CHMessageTableViewController.m */; };
 		2769B04F18EDD40800CCE470 /* CHOwnMessageTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 2769B04E18EDD40800CCE470 /* CHOwnMessageTableViewCell.m */; };
 		2769B05B18F1258A00CCE470 /* MessageEntryBackground@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 2769B05318F1258A00CCE470 /* MessageEntryBackground@2x.png */; };
 		2769B05C18F1258A00CCE470 /* MessageEntryBackground.png in Resources */ = {isa = PBXBuildFile; fileRef = 2769B05418F1258A00CCE470 /* MessageEntryBackground.png */; };
@@ -97,8 +96,6 @@
 		2768EABE18DE43F2006D14BB /* CHInvitationsTableViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CHInvitationsTableViewController.m; sourceTree = "<group>"; };
 		2769B04418E7820A00CCE470 /* CHMessageTableViewCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CHMessageTableViewCell.h; sourceTree = "<group>"; };
 		2769B04518E7820A00CCE470 /* CHMessageTableViewCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CHMessageTableViewCell.m; sourceTree = "<group>"; };
-		2769B04718E782B600CCE470 /* CHMessageTableViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CHMessageTableViewController.h; sourceTree = "<group>"; };
-		2769B04818E782B600CCE470 /* CHMessageTableViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CHMessageTableViewController.m; sourceTree = "<group>"; };
 		2769B04D18EDD40800CCE470 /* CHOwnMessageTableViewCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CHOwnMessageTableViewCell.h; sourceTree = "<group>"; };
 		2769B04E18EDD40800CCE470 /* CHOwnMessageTableViewCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CHOwnMessageTableViewCell.m; sourceTree = "<group>"; };
 		2769B05318F1258A00CCE470 /* MessageEntryBackground@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "MessageEntryBackground@2x.png"; sourceTree = "<group>"; };
@@ -261,8 +258,6 @@
 				2768EAAD18D9138D006D14BB /* CHMessageViewController.m */,
 				2769B04418E7820A00CCE470 /* CHMessageTableViewCell.h */,
 				2769B04518E7820A00CCE470 /* CHMessageTableViewCell.m */,
-				2769B04718E782B600CCE470 /* CHMessageTableViewController.h */,
-				2769B04818E782B600CCE470 /* CHMessageTableViewController.m */,
 				2769B04D18EDD40800CCE470 /* CHOwnMessageTableViewCell.h */,
 				2769B04E18EDD40800CCE470 /* CHOwnMessageTableViewCell.m */,
 				27BAD79F192BF56500C8569A /* CHMediaMessageTableViewCell.h */,
@@ -553,7 +548,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				2769B04918E782B600CCE470 /* CHMessageTableViewController.m in Sources */,
 				2768EA9F18D87059006D14BB /* CHRegisterViewController.m in Sources */,
 				2769B04F18EDD40800CCE470 /* CHOwnMessageTableViewCell.m in Sources */,
 				2769B06818F47E5E00CCE470 /* CHFastChatObject.m in Sources */,

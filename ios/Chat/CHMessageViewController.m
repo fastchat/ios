@@ -41,11 +41,11 @@
 
 @implementation CHMessageViewController
 
-- (void)viewDidLoad
+- (void)viewDidLoad;
 {
     [super viewDidLoad];
-    // Do any additional setup after loading the view.
-    
+    self.view.backgroundColor = kLightBackgroundColor;
+    self.messageTable.backgroundColor = kLightBackgroundColor;
 
     self.shouldSlide = YES;
     self.title = _group.groupName;
@@ -56,8 +56,8 @@
     self.refresh = [[UIRefreshControl alloc] init];
     self.refresh.attributedTitle = [[NSAttributedString alloc] initWithString:@"Pull to load old messages"];
     [self.refresh addTarget:self
-                action:@selector(loadMoreMessages)
-      forControlEvents:UIControlEventValueChanged];
+                     action:@selector(loadMoreMessages)
+           forControlEvents:UIControlEventValueChanged];
 
     [self.messageTable addSubview:self.refresh];
     
@@ -142,9 +142,13 @@
     _messageArray = [[NSMutableArray alloc] init];
 
     self.messages = @"";
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(keyboardWillShow:) name:UIKeyboardWillShowNotification object:self.view.window];
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(keyboardWillShow:)
+                                                 name:UIKeyboardWillShowNotification object:self.view.window];
     
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(keyboardWillHide:) name:UIKeyboardWillHideNotification object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(keyboardWillHide:)
+                                                 name:UIKeyboardWillHideNotification object:nil];
     
     UIBarButtonItem *addButton = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemAdd target:self action:@selector(addUser)];
     self.navigationItem.rightBarButtonItem = addButton;
@@ -244,15 +248,15 @@
     }];
 }
 
--(void)addUser {
-
+-(void)addUser;
+{
     UINavigationController *addController = [self.storyboard instantiateViewControllerWithIdentifier:@"InviteNavigationController"];
     [self presentViewController:addController animated:YES completion:^{
        
     }];
 }
 
--(void)resignTextView
+- (void)resignTextView;
 {
 	[self.textView resignFirstResponder];
 }
@@ -318,7 +322,7 @@
 
 }
 
-- (void) keyboardWillShow: (NSNotification*) notification
+- (void)keyboardWillShow:(NSNotification *)notification;
 {
     DLog(@"Keyboard WILL SHOW");
 //    if( self.shouldSlide) {
@@ -364,7 +368,7 @@
    // }
 }
 
-- (void) keyboardWillHide: (NSNotification*) notification
+- (void)keyboardWillHide:(NSNotification *)notification;
 {
 //    if (self.shouldSlide) {
         self.keyboardIsVisible = NO;
@@ -392,11 +396,13 @@
 
 #pragma mark - TableView DataSource Implementation
 
-- (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
+- (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section;
+{
     return _messageArray.count;
 }
 
-- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
+- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath;
+{
     
     static NSString *cHMessageTableViewCell = @"CHMessageTableViewCell";
     CHMessage *currMessage = (CHMessage *)[self.messageArray objectAtIndex:indexPath.row];
@@ -509,7 +515,7 @@
     return cell;
 }
 
--(void)expandImage:(UIImage *)image;
+- (void)expandImage:(UIImage *)image;
 {
     CHExpandedImageViewController *expandedImageController = [self.storyboard instantiateViewControllerWithIdentifier:@"CHExpandedImageViewController"];
     DLog(@"Image: %@", image);
@@ -519,13 +525,13 @@
     [self.navigationController pushViewController:expandedImageController animated:YES];
 }
 
--(void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath;
+- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath;
 {
     self.shouldSlide = YES;
     [self resignTextView];
 }
 
--(CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath;
+- (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath;
 {
     CGSize renderedSize = [((CHMessage *)[self.messageArray objectAtIndex:indexPath.row]).text sizeWithFont: [UIFont systemFontOfSize:14.0f] constrainedToSize:CGSizeMake(205, CGFLOAT_MAX) lineBreakMode:NSLineBreakByWordWrapping];
 
@@ -537,7 +543,7 @@
 
 }
 
--(BOOL)manager:(CHSocketManager *)manager doesCareAboutMessage:(CHMessage *)message;
+- (BOOL)manager:(CHSocketManager *)manager doesCareAboutMessage:(CHMessage *)message;
 {
     if( [message.group isEqualToString:self.group._id] ) {
         
@@ -576,7 +582,7 @@
 
 }
 
--(void)viewDidDisappear:(BOOL)animated;
+- (void)viewDidDisappear:(BOOL)animated;
 {
     [super viewDidDisappear:animated];
 //    [[NSNotificationCenter defaultCenter] removeObserver:self];
@@ -600,7 +606,8 @@
     [self.messageTable scrollToRowAtIndexPath:[NSIndexPath indexPathForRow:_messageArray.count - 1 inSection:0] atScrollPosition:UITableViewScrollPositionBottom animated:YES];
 }
 
-- (NSDateFormatter *)timestampFormatter {
+- (NSDateFormatter *)timestampFormatter;
+{
     NSDateFormatter *timestampFormatter = [[NSDateFormatter alloc] init];
     [timestampFormatter setDateStyle:NSDateFormatterLongStyle];
     timestampFormatter.locale = [[NSLocale alloc] initWithLocaleIdentifier:@"en_US_POSIX"];

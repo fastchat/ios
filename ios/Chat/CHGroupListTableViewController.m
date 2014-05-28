@@ -13,7 +13,6 @@
 #import "CHSideNavigationTableViewController.h"
 #import "CHMessageViewController.h"
 #import "CHLoginViewController.h"
-#import "CHMessageTableViewController.h"
 #import "CHGroup.h"
 #import "CHUser.h"
 #import "MBProgressHUD.h"
@@ -32,6 +31,7 @@
 {
     [super viewDidLoad];
     self.navigationItem.title = @"Groups";
+    self.view.backgroundColor = kLightBackgroundColor;
     
     ///
     /// Check to see if we are logged in. If we are not, login and stop.
@@ -175,7 +175,8 @@
     [tableView deselectRowAtIndexPath:indexPath animated:YES];
 }
 
-- (BOOL)tableView:(UITableView *)tableView canEditRowAtIndexPath:(NSIndexPath *)indexPath {
+- (BOOL)tableView:(UITableView *)tableView canEditRowAtIndexPath:(NSIndexPath *)indexPath;
+{
     return YES;
 }
 

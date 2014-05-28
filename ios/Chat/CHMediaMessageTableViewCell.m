@@ -21,6 +21,7 @@
 {
     // Initialization code
     [super awakeFromNib];
+    self.backgroundColor = kLightBackgroundColor;
     
     self.messageTextView.layer.cornerRadius = 5.0;
     self.messageTextView.layer.masksToBounds = YES;
