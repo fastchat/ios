@@ -12,7 +12,7 @@
 #import "CHAppDelegate.h"
 #import "CHSideNavigationTableViewController.h"
 #import "CHMessageViewController.h"
-#import "CHViewController.h"
+#import "CHLoginViewController.h"
 #import "CHMessageTableViewController.h"
 #import "CHGroup.h"
 #import "CHUser.h"

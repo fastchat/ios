@@ -36,6 +36,10 @@ NSLocalizedStringFromTable(key, @"DBCamera", nil)
 @end
 
 @implementation DBCameraViewController
+@synthesize cameraGridView = _cameraGridView;
+@synthesize forceQuadCrop = _forceQuadCrop;
+@synthesize tintColor = _tintColor;
+@synthesize selectedTintColor = _selectedTintColor;
 
 #pragma mark - Life cycle
 
@@ -63,6 +67,9 @@ NSLocalizedStringFromTable(key, @"DBCamera", nil)
             [self setCustomCamera:camera];
 
         [self setUseCameraSegue:YES];
+        
+        [self setTintColor:[UIColor whiteColor]];
+        [self setSelectedTintColor:[UIColor cyanColor]];
     }
     
     return self;
@@ -98,6 +105,9 @@ NSLocalizedStringFromTable(key, @"DBCamera", nil)
         } else
             [self.view addSubview:self.cameraView];
     }
+    
+    id camera =_customCamera ?: _cameraView;
+    [camera insertSubview:self.cameraGridView atIndex:1];
 }
 
 - (void)viewDidAppear:(BOOL)animated
@@ -170,6 +180,8 @@ NSLocalizedStringFromTable(key, @"DBCamera", nil)
 {
     if ( !_cameraView ) {
         _cameraView = [DBCameraView initWithCaptureSession:self.cameraManager.captureSession];
+        [_cameraView setTintColor:self.tintColor];
+        [_cameraView setSelectedTintColor:self.selectedTintColor];
         [_cameraView defaultInterface];
         [_cameraView setDelegate:self];
     }
@@ -190,13 +202,29 @@ NSLocalizedStringFromTable(key, @"DBCamera", nil)
 - (DBCameraGridView *) cameraGridView
 {
     if ( !_cameraGridView ) {
-        _cameraGridView = [[DBCameraGridView alloc] initWithFrame:self.cameraView.previewLayer.frame];
-        _cameraGridView.numberOfColumns = 2;
-        _cameraGridView.numberOfRows = 2;
-        [self.cameraView insertSubview:_cameraGridView atIndex:1];
+        DBCameraView *camera =_customCamera ?: _cameraView;
+        _cameraGridView = [[DBCameraGridView alloc] initWithFrame:camera.previewLayer.frame];
+        [_cameraGridView setNumberOfColumns:2];
+        [_cameraGridView setNumberOfRows:2];
+        [_cameraGridView setAlpha:0];
     }
     
     return _cameraGridView;
+}
+
+- (void) setCameraGridView:(DBCameraGridView *)cameraGridView
+{
+    _cameraGridView = cameraGridView;
+    __block DBCameraGridView *blockGridView = cameraGridView;
+    __weak DBCameraView *camera =_customCamera ?: _cameraView;
+    [camera.subviews enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
+        if ( [obj isKindOfClass:[DBCameraGridView class]] ) {
+            [obj removeFromSuperview];
+            [camera insertSubview:blockGridView atIndex:1];
+            blockGridView = nil;
+            *stop = YES;
+        }
+    }];
 }
 
 - (void) rotationChanged:(NSNotification *)notification
@@ -258,6 +286,9 @@ NSLocalizedStringFromTable(key, @"DBCamera", nil)
         }
         
         DBCameraSegueViewController *segue = [[DBCameraSegueViewController alloc] initWithImage:image thumb:[UIImage returnImage:image withSize:(CGSize){ newW, newH }]];
+        [segue setTintColor:self.tintColor];
+        [segue setSelectedTintColor:self.selectedTintColor];
+        [segue setForceQuadCrop:_forceQuadCrop];
         [segue enableGestures:YES];
         [segue setDelegate:self.delegate];
         [segue setCapturedImageMetadata:finalMetadata];
@@ -292,6 +323,9 @@ NSLocalizedStringFromTable(key, @"DBCamera", nil)
             [self.view setTransform:CGAffineTransformMakeScale(.8, .8)];
         } completion:^(BOOL finished) {
             DBCameraLibraryViewController *library = [[DBCameraLibraryViewController alloc] initWithDelegate:self.containerDelegate];
+            [library setTintColor:self.tintColor];
+            [library setSelectedTintColor:self.selectedTintColor];
+            [library setForceQuadCrop:_forceQuadCrop];
             [library setDelegate:self.delegate];
             [library setUseCameraSegue:self.useCameraSegue];
             [self.containerDelegate switchFromController:self toController:library];

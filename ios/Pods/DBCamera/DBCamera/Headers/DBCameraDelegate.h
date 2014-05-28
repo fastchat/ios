@@ -11,6 +11,7 @@
 /**
  *  DBCameraView delegate protocol
  */
+@class DBCameraGridView;
 @protocol DBCameraViewDelegate <NSObject>
 @optional
 /**
@@ -148,4 +149,34 @@
  *  Add cropRect for the frameView.
  */
 @property (nonatomic, assign) CGRect cropRect;
+@end
+
+/**
+ *  DBCameraSegueSettings protocol
+ */
+@protocol DBCameraSegueSettings <NSObject>
+/**
+ *  Set if the Camera Segue has a force quad crop mode
+ */
+@property (nonatomic, assign) BOOL forceQuadCrop;
+
+/**
+ *  Set if Camera View Controller will use the camera segue
+ */
+@property (nonatomic, assign) BOOL useCameraSegue;
+@end
+
+/**
+ *  DBCameraViewControllerSettings protocol
+ */
+@protocol DBCameraViewControllerSettings <NSObject>
+/**
+ *  Set the tint color of icons and labels
+ */
+@property (nonatomic, strong) UIColor *tintColor;
+
+/**
+ *  Set the tint color of icons and labels for the selected state
+ */
+@property (nonatomic, strong) UIColor *selectedTintColor;
 @end

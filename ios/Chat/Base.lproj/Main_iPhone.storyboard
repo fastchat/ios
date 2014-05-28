@@ -4,10 +4,10 @@
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="3733"/>
     </dependencies>
     <scenes>
-        <!--View Controller-->
+        <!--Login View Controller - Login-->
         <scene sceneID="ufC-wZ-h7g">
             <objects>
-                <viewController storyboardIdentifier="CHViewController" id="vXZ-lx-hvc" customClass="CHViewController" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="CHLoginViewController" title="Login" id="vXZ-lx-hvc" customClass="CHLoginViewController" sceneMemberID="viewController">
                     <layoutGuides>
                         <viewControllerLayoutGuide type="top" id="jyV-Pf-zRb"/>
                         <viewControllerLayoutGuide type="bottom" id="2fi-mo-0CV"/>
@@ -652,10 +652,10 @@
             </objects>
             <point key="canvasLocation" x="968" y="-645"/>
         </scene>
-        <!--Register View Controller-->
+        <!--Register View Controller - Register-->
         <scene sceneID="nPp-gB-YOs">
             <objects>
-                <viewController storyboardIdentifier="CHRegisterViewController" id="7xF-es-miE" customClass="CHRegisterViewController" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="CHRegisterViewController" title="Register" id="7xF-es-miE" customClass="CHRegisterViewController" sceneMemberID="viewController">
                     <layoutGuides>
                         <viewControllerLayoutGuide type="top" id="zNI-Ff-k8B"/>
                         <viewControllerLayoutGuide type="bottom" id="u9O-tf-39f"/>
@@ -889,7 +889,7 @@
         <scene sceneID="whd-JD-OdV">
             <objects>
                 <tabBarController definesPresentationContext="YES" id="Hru-pZ-kQp" sceneMemberID="viewController">
-                    <simulatedTabBarMetrics key="simulatedBottomBarMetrics"/>
+                    <nil key="simulatedBottomBarMetrics"/>
                     <tabBar key="tabBar" contentMode="scaleToFill" id="7cx-to-bRo">
                         <rect key="frame" x="129" y="330" width="163" height="49"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMinY="YES"/>

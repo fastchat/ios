@@ -23,6 +23,12 @@
     
     NSSetUncaughtExceptionHandler(&uncaughtExceptionHandler);
     
+    ///
+    /// Bar Color
+    ///
+    [[UINavigationBar appearance] setBarTintColor:[UIColor colorWithRed:(87.0/255.0) green:(0.0/255.0) blue:(143.0/255.0) alpha:1.0]];
+    [[UINavigationBar appearance] setTitleTextAttributes:@{NSForegroundColorAttributeName:[UIColor whiteColor]}];g
+    
     return YES;
 }
 

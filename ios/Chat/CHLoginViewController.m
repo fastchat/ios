@@ -6,7 +6,7 @@
 //
 //
 
-#import "CHViewController.h"
+#import "CHLoginViewController.h"
 #import "SocketIOPacket.h"
 #import "AFNetworking.h"
 #import "CHRegisterViewController.h"
@@ -17,18 +17,20 @@
 
 #define URL @"localhost" //localhost
 
-@interface CHViewController ()
+@interface CHLoginViewController ()
 
 //@property (nonatomic, strong) SocketIO *socket;
 @property (nonatomic, strong) UIView *view;
 
 @end
 
-@implementation CHViewController
+@implementation CHLoginViewController
 
 - (void)viewDidLoad;
 {
     [super viewDidLoad];
+    
+    self.title = @"Login";
     
     self.errorLabel.text = @"";
 }

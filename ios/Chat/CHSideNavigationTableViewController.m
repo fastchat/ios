@@ -9,7 +9,7 @@
 #import "CHSideNavigationTableViewController.h"
 #import "CHInvitationsTableViewController.h"
 #import "CHNetworkManager.h"
-#import "CHViewController.h"
+#import "CHLoginViewController.h"
 #import "CHSocketManager.h"
 #import "CHGroupListTableViewController.h"
 #import "CHProfileViewController.h"
@@ -72,7 +72,7 @@
         [[CHNetworkManager sharedManager] logoutWithCallback:^(bool successful, NSError *error) {
             [[CHSocketManager sharedManager] closeSocket];
             [self.navigationController popViewControllerAnimated:YES];
-            CHViewController *loginController = [self.storyboard instantiateViewControllerWithIdentifier:@"CHViewController"];
+            CHLoginViewController *loginController = [self.storyboard instantiateViewControllerWithIdentifier:@"CHViewController"];
             [self presentViewController:loginController animated:NO completion:nil];
 
         }];

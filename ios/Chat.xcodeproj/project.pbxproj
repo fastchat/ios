@@ -48,7 +48,7 @@
 		AA7759EA18D54D3000E4E7AB /* CHAppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = AA7759E918D54D3000E4E7AB /* CHAppDelegate.m */; };
 		AA7759ED18D54D3000E4E7AB /* Main_iPhone.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = AA7759EB18D54D3000E4E7AB /* Main_iPhone.storyboard */; };
 		AA7759F018D54D3000E4E7AB /* Main_iPad.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = AA7759EE18D54D3000E4E7AB /* Main_iPad.storyboard */; };
-		AA7759F318D54D3000E4E7AB /* CHViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = AA7759F218D54D3000E4E7AB /* CHViewController.m */; };
+		AA7759F318D54D3000E4E7AB /* CHLoginViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = AA7759F218D54D3000E4E7AB /* CHLoginViewController.m */; };
 		AA7759F518D54D3000E4E7AB /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = AA7759F418D54D3000E4E7AB /* Images.xcassets */; };
 		AA7759FC18D54D3000E4E7AB /* XCTest.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = AA7759FB18D54D3000E4E7AB /* XCTest.framework */; };
 		AA7759FD18D54D3000E4E7AB /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = AA7759D918D54D3000E4E7AB /* Foundation.framework */; };
@@ -135,8 +135,8 @@
 		AA7759E918D54D3000E4E7AB /* CHAppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = CHAppDelegate.m; sourceTree = "<group>"; };
 		AA7759EC18D54D3000E4E7AB /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main_iPhone.storyboard; sourceTree = "<group>"; };
 		AA7759EF18D54D3000E4E7AB /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main_iPad.storyboard; sourceTree = "<group>"; };
-		AA7759F118D54D3000E4E7AB /* CHViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CHViewController.h; sourceTree = "<group>"; };
-		AA7759F218D54D3000E4E7AB /* CHViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = CHViewController.m; sourceTree = "<group>"; };
+		AA7759F118D54D3000E4E7AB /* CHLoginViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CHLoginViewController.h; sourceTree = "<group>"; };
+		AA7759F218D54D3000E4E7AB /* CHLoginViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = CHLoginViewController.m; sourceTree = "<group>"; };
 		AA7759F418D54D3000E4E7AB /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
 		AA7759FA18D54D3000E4E7AB /* ChatTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ChatTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		AA7759FB18D54D3000E4E7AB /* XCTest.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = XCTest.framework; path = Library/Frameworks/XCTest.framework; sourceTree = DEVELOPER_DIR; };
@@ -196,8 +196,8 @@
 		2768EAB018D91538006D14BB /* Authentication */ = {
 			isa = PBXGroup;
 			children = (
-				AA7759F118D54D3000E4E7AB /* CHViewController.h */,
-				AA7759F218D54D3000E4E7AB /* CHViewController.m */,
+				AA7759F118D54D3000E4E7AB /* CHLoginViewController.h */,
+				AA7759F218D54D3000E4E7AB /* CHLoginViewController.m */,
 				2768EA9D18D87059006D14BB /* CHRegisterViewController.h */,
 				2768EA9E18D87059006D14BB /* CHRegisterViewController.m */,
 			);
@@ -542,7 +542,7 @@
 				2768EAAB18D8E02B006D14BB /* CHAddGroupViewController.m in Sources */,
 				2769B06518F479CC00CCE470 /* CHGroup.m in Sources */,
 				2768EAA818D8C90B006D14BB /* CHNetworkManager.m in Sources */,
-				AA7759F318D54D3000E4E7AB /* CHViewController.m in Sources */,
+				AA7759F318D54D3000E4E7AB /* CHLoginViewController.m in Sources */,
 				2769B06B18F495FD00CCE470 /* CHMessage.m in Sources */,
 				279CF22118DFD74D00C82399 /* CHInviteUserViewController.m in Sources */,
 			);

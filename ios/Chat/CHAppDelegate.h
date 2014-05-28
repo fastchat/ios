@@ -16,7 +16,7 @@
 
 
 -(void)setContentViewControllerWithController: (CHSideNavigationTableViewController*)controller;
--(void)showSideMenu;
+//-(void)showSideMenu;
 -(void)hideSideMenu;
 
 @end
