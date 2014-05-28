@@ -9,6 +9,7 @@
 #import "CHGroup.h"
 #import "CHUser.h"
 #import "CHNetworkManager.h"
+#import "CHMessage.h"
 
 @interface CHGroup ()
 @property (nonatomic, strong) NSMutableDictionary *allUsers;
@@ -120,6 +121,16 @@
         return [CHUser objectsFromJSON:pastMembers];
     } reverseBlock:^id(NSArray *pastMembers) {
         return @[];
+    }];
+}
+
++ (MTLValueTransformer *)lastMessageJSONTransformer;
+{
+    return [MTLValueTransformer transformerWithBlock:^id (NSDictionary *messageData) {
+        if (messageData) {
+            return [[CHMessage objectsFromJSON:@[messageData]] lastObject];
+        }
+        return nil;
     }];
 }
 

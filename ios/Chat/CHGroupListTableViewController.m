@@ -16,10 +16,9 @@
 #import "CHMessageTableViewController.h"
 #import "CHGroup.h"
 #import "CHUser.h"
+#import "MBProgressHUD.h"
 
 @interface CHGroupListTableViewController ()
-
-
 
 @end
 
@@ -39,8 +38,6 @@
         return;
     }
     
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(loadGroupsAndRefresh) name:@"ReloadGroupListTable" object:nil];
-    
     ///
     /// Get the user profile to ensure we have a user
     ///
@@ -53,7 +50,7 @@
         }];
     }];
     
-    [self loadGroupsAndRefresh];
+    [self.tableView reloadData];
     
     
     [[CHNetworkManager sharedManager] getProfile:^(CHUser *userProfile) {
@@ -65,13 +62,17 @@
 - (void)viewWillAppear:(BOOL)animated;
 {
     [super viewWillAppear:animated];
-    //set initial values here
+
+    ///
+    /// If we got here, it means we logged in
+    ///
         
     [[UIApplication sharedApplication] registerForRemoteNotificationTypes:
      (UIRemoteNotificationTypeBadge | UIRemoteNotificationTypeSound | UIRemoteNotificationTypeAlert)];
     
     [[CHNetworkManager sharedManager] getGroups:^(NSArray *groups) {
         self.groups = [groups mutableCopy];
+        DLog(@"Groups: %@", [_groups[0] lastMessage]);
         
         // Get all member avatars
         for( CHGroup *group in self.groups ) {
@@ -91,22 +92,8 @@
                 }
             }
         }
-        [self loadGroupsAndRefresh];
-        
+        [self.tableView reloadData];
     }];
-    
-}
-
-- (void)loadGroupsAndRefresh;
-{
-    UIActivityIndicatorView *spinner = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleGray];
-    spinner.center = CGPointMake(160, 240);
-    spinner.tag = 12;
-    [self.view addSubview:spinner];
-    [spinner startAnimating];
-    
-    [self.tableView reloadData];
-    [spinner stopAnimating];
 }
 
 #pragma mark - Table view data source
