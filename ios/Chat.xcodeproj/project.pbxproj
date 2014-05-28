@@ -43,6 +43,8 @@
 		AA46331B193659EB00513578 /* CHTextField.m in Sources */ = {isa = PBXBuildFile; fileRef = AA46331A193659EB00513578 /* CHTextField.m */; };
 		AA46331E19365BB700513578 /* CHColors.m in Sources */ = {isa = PBXBuildFile; fileRef = AA46331D19365BB700513578 /* CHColors.m */; };
 		AA46332119365DDF00513578 /* CHAuthTextField.m in Sources */ = {isa = PBXBuildFile; fileRef = AA46332019365DDF00513578 /* CHAuthTextField.m */; };
+		AA4633241936735F00513578 /* CHGroupTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = AA4633231936735F00513578 /* CHGroupTableViewCell.m */; };
+		AA46332719367A5F00513578 /* CHUnreadView.m in Sources */ = {isa = PBXBuildFile; fileRef = AA46332619367A5F00513578 /* CHUnreadView.m */; };
 		AA7759DA18D54D3000E4E7AB /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = AA7759D918D54D3000E4E7AB /* Foundation.framework */; };
 		AA7759DC18D54D3000E4E7AB /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = AA7759DB18D54D3000E4E7AB /* CoreGraphics.framework */; };
 		AA7759DE18D54D3000E4E7AB /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = AA7759DD18D54D3000E4E7AB /* UIKit.framework */; };
@@ -132,6 +134,10 @@
 		AA46331D19365BB700513578 /* CHColors.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CHColors.m; sourceTree = "<group>"; };
 		AA46331F19365DDF00513578 /* CHAuthTextField.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CHAuthTextField.h; sourceTree = "<group>"; };
 		AA46332019365DDF00513578 /* CHAuthTextField.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CHAuthTextField.m; sourceTree = "<group>"; };
+		AA4633221936735F00513578 /* CHGroupTableViewCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CHGroupTableViewCell.h; sourceTree = "<group>"; };
+		AA4633231936735F00513578 /* CHGroupTableViewCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CHGroupTableViewCell.m; sourceTree = "<group>"; };
+		AA46332519367A5F00513578 /* CHUnreadView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CHUnreadView.h; sourceTree = "<group>"; };
+		AA46332619367A5F00513578 /* CHUnreadView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CHUnreadView.m; sourceTree = "<group>"; };
 		AA7759D618D54D3000E4E7AB /* Chat.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Chat.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		AA7759D918D54D3000E4E7AB /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		AA7759DB18D54D3000E4E7AB /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
@@ -274,12 +280,16 @@
 			children = (
 				2768EAA018D888B6006D14BB /* CHGroupListTableViewController.h */,
 				2768EAA118D888B6006D14BB /* CHGroupListTableViewController.m */,
+				AA4633221936735F00513578 /* CHGroupTableViewCell.h */,
+				AA4633231936735F00513578 /* CHGroupTableViewCell.m */,
 				279CF21F18DFD74D00C82399 /* CHInviteUserViewController.h */,
 				279CF22018DFD74D00C82399 /* CHInviteUserViewController.m */,
 				2768EABD18DE43F2006D14BB /* CHInvitationsTableViewController.h */,
 				2768EABE18DE43F2006D14BB /* CHInvitationsTableViewController.m */,
 				2768EAA918D8E02B006D14BB /* CHAddGroupViewController.h */,
 				2768EAAA18D8E02B006D14BB /* CHAddGroupViewController.m */,
+				AA46332519367A5F00513578 /* CHUnreadView.h */,
+				AA46332619367A5F00513578 /* CHUnreadView.m */,
 			);
 			name = Groups;
 			sourceTree = "<group>";
@@ -548,6 +558,8 @@
 				2769B04F18EDD40800CCE470 /* CHOwnMessageTableViewCell.m in Sources */,
 				2769B06818F47E5E00CCE470 /* CHFastChatObject.m in Sources */,
 				2768EABF18DE43F2006D14BB /* CHInvitationsTableViewController.m in Sources */,
+				AA4633241936735F00513578 /* CHGroupTableViewCell.m in Sources */,
+				AA46332719367A5F00513578 /* CHUnreadView.m in Sources */,
 				27BAD7A7192CF7FB00C8569A /* CHExpandedImageViewController.m in Sources */,
 				27BAD7A1192BF56500C8569A /* CHMediaMessageTableViewCell.m in Sources */,
 				2768EAB318DB119A006D14BB /* CHSocketManager.m in Sources */,

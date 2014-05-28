@@ -17,6 +17,10 @@
 #import "CHGroup.h"
 #import "CHUser.h"
 #import "MBProgressHUD.h"
+#import "CHGroupTableViewCell.h"
+#import "CHMessage.h"
+
+#define kSecondsInDay 86400
 
 @interface CHGroupListTableViewController ()
 
@@ -72,7 +76,7 @@
     
     [[CHNetworkManager sharedManager] getGroups:^(NSArray *groups) {
         self.groups = [groups mutableCopy];
-        DLog(@"Groups: %@", [_groups[0] lastMessage]);
+        [((CHGroup *)_groups[0]) setUnread:@1];
         
         // Get all member avatars
         for( CHGroup *group in self.groups ) {
@@ -96,6 +100,50 @@
     }];
 }
 
+- (NSString *)formatTime:(NSDate *)date;
+{
+    if (!date) {
+        return @"";
+    }
+    
+    NSCalendar *cal = [NSCalendar currentCalendar];
+    NSDateComponents *components = [cal components:(NSEraCalendarUnit|NSYearCalendarUnit|NSMonthCalendarUnit|NSDayCalendarUnit)
+                                          fromDate:[NSDate date]];
+    NSDate *today = [cal dateFromComponents:components];
+    components = [cal components:(NSEraCalendarUnit|NSYearCalendarUnit|NSMonthCalendarUnit|NSDayCalendarUnit)
+                        fromDate:date];
+    NSDate *otherDate = [cal dateFromComponents:components];
+    
+    // if today
+    if([today isEqualToDate:otherDate]) {
+        static NSDateFormatter *formatter = nil;
+        if (!formatter) {
+            formatter = [[NSDateFormatter alloc] init];
+            [formatter setDateFormat:@"h:mm a"];
+        }
+        return [formatter stringFromDate:date];
+    }
+    
+    NSDateComponents *componentsYesterday = [cal components:(NSEraCalendarUnit|NSYearCalendarUnit|NSMonthCalendarUnit|NSDayCalendarUnit)
+                                          fromDate:[NSDate dateWithTimeIntervalSinceNow:-kSecondsInDay]];
+    NSDate *yesterday = [cal dateFromComponents:componentsYesterday];
+    // if yesterday
+    if ([yesterday isEqualToDate:otherDate]) {
+        return @"Yesterday";
+    }
+    
+    // if within a week (get weekday and say "sunday"
+    // do this later.
+    
+    //else, show date 5/12/14
+    static NSDateFormatter *dateFormatter = nil;
+    if (!dateFormatter) {
+        dateFormatter = [[NSDateFormatter alloc] init];
+        [dateFormatter setDateFormat:@"d/M/yy"];
+    }
+    return [dateFormatter stringFromDate:date];
+}
+
 #pragma mark - Table view data source
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section;
@@ -106,27 +154,37 @@
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"CHGroupTableViewCell" forIndexPath:indexPath];
-    NSMutableString *cellText = [[self.groups[indexPath.row] getGroupName] mutableCopy];
+    CHGroupTableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"CHGroupTableViewCell" forIndexPath:indexPath];
     
-    if( [[self.groups[indexPath.row] unread] intValue] > 0 ) {
-        cell.detailTextLabel.text = [NSString stringWithFormat:@"%@", [self.groups[indexPath.row] unread]];
-    }
-    else {
-        cell.detailTextLabel.text = @"";
-    }
-    cell.textLabel.text = cellText;
+    CHGroup *group = _groups[indexPath.row];
+    cell.groupTextLabel.text = group.groupName;
+    cell.groupDetailLabel.text = group.lastMessage.text;
+    cell.groupRightDetailLabel.text = [self formatTime:group.lastMessage.sent];
+    [cell setUnread:[group hasUnread]];
     
     return cell;
+}
+
+- (void)tableView:(UITableView *)tableView willDisplayCell:(UITableViewCell *)cell forRowAtIndexPath:(NSIndexPath *)indexPath;
+{
+    CHGroupTableViewCell *groupCell = (CHGroupTableViewCell *)cell;
+    [groupCell.groupDetailLabel sizeThatFits:groupCell.groupDetailLabel.frame.size];
+}
+
+- (void)tableView:(UITableView *)tableView didEndDisplayingCell:(UITableViewCell *)cell forRowAtIndexPath:(NSIndexPath *)indexPath;
+{
+    CHGroupTableViewCell *groupCell = (CHGroupTableViewCell *)cell;
+    DLog(@"Text Frame: %@", NSStringFromCGRect(groupCell.groupDetailLabel.frame));
 }
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
     [tableView deselectRowAtIndexPath:indexPath animated:YES];
     
+    CHGroup *group = _groups[indexPath.row];
+    group.unread = @0;
+    
     CHMessageViewController *vc = [self.storyboard instantiateViewControllerWithIdentifier:@"CHMessageViewController"];
-    [vc setGroup:_groups[indexPath.row]];
-    [self.groups[indexPath.row] setUnread:[NSNumber numberWithInt:0]];
-
+    [vc setGroup:group];
     [self.navigationController pushViewController:vc animated:YES];
     
     [self.tableView reloadData];

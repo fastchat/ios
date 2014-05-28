@@ -50,10 +50,10 @@
     };
 }
 
-- (NSString *)getGroupName;
+- (NSString *)groupName;
 {
-    if( self.groupName != nil && ![self.groupName isEqualToString:@""] ) {
-        return self.groupName;
+    if( _groupName != nil && ![_groupName isEqualToString:@""] ) {
+        return _groupName;
     }
     
     NSMutableString *nameFromMembers = [@"" mutableCopy];
@@ -100,6 +100,11 @@
     }
     
     return userToReturn;
+}
+
+- (BOOL)hasUnread;
+{
+    return self.unread.integerValue > 0;
 }
 
 + (MTLValueTransformer *)membersJSONTransformer;

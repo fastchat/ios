@@ -100,7 +100,6 @@
 
 - (void)getGroups: (void (^)(NSArray *groups))callback {
     [self GET:[NSString stringWithFormat:@"/group"] parameters:nil success:^(NSURLSessionDataTask *task, id responseObject) {
-        DLog(@"Response: %@", responseObject);
         if( callback ) {
             NSArray *groups = [CHGroup objectsFromJSON:responseObject];
 

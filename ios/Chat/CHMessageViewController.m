@@ -48,7 +48,7 @@
     
 
     self.shouldSlide = YES;
-    self.title = [_group getGroupName];
+    self.title = _group.groupName;
     self.messageEntryField.hidden = YES;
     
     self.currPage = 0;
