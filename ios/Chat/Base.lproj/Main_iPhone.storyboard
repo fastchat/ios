@@ -82,7 +82,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="x5A-6p-PRh" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="-556" y="-60"/>
+            <point key="canvasLocation" x="-775" y="-39"/>
         </scene>
         <!--Group List Table View Controller-->
         <scene sceneID="pPb-Ll-dyZ">
@@ -127,7 +127,7 @@
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="QlX-OV-zLX" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="1757" y="42"/>
+            <point key="canvasLocation" x="509" y="42"/>
         </scene>
         <!--Expanded Image View Controller-->
         <scene sceneID="x9D-SA-jPL">
@@ -603,7 +603,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="R4L-bU-Txy" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="2148" y="42"/>
+            <point key="canvasLocation" x="968" y="33"/>
         </scene>
         <!--Invite User View Controller-->
         <scene sceneID="OXX-ED-a1k">
@@ -650,7 +650,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="ueo-ZA-24e" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="921" y="757"/>
+            <point key="canvasLocation" x="968" y="-645"/>
         </scene>
         <!--Register View Controller-->
         <scene sceneID="nPp-gB-YOs">
@@ -721,7 +721,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="rOF-qk-AtR" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="-56" y="-60"/>
+            <point key="canvasLocation" x="-344" y="-39"/>
         </scene>
         <!--Side Navigation Table View Controller-->
         <scene sceneID="4Ts-OC-fPx">
@@ -779,7 +779,7 @@
             </objects>
             <point key="canvasLocation" x="1291" y="1481"/>
         </scene>
-        <!--Profile View Controller-->
+        <!--Profile View Controller - Profile-->
         <scene sceneID="AND-c9-1Mq">
             <objects>
                 <viewController storyboardIdentifier="CHProfileViewController" id="smW-kQ-2zj" customClass="CHProfileViewController" sceneMemberID="viewController">
@@ -837,6 +837,7 @@
                             <constraint firstItem="24y-Rt-Ool" firstAttribute="top" secondItem="j31-uZ-8GE" secondAttribute="bottom" constant="84" id="nrq-eC-MPr"/>
                         </constraints>
                     </view>
+                    <tabBarItem key="tabBarItem" title="Profile" image="ProfileTabIcon" id="qlY-6O-iXR"/>
                     <connections>
                         <outlet property="avatarCameraButton" destination="24y-Rt-Ool" id="TLU-OY-FWh"/>
                         <outlet property="avatarImageView" destination="XEX-Zc-WUn" id="bPx-Hn-Cg2"/>
@@ -845,12 +846,13 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="NOq-xS-hwC" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="1673" y="1478"/>
+            <point key="canvasLocation" x="54" y="851"/>
         </scene>
-        <!--Navigation Controller-->
+        <!--Navigation Controller - Chat-->
         <scene sceneID="OfC-YW-V0P">
             <objects>
                 <navigationController automaticallyAdjustsScrollViewInsets="NO" id="IsZ-yr-CFu" sceneMemberID="viewController">
+                    <tabBarItem key="tabBarItem" title="Chat" image="ChatTabIcon" id="DgD-Cf-cql"/>
                     <toolbarItems/>
                     <navigationBar key="navigationBar" contentMode="scaleToFill" id="0nh-6k-5KS">
                         <rect key="frame" x="0.0" y="0.0" width="320" height="44"/>
@@ -863,7 +865,7 @@
                 </navigationController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="ubU-ot-tCP" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="1276" y="42"/>
+            <point key="canvasLocation" x="54" y="176"/>
         </scene>
         <!--Navigation Controller-->
         <scene sceneID="CDo-hu-KC4">
@@ -881,7 +883,7 @@
                 </navigationController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="QFJ-db-lrb" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="-993" y="-60"/>
+            <point key="canvasLocation" x="-1209" y="-39"/>
         </scene>
         <!--Tab Bar Controller-->
         <scene sceneID="whd-JD-OdV">
@@ -893,6 +895,10 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMinY="YES"/>
                         <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                     </tabBar>
+                    <connections>
+                        <segue destination="IsZ-yr-CFu" kind="relationship" relationship="viewControllers" id="VWj-8d-UA9"/>
+                        <segue destination="smW-kQ-2zj" kind="relationship" relationship="viewControllers" id="ckx-Oc-iUN"/>
+                    </connections>
                 </tabBarController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="EPR-TE-swK" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
@@ -914,10 +920,12 @@
                 </navigationController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="Bco-zr-9OA" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="395" y="757"/>
+            <point key="canvasLocation" x="509" y="-645"/>
         </scene>
     </scenes>
     <resources>
+        <image name="ChatTabIcon" width="50" height="37"/>
+        <image name="ProfileTabIcon" width="50" height="38"/>
         <image name="profile-dark.png" width="240" height="240"/>
     </resources>
     <simulatedMetricsContainer key="defaultSimulatedMetrics">

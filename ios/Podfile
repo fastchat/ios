@@ -9,6 +9,7 @@ target "Chat" do
   pod 'Mantle', '~> 1.4'
   pod 'TSMessages', '~> 0.9'
   pod 'DBCamera', '~> 2.0'
+  pod 'CRNavigationController', '~> 1.1'
 end
 
 target "ChatTests" do
