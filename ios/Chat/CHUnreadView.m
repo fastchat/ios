@@ -10,6 +10,12 @@
 
 #define kSize 12
 
+@interface CHUnreadView ()
+
+@property (nonatomic, strong) UIColor *circleColor;
+
+@end
+
 @implementation CHUnreadView
 
 - (instancetype)initWithUnread:(BOOL)unread;
@@ -17,8 +23,14 @@
     if ( (self = [super initWithFrame:CGRectMake(0, 0, kSize, kSize)]) ) {
         self.backgroundColor = kLightBackgroundColor;
         self.unread = unread;
+        self.circleColor = unread ? kPurpleAppColor : kLightBackgroundColor;
     }
     return self;
+}
+
+- (void)setSelected:(BOOL)selected animated:(BOOL)animated
+{
+    self.circleColor = selected ? [UIColor clearColor] : ( _unread ? kPurpleAppColor : kLightBackgroundColor );
 }
 
 // 12, 12
@@ -27,7 +39,7 @@
     // Drawing code
     CGContextRef ctx = UIGraphicsGetCurrentContext();
     CGContextAddEllipseInRect(ctx, self.bounds);
-    CGContextSetFillColor(ctx, CGColorGetComponents(_unread ? [kPurpleAppColor CGColor] : [kLightBackgroundColor CGColor]));
+    CGContextSetFillColor(ctx, CGColorGetComponents(_circleColor.CGColor));
     CGContextFillPath(ctx);
 }
 

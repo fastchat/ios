@@ -497,29 +497,17 @@
                                     <outlet property="delegate" destination="Ve0-ai-wJa" id="Ebe-zD-r8O"/>
                                 </connections>
                             </tableView>
-                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="eXJ-CE-LvH">
-                                <rect key="frame" x="0.0" y="518" width="320" height="50"/>
-                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
-                                <constraints>
-                                    <constraint firstAttribute="height" constant="50" id="mLO-4o-KuN"/>
-                                </constraints>
-                            </view>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
                         <constraints>
                             <constraint firstAttribute="trailing" secondItem="srm-hB-ROt" secondAttribute="trailing" id="5qF-3e-emn"/>
                             <constraint firstItem="srm-hB-ROt" firstAttribute="leading" secondItem="6fJ-u5-PgN" secondAttribute="leading" id="62K-iC-a4V"/>
-                            <constraint firstItem="eXJ-CE-LvH" firstAttribute="leading" secondItem="6fJ-u5-PgN" secondAttribute="leading" id="bfq-R5-UI7"/>
-                            <constraint firstAttribute="trailing" secondItem="eXJ-CE-LvH" secondAttribute="trailing" id="eDe-KG-ul6"/>
                             <constraint firstAttribute="bottom" secondItem="srm-hB-ROt" secondAttribute="bottom" id="jKg-KT-ytJ"/>
-                            <constraint firstAttribute="bottom" secondItem="eXJ-CE-LvH" secondAttribute="bottom" id="kN6-q7-cTw"/>
                             <constraint firstItem="srm-hB-ROt" firstAttribute="top" secondItem="6fJ-u5-PgN" secondAttribute="top" id="seC-DX-lWN"/>
                         </constraints>
                     </view>
                     <navigationItem key="navigationItem" id="tJO-tD-WID"/>
                     <connections>
-                        <outlet property="bottomDistance" destination="kN6-q7-cTw" id="KmP-Bv-D7R"/>
                         <outlet property="messageTable" destination="srm-hB-ROt" id="8Eq-zy-qgj"/>
                     </connections>
                 </viewController>

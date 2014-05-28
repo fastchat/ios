@@ -13,5 +13,6 @@
 @property (nonatomic, assign) BOOL unread;
 
 - (instancetype)initWithUnread:(BOOL)unread;
+- (void)setSelected:(BOOL)selected animated:(BOOL)animated;
 
 @end

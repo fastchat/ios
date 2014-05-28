@@ -24,9 +24,8 @@
 
 - (void)setSelected:(BOOL)selected animated:(BOOL)animated
 {
+    [_unreadView setSelected:selected animated:animated];
     [super setSelected:selected animated:animated];
-
-    // Configure the view for the selected state
 }
 
 - (void)setUnread:(BOOL)unread;

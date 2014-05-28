@@ -256,14 +256,8 @@
 			children = (
 				2768EAAC18D9138D006D14BB /* CHMessageViewController.h */,
 				2768EAAD18D9138D006D14BB /* CHMessageViewController.m */,
-				2769B04418E7820A00CCE470 /* CHMessageTableViewCell.h */,
-				2769B04518E7820A00CCE470 /* CHMessageTableViewCell.m */,
-				2769B04D18EDD40800CCE470 /* CHOwnMessageTableViewCell.h */,
-				2769B04E18EDD40800CCE470 /* CHOwnMessageTableViewCell.m */,
-				27BAD79F192BF56500C8569A /* CHMediaMessageTableViewCell.h */,
-				27BAD7A0192BF56500C8569A /* CHMediaMessageTableViewCell.m */,
-				27BAD7A2192CED4F00C8569A /* CHMediaOwnTableViewCell.h */,
-				27BAD7A3192CED4F00C8569A /* CHMediaOwnTableViewCell.m */,
+				AA4633291936933000513578 /* Message Views */,
+				AA4633281936902600513578 /* Message Cells */,
 				27BAD7A5192CF7FB00C8569A /* CHExpandedImageViewController.h */,
 				27BAD7A6192CF7FB00C8569A /* CHExpandedImageViewController.m */,
 			);
@@ -296,6 +290,28 @@
 				AA46331A193659EB00513578 /* CHTextField.m */,
 			);
 			name = "UI Elements";
+			sourceTree = "<group>";
+		};
+		AA4633281936902600513578 /* Message Cells */ = {
+			isa = PBXGroup;
+			children = (
+				2769B04418E7820A00CCE470 /* CHMessageTableViewCell.h */,
+				2769B04518E7820A00CCE470 /* CHMessageTableViewCell.m */,
+				2769B04D18EDD40800CCE470 /* CHOwnMessageTableViewCell.h */,
+				2769B04E18EDD40800CCE470 /* CHOwnMessageTableViewCell.m */,
+				27BAD79F192BF56500C8569A /* CHMediaMessageTableViewCell.h */,
+				27BAD7A0192BF56500C8569A /* CHMediaMessageTableViewCell.m */,
+				27BAD7A2192CED4F00C8569A /* CHMediaOwnTableViewCell.h */,
+				27BAD7A3192CED4F00C8569A /* CHMediaOwnTableViewCell.m */,
+			);
+			name = "Message Cells";
+			sourceTree = "<group>";
+		};
+		AA4633291936933000513578 /* Message Views */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = "Message Views";
 			sourceTree = "<group>";
 		};
 		AA71AE8118E0ECA900CDE1E2 /* App Delegate */ = {

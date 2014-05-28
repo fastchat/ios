@@ -20,7 +20,7 @@
 #import "CHMediaOwnTableViewCell.h"
 #import "CHExpandedImageViewController.h"
 
-#define kDefaultContentOffset 70
+#define kDefaultContentOffset self.navigationController.navigationBar.frame.size.height + 20
 
 @interface CHMessageViewController ()
 
@@ -46,7 +46,7 @@
     [super viewDidLoad];
     self.view.backgroundColor = kLightBackgroundColor;
     self.messageTable.backgroundColor = kLightBackgroundColor;
-
+    
     self.shouldSlide = YES;
     self.title = _group.groupName;
     self.messageEntryField.hidden = YES;
@@ -62,19 +62,26 @@
     [self.messageTable addSubview:self.refresh];
     
     self.containerView = [[UIView alloc] initWithFrame:CGRectMake(0, self.view.frame.size.height - 40, 320, 40)];
+    self.containerView.backgroundColor = [UIColor whiteColor];
     
-    UIButton *cameraBtn = [UIButton buttonWithType:UIButtonTypeSystem]; //[UIButton buttonWithType:UIButtonTypeCustom];
+    UIView *line = [[UIView alloc] initWithFrame:CGRectMake(0, 0, self.messageTable.frame.size.width, 0.5)];
+    line.backgroundColor = [UIColor lightGrayColor];
+    [self.containerView addSubview:line];
     
-	cameraBtn.frame = CGRectMake(0, 1, 50, 40);
-    cameraBtn.autoresizingMask = UIViewAutoresizingFlexibleTopMargin | UIViewAutoresizingFlexibleLeftMargin;
-	[cameraBtn setTitle:@"Pic" forState:UIControlStateNormal];
-    
+    UIButton *cameraBtn = [UIButton buttonWithType:UIButtonTypeCustom];
+    [cameraBtn setImage:[UIImage imageNamed:@"Attach"] forState:UIControlStateNormal];
+	cameraBtn.frame = CGRectMake(0, 0, 40, 40);
+    cameraBtn.imageEdgeInsets = UIEdgeInsetsMake(5, 8, 5, 8); //UIEdgeInsetsMake(<#CGFloat top#>, <#CGFloat left#>, <#CGFloat bottom#>, <#CGFloat right#>)
     [cameraBtn addTarget:self action:@selector(loadCamera) forControlEvents:UIControlEventTouchUpInside];
     [self.containerView addSubview:cameraBtn];
     
-    self.textView = [[HPGrowingTextView alloc] initWithFrame:CGRectMake(56, 3, 190, 40)];
+    self.textView = [[HPGrowingTextView alloc] initWithFrame:CGRectMake(45, 3, 230, 42)];
     self.textView.isScrollable = NO;
-    self.textView.contentInset = UIEdgeInsetsMake(50, 5, 0, 5);
+    self.textView.contentInset = UIEdgeInsetsMake(49, 5, 0, 5);
+    self.textView.layer.borderColor = [[UIColor lightGrayColor] CGColor];
+    self.textView.layer.borderWidth = 0.5;
+    self.textView.layer.cornerRadius = 4.0;
+    self.textView.layer.masksToBounds = YES;
     
 	self.textView.minNumberOfLines = 1;
 	self.textView.maxNumberOfLines = 6;
@@ -85,33 +92,19 @@
 	self.textView.delegate = self;
     self.textView.internalTextView.scrollIndicatorInsets = UIEdgeInsetsMake(55, 0, 5, 0);
     self.textView.backgroundColor = [UIColor whiteColor];
-    self.textView.placeholder = @"Send a message...";
+    self.textView.placeholder = @"Send FastChat";
     
 
     [self.view addSubview:self.containerView];
     
-    
-    UIImage *rawEntryBackground = [UIImage imageNamed:@"MessageEntryInputField.png"];
-    UIImage *entryBackground = [rawEntryBackground stretchableImageWithLeftCapWidth:13 topCapHeight:22];
-    UIImageView *entryImageView = [[UIImageView alloc] initWithImage:entryBackground];
-    entryImageView.frame = CGRectMake(55, 0, 198, 40);
-    entryImageView.autoresizingMask = UIViewAutoresizingFlexibleHeight | UIViewAutoresizingFlexibleWidth;
-    
-    UIImage *rawBackground = [UIImage imageNamed:@"MessageEntryBackground.png"];
-    UIImage *background = [rawBackground stretchableImageWithLeftCapWidth:13 topCapHeight:22];
-    UIImageView *imageView = [[UIImageView alloc] initWithImage:background];
-    imageView.frame = CGRectMake(50, 0, self.containerView.frame.size.width - 50, self.containerView.frame.size.height);
-    imageView.autoresizingMask = UIViewAutoresizingFlexibleHeight | UIViewAutoresizingFlexibleWidth;
 
     
     self.textView.autoresizingMask = UIViewAutoresizingFlexibleWidth;
     
-    [self.containerView addSubview:imageView];
     [self.containerView addSubview:self.textView];
-    [self.containerView addSubview:entryImageView];
     
     UIButton *doneBtn = [UIButton buttonWithType:UIButtonTypeSystem]; //[UIButton buttonWithType:UIButtonTypeCustom];
-	doneBtn.frame = CGRectMake(self.containerView.frame.size.width - 72, 1, 72, 40);
+	doneBtn.frame = CGRectMake(self.containerView.frame.size.width - 42, 1, 42, 40);
     doneBtn.autoresizingMask = UIViewAutoresizingFlexibleTopMargin | UIViewAutoresizingFlexibleLeftMargin;
 	[doneBtn setTitle:@"Send" forState:UIControlStateNormal];
 
@@ -119,16 +112,14 @@
 
  	[self.containerView addSubview:doneBtn];
     self.containerView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleTopMargin;
-   
-    //Reload message table when app returns to foreground
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(reloadTableViewData) name:@"ReloadAppDelegateTable" object:nil];
     
     self.previousMessageTextViewRect = CGRectZero;
+    [self setTableViewInsetsFromBottom:0];
+
     
-    // Set table view content offset
-    self.messageTable.contentInset = UIEdgeInsetsMake(0, 0, kDefaultContentOffset, 0);
-    
-    
+    ///
+    /// Data
+    ///
     [[CHSocketManager sharedManager] setDelegate:self];
     
     NSArray *members = _group.members;
@@ -137,18 +128,10 @@
         CHUser *thisUser = obj;
         tempIds[thisUser.userId] = thisUser.username;
     }];
+    
     self.userIds = tempIds;
-    
-    _messageArray = [[NSMutableArray alloc] init];
-
+    self.messageArray = [NSMutableArray array];
     self.messages = @"";
-    [[NSNotificationCenter defaultCenter] addObserver:self
-                                             selector:@selector(keyboardWillShow:)
-                                                 name:UIKeyboardWillShowNotification object:self.view.window];
-    
-    [[NSNotificationCenter defaultCenter] addObserver:self
-                                             selector:@selector(keyboardWillHide:)
-                                                 name:UIKeyboardWillHideNotification object:nil];
     
     UIBarButtonItem *addButton = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemAdd target:self action:@selector(addUser)];
     self.navigationItem.rightBarButtonItem = addButton;
@@ -177,34 +160,26 @@
     }];
 
     /// Don't crash if we don't have messages pl0x
+    /// I laughed out loud - EM
     if( !self.messageArray ) {
-        self.messageArray = [@[] mutableCopy];
+        self.messageArray = [NSMutableArray array];
     }
     
     self.keyboardIsVisible = NO;
-
-
 }
 
--(void)loadCamera;
+-(void)viewWillAppear:(BOOL)animated;
 {
     
-    /*
-     Fix for DBCamera crashing when you open your photo library:
-     
-     NSURL *url = [[result defaultRepresentation] url];
-     if( url ) {
-     [items addObject:url];
-     }
-     
-     Add this to their file. at the line it crashes at DBLibraryManager.
-     */
-    UINavigationController *nav = [[UINavigationController alloc] initWithRootViewController:[[DBCameraContainerViewController alloc] initWithDelegate:self]];
-    [nav setNavigationBarHidden:YES];
-    [self presentViewController:nav animated:YES completion:nil];
-}
-
--(void)viewWillAppear:(BOOL)animated {
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(keyboardWillShow:)
+                                                 name:UIKeyboardWillShowNotification object:nil];
+    
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(keyboardWillHide:)
+                                                 name:UIKeyboardWillHideNotification object:nil];
+    
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(reloadTableViewData) name:@"ReloadAppDelegateTable" object:nil];
     
     if (self.group == nil) {
         [[CHNetworkManager sharedManager] getGroups:^(NSArray *groups) {
@@ -231,6 +206,33 @@
         }
     }
 }
+
+- (void)viewWillDisappear:(BOOL)animated;
+{
+    [super viewWillDisappear:animated];
+    [[NSNotificationCenter defaultCenter] removeObserver:self];
+}
+
+#pragma mark - Camera 
+
+-(void)loadCamera;
+{
+    /*
+     Fix for DBCamera crashing when you open your photo library:
+     
+     NSURL *url = [[result defaultRepresentation] url];
+     if( url ) {
+     [items addObject:url];
+     }
+     
+     Add this to their file. at the line it crashes at DBLibraryManager.
+     */
+    UINavigationController *nav = [[UINavigationController alloc] initWithRootViewController:[[DBCameraContainerViewController alloc] initWithDelegate:self]];
+    [nav setNavigationBarHidden:YES];
+    [self presentViewController:nav animated:YES completion:nil];
+}
+
+
 
 -(void)loadMoreMessages;
 {
@@ -562,8 +564,8 @@
     return NO;
 }
 
-- (void)reloadTableViewData{
-
+- (void)reloadTableViewData;
+{
     ///
     /// Load up old messages
     ///
@@ -582,15 +584,9 @@
 
 }
 
-- (void)viewDidDisappear:(BOOL)animated;
-{
-    [super viewDidDisappear:animated];
-//    [[NSNotificationCenter defaultCenter] removeObserver:self];
-}
-
 - (void)growingTextView:(HPGrowingTextView *)growingTextView willChangeHeight:(float)height
 {
-    float diff = (growingTextView.frame.size.height - height);
+    CGFloat diff = (growingTextView.frame.size.height - height);
     
 	CGRect r = self.containerView.frame;
     r.size.height -= diff;
@@ -613,6 +609,22 @@
     timestampFormatter.locale = [[NSLocale alloc] initWithLocaleIdentifier:@"en_US_POSIX"];
     timestampFormatter.dateFormat = @"MMMM dd, HH:mm";
     return timestampFormatter;
+}
+
+/**
+ * Sets the insets just how we want them, with whatever distance from the
+ * bottom of the screen (which will change, depending on the height of the textview,
+ * and if the keyboard is up.
+ */
+- (void)setTableViewInsetsFromBottom:(CGFloat)bottomDistance;
+{
+//    UIEdgeInsetsMake(top, left, bottom, right)
+    UIEdgeInsets insets = UIEdgeInsetsMake(kDefaultContentOffset,
+                                           0,
+                                           self.containerView.frame.size.height + bottomDistance,
+                                           0);
+    self.messageTable.contentInset = insets;
+    self.messageTable.scrollIndicatorInsets = insets;
 }
 
 
