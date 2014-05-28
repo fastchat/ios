@@ -76,7 +76,6 @@
     
     [[CHNetworkManager sharedManager] getGroups:^(NSArray *groups) {
         self.groups = [groups mutableCopy];
-        [((CHGroup *)_groups[0]) setUnread:@1];
         
         // Get all member avatars
         for( CHGroup *group in self.groups ) {
