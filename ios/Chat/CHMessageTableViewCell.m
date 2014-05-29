@@ -10,28 +10,15 @@
 
 @implementation CHMessageTableViewCell
 
-- (void)awakeFromNib
+- (void)awakeFromNib;
 {
-    // Initialization code
     [super awakeFromNib];
     self.backgroundColor = kLightBackgroundColor;
     
     self.messageTextView.layer.cornerRadius = 5.0;
+    self.messageTextView.layer.borderColor = [[UIColor lightGrayColor] CGColor];
+    self.messageTextView.layer.borderWidth = 0.5;
     self.messageTextView.layer.masksToBounds = YES;
-}
-
-- (id)initWithCoder:(NSCoder *)aDecoder;
-{
-    if ( ( self = [super initWithCoder:aDecoder]) ) {
-        // Initialization code
-        self.authorLabel = [[UILabel alloc] init];
-        self.messageLabel = [[UILabel alloc]init];
-        
-        self.authorLabel.font = [UIFont systemFontOfSize:14];
-        self.messageLabel.font = [UIFont systemFontOfSize:14];
-        [self.contentView addSubview:self.authorLabel];
-    }
-    return self;
 }
 
 @end

@@ -15,9 +15,6 @@
 
 @property (weak, nonatomic) IBOutlet UIImageView *mediaMessageImageView;
 
-@property NSDate *dateSent;
-
-- (id)initWithCoder:(NSCoder *)aDecoder;
--(void)setupGestureWithTableView: (CHMessageViewController *)tableView;
+- (void)setupGestureWithTableView: (CHMessageViewController *)tableView;
 
 @end

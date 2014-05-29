@@ -7,15 +7,8 @@
 //
 
 #import <UIKit/UIKit.h>
-#import "CHMessageTableViewCell.h"
+#import "CHMediaMessageTableViewCell.h"
 
-@interface CHMediaOwnTableViewCell : CHMessageTableViewCell
-
-@property (weak, nonatomic) IBOutlet UIImageView *mediaMessageImageView;
-
-
-@property NSDate *dateSent;
-
-- (id)initWithCoder:(NSCoder *)aDecoder;
+@interface CHMediaOwnTableViewCell : CHMediaMessageTableViewCell
 
 @end

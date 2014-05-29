@@ -10,14 +10,4 @@
 
 @implementation CHOwnMessageTableViewCell
 
-- (void)awakeFromNib;
-{
-    [super awakeFromNib];
-    self.backgroundColor = kLightBackgroundColor;
-}
-
-- (void)layoutSubviews {
-    [super layoutSubviews];
-}
-
 @end

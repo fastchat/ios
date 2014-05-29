@@ -19,6 +19,7 @@
 #import "CHMediaMessageTableViewCell.h"
 #import "CHMediaOwnTableViewCell.h"
 #import "URBMediaFocusViewController.h"
+#import "UIImage+ColorArt.h"
 
 #define kDefaultContentOffset self.navigationController.navigationBar.frame.size.height + 20
 
@@ -458,7 +459,10 @@
         cell.messageTextView.attributedText = attrString;
        
         if ( [_group memberFromId:currMessage.author].avatar != nil) {
-            [cell.avatarImageView setImage:[_group memberFromId:currMessage.author].avatar];
+            UIImage *avatar = [_group memberFromId:currMessage.author].avatar;
+            [cell.avatarImageView setImage:avatar];
+            SLColorArt *colorArt = [avatar colorArt];
+            cell.authorLabel.textColor = colorArt.primaryColor;
         }
         else {
             [cell.avatarImageView setImage:[UIImage imageNamed:@"profile-dark.png"]];
