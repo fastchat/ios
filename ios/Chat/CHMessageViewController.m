@@ -387,13 +387,15 @@ NSString *const CHOwnMediaMesssageCellIdentifier = @"CHMediaOwnTableViewCell";
     }
     
     cell.messageTextView.text = nil;
+    cell.messageTextView.attributedText = nil;
     //Set attributed string as workaround for iOS 7 bug
     NSDictionary *attrsDictionary = @{NSFontAttributeName: [UIFont systemFontOfSize:14.0]};
     
     cell.messageTextView.attributedText = [[NSAttributedString alloc] initWithString:
                                       [NSString stringWithFormat:@"%@", message.text]
                                                                      attributes:attrsDictionary];
-    cell.authorLabel.text = [NSString stringWithFormat:@"by %@", [self.group usernameFromId:message.author]];
+    cell.authorLabel.text = [self.group usernameFromId:message.author];
+    cell.timestampLabel.text = [self formatDate:message.sent];
     
     if ( [_group memberFromId:message.author].avatar != nil) {
         UIImage *avatar = [_group memberFromId:message.author].avatar;
@@ -403,131 +405,29 @@ NSString *const CHOwnMediaMesssageCellIdentifier = @"CHMediaOwnTableViewCell";
     }
     else {
         [cell.avatarImageView setImage:[UIImage imageNamed:@"profile-dark.png"]];
+        cell.authorLabel.textColor = [UIColor blackColor];
     }
     
-    if (message.sent != nil) {
-        // Format the timestamp
-        cell.timestampLabel.text = [[self timestampFormatter] stringFromDate:message.sent];
-    }
-    else {
-        cell.timestampLabel.text = @"";
-    }
-    
-    return cell;
-    
-    
-    
-    static NSString *cHMessageTableViewCell = @"CHMessageTableViewCell";
-    CHMessage *currMessage = (CHMessage *)[self.messageArray objectAtIndex:indexPath.row];
-//    CHMessageTableViewCell *cell = nil;
-    CHUser *currUser = [[CHNetworkManager sharedManager] currentUser];
-
-    if( [self.members[currMessage.author] isEqualToString:self.members[currUser.userId]] ) {
-        if( [currMessage.hasMedia floatValue] ) {
-            cell = [tableView dequeueReusableCellWithIdentifier:@"CHMediaOwnTableViewCell" forIndexPath:indexPath];
+    if (message.hasMedia) {
+        [[CHNetworkManager sharedManager] getMediaForMessage:message._id groupId:self.group._id callback:^(UIImage *messageMedia) {
+            [message setTheMediaSent:messageMedia];
+            [self.messageArray replaceObjectAtIndex:indexPath.row withObject:message];
+//            [ ((CHMediaMessageTableViewCell *)cell).mediaMessageImageView setImage:messageMedia];
             
-            if( currMessage.theMediaSent == nil ) {
-                [((CHMediaMessageTableViewCell *)cell).mediaMessageImageView setImage:[UIImage imageNamed:@"inprogress.png"]];
-                [[CHNetworkManager sharedManager] getMediaForMessage:currMessage._id groupId:self.group._id callback:^(UIImage *messageMedia) {
-
-                    [currMessage setTheMediaSent:messageMedia];
-                    [self.messageArray replaceObjectAtIndex:indexPath.row withObject:currMessage];
-                    [ ((CHMediaMessageTableViewCell *)cell).mediaMessageImageView setImage:messageMedia];
-                }];
-            }
-            else {
-                [((CHMediaMessageTableViewCell *)cell).mediaMessageImageView setImage:currMessage.theMediaSent];
-            }
+            NSMutableAttributedString *attributedString = [[NSMutableAttributedString alloc] initWithString:message.text];
             
-        }
-        else {
-            cell = [tableView dequeueReusableCellWithIdentifier:@"CHOwnMessageTableViewCell" forIndexPath:indexPath];
-        }
-        cell.avatarImageView.contentMode = UIViewContentModeScaleAspectFill;
-        
-        // Setting to nil as workaround for iOS 7 bug showing links at wrong time
-        cell.messageTextView.text = nil;
-        [cell.messageTextView setScrollEnabled:NO];
-        
-        //Set attributed string as workaround for iOS 7 bug
-        UIFont *font = [UIFont systemFontOfSize:14.0];
-        NSDictionary *attrsDictionary =
-        [NSDictionary dictionaryWithObject:font
-                                    forKey:NSFontAttributeName];
-         
-         NSAttributedString *attrString =
-         [[NSAttributedString alloc] initWithString:[NSString stringWithFormat:@"%@",currMessage.text] attributes:attrsDictionary];
-        cell.messageTextView.attributedText = attrString;
-        cell.authorLabel.text = [[NSString alloc] initWithFormat:@"by %@",[self.group usernameFromId:currMessage.author]];
-
-        if( [_group memberFromId:currMessage.author].avatar != nil ) {
-            [cell.avatarImageView setImage:[_group memberFromId:currMessage.author].avatar];
-        }
-        else {
-            [cell.avatarImageView setImage:[UIImage imageNamed:@"profile-dark.png"]];
-        }
-        
-        if (currMessage.sent != nil) {
-            // Format the timestamp
-            cell.timestampLabel.text = [[self timestampFormatter] stringFromDate:currMessage.sent];
-        }
-        else {
-            cell.timestampLabel.text = @"";
-        }
-
+            NSTextAttachment *textAttachment = [[NSTextAttachment alloc] init];
+            textAttachment.image = messageMedia;
+            
+            NSAttributedString *attrStringWithImage = [NSAttributedString attributedStringWithAttachment:textAttachment];
+            [attributedString appendAttributedString:attrStringWithImage];
+            cell.messageTextView.attributedText = attrStringWithImage;
+        }];
     }
     
-    else {
-        if( [currMessage.hasMedia floatValue] ) {
-            cell = [tableView dequeueReusableCellWithIdentifier:@"CHMediaMessageTableViewCell" forIndexPath:indexPath];
-            
-            [[CHNetworkManager sharedManager] getMediaForMessage:currMessage._id groupId:self.group._id callback:^(UIImage *messageMedia) {
-                [ ((CHMediaMessageTableViewCell *)cell).mediaMessageImageView setImage:messageMedia];
-            }];
-            
-            [((CHMediaMessageTableViewCell *)cell) setupGestureWithTableView:self];
-            
-        }
-        else {
-            cell = [tableView dequeueReusableCellWithIdentifier:cHMessageTableViewCell forIndexPath:indexPath];
-        }
-
-        cell.avatarImageView.contentMode = UIViewContentModeScaleAspectFill;
-
-        cell.authorLabel.text = [[NSString alloc] initWithFormat:@"by %@", [self.group usernameFromId:currMessage.author]];
-        // Setting to nil as workaround for iOS 7 bug showing links at wrong time
-        cell.messageTextView.text = nil;
-        [cell.messageTextView setScrollEnabled:NO];
-        
-        //Set attributed string as workaround for iOS 7 bug
-        UIFont *font = [UIFont systemFontOfSize:14.0];
-        NSDictionary *attrsDictionary =
-        [NSDictionary dictionaryWithObject:font
-                                    forKey:NSFontAttributeName];
-        NSAttributedString *attrString =
-        [[NSAttributedString alloc] initWithString:[NSString stringWithFormat:@"%@",currMessage.text] attributes:attrsDictionary];
-        
-        cell.messageTextView.attributedText = attrString;
-       
-        if ( [_group memberFromId:currMessage.author].avatar != nil) {
-            UIImage *avatar = [_group memberFromId:currMessage.author].avatar;
-            [cell.avatarImageView setImage:avatar];
-            SLColorArt *colorArt = [avatar colorArt];
-            cell.authorLabel.textColor = colorArt.primaryColor;
-        }
-        else {
-            [cell.avatarImageView setImage:[UIImage imageNamed:@"profile-dark.png"]];
-        }
-
-        if (currMessage.sent != nil) {
-            // Format the timestamp
-            cell.timestampLabel.text = [[self timestampFormatter] stringFromDate:currMessage.sent];
-        }
-        else {
-            cell.timestampLabel.text = @"";
-        }
-    }
-
+    UITapGestureRecognizer *tapper = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(textViewTapped:)];
+    [cell.messageTextView addGestureRecognizer:tapper];
+    
     return cell;
 }
 
@@ -615,13 +515,20 @@ NSString *const CHOwnMediaMesssageCellIdentifier = @"CHMediaOwnTableViewCell";
                                      animated:YES];
 }
 
-- (NSDateFormatter *)timestampFormatter;
+- (NSString *)formatDate:(NSDate *)date;
 {
-    NSDateFormatter *timestampFormatter = [[NSDateFormatter alloc] init];
-    [timestampFormatter setDateStyle:NSDateFormatterLongStyle];
-    timestampFormatter.locale = [[NSLocale alloc] initWithLocaleIdentifier:@"en_US_POSIX"];
-    timestampFormatter.dateFormat = @"MMMM dd, HH:mm";
-    return timestampFormatter;
+    if (!date) {
+        return nil;
+    }
+    
+    static NSDateFormatter *timestampFormatter = nil;
+    if (!timestampFormatter) {
+        timestampFormatter = [[NSDateFormatter alloc] init];
+        [timestampFormatter setDateStyle:NSDateFormatterLongStyle];
+        timestampFormatter.locale = [[NSLocale alloc] initWithLocaleIdentifier:@"en_US_POSIX"];
+        timestampFormatter.dateFormat = @"MMMM dd, HH:mm";
+    }
+    return [timestampFormatter stringFromDate:date];
 }
 
 /**
@@ -638,6 +545,11 @@ NSString *const CHOwnMediaMesssageCellIdentifier = @"CHMediaOwnTableViewCell";
                                            0);
     self.messageTable.contentInset = insets;
     self.messageTable.scrollIndicatorInsets = insets;
+}
+
+- (void)textViewTapped:(UITapGestureRecognizer *)sender;
+{
+    [self resignTextView];
 }
 
 #pragma mark - Camera

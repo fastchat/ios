@@ -66,12 +66,6 @@
 #define COCOAPODS_VERSION_MINOR_DBCamera 1
 #define COCOAPODS_VERSION_PATCH_DBCamera 2
 
-// HPGrowingTextView
-#define COCOAPODS_POD_AVAILABLE_HPGrowingTextView
-#define COCOAPODS_VERSION_MAJOR_HPGrowingTextView 1
-#define COCOAPODS_VERSION_MINOR_HPGrowingTextView 1
-#define COCOAPODS_VERSION_PATCH_HPGrowingTextView 0
-
 // HexColors
 #define COCOAPODS_POD_AVAILABLE_HexColors
 #define COCOAPODS_VERSION_MAJOR_HexColors 2

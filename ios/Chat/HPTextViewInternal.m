@@ -123,4 +123,33 @@
 	[self setNeedsDisplay];
 }
 
+- (BOOL)canPerformAction:(SEL)action withSender:(id)sender;
+{
+    NSLog(@"Action? %@ Sender? %@", NSStringFromSelector(action), sender);
+    if ([NSStringFromSelector(action) isEqualToString:@"paste:"]) {
+        return YES;
+    }
+    return [super canPerformAction:action withSender:sender];
+}
+
+- (void)paste:(id)sender;
+{
+    UIPasteboard *gpBoard = [UIPasteboard generalPasteboard];
+    UIImage *image = [gpBoard image];
+    if (image) {
+        NSString *newString = [NSString stringWithFormat:@"%@\n", self.text];
+        NSMutableAttributedString *attributedString = [[NSMutableAttributedString alloc] initWithString:newString];
+        
+        NSTextAttachment *textAttachment = [[NSTextAttachment alloc] init];
+        textAttachment.image = image;
+        
+        NSAttributedString *attrStringWithImage = [NSAttributedString attributedStringWithAttachment:textAttachment];
+        [attributedString appendAttributedString:attrStringWithImage];
+        self.text = nil;
+        self.attributedText = attrStringWithImage;
+    }
+        
+    
+}
+
 @end

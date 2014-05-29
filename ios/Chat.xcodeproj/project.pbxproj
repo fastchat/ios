@@ -57,6 +57,8 @@
 		AA7759FE18D54D3000E4E7AB /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = AA7759DD18D54D3000E4E7AB /* UIKit.framework */; };
 		AA775A0618D54D3000E4E7AB /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = AA775A0418D54D3000E4E7AB /* InfoPlist.strings */; };
 		AA775A0818D54D3000E4E7AB /* ChatTests.m in Sources */ = {isa = PBXBuildFile; fileRef = AA775A0718D54D3000E4E7AB /* ChatTests.m */; };
+		AA8DDA931936DABD007F0196 /* HPGrowingTextView.m in Sources */ = {isa = PBXBuildFile; fileRef = AA8DDA901936DABD007F0196 /* HPGrowingTextView.m */; };
+		AA8DDA941936DABD007F0196 /* HPTextViewInternal.m in Sources */ = {isa = PBXBuildFile; fileRef = AA8DDA921936DABD007F0196 /* HPTextViewInternal.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -149,6 +151,10 @@
 		AA775A0318D54D3000E4E7AB /* ChatTests-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "ChatTests-Info.plist"; sourceTree = "<group>"; };
 		AA775A0518D54D3000E4E7AB /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		AA775A0718D54D3000E4E7AB /* ChatTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ChatTests.m; sourceTree = "<group>"; };
+		AA8DDA8F1936DABD007F0196 /* HPGrowingTextView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HPGrowingTextView.h; sourceTree = "<group>"; };
+		AA8DDA901936DABD007F0196 /* HPGrowingTextView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HPGrowingTextView.m; sourceTree = "<group>"; };
+		AA8DDA911936DABD007F0196 /* HPTextViewInternal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HPTextViewInternal.h; sourceTree = "<group>"; };
+		AA8DDA921936DABD007F0196 /* HPTextViewInternal.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HPTextViewInternal.m; sourceTree = "<group>"; };
 		ED86F54EC1C64B14950512A1 /* libPods-Chat.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-Chat.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
@@ -300,6 +306,10 @@
 		AA4633291936933000513578 /* Message Views */ = {
 			isa = PBXGroup;
 			children = (
+				AA8DDA8F1936DABD007F0196 /* HPGrowingTextView.h */,
+				AA8DDA901936DABD007F0196 /* HPGrowingTextView.m */,
+				AA8DDA911936DABD007F0196 /* HPTextViewInternal.h */,
+				AA8DDA921936DABD007F0196 /* HPTextViewInternal.m */,
 			);
 			name = "Message Views";
 			sourceTree = "<group>";
@@ -572,11 +582,13 @@
 				AA46331B193659EB00513578 /* CHTextField.m in Sources */,
 				AA7759E618D54D3000E4E7AB /* main.m in Sources */,
 				AA7759EA18D54D3000E4E7AB /* CHAppDelegate.m in Sources */,
+				AA8DDA941936DABD007F0196 /* HPTextViewInternal.m in Sources */,
 				AA46331E19365BB700513578 /* CHColors.m in Sources */,
 				2762621B18F706FA001F7754 /* CHProfileViewController.m in Sources */,
 				2768EAAB18D8E02B006D14BB /* CHAddGroupViewController.m in Sources */,
 				AA46332119365DDF00513578 /* CHAuthTextField.m in Sources */,
 				2769B06518F479CC00CCE470 /* CHGroup.m in Sources */,
+				AA8DDA931936DABD007F0196 /* HPGrowingTextView.m in Sources */,
 				2768EAA818D8C90B006D14BB /* CHNetworkManager.m in Sources */,
 				AA7759F318D54D3000E4E7AB /* CHLoginViewController.m in Sources */,
 				2769B06B18F495FD00CCE470 /* CHMessage.m in Sources */,
