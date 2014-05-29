@@ -70,47 +70,43 @@ NSString *const CHOwnMesssageCellIdentifier = @"CHOwnMessageTableViewCell";
 
     [self.messageTable addSubview:self.refresh];
     
-    self.containerView = [[UIView alloc] initWithFrame:CGRectMake(0, self.view.frame.size.height - 40, 320, 40)];
+    self.containerView = [[UIView alloc] initWithFrame:CGRectMake(0, self.view.frame.size.height - 45, 320, 45)];
     self.containerView.backgroundColor = [UIColor whiteColor];
     
     UIView *line = [[UIView alloc] initWithFrame:CGRectMake(0, 0, self.messageTable.frame.size.width, 0.5)];
     line.backgroundColor = [UIColor lightGrayColor];
     [self.containerView addSubview:line];
     
+    //UIEdgeInsetsMake(<#CGFloat top#>, <#CGFloat left#>, <#CGFloat bottom#>, <#CGFloat right#>)
     UIButton *cameraBtn = [UIButton buttonWithType:UIButtonTypeCustom];
     [cameraBtn setImage:[UIImage imageNamed:@"Attach"] forState:UIControlStateNormal];
 	cameraBtn.frame = CGRectMake(0, 0, 40, 40);
-    cameraBtn.imageEdgeInsets = UIEdgeInsetsMake(5, 8, 5, 8); //UIEdgeInsetsMake(<#CGFloat top#>, <#CGFloat left#>, <#CGFloat bottom#>, <#CGFloat right#>)
+    cameraBtn.imageEdgeInsets = UIEdgeInsetsMake(5, 8, 5, 8);
     [cameraBtn addTarget:self action:@selector(loadCamera) forControlEvents:UIControlEventTouchUpInside];
     [self.containerView addSubview:cameraBtn];
     
-    self.textView = [[HPGrowingTextView alloc] initWithFrame:CGRectMake(45, 3, 230, 42)];
+    self.textView = [[HPGrowingTextView alloc] initWithFrame:CGRectMake(45, 2, 230, 10)];
     self.textView.isScrollable = NO;
-    self.textView.contentInset = UIEdgeInsetsMake(49, 5, 0, 5);
+//    self.textView.contentInset = UIEdgeInsetsMake(49, 5, 0, 5);
     self.textView.layer.borderColor = [[UIColor lightGrayColor] CGColor];
     self.textView.layer.borderWidth = 0.5;
     self.textView.layer.cornerRadius = 4.0;
     self.textView.layer.masksToBounds = YES;
     
 	self.textView.minNumberOfLines = 1;
-	self.textView.maxNumberOfLines = 6;
     // you can also set the maximum height in points with maxHeight
     self.textView.maxHeight = 140.0f;
 	self.textView.returnKeyType = UIReturnKeyDefault; //just as an example
-	self.textView.font = [UIFont systemFontOfSize:14.0f];
+    self.textView.font = [UIFont systemFontOfSize:16];
+    self.textView.internalTextView.typingAttributes = @{NSFontAttributeName: [UIFont systemFontOfSize:16]};
 	self.textView.delegate = self;
-    self.textView.internalTextView.scrollIndicatorInsets = UIEdgeInsetsMake(55, 0, 5, 0);
+    self.textView.internalTextView.scrollIndicatorInsets = UIEdgeInsetsMake(5, 0, 5, 0);
     self.textView.backgroundColor = [UIColor whiteColor];
     self.textView.placeholder = @"Send FastChat";
     
-
+    [self.containerView addSubview:self.textView];
     [self.view addSubview:self.containerView];
     
-
-    
-    self.textView.autoresizingMask = UIViewAutoresizingFlexibleWidth;
-    
-    [self.containerView addSubview:self.textView];
     
     self.sendButton = [UIButton buttonWithType:UIButtonTypeSystem]; //[UIButton buttonWithType:UIButtonTypeCustom];
 	_sendButton.frame = CGRectMake(self.containerView.frame.size.width - 42, 1, 42, 40);
@@ -118,8 +114,6 @@ NSString *const CHOwnMesssageCellIdentifier = @"CHOwnMessageTableViewCell";
 	[_sendButton setTitle:@"Send" forState:UIControlStateNormal];
     [_sendButton addTarget:self action:@selector(sendMessage) forControlEvents:UIControlEventTouchUpInside];
  	[self.containerView addSubview:_sendButton];
-    
-    self.containerView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleTopMargin;
     
     self.previousMessageTextViewRect = CGRectZero;
     

@@ -58,10 +58,9 @@
     
     // Ensure size is less than 200KB
     NSData *imgData = [[NSData alloc] initWithData:UIImageJPEGRepresentation((image), 0.5)];
-    int imageSize   = imgData.length;
+    unsigned long imageSize = imgData.length;
     
     if( imageSize/1024.0 <= 200 ) {
-    
 
         [[CHNetworkManager sharedManager] pushNewAvatarForUser:[[CHNetworkManager sharedManager] currentUser].userId avatarImage:image callback:^(bool successful, NSError *error) {
 
