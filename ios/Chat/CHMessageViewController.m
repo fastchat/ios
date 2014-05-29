@@ -20,6 +20,7 @@
 #import "CHMediaOwnTableViewCell.h"
 #import "URBMediaFocusViewController.h"
 #import "UIImage+ColorArt.h"
+#import "HPTextViewInternal.h"
 
 #define kDefaultContentOffset self.navigationController.navigationBar.frame.size.height + 20
 
@@ -260,52 +261,64 @@ NSString *const CHOwnMediaMesssageCellIdentifier = @"CHMediaOwnTableViewCell";
 - (void)sendMessage;
 {
     
-    DLog(@"We should send message: %hhd", self.mediaWasAdded);
+    DLog(@"We should send message: %@", self.textView.internalTextView.attachedImage);
     NSString *msg = self.textView.text;
     
-    if ( [msg isEqualToString:@""] || msg == nil ) {
+    if ( !msg.length ) {
         return;
     }
     
     CHUser *currUser = [[CHNetworkManager sharedManager] currentUser];
     NSMutableDictionary *data = [[NSMutableDictionary alloc] initWithDictionary:@{@"from": currUser.userId, @"text" : msg, @"group": self.group._id}];
     
-    [[CHSocketManager sharedManager] sendMessageWithEvent:@"message" data:data];
-    NSDateFormatter *formatter = [[NSDateFormatter alloc] init];
-    formatter.locale = [[NSLocale alloc] initWithLocaleIdentifier:@"en_US_POSIX"];
-    formatter.dateFormat = @"yyyy-MM-dd'T'HH:mm:ss.SSSz";
+    CHMessage *newMessage = [[CHMessage alloc] init];
+    
+    if (self.textView.internalTextView.attachedImage) {
+        newMessage.text = self.textView.text;
+        newMessage.hasMedia = @YES;
+        newMessage.theMediaSent = self.textView.internalTextView.attachedImage;
+        [[CHNetworkManager sharedManager] postMediaMessageWithImage:self.textView.internalTextView.attachedImage
+                                                            groupId:self.group._id
+                                                            message:self.textView.text
+                                                           callback:^(BOOL success, NSError *error) {
+                                                               
+                                                               self.textView.text = @"";
+                                                               
+                                                               if( success ) {
+                                                                   DLog(@"Successful post!");
+                                                               }
+                                                               else {
+                                                                   DLog(@"Error posting image");
+                                                               }
+                                                           }];
+        
+    } else {
+        [[CHSocketManager sharedManager] sendMessageWithEvent:@"message" data:data];
+    }
+    
+    newMessage.author = currUser.userId;
+    newMessage.group = _group._id;
+    newMessage.sent = [NSDate date];
+    
+    [self addNewMessage:newMessage];
+}
 
-    data[@"sent"] = [formatter stringFromDate:[NSDate date] ];
+- (void)addNewMessage:(CHMessage *)message;
+{
+    [self.messageArray addObject:message];
 
-    CHMessage *newMessage = [[CHMessage objectsFromJSON:@[data]] firstObject];
-    
-    [self.messageArray addObject:newMessage];
-    
-    
     [self.messageTable beginUpdates];
-    
-    // Magically add rows to table view
-    [self.messageTable insertRowsAtIndexPaths:@[[NSIndexPath indexPathForRow:_messageArray.count - 1 inSection:0]] withRowAnimation:UITableViewRowAnimationAutomatic];
-    
+    [self.messageTable insertRowsAtIndexPaths:@[[NSIndexPath indexPathForRow:_messageArray.count - 1 inSection:0]]
+                             withRowAnimation:UITableViewRowAnimationAutomatic];
     [self.messageTable endUpdates];
     
-    [self.messageTable scrollToRowAtIndexPath:[NSIndexPath indexPathForRow:_messageArray.count - 1 inSection:0] atScrollPosition:UITableViewScrollPositionBottom animated:YES];
+    [self.messageTable scrollToRowAtIndexPath:[NSIndexPath indexPathForRow:_messageArray.count - 1 inSection:0]
+                             atScrollPosition:UITableViewScrollPositionBottom
+                                     animated:YES];
     
     self.textView.text = @"";
     self.shouldSlide = NO;
     
-    if( self.mediaWasAdded ) {
-        [[CHNetworkManager sharedManager] postMediaMessageWithImage:self.media groupId:[self.group _id] message:self.textView.text callback:^(BOOL success, NSError *error) {
-            if( success ) {
-                DLog(@"Successful post!");
-            }
-            else {
-                DLog(@"Error posting image");
-            }
-            //[self resignTextView];
-        }];
-    }
-
     if( self.keyboardIsVisible ) {
         [self.textView setKeyboardType:UIKeyboardTypeDefault];
         [self.textView resignFirstResponder];
@@ -314,7 +327,6 @@ NSString *const CHOwnMediaMesssageCellIdentifier = @"CHMediaOwnTableViewCell";
     
     self.media = nil;
     self.mediaWasAdded = NO;
-
 }
 
 #pragma mark - Keyboard Methods
@@ -389,11 +401,10 @@ NSString *const CHOwnMediaMesssageCellIdentifier = @"CHMediaOwnTableViewCell";
     cell.messageTextView.text = nil;
     cell.messageTextView.attributedText = nil;
     //Set attributed string as workaround for iOS 7 bug
-    NSDictionary *attrsDictionary = @{NSFontAttributeName: [UIFont systemFontOfSize:14.0]};
+//    NSDictionary *attrsDictionary = @{NSFontAttributeName: [UIFont systemFontOfSize:14.0]};
     
-    cell.messageTextView.attributedText = [[NSAttributedString alloc] initWithString:
-                                      [NSString stringWithFormat:@"%@", message.text]
-                                                                     attributes:attrsDictionary];
+    cell.messageTextView.attributedText = [[NSAttributedString alloc] initWithString:message.text
+                                                                     attributes:nil];
     cell.authorLabel.text = [self.group usernameFromId:message.author];
     cell.timestampLabel.text = [self formatDate:message.sent];
     
@@ -414,14 +425,17 @@ NSString *const CHOwnMediaMesssageCellIdentifier = @"CHMediaOwnTableViewCell";
             [self.messageArray replaceObjectAtIndex:indexPath.row withObject:message];
 //            [ ((CHMediaMessageTableViewCell *)cell).mediaMessageImageView setImage:messageMedia];
             
-            NSMutableAttributedString *attributedString = [[NSMutableAttributedString alloc] initWithString:message.text];
-            
+            CGSize size = [self boundsForImage:messageMedia];
             NSTextAttachment *textAttachment = [[NSTextAttachment alloc] init];
             textAttachment.image = messageMedia;
+            textAttachment.bounds = CGRectMake(0, 0, size.width, size.height);
             
-            NSAttributedString *attrStringWithImage = [NSAttributedString attributedStringWithAttachment:textAttachment];
-            [attributedString appendAttributedString:attrStringWithImage];
-            cell.messageTextView.attributedText = attrStringWithImage;
+            DLog(@"Before Removed: %@", message.text);
+            NSMutableAttributedString *string = [[NSMutableAttributedString alloc] init];
+            [string appendAttributedString:[[NSAttributedString alloc] initWithString:message.text]];
+            [string appendAttributedString:[[NSAttributedString alloc] initWithString:@"\n\n"]];
+            [string appendAttributedString:[NSAttributedString attributedStringWithAttachment:textAttachment]];
+            cell.messageTextView.attributedText = string;
         }];
     }
     
@@ -429,6 +443,15 @@ NSString *const CHOwnMediaMesssageCellIdentifier = @"CHMediaOwnTableViewCell";
     [cell.messageTextView addGestureRecognizer:tapper];
     
     return cell;
+}
+
+- (CGSize)boundsForImage:(UIImage *)image;
+{
+//    if (image.size.width < 100 && image.size.height < 100) {
+//        return CGSizeMake(75, 75);
+//    }
+    
+    return CGSizeMake(75, 75);
 }
 
 - (void)expandImage:(UIImage *)image;
@@ -574,13 +597,11 @@ NSString *const CHOwnMediaMesssageCellIdentifier = @"CHMediaOwnTableViewCell";
 - (void) captureImageDidFinish:(UIImage *)image withMetadata:(NSDictionary *)metadata
 {
     self.mediaWasAdded = YES;
-    self.media = image;
-    
+//    self.media = image;
     self.shouldSlide = NO;
+    [self.textView.internalTextView addImage:image];
 
-    [self.presentedViewController dismissViewControllerAnimated:YES completion:^{
-       
-    }];
+    [self.presentedViewController dismissViewControllerAnimated:YES completion:nil];
     
     if( self.keyboardIsVisible ) {
         DLog(@"Keyboard should be visible");

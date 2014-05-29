@@ -37,8 +37,17 @@
     //setting the text programatically will cause UIKit to search upwards until it finds a scrollView with scrollEnabled==yes
     //then scroll it erratically. Setting scrollEnabled temporarily to YES prevents this.
     [self setScrollEnabled:YES];
-    [super setText:text];
+    [super setAttributedText:[[NSAttributedString alloc] initWithString:text]];
     [self setScrollEnabled:originalValue];
+    
+    if (!text.length) {
+        self.attachedImage = nil;
+    }
+}
+
+- (NSString *)text;
+{
+    return self.attributedText.string ? self.attributedText.string : self.text;
 }
 
 - (void)setScrollable:(BOOL)isScrollable
@@ -126,7 +135,9 @@
 - (BOOL)canPerformAction:(SEL)action withSender:(id)sender;
 {
     NSLog(@"Action? %@ Sender? %@", NSStringFromSelector(action), sender);
-    if ([NSStringFromSelector(action) isEqualToString:@"paste:"]) {
+    UIPasteboard *gpBoard = [UIPasteboard generalPasteboard];
+    
+    if ([NSStringFromSelector(action) isEqualToString:@"paste:"] && gpBoard.image) { //add more types later.
         return YES;
     }
     return [super canPerformAction:action withSender:sender];
@@ -137,19 +148,27 @@
     UIPasteboard *gpBoard = [UIPasteboard generalPasteboard];
     UIImage *image = [gpBoard image];
     if (image) {
-        NSString *newString = [NSString stringWithFormat:@"%@\n", self.text];
-        NSMutableAttributedString *attributedString = [[NSMutableAttributedString alloc] initWithString:newString];
-        
-        NSTextAttachment *textAttachment = [[NSTextAttachment alloc] init];
-        textAttachment.image = image;
-        
-        NSAttributedString *attrStringWithImage = [NSAttributedString attributedStringWithAttachment:textAttachment];
-        [attributedString appendAttributedString:attrStringWithImage];
-        self.text = nil;
-        self.attributedText = attrStringWithImage;
+        [self addImage:image];
     }
-        
+}
+
+- (void)addImage:(UIImage *)image;
+{
+    CGSize size = CGSizeMake(100, 150);
+                   
+    NSTextAttachment *textAttachment = [[NSTextAttachment alloc] init];
+    textAttachment.image = image;
+    textAttachment.bounds = CGRectMake(0, 0, size.width, size.height);
     
+    NSMutableAttributedString *string = [[NSMutableAttributedString alloc] init];
+    [string appendAttributedString:[[NSAttributedString alloc] initWithString:self.text]];
+    [string appendAttributedString:[[NSAttributedString alloc] initWithString:@"\n\n"]];
+    [string appendAttributedString:[NSAttributedString attributedStringWithAttachment:textAttachment]];
+    self.attributedText = string;
+    
+    /// again, only supporting 1 for now.
+    self.attachedImage = image;
+    [self setNeedsDisplay];
 }
 
 @end

@@ -56,7 +56,6 @@
 @end
 
 @interface HPGrowingTextView : UIView <UITextViewDelegate> {
-	HPTextViewInternal *internalTextView;	
 	
 	int minHeight;
 	int maxHeight;
@@ -80,6 +79,8 @@
     UIEdgeInsets contentInset;
 }
 
+@property (nonatomic, strong) HPTextViewInternal *internalTextView;
+
 //real class properties
 @property int maxNumberOfLines;
 @property int minNumberOfLines;
@@ -89,7 +90,6 @@
 @property NSTimeInterval animationDuration;
 @property (nonatomic, strong) NSString *placeholder;
 @property (nonatomic, strong) UIColor *placeholderColor;
-@property (nonatomic, strong) UITextView *internalTextView;	
 
 
 //uitextview properties

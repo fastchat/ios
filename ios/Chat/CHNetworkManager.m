@@ -352,12 +352,14 @@ NSString *const kAvatarKey = @"com.fastchat.avatarkey";
                                                                                 URLString:[[NSURL URLWithString:url relativeToURL:self.baseURL] absoluteString]
                                                                                parameters:parameters
                                                                 constructingBodyWithBlock:^(id<AFMultipartFormData> formData) {
+                                                                    NSString *randomName = [NSString stringWithFormat:@"%@.png", [[NSUUID UUID] UUIDString]];
                                                                     [formData appendPartWithFileData:imageData
                                                                                                 name:@"media"
-                                                                                            fileName:@"test_media_ios.png"
-                                                                                            mimeType:@"image/png"
-                                                                                            ];
-                                                                    [formData appendPartWithFormData:[message dataUsingEncoding:NSUTF8StringEncoding] name:@"text"];
+                                                                                            fileName:randomName
+                                                                                            mimeType:@"image/png"];
+                                                                    
+                                                                    [formData appendPartWithFormData:[message dataUsingEncoding:NSUTF8StringEncoding]
+                                                                                                name:@"text"];
                                                                 } error:&error];
     
     [request setValue:self.sessiontoken forHTTPHeaderField:@"session-token"];
