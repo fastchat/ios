@@ -13,6 +13,7 @@
 #import "AFNetworking.h"
 #import "CHGroupsCollectionAccessor.h"
 
+NSString *const kAvatarKey = @"com.fastchat.avatarkey";
 //#define BASE_URL @"http://10.0.0.10:3000"
 #define BASE_URL @"http://powerful-cliffs-9562.herokuapp.com:80"
 
@@ -206,23 +207,47 @@
 
 }
 
-- (void)getAvatarOfUser: (NSString *)userId callback: (void (^)(UIImage *avatar))callback;
+- (void)getAvatarOfUser:(NSString *)userId
+               callback:(void (^)(UIImage *avatar))callback;
 {
-    NSMutableURLRequest *request = [[NSMutableURLRequest alloc] initWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"%@/user/%@/avatar",BASE_URL, userId]]];
+    ///
+    /// First check our secret cache
+    ///
+    NSString *key = [NSString stringWithFormat:@"%@-%@", kAvatarKey, userId];
+    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+    NSData *data = [defaults objectForKey:key];
+    UIImage *avatar = [UIImage imageWithData:data];
+    if (avatar) {
+        if (callback) {
+            callback(avatar);
+        }
+    }
+    
+    NSMutableURLRequest *request = [[NSMutableURLRequest alloc] initWithURL:
+                                    [NSURL URLWithString:[NSString stringWithFormat:@"%@/user/%@/avatar", BASE_URL, userId]]];
     [request setValue:self.sessiontoken forHTTPHeaderField:@"session-token"];
+    
     
     AFHTTPRequestOperation *requestOperation = [[AFHTTPRequestOperation alloc] initWithRequest:request];
     requestOperation.responseSerializer = [AFImageResponseSerializer serializer];
     [requestOperation setCompletionBlockWithSuccess:^(AFHTTPRequestOperation *operation, id responseObject) {
-        if (self.currentUser) {
-            self.currentUser.avatar = responseObject;
+        
+        if (responseObject) {
+            dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+                [defaults setObject:UIImagePNGRepresentation(responseObject) forKey:key];
+                [defaults synchronize];
+            });
         }
+        
         if(callback) {
             callback(responseObject);
         }
         
     } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
         NSLog(@"Image error: %@", error);
+        if (callback) {
+            callback(nil);
+        }
     }];
     
     [requestOperation start];
@@ -311,7 +336,10 @@
     }];
 }
 
-- (void)postMediaMessageWithImage:(UIImage *)image groupId:(NSString *)groupId message:(NSString *)message callback:(void (^)(BOOL success, NSError *error))callback;
+- (void)postMediaMessageWithImage:(UIImage *)image
+                          groupId:(NSString *)groupId
+                          message:(NSString *)message
+                         callback:(void (^)(BOOL success, NSError *error))callback;
 {
 
     NSData *imageData = UIImagePNGRepresentation(image);

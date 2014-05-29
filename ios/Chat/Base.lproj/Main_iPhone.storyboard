@@ -198,7 +198,7 @@
                                                     <fontDescription key="fontDescription" type="system" pointSize="8"/>
                                                     <nil key="highlightedColor"/>
                                                 </label>
-                                                <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="profile-dark.png" translatesAutoresizingMaskIntoConstraints="NO" id="ipt-4u-Duv" customClass="CHCircleImageView">
+                                                <imageView userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="profile-dark.png" translatesAutoresizingMaskIntoConstraints="NO" id="ipt-4u-Duv" customClass="CHCircleImageView">
                                                     <rect key="frame" x="7" y="12" width="35" height="35"/>
                                                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                                     <color key="backgroundColor" red="0.34053679440000001" green="0.57352570560000005" blue="0.98330393149999995" alpha="1" colorSpace="calibratedRGB"/>
@@ -248,7 +248,7 @@
                                             <rect key="frame" x="0.0" y="0.0" width="320" height="49"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
-                                                <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" bounces="NO" scrollEnabled="NO" showsHorizontalScrollIndicator="NO" showsVerticalScrollIndicator="NO" editable="NO" translatesAutoresizingMaskIntoConstraints="NO" id="NYG-2q-ytz">
+                                                <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" bounces="NO" scrollEnabled="NO" showsHorizontalScrollIndicator="NO" showsVerticalScrollIndicator="NO" editable="NO" textAlignment="right" translatesAutoresizingMaskIntoConstraints="NO" id="NYG-2q-ytz">
                                                     <rect key="frame" x="68" y="5" width="205" height="42"/>
                                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                     <color key="backgroundColor" red="0.47058823529411764" green="0.20000000000000001" blue="0.6470588235294118" alpha="1" colorSpace="calibratedRGB"/>
@@ -269,7 +269,7 @@
                                                     <fontDescription key="fontDescription" type="system" pointSize="8"/>
                                                     <nil key="highlightedColor"/>
                                                 </label>
-                                                <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="profile-dark.png" translatesAutoresizingMaskIntoConstraints="NO" id="R9j-gL-A3a" customClass="CHCircleImageView">
+                                                <imageView userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="profile-dark.png" translatesAutoresizingMaskIntoConstraints="NO" id="R9j-gL-A3a" customClass="CHCircleImageView">
                                                     <rect key="frame" x="278" y="12" width="35" height="35"/>
                                                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                                     <color key="backgroundColor" red="0.18862256059999999" green="0.62269851210000005" blue="1" alpha="1" colorSpace="calibratedRGB"/>
@@ -278,12 +278,12 @@
                                                         <constraint firstAttribute="height" constant="35" id="t9d-Qw-lZl"/>
                                                     </constraints>
                                                 </imageView>
-                                                <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" misplaced="YES" text="Author" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="hkV-wY-dtL">
-                                                    <rect key="frame" x="171" y="5" width="142" height="12"/>
+                                                <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Author" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="hkV-wY-dtL">
+                                                    <rect key="frame" x="171" y="5" width="102" height="12"/>
                                                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                                     <constraints>
-                                                        <constraint firstAttribute="height" constant="21" id="OEB-K1-zPQ"/>
-                                                        <constraint firstAttribute="width" constant="142" id="fYS-L2-7Tj"/>
+                                                        <constraint firstAttribute="width" constant="102" id="hGD-Yx-pok"/>
+                                                        <constraint firstAttribute="height" constant="12" id="wrl-8W-ONg"/>
                                                     </constraints>
                                                     <fontDescription key="fontDescription" type="system" pointSize="10"/>
                                                     <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
@@ -293,12 +293,12 @@
                                             <constraints>
                                                 <constraint firstAttribute="bottom" secondItem="R9j-gL-A3a" secondAttribute="bottom" constant="2" id="0Sr-V4-J2j"/>
                                                 <constraint firstAttribute="bottom" secondItem="NYG-2q-ytz" secondAttribute="bottom" constant="2" id="33z-pK-hVn"/>
-                                                <constraint firstAttribute="bottom" secondItem="hkV-wY-dtL" secondAttribute="bottom" id="4HK-yc-JFH"/>
+                                                <constraint firstItem="hkV-wY-dtL" firstAttribute="top" secondItem="CqB-QS-s35" secondAttribute="top" constant="5" id="9s0-eG-3ok"/>
                                                 <constraint firstItem="NYG-2q-ytz" firstAttribute="leading" secondItem="CqB-QS-s35" secondAttribute="leading" constant="68" id="Ezu-7q-ePJ"/>
                                                 <constraint firstAttribute="bottom" secondItem="MiQ-B8-fYS" secondAttribute="bottom" id="T9B-AL-zdL"/>
+                                                <constraint firstAttribute="trailing" secondItem="hkV-wY-dtL" secondAttribute="trailing" constant="47" id="TXj-xH-nr0"/>
                                                 <constraint firstItem="MiQ-B8-fYS" firstAttribute="leading" secondItem="CqB-QS-s35" secondAttribute="leading" constant="80" id="eFJ-OV-vjR"/>
                                                 <constraint firstItem="NYG-2q-ytz" firstAttribute="top" secondItem="CqB-QS-s35" secondAttribute="top" constant="5" id="fbd-hk-BUR"/>
-                                                <constraint firstItem="hkV-wY-dtL" firstAttribute="leading" secondItem="MiQ-B8-fYS" secondAttribute="trailing" constant="1" id="paA-BP-d9A"/>
                                                 <constraint firstItem="R9j-gL-A3a" firstAttribute="leading" secondItem="NYG-2q-ytz" secondAttribute="trailing" constant="5" id="vPL-sJ-8CN"/>
                                             </constraints>
                                         </tableViewCellContentView>
@@ -316,7 +316,7 @@
                                             <rect key="frame" x="0.0" y="0.0" width="320" height="184"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
-                                                <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="3RZ-CU-voq" customClass="CHCircleImageView">
+                                                <imageView userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="3RZ-CU-voq" customClass="CHCircleImageView">
                                                     <rect key="frame" x="7" y="139" width="35" height="35"/>
                                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                     <color key="backgroundColor" red="0.19215686274509802" green="0.5725490196078431" blue="0.98431372549019602" alpha="1" colorSpace="calibratedRGB"/>
@@ -394,7 +394,7 @@
                                             <rect key="frame" x="0.0" y="0.0" width="320" height="184"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
-                                                <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="QTF-lm-zGW" customClass="CHCircleImageView">
+                                                <imageView userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="QTF-lm-zGW" customClass="CHCircleImageView">
                                                     <rect key="frame" x="277" y="149" width="35" height="35"/>
                                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                     <color key="backgroundColor" red="0.3411764706" green="0.57254901960000004" blue="0.98431372549999996" alpha="1" colorSpace="calibratedRGB"/>
@@ -403,7 +403,7 @@
                                                         <constraint firstAttribute="width" constant="35" id="gaX-GY-hzg"/>
                                                     </constraints>
                                                 </imageView>
-                                                <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" editable="NO" translatesAutoresizingMaskIntoConstraints="NO" id="BSG-7w-2sz">
+                                                <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" editable="NO" textAlignment="right" translatesAutoresizingMaskIntoConstraints="NO" id="BSG-7w-2sz">
                                                     <rect key="frame" x="68" y="24" width="205" height="157"/>
                                                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                                     <color key="backgroundColor" red="0.47058823529999999" green="0.20000000000000001" blue="0.64705882349999999" alpha="1" colorSpace="calibratedRGB"/>

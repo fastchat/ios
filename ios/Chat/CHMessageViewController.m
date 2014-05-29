@@ -23,9 +23,15 @@
 
 #define kDefaultContentOffset self.navigationController.navigationBar.frame.size.height + 20
 
+NSString *const CHMesssageCellIdentifier = @"CHMessageTableViewCell";
+NSString *const CHOwnMesssageCellIdentifier = @"CHOwnMessageTableViewCell";
+NSString *const CHMediaMesssageCellIdentifier = @"CHMediaMessageTableViewCell";
+NSString *const CHOwnMediaMesssageCellIdentifier = @"CHMediaOwnTableViewCell";
+
 @interface CHMessageViewController ()
 
 @property (nonatomic, strong) URBMediaFocusViewController *mediaFocus;
+@property (nonatomic, strong) CHUser *currentUser;
 
 @property NSString *messages;
 @property NSMutableArray *messageArray;
@@ -171,6 +177,8 @@
     if( !self.messageArray ) {
         self.messageArray = [NSMutableArray array];
     }
+    
+    self.currentUser = [[CHNetworkManager sharedManager] currentUser];
     
     self.keyboardIsVisible = NO;
 }
@@ -365,10 +373,53 @@
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath;
 {
+    CHMessage *message = _messageArray[indexPath.row];
+    CHMessageTableViewCell *cell;
+    
+    if ([self.members[message.author] isEqualToString:self.members[_currentUser.userId]] && message.hasMedia.boolValue) {
+        cell = [tableView dequeueReusableCellWithIdentifier:CHOwnMediaMesssageCellIdentifier forIndexPath:indexPath];
+    } else if ([self.members[message.author] isEqualToString:self.members[_currentUser.userId]]) {
+        cell = [tableView dequeueReusableCellWithIdentifier:CHOwnMesssageCellIdentifier forIndexPath:indexPath];
+    } else if (message.hasMedia) {
+        cell = [tableView dequeueReusableCellWithIdentifier:CHMediaMesssageCellIdentifier forIndexPath:indexPath];
+    } else {
+        cell = [tableView dequeueReusableCellWithIdentifier:CHMesssageCellIdentifier forIndexPath:indexPath];
+    }
+    
+    cell.messageTextView.text = nil;
+    //Set attributed string as workaround for iOS 7 bug
+    NSDictionary *attrsDictionary = @{NSFontAttributeName: [UIFont systemFontOfSize:14.0]};
+    
+    cell.messageTextView.attributedText = [[NSAttributedString alloc] initWithString:
+                                      [NSString stringWithFormat:@"%@", message.text]
+                                                                     attributes:attrsDictionary];
+    cell.authorLabel.text = [NSString stringWithFormat:@"by %@", [self.group usernameFromId:message.author]];
+    
+    if ( [_group memberFromId:message.author].avatar != nil) {
+        UIImage *avatar = [_group memberFromId:message.author].avatar;
+        [cell.avatarImageView setImage:avatar];
+        SLColorArt *colorArt = [avatar colorArt];
+        cell.authorLabel.textColor = colorArt.primaryColor;
+    }
+    else {
+        [cell.avatarImageView setImage:[UIImage imageNamed:@"profile-dark.png"]];
+    }
+    
+    if (message.sent != nil) {
+        // Format the timestamp
+        cell.timestampLabel.text = [[self timestampFormatter] stringFromDate:message.sent];
+    }
+    else {
+        cell.timestampLabel.text = @"";
+    }
+    
+    return cell;
+    
+    
     
     static NSString *cHMessageTableViewCell = @"CHMessageTableViewCell";
     CHMessage *currMessage = (CHMessage *)[self.messageArray objectAtIndex:indexPath.row];
-    CHMessageTableViewCell *cell = nil;
+//    CHMessageTableViewCell *cell = nil;
     CHUser *currUser = [[CHNetworkManager sharedManager] currentUser];
 
     if( [self.members[currMessage.author] isEqualToString:self.members[currUser.userId]] ) {
