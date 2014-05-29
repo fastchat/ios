@@ -54,6 +54,12 @@
 #define COCOAPODS_VERSION_MINOR_CRNavigationController 1
 #define COCOAPODS_VERSION_PATCH_CRNavigationController 0
 
+// ColorArt
+#define COCOAPODS_POD_AVAILABLE_ColorArt
+#define COCOAPODS_VERSION_MAJOR_ColorArt 0
+#define COCOAPODS_VERSION_MINOR_ColorArt 1
+#define COCOAPODS_VERSION_PATCH_ColorArt 1
+
 // DBCamera
 #define COCOAPODS_POD_AVAILABLE_DBCamera
 #define COCOAPODS_VERSION_MAJOR_DBCamera 2

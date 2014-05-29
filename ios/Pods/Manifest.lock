@@ -18,6 +18,7 @@ PODS:
   - AFNetworking/UIKit (2.2.4):
     - AFNetworking/NSURLConnection
     - AFNetworking/NSURLSession
+  - ColorArt (0.1.1)
   - CRNavigationController (1.1)
   - DBCamera (2.1.2)
   - HexColors (2.2.1)
@@ -35,6 +36,7 @@ PODS:
 
 DEPENDENCIES:
   - AFNetworking (~> 2.2)
+  - ColorArt (~> 0.1)
   - CRNavigationController (~> 1.1)
   - DBCamera (~> 2.0)
   - HPGrowingTextView (~> 1.1)
@@ -46,6 +48,7 @@ DEPENDENCIES:
 
 SPEC CHECKSUMS:
   AFNetworking: ab63e259fe91eef4519b371ef0a4955af0e73e64
+  ColorArt: f734aa2f988b2be4e9a064c1818d8f8320488110
   CRNavigationController: e6f95ddaff76444a7083d546d5b9f08f915c6073
   DBCamera: 202292ae99033e9e1983b39bca107b9c5bd1c1a4
   HexColors: 01384d2bbe8dc4ffa43c3b4135db6e976952d153
