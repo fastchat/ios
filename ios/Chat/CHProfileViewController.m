@@ -17,7 +17,7 @@
 
 @implementation CHProfileViewController
 
-- (void)viewDidLoad
+- (void)viewDidLoad;
 {
     [super viewDidLoad];
     // Do any additional setup after loading the view.
@@ -29,11 +29,12 @@
    self.avatarImageView.contentMode = UIViewContentModeScaleAspectFill;
 }
 
-- (void)viewWillAppear:(BOOL)animated
+- (void)viewWillAppear:(BOOL)animated;
 {
     [super viewWillAppear:animated];
     
     CHUser *currUser = [[CHNetworkManager sharedManager] currentUser];
+    DLog(@"Curr User: %@", currUser);
     
     if( currUser.avatar == nil ) {
         [[CHNetworkManager sharedManager] getAvatarOfUser:currUser.userId callback:^(UIImage *avatar) {
@@ -50,7 +51,8 @@
     }
 }
 
--(void) imagePickerController:(UIImagePickerController *)picker didFinishPickingMediaWithInfo:(NSDictionary *)info {
+- (void) imagePickerController:(UIImagePickerController *)picker didFinishPickingMediaWithInfo:(NSDictionary *)info;
+{
     UIImage *image = [info objectForKey:UIImagePickerControllerOriginalImage];
     
     
@@ -88,6 +90,6 @@
     [imagePicker setSourceType:UIImagePickerControllerSourceTypeSavedPhotosAlbum];
     [imagePicker setDelegate:self];
     
-    [self presentViewController:imagePicker animated:YES completion:^{}];
+    [self presentViewController:imagePicker animated:YES completion:nil];
 }
 @end

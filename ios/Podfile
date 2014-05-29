@@ -12,6 +12,7 @@ target "Chat" do
   pod 'CRNavigationController', '~> 1.1'
   pod 'MBProgressHUD', '~> 0.8'
   pod 'URBMediaFocusViewController', '~> 0.5'
+  pod 'ColorArt', '~> 0.1'
 end
 
 target "ChatTests" do

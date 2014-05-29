@@ -80,23 +80,27 @@
         self.groups = [groups mutableCopy];
         
         // Get all member avatars
-        for( CHGroup *group in self.groups ) {
-            for( CHUser *user in group.members ) {
-                if( user.avatar == nil ) {
-                    [[CHNetworkManager sharedManager] getAvatarOfUser:user.userId callback:^(UIImage *avatar) {
-                        ((CHUser *)group.memberDict[user.userId]).avatar = avatar;
-                    }];
-                }
-            }
-            
-            for( CHUser *user in group.pastMembers ) {
-                if( user.avatar == nil ) {
-                    [[CHNetworkManager sharedManager] getAvatarOfUser:user.userId callback:^(UIImage *avatar) {
-                        ((CHUser *)group.memberDict[user.userId]).avatar = avatar;
-                    }];
-                }
-            }
-        }
+//        for( CHGroup *group in self.groups ) {
+//            
+//            [group.members enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
+//                CHUser *user = obj;
+//                if( user.avatar == nil ) {
+//                    [[CHNetworkManager sharedManager] getAvatarOfUser:user.userId callback:^(UIImage *avatar) {
+//                        ((CHUser *)group.memberDict[user.userId]).avatar = avatar;
+//                    }];
+//                }
+//            }];
+//            
+//            [group.pastMembers enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
+//                CHUser *user = obj;
+//                if( user.avatar == nil ) {
+//                    [[CHNetworkManager sharedManager] getAvatarOfUser:user.userId callback:^(UIImage *avatar) {
+//                        ((CHUser *)group.memberDict[user.userId]).avatar = avatar;
+//                    }];
+//                }
+//            }];
+//
+//        }
         [self.tableView reloadData];
     }];
 }

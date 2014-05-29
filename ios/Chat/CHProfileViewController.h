@@ -8,12 +8,12 @@
 
 #import <UIKit/UIKit.h>
 
-@interface CHProfileViewController : UIViewController <UIImagePickerControllerDelegate>
+@interface CHProfileViewController : UIViewController <UINavigationControllerDelegate, UIImagePickerControllerDelegate>
 
 @property (weak, nonatomic) IBOutlet UILabel *userNameLabel;
 @property (weak, nonatomic) IBOutlet UIImageView *avatarImageView;
 @property (weak, nonatomic) IBOutlet UIButton *avatarCameraButton;
-- (IBAction)cameraButtonTouched:(id)sender;
 
+- (IBAction)cameraButtonTouched:(id)sender;
 
 @end

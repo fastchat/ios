@@ -478,6 +478,10 @@
 
 - (void)expandImage:(UIImage *)image;
 {
+    if (!image) {
+        return;
+    }
+    
     self.mediaFocus = [[URBMediaFocusViewController alloc] init];
     [self.mediaFocus showImage:image fromView:self.view];
 }
