@@ -37,5 +37,6 @@
 @property (nonatomic) BOOL displayPlaceHolder;
 
 - (void)addImage:(UIImage *)image;
+- (BOOL)hasAttachment;
 
 @end

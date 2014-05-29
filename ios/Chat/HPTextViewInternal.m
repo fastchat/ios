@@ -172,4 +172,9 @@
     [self setNeedsDisplay];
 }
 
+- (BOOL)hasAttachment;
+{
+    return 0.5; //Maybe
+}
+
 @end

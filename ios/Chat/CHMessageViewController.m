@@ -29,6 +29,7 @@ NSString *const CHOwnMesssageCellIdentifier = @"CHOwnMessageTableViewCell";
 
 @property (nonatomic, strong) URBMediaFocusViewController *mediaFocus;
 @property (nonatomic, strong) CHUser *currentUser;
+@property (nonatomic, strong) UIButton *sendButton;
 
 @property NSString *messages;
 @property NSMutableArray *messageArray;
@@ -111,14 +112,13 @@ NSString *const CHOwnMesssageCellIdentifier = @"CHOwnMessageTableViewCell";
     
     [self.containerView addSubview:self.textView];
     
-    UIButton *doneBtn = [UIButton buttonWithType:UIButtonTypeSystem]; //[UIButton buttonWithType:UIButtonTypeCustom];
-	doneBtn.frame = CGRectMake(self.containerView.frame.size.width - 42, 1, 42, 40);
-    doneBtn.autoresizingMask = UIViewAutoresizingFlexibleTopMargin | UIViewAutoresizingFlexibleLeftMargin;
-	[doneBtn setTitle:@"Send" forState:UIControlStateNormal];
-
-    [doneBtn addTarget:self action:@selector(sendMessage) forControlEvents:UIControlEventTouchUpInside];
-
- 	[self.containerView addSubview:doneBtn];
+    self.sendButton = [UIButton buttonWithType:UIButtonTypeSystem]; //[UIButton buttonWithType:UIButtonTypeCustom];
+	_sendButton.frame = CGRectMake(self.containerView.frame.size.width - 42, 1, 42, 40);
+    _sendButton.autoresizingMask = UIViewAutoresizingFlexibleTopMargin | UIViewAutoresizingFlexibleLeftMargin;
+	[_sendButton setTitle:@"Send" forState:UIControlStateNormal];
+    [_sendButton addTarget:self action:@selector(sendMessage) forControlEvents:UIControlEventTouchUpInside];
+ 	[self.containerView addSubview:_sendButton];
+    
     self.containerView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleTopMargin;
     
     self.previousMessageTextViewRect = CGRectZero;
@@ -176,8 +176,8 @@ NSString *const CHOwnMesssageCellIdentifier = @"CHOwnMessageTableViewCell";
     }
     
     self.currentUser = [[CHNetworkManager sharedManager] currentUser];
-    
     self.keyboardIsVisible = NO;
+    [self setSendButtonEnabled:[self canSendMessage]];
 }
 
 -(void)viewWillAppear:(BOOL)animated;
@@ -236,13 +236,27 @@ NSString *const CHOwnMesssageCellIdentifier = @"CHOwnMessageTableViewCell";
     
     [[CHNetworkManager sharedManager] getMessagesForGroup:self.group._id page:self.currPage callback:^(NSArray *messages) {
         messages = [[[messages reverseObjectEnumerator] allObjects] mutableCopy];
+
+        NSInteger newCount = messages.count;
+        NSMutableArray *indexPaths = [NSMutableArray array];
+        for (NSInteger i = 0; i < newCount; i++) {
+            [indexPaths addObject:[NSIndexPath indexPathForRow:i inSection:0]];
+        }
+        
         NSRange range = NSMakeRange(0, messages.count);
         NSIndexSet *indexSet = [NSIndexSet indexSetWithIndexesInRange:range];
+
+        ///
+        /// Actually add the rows animatedly
+        ///
+        [self.messageArray insertObjects:messages atIndexes:indexSet];
+        [self.messageTable beginUpdates];
+        [self.messageTable insertRowsAtIndexPaths:indexPaths withRowAnimation:UITableViewRowAnimationAutomatic];
+        [self.messageTable endUpdates];
         
-#warning Do not use reload Data
-        [self.messageArray insertObjectgss:messages atIndexes:indexSet];
-        [self.messageTable reloadData];
-        [self.messageTable scrollToRowAtIndexPath:[NSIndexPath indexPathForRow:_messageArray.count - 1 inSection:0] atScrollPosition:UITableViewScrollPositionBottom animated:NO];
+        [self.messageTable scrollToRowAtIndexPath:[NSIndexPath indexPathForRow:(_messageArray.count - newCount) inSection:0]
+                                 atScrollPosition:UITableViewScrollPositionMiddle
+                                         animated:NO];
         
         [self.refresh endRefreshing];
     }];
@@ -323,6 +337,7 @@ NSString *const CHOwnMesssageCellIdentifier = @"CHOwnMessageTableViewCell";
     
     self.media = nil;
     self.mediaWasAdded = NO;
+    [self setSendButtonEnabled:[self canSendMessage]];
 }
 
 #pragma mark - Keyboard Methods
@@ -547,6 +562,19 @@ NSString *const CHOwnMesssageCellIdentifier = @"CHOwnMessageTableViewCell";
                                      animated:YES];
 }
 
+- (BOOL)growingTextView:(HPGrowingTextView *)growingTextView shouldChangeTextInRange:(NSRange)range replacementText:(NSString *)text;
+{
+    if (self.textView.text.length > range.location ) {
+        NSInteger character = [self.textView.text characterAtIndex:range.location];
+        if (character == NSAttachmentCharacter) {
+            
+            DLog(@"DELETED ATTACHMENT");
+            self.textView.internalTextView.attachedImage = nil;
+        }
+    }
+       return YES;
+}
+
 - (NSString *)formatDate:(NSDate *)date;
 {
     if (!date) {
@@ -584,6 +612,11 @@ NSString *const CHOwnMesssageCellIdentifier = @"CHOwnMessageTableViewCell";
     [self tableView:self.messageTable didSelectRowAtIndexPath:[NSIndexPath indexPathForRow:sender.view.tag inSection:0]];
 }
 
+- (void)growingTextViewDidChange:(HPGrowingTextView *)growingTextView;
+{
+    [self setSendButtonEnabled:[self canSendMessage]];
+}
+
 #pragma mark - Camera
 
 -(void)loadCamera;
@@ -615,6 +648,18 @@ NSString *const CHOwnMesssageCellIdentifier = @"CHOwnMessageTableViewCell";
     if( self.keyboardIsVisible ) {
         DLog(@"Keyboard should be visible");
     }
+    
+    [self setSendButtonEnabled:[self canSendMessage]];
+}
+
+- (void)setSendButtonEnabled:(BOOL)enabled;
+{
+    [self.sendButton setEnabled:enabled];
+}
+
+- (BOOL)canSendMessage;
+{
+    return self.textView.text.length > 0 || self.textView.internalTextView.attachedImage != nil;
 }
 
 
