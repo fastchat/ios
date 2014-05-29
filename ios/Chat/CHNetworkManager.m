@@ -220,6 +220,7 @@ NSString *const kAvatarKey = @"com.fastchat.avatarkey";
     if (avatar) {
         if (callback) {
             callback(avatar);
+            return;
         }
     }
     
