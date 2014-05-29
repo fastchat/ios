@@ -208,7 +208,8 @@
     
     internalTextView.text = newText;
     
-    minHeight = [self measureHeight];
+//    minHeight = [self measureHeight];
+    minHeight = 36;
     
     internalTextView.text = saveText;
     internalTextView.hidden = NO;

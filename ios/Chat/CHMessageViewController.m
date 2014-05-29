@@ -70,7 +70,7 @@ NSString *const CHOwnMesssageCellIdentifier = @"CHOwnMessageTableViewCell";
 
     [self.messageTable addSubview:self.refresh];
     
-    self.containerView = [[UIView alloc] initWithFrame:CGRectMake(0, self.view.frame.size.height - 45, 320, 45)];
+    self.containerView = [[UIView alloc] initWithFrame:CGRectMake(0, self.view.frame.size.height - 40, 320, 40)];
     self.containerView.backgroundColor = [UIColor whiteColor];
     
     UIView *line = [[UIView alloc] initWithFrame:CGRectMake(0, 0, self.messageTable.frame.size.width, 0.5)];
@@ -85,24 +85,21 @@ NSString *const CHOwnMesssageCellIdentifier = @"CHOwnMessageTableViewCell";
     [cameraBtn addTarget:self action:@selector(loadCamera) forControlEvents:UIControlEventTouchUpInside];
     [self.containerView addSubview:cameraBtn];
     
-    self.textView = [[HPGrowingTextView alloc] initWithFrame:CGRectMake(45, 2, 230, 10)];
+    self.textView = [[HPGrowingTextView alloc] initWithFrame:CGRectMake(45, 2, 230, 36)];
     self.textView.isScrollable = NO;
 //    self.textView.contentInset = UIEdgeInsetsMake(49, 5, 0, 5);
     self.textView.layer.borderColor = [[UIColor lightGrayColor] CGColor];
     self.textView.layer.borderWidth = 0.5;
     self.textView.layer.cornerRadius = 4.0;
     self.textView.layer.masksToBounds = YES;
-    
-	self.textView.minNumberOfLines = 1;
-    // you can also set the maximum height in points with maxHeight
-    self.textView.maxHeight = 140.0f;
-	self.textView.returnKeyType = UIReturnKeyDefault; //just as an example
     self.textView.font = [UIFont systemFontOfSize:16];
     self.textView.internalTextView.typingAttributes = @{NSFontAttributeName: [UIFont systemFontOfSize:16]};
-	self.textView.delegate = self;
+    self.textView.maxHeight = 140.0f;
+	self.textView.returnKeyType = UIReturnKeyDefault; //just as an example
     self.textView.internalTextView.scrollIndicatorInsets = UIEdgeInsetsMake(5, 0, 5, 0);
     self.textView.backgroundColor = [UIColor whiteColor];
     self.textView.placeholder = @"Send FastChat";
+    self.textView.delegate = self;
     
     [self.containerView addSubview:self.textView];
     [self.view addSubview:self.containerView];
@@ -189,7 +186,7 @@ NSString *const CHOwnMesssageCellIdentifier = @"CHOwnMessageTableViewCell";
     
     ///
     /// This all needs to be refactored. AKA, it should never happen
-    ///8
+    ///
     if (self.group == nil) {
         [[CHNetworkManager sharedManager] getGroups:^(NSArray *groups) {
             for (CHGroup *group in groups) {
@@ -551,9 +548,11 @@ NSString *const CHOwnMesssageCellIdentifier = @"CHOwnMessageTableViewCell";
     // Resize table
     [self setTableViewInsetsFromBottom:self.heightOfKeyboard];
 
-    [self.messageTable scrollToRowAtIndexPath:[NSIndexPath indexPathForRow:_messageArray.count - 1 inSection:0]
-                             atScrollPosition:UITableViewScrollPositionBottom
-                                     animated:YES];
+    if (_messageArray.count > 0) {
+        [self.messageTable scrollToRowAtIndexPath:[NSIndexPath indexPathForRow:_messageArray.count - 1 inSection:0]
+                                 atScrollPosition:UITableViewScrollPositionBottom
+                                         animated:YES];
+    }
 }
 
 - (BOOL)growingTextView:(HPGrowingTextView *)growingTextView shouldChangeTextInRange:(NSRange)range replacementText:(NSString *)text;
