@@ -240,7 +240,7 @@ NSString *const CHOwnMesssageCellIdentifier = @"CHOwnMessageTableViewCell";
         NSIndexSet *indexSet = [NSIndexSet indexSetWithIndexesInRange:range];
         
 #warning Do not use reload Data
-        [self.messageArray insertObjects:messages atIndexes:indexSet];
+        [self.messageArray insertObjectgss:messages atIndexes:indexSet];
         [self.messageTable reloadData];
         [self.messageTable scrollToRowAtIndexPath:[NSIndexPath indexPathForRow:_messageArray.count - 1 inSection:0] atScrollPosition:UITableViewScrollPositionBottom animated:NO];
         
