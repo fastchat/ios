@@ -16,8 +16,6 @@
 #import "CHGroup.h"
 #import "CHMessage.h"
 #import "CHCircleImageView.h"
-#import "CHMediaMessageTableViewCell.h"
-#import "CHMediaOwnTableViewCell.h"
 #import "URBMediaFocusViewController.h"
 #import "UIImage+ColorArt.h"
 #import "HPTextViewInternal.h"
@@ -26,8 +24,6 @@
 
 NSString *const CHMesssageCellIdentifier = @"CHMessageTableViewCell";
 NSString *const CHOwnMesssageCellIdentifier = @"CHOwnMessageTableViewCell";
-NSString *const CHMediaMesssageCellIdentifier = @"CHMediaMessageTableViewCell";
-NSString *const CHOwnMediaMesssageCellIdentifier = @"CHMediaOwnTableViewCell";
 
 @interface CHMessageViewController ()
 
@@ -272,9 +268,9 @@ NSString *const CHOwnMediaMesssageCellIdentifier = @"CHMediaOwnTableViewCell";
     NSMutableDictionary *data = [[NSMutableDictionary alloc] initWithDictionary:@{@"from": currUser.userId, @"text" : msg, @"group": self.group._id}];
     
     CHMessage *newMessage = [[CHMessage alloc] init];
+    newMessage.text = self.textView.text;
     
     if (self.textView.internalTextView.attachedImage) {
-        newMessage.text = self.textView.text;
         newMessage.hasMedia = @YES;
         newMessage.theMediaSent = self.textView.internalTextView.attachedImage;
         [[CHNetworkManager sharedManager] postMediaMessageWithImage:self.textView.internalTextView.attachedImage
@@ -336,11 +332,12 @@ NSString *const CHOwnMediaMesssageCellIdentifier = @"CHMediaOwnTableViewCell";
     CGFloat keyboardHeight = [[notification.userInfo valueForKey:UIKeyboardFrameEndUserInfoKey] CGRectValue].size.height;
     NSTimeInterval animationDuration = [[notification.userInfo objectForKey:UIKeyboardAnimationDurationUserInfoKey] floatValue];
     NSInteger curve = [[notification.userInfo valueForKey:UIKeyboardAnimationCurveUserInfoKey] integerValue];
-    self.heightOfKeyboard = keyboardHeight;
+    UIViewAnimationOptions options = (curve << 16);
     
+    self.heightOfKeyboard = keyboardHeight;
     [UIView animateWithDuration:animationDuration
                           delay:0.0
-                        options:curve
+                        options:options
                      animations:^{
                          [self setTableViewInsetsFromBottom:keyboardHeight];
                          
@@ -359,10 +356,11 @@ NSString *const CHOwnMediaMesssageCellIdentifier = @"CHMediaOwnTableViewCell";
     self.heightOfKeyboard = 0;
     NSTimeInterval animationDuration = [[notification.userInfo objectForKey:UIKeyboardAnimationDurationUserInfoKey] floatValue];
     NSInteger animationCurve = [[notification.userInfo objectForKey:UIKeyboardAnimationCurveUserInfoKey] integerValue];
+    UIViewAnimationOptions options = (animationCurve << 16);
     
     [UIView animateWithDuration:animationDuration
                           delay:0.0
-                        options:animationCurve
+                        options:options
                      animations:^{
                          [self setTableViewInsetsFromBottom:0];
                          
@@ -388,23 +386,21 @@ NSString *const CHOwnMediaMesssageCellIdentifier = @"CHMediaOwnTableViewCell";
     CHMessage *message = _messageArray[indexPath.row];
     CHMessageTableViewCell *cell;
     
-    if ([self.members[message.author] isEqualToString:self.members[_currentUser.userId]] && message.hasMedia.boolValue) {
-        cell = [tableView dequeueReusableCellWithIdentifier:CHOwnMediaMesssageCellIdentifier forIndexPath:indexPath];
-    } else if ([self.members[message.author] isEqualToString:self.members[_currentUser.userId]]) {
+    UIColor *color = [UIColor whiteColor];;
+    
+    if ([self.members[message.author] isEqualToString:self.members[_currentUser.userId]]) {
         cell = [tableView dequeueReusableCellWithIdentifier:CHOwnMesssageCellIdentifier forIndexPath:indexPath];
-    } else if (message.hasMedia) {
-        cell = [tableView dequeueReusableCellWithIdentifier:CHMediaMesssageCellIdentifier forIndexPath:indexPath];
     } else {
         cell = [tableView dequeueReusableCellWithIdentifier:CHMesssageCellIdentifier forIndexPath:indexPath];
+        color = [UIColor blackColor];
     }
     
+    NSDictionary *attributes = @{NSForegroundColorAttributeName: color,
+                                 NSFontAttributeName: [UIFont systemFontOfSize:16.0]};
     cell.messageTextView.text = nil;
     cell.messageTextView.attributedText = nil;
-    //Set attributed string as workaround for iOS 7 bug
-//    NSDictionary *attrsDictionary = @{NSFontAttributeName: [UIFont systemFontOfSize:14.0]};
-    
-    cell.messageTextView.attributedText = [[NSAttributedString alloc] initWithString:message.text
-                                                                     attributes:nil];
+    cell.messageTextView.attributedText = [[NSAttributedString alloc] initWithString:message.text ? message.text : @""
+                                                                          attributes:attributes];
     cell.authorLabel.text = [self.group usernameFromId:message.author];
     cell.timestampLabel.text = [self formatDate:message.sent];
     
@@ -413,8 +409,7 @@ NSString *const CHOwnMediaMesssageCellIdentifier = @"CHMediaOwnTableViewCell";
         [cell.avatarImageView setImage:avatar];
         SLColorArt *colorArt = [avatar colorArt];
         cell.authorLabel.textColor = colorArt.primaryColor;
-    }
-    else {
+    } else {
         [cell.avatarImageView setImage:[UIImage imageNamed:@"profile-dark.png"]];
         cell.authorLabel.textColor = [UIColor blackColor];
     }
@@ -435,6 +430,7 @@ NSString *const CHOwnMediaMesssageCellIdentifier = @"CHMediaOwnTableViewCell";
             [string appendAttributedString:[[NSAttributedString alloc] initWithString:message.text]];
             [string appendAttributedString:[[NSAttributedString alloc] initWithString:@"\n\n"]];
             [string appendAttributedString:[NSAttributedString attributedStringWithAttachment:textAttachment]];
+            [string addAttributes:attributes range:NSMakeRange(0, string.length)];
             cell.messageTextView.attributedText = string;
         }];
     }
@@ -479,13 +475,19 @@ NSString *const CHOwnMediaMesssageCellIdentifier = @"CHMediaOwnTableViewCell";
 
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath;
 {
-    CGSize renderedSize = [((CHMessage *)[self.messageArray objectAtIndex:indexPath.row]).text sizeWithFont: [UIFont systemFontOfSize:14.0f] constrainedToSize:CGSizeMake(205, CGFLOAT_MAX) lineBreakMode:NSLineBreakByWordWrapping];
+    CHMessage *message = _messageArray[indexPath.row];
+    CGRect rect = [message.text boundingRectWithSize:CGSizeMake(205 - 16, CGFLOAT_MAX)
+                                             options:NSStringDrawingUsesFontLeading | NSStringDrawingUsesLineFragmentOrigin
+                                          attributes:@{NSFontAttributeName: [UIFont systemFontOfSize:16]}
+                                             context:nil];
 
+    
+    CGFloat height = rect.size.height;
     // Adding 45.0 to fix the bug where messages of certain lengths don't size the cell properly.
-    if( [[[self.messageArray objectAtIndex:indexPath.row] hasMedia] floatValue]) {
-        renderedSize.height += 110.0f;
+    if( message.hasMedia.boolValue) {
+        height += 110.0f;
     }
-    return renderedSize.height + 45.0f;
+    return height + 45.0f;
 
 }
 
