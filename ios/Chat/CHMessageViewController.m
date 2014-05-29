@@ -440,6 +440,7 @@ NSString *const CHOwnMediaMesssageCellIdentifier = @"CHMediaOwnTableViewCell";
     }
     
     UITapGestureRecognizer *tapper = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(textViewTapped:)];
+    cell.messageTextView.tag = indexPath.row;
     [cell.messageTextView addGestureRecognizer:tapper];
     
     return cell;
@@ -466,8 +467,14 @@ NSString *const CHOwnMediaMesssageCellIdentifier = @"CHMediaOwnTableViewCell";
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath;
 {
+    CHMessage *message = _messageArray[indexPath.row];
+    
     self.shouldSlide = YES;
     [self resignTextView];
+    
+    if (message.hasMedia) {
+        [self expandImage:message.theMediaSent];
+    }
 }
 
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath;
@@ -572,7 +579,7 @@ NSString *const CHOwnMediaMesssageCellIdentifier = @"CHMediaOwnTableViewCell";
 
 - (void)textViewTapped:(UITapGestureRecognizer *)sender;
 {
-    [self resignTextView];
+    [self tableView:self.messageTable didSelectRowAtIndexPath:[NSIndexPath indexPathForRow:sender.view.tag inSection:0]];
 }
 
 #pragma mark - Camera
