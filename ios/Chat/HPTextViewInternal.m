@@ -183,7 +183,7 @@
     
     NSMutableAttributedString *string = [[NSMutableAttributedString alloc] init];
     [string appendAttributedString:[[NSAttributedString alloc] initWithString:self.text]];
-    [string appendAttributedString:[[NSAttributedString alloc] initWithString:@"\n\n"]];
+    [string appendAttributedString:[[NSAttributedString alloc] initWithString:@"\n"]];
     [string appendAttributedString:[NSAttributedString attributedStringWithAttachment:textAttachment]];
     self.attributedText = string;
     

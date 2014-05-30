@@ -428,14 +428,13 @@ NSString *const CHOwnMesssageCellIdentifier = @"CHOwnMessageTableViewCell";
 //            [ ((CHMediaMessageTableViewCell *)cell).mediaMessageImageView setImage:messageMedia];
             
             CGSize size = [self boundsForImage:messageMedia];
+            DLog(@"SIZE??? %@", NSStringFromCGSize(size));
             NSTextAttachment *textAttachment = [[NSTextAttachment alloc] init];
             textAttachment.image = messageMedia;
             textAttachment.bounds = CGRectMake(0, 0, size.width, size.height);
             
-            DLog(@"Before Removed: %@", message.text);
             NSMutableAttributedString *string = [[NSMutableAttributedString alloc] init];
             [string appendAttributedString:[[NSAttributedString alloc] initWithString:message.text]];
-            [string appendAttributedString:[[NSAttributedString alloc] initWithString:@"\n\n"]];
             [string appendAttributedString:[NSAttributedString attributedStringWithAttachment:textAttachment]];
             [string addAttributes:attributes range:NSMakeRange(0, string.length)];
             cell.messageTextView.attributedText = string;
@@ -451,11 +450,20 @@ NSString *const CHOwnMesssageCellIdentifier = @"CHOwnMessageTableViewCell";
 
 - (CGSize)boundsForImage:(UIImage *)image;
 {
-//    if (image.size.width < 100 && image.size.height < 100) {
-//        return CGSizeMake(75, 75);
-//    }
+    CGFloat height = image.size.height;
+    CGFloat width = image.size.width;
+    CGFloat max = 150.0;
     
-    return CGSizeMake(75, 75);
+    if (height > width && height > max) {
+        CGFloat ratio = height / max;
+        height = height / ratio;
+        width = width / ratio;
+    } else if (width >= height && width > max) {
+        CGFloat ratio = width / max;
+        height = height / ratio;
+        width = width / ratio;
+    }
+    return CGSizeMake(width, height);
 }
 
 - (void)expandImage:(UIImage *)image;
@@ -492,7 +500,7 @@ NSString *const CHOwnMesssageCellIdentifier = @"CHOwnMessageTableViewCell";
     CGFloat height = rect.size.height;
     // Adding 45.0 to fix the bug where messages of certain lengths don't size the cell properly.
     if( message.hasMedia.boolValue) {
-        height += 110.0f;
+        height += 150.0f;
     }
     return height + 45.0f;
 

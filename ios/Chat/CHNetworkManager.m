@@ -14,6 +14,7 @@
 #import "CHGroupsCollectionAccessor.h"
 
 NSString *const kAvatarKey = @"com.fastchat.avatarkey";
+NSString *const kMediaKey = @"com.fastchat.mediakey";
 //#define BASE_URL @"http://10.0.0.10:3000"
 #define BASE_URL @"http://powerful-cliffs-9562.herokuapp.com:80"
 
@@ -138,18 +139,41 @@ NSString *const kAvatarKey = @"com.fastchat.avatarkey";
 
 - (void)getMediaForMessage:(NSString *)messageId groupId:(NSString *)groupId callback:(void (^)(UIImage *messageMedia))callback;
 {
-    NSMutableURLRequest *request = [[NSMutableURLRequest alloc] initWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"%@/group/%@/message/%@/media",BASE_URL, groupId, messageId]]];
+    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+    NSString *key = [NSString stringWithFormat:@"%@-%@-%@", kMediaKey, groupId, messageId];
+    NSData *data = [defaults objectForKey:key];
+    UIImage *image = [UIImage imageWithData:data];
+    if (image) {
+        if (callback) {
+            callback(image);
+            return;
+        }
+    }
+    
+    NSMutableURLRequest *request = [[NSMutableURLRequest alloc] initWithURL:
+                                    [NSURL URLWithString:
+                                     [NSString stringWithFormat:@"%@/group/%@/message/%@/media", BASE_URL, groupId, messageId]]];
     [request setValue:self.sessiontoken forHTTPHeaderField:@"session-token"];
     
     AFHTTPRequestOperation *requestOperation = [[AFHTTPRequestOperation alloc] initWithRequest:request];
     requestOperation.responseSerializer = [AFImageResponseSerializer serializer];
     [requestOperation setCompletionBlockWithSuccess:^(AFHTTPRequestOperation *operation, id responseObject) {
+        if (responseObject) {
+            dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+                NSData *data = UIImagePNGRepresentation(responseObject);
+                [defaults setObject:data forKey:key];
+                [defaults synchronize];
+            });
+        }
         if(callback) {
             callback(responseObject);
         }
         
     } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
         NSLog(@"Image error: %@", error);
+        if (callback) {
+            callback(nil);
+        }
     }];
     
     [requestOperation start];
