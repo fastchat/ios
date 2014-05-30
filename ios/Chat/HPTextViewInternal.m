@@ -161,7 +161,21 @@
 
 - (void)addImage:(UIImage *)image;
 {
-    CGSize size = CGSizeMake(100, 150);
+    CGFloat height = image.size.height;
+    CGFloat width = image.size.width;
+    CGFloat max = 150.0;
+    
+    if (height > width && height > 150) {
+        CGFloat ratio = height / max;
+        height = height / ratio;
+        width = width / ratio;
+    } else if (width >= height && width > 150) {
+        CGFloat ratio = width / max;
+        height = height / ratio;
+        width = width / ratio;
+    }
+    
+    CGSize size = CGSizeMake(width, height);
                    
     NSTextAttachment *textAttachment = [[NSTextAttachment alloc] init];
     textAttachment.image = image;
@@ -180,7 +194,24 @@
 
 - (BOOL)hasAttachment;
 {
-    return 0.5; //Maybe
+    return [self numberOfAttachments] > 0;
+}
+
+- (NSInteger)numberOfAttachments;
+{
+    return [[self locationOfAttachments] count];
+}
+
+- (NSArray *)locationOfAttachments;
+{
+    NSMutableArray *locations = [NSMutableArray array];
+    for (NSInteger i = 0; i < self.attributedText.length; i++) {
+        NSInteger character = [self.attributedText.string characterAtIndex:i];
+        if (character == NSAttachmentCharacter) {
+            [locations addObject:[NSValue valueWithRange:NSMakeRange(i, 1)]];
+        }
+    }
+    return locations;
 }
 
 @end

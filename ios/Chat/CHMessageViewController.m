@@ -30,14 +30,16 @@ NSString *const CHOwnMesssageCellIdentifier = @"CHOwnMessageTableViewCell";
 @property (nonatomic, strong) URBMediaFocusViewController *mediaFocus;
 @property (nonatomic, strong) CHUser *currentUser;
 @property (nonatomic, strong) UIButton *sendButton;
+@property (nonatomic, strong) NSMutableArray *messageArray;
+@property (nonatomic, assign) NSInteger currPage;
 
-@property NSString *messages;
-@property NSMutableArray *messageArray;
+
+
 @property (nonatomic, strong) SocketIO *socket;
 @property CGRect previousMessageTextViewRect;
 @property (nonatomic, strong) NSMutableDictionary *members;
 @property float heightOfKeyboard;
-@property int currPage;
+
 @property UIRefreshControl *refresh;
 @property BOOL shouldSlide;
 @property BOOL keyboardIsVisible;
@@ -135,7 +137,6 @@ NSString *const CHOwnMesssageCellIdentifier = @"CHOwnMessageTableViewCell";
     
     self.userIds = tempIds;
     self.messageArray = [NSMutableArray array];
-    self.messages = @"";
     
     //
     // make a memebrs hash
