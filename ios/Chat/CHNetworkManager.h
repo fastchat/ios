@@ -23,7 +23,7 @@
 - (void)getGroups: (void (^)(NSArray *groups))callback;
 - (void)createGroupWithName: (NSString *)groupName members: (NSArray *)members callback: (void (^)(bool successful, NSError *error))callback;
 - (void)getMediaForMessage:(NSString *)messageId groupId:(NSString *)groupId callback:(void (^)(UIImage *messageMedia))callback;
-- (void)getMessagesForGroup:(NSString *)group page:(int)page callback:(void (^)(NSArray *messages))callback;
+- (void)getMessagesForGroup:(NSString *)group page:(NSInteger)page callback:(void (^)(NSArray *messages))callback;
 
 - (void)getProfile: (void (^)(CHUser *userProfile))callback;
 - (void)getAvatarOfUser: (NSString *)userId callback: (void (^)(UIImage *avatar))callback;

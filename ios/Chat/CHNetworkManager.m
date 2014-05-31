@@ -179,7 +179,7 @@ NSString *const kMediaKey = @"com.fastchat.mediakey";
     [requestOperation start];
 }
 
-- (void)getMessagesForGroup:(NSString *)group page:(int)page callback:(void (^)(NSArray *messages))callback;
+- (void)getMessagesForGroup:(NSString *)group page:(NSInteger)page callback:(void (^)(NSArray *messages))callback;
 {
     if( !page ) {
         [self GET:[NSString stringWithFormat:@"/group/%@/message", group] parameters:nil success:^(NSURLSessionDataTask *task, id responseObject) {
@@ -196,7 +196,7 @@ NSString *const kMediaKey = @"com.fastchat.mediakey";
         }];
     }
     else {
-        [self GET:[NSString stringWithFormat:@"/group/%@/message?page=%d", group, page] parameters:nil success:^(NSURLSessionDataTask *task, id responseObject) {
+        [self GET:[NSString stringWithFormat:@"/group/%@/message?page=%ld", group, (long)page] parameters:nil success:^(NSURLSessionDataTask *task, id responseObject) {
             if( callback ) {
                 NSArray *messages = [CHMessage objectsFromJSON:responseObject];
                 
