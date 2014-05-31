@@ -25,6 +25,7 @@
 @property (weak, nonatomic) IBOutlet UITableView *messageTable;
 @property (weak, nonatomic) IBOutlet NSLayoutConstraint *bottomDistance;
 @property (weak, nonatomic) IBOutlet UIView *messageBarView;
+@property (weak, nonatomic) IBOutlet UIProgressView *progressBar;
 
 @property UIView *containerView;
 @property HPGrowingTextView *textView;

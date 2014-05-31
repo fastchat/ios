@@ -262,13 +262,14 @@ NSString *const CHOwnMesssageCellIdentifier = @"CHOwnMessageTableViewCell";
 
 - (void)sendMessage;
 {
-    
-    DLog(@"We should send message: %@", self.textView.internalTextView.attachedImage);
     NSString *msg = self.textView.text;
     
     if ( !msg.length ) {
         return;
     }
+    
+    self.progressBar.progress = 0.0;
+//    self.progressBar.hidden = NO;
     
     CHUser *currUser = [[CHNetworkManager sharedManager] currentUser];
     NSMutableDictionary *data = [[NSMutableDictionary alloc] initWithDictionary:@{@"from": currUser.userId, @"text" : msg, @"group": self.group._id}];
@@ -276,6 +277,7 @@ NSString *const CHOwnMesssageCellIdentifier = @"CHOwnMessageTableViewCell";
     CHMessage *newMessage = [[CHMessage alloc] init];
     newMessage.text = self.textView.text;
     
+    [_progressBar setProgress:0.5 animated:YES];
     if (self.textView.internalTextView.attachedImage) {
         newMessage.hasMedia = @YES;
         newMessage.theMediaSent = self.textView.internalTextView.attachedImage;
@@ -286,6 +288,11 @@ NSString *const CHOwnMesssageCellIdentifier = @"CHOwnMessageTableViewCell";
                                                                
                                                                self.textView.text = @"";
                                                                
+                                                               [self.progressBar setProgress:1.0 animated:YES];
+                                                               dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1.5 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+                                                                   self.progressBar.hidden = YES;
+                                                               });
+                                                               
                                                                if( success ) {
                                                                    DLog(@"Successful post!");
                                                                }
@@ -295,7 +302,12 @@ NSString *const CHOwnMesssageCellIdentifier = @"CHOwnMessageTableViewCell";
                                                            }];
         
     } else {
-        [[CHSocketManager sharedManager] sendMessageWithEvent:@"message" data:data];
+        [[CHSocketManager sharedManager] sendMessageWithEvent:@"message" data:data acknowledgement:^(id argsData) {
+            [self.progressBar setProgress:1.0 animated:YES];
+            dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1.5 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+                self.progressBar.hidden = YES;
+            });
+        }];
     }
     
     newMessage.author = currUser.userId;

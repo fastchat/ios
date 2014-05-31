@@ -21,8 +21,6 @@
 
 @implementation CHSocketManager
 
-
-
 + (CHSocketManager *)sharedManager;
 {
     static CHSocketManager *_sharedManager;
@@ -35,9 +33,8 @@
     return _sharedManager;
 }
 
--(SocketIO *)getSocket;
+- (SocketIO *)getSocket;
 {
-
     return _socket;
 }
 
@@ -106,9 +103,9 @@
     
 }
 
--(void) sendMessageWithEvent: (NSString *)message data: (NSDictionary *)data;
+-(void) sendMessageWithEvent: (NSString *)message data: (NSDictionary *)data acknowledgement:(void (^)(id argsData))acknowledgement;
 {
-    [_socket sendEvent:message withData: data];
+    [_socket sendEvent:message withData:data andAcknowledge:acknowledgement];
 }
 
 -(void) closeSocket;

@@ -26,7 +26,7 @@
 + (CHSocketManager *)sharedManager;
 -(SocketIO *)getSocket;
 -(void)openSocket;
--(void) sendMessageWithEvent: (NSString *)message data: (NSDictionary *)data;
+- (void) sendMessageWithEvent: (NSString *)message data: (NSDictionary *)data acknowledgement:(void (^)(id argsData))acknowledgement;
 -(void) closeSocket;
 
 @end
