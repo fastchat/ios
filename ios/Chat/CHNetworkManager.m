@@ -185,7 +185,6 @@ NSString *const kMediaKey = @"com.fastchat.mediakey";
         [self GET:[NSString stringWithFormat:@"/group/%@/message", group] parameters:nil success:^(NSURLSessionDataTask *task, id responseObject) {
             if( callback ) {
                 NSArray *messages = [CHMessage objectsFromJSON:responseObject];
-                DLog(@"Messages returned: %@", messages);
                 callback(messages);
             }
         } failure:^(NSURLSessionDataTask *task, NSError *error) {

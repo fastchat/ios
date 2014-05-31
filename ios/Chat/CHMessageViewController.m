@@ -32,7 +32,8 @@ NSString *const CHOwnMesssageCellIdentifier = @"CHOwnMessageTableViewCell";
 @property (nonatomic, strong) UIButton *sendButton;
 @property (nonatomic, strong) NSMutableArray *messageArray;
 @property (nonatomic, assign) NSInteger currPage;
-
+@property (nonatomic, strong) UIResponder *previousResponder;
+@property (nonatomic, assign) BOOL beingDismissed;
 
 
 @property (nonatomic, strong) SocketIO *socket;
@@ -61,6 +62,7 @@ NSString *const CHOwnMesssageCellIdentifier = @"CHOwnMessageTableViewCell";
     self.shouldSlide = YES;
     self.title = _group.groupName;
     self.messageEntryField.hidden = YES;
+    _beingDismissed = NO;
     
     self.currPage = 0;
     
@@ -172,52 +174,166 @@ NSString *const CHOwnMesssageCellIdentifier = @"CHOwnMessageTableViewCell";
     [self setSendButtonEnabled:[self canSendMessage]];
 }
 
--(void)viewWillAppear:(BOOL)animated;
+
+
+- (void)beginAppearanceTransition:(BOOL)isAppearing animated:(BOOL)animated;
 {
+    [super beginAppearanceTransition:isAppearing animated:animated];
     
-    [[NSNotificationCenter defaultCenter] addObserver:self
-                                             selector:@selector(keyboardWillShow:)
-                                                 name:UIKeyboardWillShowNotification object:nil];
-    
-    [[NSNotificationCenter defaultCenter] addObserver:self
-                                             selector:@selector(keyboardWillHide:)
-                                                 name:UIKeyboardWillHideNotification object:nil];
-    
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(reloadTableViewData) name:@"ReloadAppDelegateTable" object:nil];
-    
-    ///
-    /// This all needs to be refactored. AKA, it should never happen
-    ///
-    if (self.group == nil) {
-        [[CHNetworkManager sharedManager] getGroups:^(NSArray *groups) {
-            for (CHGroup *group in groups) {
-                if( [group._id isEqualToString:self.groupId] ) {
-                    self.group = group;
-                }
-            }
-        }];
+    if (!isAppearing) {
+        _beingDismissed = YES;
     }
-    // Get all member avatars
-    NSArray *members = _group.members;
-    for( CHUser *user in members ) {
-        if( user.avatar == nil ) {
-            [[CHNetworkManager sharedManager] getAvatarOfUser:user.userId callback:^(UIImage *avatar) {
-                if( avatar ) {
-                    user.avatar = avatar;
-                    _group.memberDict[user.userId] = user;
+    
+    if (isAppearing) {
+        [self.transitionCoordinator animateAlongsideTransitionInView:nil animation:^(id<UIViewControllerTransitionCoordinatorContext> context) {
+
+        } completion:^(id<UIViewControllerTransitionCoordinatorContext> context) {
+            
+            if (![context isCancelled]) {
+                DLog(@"Showed successfully.");
+                [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(reloadTableViewData) name:@"ReloadAppDelegateTable" object:nil];
+                
+                [[NSNotificationCenter defaultCenter] addObserver:self
+                                                         selector:@selector(keyboardWillShow:)
+                                                             name:UIKeyboardWillShowNotification
+                                                           object:nil];
+                
+                [[NSNotificationCenter defaultCenter] addObserver:self
+                                                         selector:@selector(keyboardWillHide:)
+                                                             name:UIKeyboardWillHideNotification
+                                                           object:nil];
+                
+                ///
+                /// This all needs to be refactored. AKA, it should never happen
+                ///
+                if (self.group == nil) {
+                    [[CHNetworkManager sharedManager] getGroups:^(NSArray *groups) {
+                        for (CHGroup *group in groups) {
+                            if( [group._id isEqualToString:self.groupId] ) {
+                                self.group = group;
+                            }
+                        }
+                    }];
                 }
-                else {
-                    user.avatar = [UIImage imageNamed:@"profile-dark.png"];
+                // Get all member avatars
+                NSArray *members = _group.members;
+                for( CHUser *user in members ) {
+                    if( user.avatar == nil ) {
+                        [[CHNetworkManager sharedManager] getAvatarOfUser:user.userId callback:^(UIImage *avatar) {
+                            if( avatar ) {
+                                user.avatar = avatar;
+                                _group.memberDict[user.userId] = user;
+                            }
+                            else {
+                                user.avatar = [UIImage imageNamed:@"profile-dark.png"];
+                            }
+                        }];
+                    }
                 }
-            }];
+
+            }
+            
+           
+        }];
+    } else if (!isAppearing && animated && self.previousResponder != nil) {
+        UIView *keyboardView = self.previousResponder.inputAccessoryView.superview;
+        if (!keyboardView) {
+            [self.previousResponder becomeFirstResponder];
+            keyboardView = self.previousResponder.inputAccessoryView.superview;
+            if (!keyboardView) {
+                return;
+            } else {
+                [self.previousResponder resignFirstResponder];
+            }
         }
+        
+        [self.previousResponder becomeFirstResponder];
+        [self.transitionCoordinator animateAlongsideTransitionInView:keyboardView animation:^(id<UIViewControllerTransitionCoordinatorContext> context) {
+            UIView* fromView = [[context viewControllerForKey:UITransitionContextFromViewControllerKey] view];
+            CGRect endFrame = keyboardView.frame;
+            endFrame.origin.x = fromView.frame.origin.x;
+            keyboardView.frame = endFrame;
+        } completion:^(id<UIViewControllerTransitionCoordinatorContext> context) {
+            
+            if ([context isCancelled]) {
+                _beingDismissed = NO;
+                return;
+            }
+            
+            DLog(@"FINISHED GONE");
+            [[NSNotificationCenter defaultCenter] removeObserver:self];
+            [self.previousResponder resignFirstResponder];
+            self.previousResponder = nil;
+        }];
     }
 }
 
 - (void)viewWillDisappear:(BOOL)animated;
 {
     [super viewWillDisappear:animated];
-    [[NSNotificationCenter defaultCenter] removeObserver:self];
+
+}
+
+#pragma mark - Keyboard Methods
+
+- (void)keyboardWillShow:(NSNotification *)notification;
+{
+    CGFloat keyboardHeight = [[notification.userInfo valueForKey:UIKeyboardFrameEndUserInfoKey] CGRectValue].size.height;
+    NSTimeInterval animationDuration = [[notification.userInfo objectForKey:UIKeyboardAnimationDurationUserInfoKey] floatValue];
+    NSInteger curve = [[notification.userInfo valueForKey:UIKeyboardAnimationCurveUserInfoKey] integerValue];
+    UIViewAnimationOptions options = (curve << 16);
+    
+    self.previousResponder = self.textView;
+    self.heightOfKeyboard = keyboardHeight;
+    [UIView animateWithDuration:animationDuration
+                          delay:0.0
+                        options:options
+                     animations:^{
+                         [self setTableViewInsetsFromBottom:keyboardHeight];
+                         
+                         [self.messageTable scrollToRowAtIndexPath:[NSIndexPath indexPathForRow:_messageArray.count - 1 inSection:0]
+                                                  atScrollPosition:UITableViewScrollPositionBottom
+                                                          animated:YES];
+                         
+                         CGRect containerFrame = self.containerView.frame;
+                         containerFrame.origin.y = self.view.bounds.size.height - (keyboardHeight + containerFrame.size.height);
+                         self.containerView.frame = containerFrame;
+                     } completion:nil];
+}
+
+- (void)keyboardWillHide:(NSNotification *)notification;
+{
+    
+    
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.01 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+        
+        if (_beingDismissed) {
+            return;
+        }
+        self.heightOfKeyboard = 0;
+        NSTimeInterval animationDuration = [[notification.userInfo objectForKey:UIKeyboardAnimationDurationUserInfoKey] floatValue];
+        NSInteger animationCurve = [[notification.userInfo objectForKey:UIKeyboardAnimationCurveUserInfoKey] integerValue];
+        UIViewAnimationOptions options = (animationCurve << 16);
+        
+        [UIView animateWithDuration:animationDuration
+                              delay:0.0
+                            options:options
+                         animations:^{
+                             [self setTableViewInsetsFromBottom:0];
+                             
+                             CGRect containerFrame = self.containerView.frame;
+                             containerFrame.origin.y = self.view.bounds.size.height - containerFrame.size.height;
+                             self.containerView.frame = containerFrame;
+                         } completion:^(BOOL finished) {
+                             
+                             self.previousResponder = nil;
+                         }];
+        
+        [self.messageTable scrollToRowAtIndexPath:[NSIndexPath indexPathForRow:_messageArray.count - 1 inSection:0]
+                                 atScrollPosition:UITableViewScrollPositionBottom
+                                         animated:YES];
+
+    });
 }
 
 #pragma mark - Message Methods
@@ -342,55 +458,6 @@ NSString *const CHOwnMesssageCellIdentifier = @"CHOwnMessageTableViewCell";
     self.media = nil;
     self.mediaWasAdded = NO;
     [self setSendButtonEnabled:[self canSendMessage]];
-}
-
-#pragma mark - Keyboard Methods
-
-- (void)keyboardWillShow:(NSNotification *)notification;
-{
-    CGFloat keyboardHeight = [[notification.userInfo valueForKey:UIKeyboardFrameEndUserInfoKey] CGRectValue].size.height;
-    NSTimeInterval animationDuration = [[notification.userInfo objectForKey:UIKeyboardAnimationDurationUserInfoKey] floatValue];
-    NSInteger curve = [[notification.userInfo valueForKey:UIKeyboardAnimationCurveUserInfoKey] integerValue];
-    UIViewAnimationOptions options = (curve << 16);
-    
-    self.heightOfKeyboard = keyboardHeight;
-    [UIView animateWithDuration:animationDuration
-                          delay:0.0
-                        options:options
-                     animations:^{
-                         [self setTableViewInsetsFromBottom:keyboardHeight];
-                         
-                         [self.messageTable scrollToRowAtIndexPath:[NSIndexPath indexPathForRow:_messageArray.count - 1 inSection:0]
-                                                  atScrollPosition:UITableViewScrollPositionBottom
-                                                          animated:YES];
-                         
-                         CGRect containerFrame = self.containerView.frame;
-                         containerFrame.origin.y = self.view.bounds.size.height - (keyboardHeight + containerFrame.size.height);
-                         self.containerView.frame = containerFrame;
-                     } completion:nil];
-}
-
-- (void)keyboardWillHide:(NSNotification *)notification;
-{
-    self.heightOfKeyboard = 0;
-    NSTimeInterval animationDuration = [[notification.userInfo objectForKey:UIKeyboardAnimationDurationUserInfoKey] floatValue];
-    NSInteger animationCurve = [[notification.userInfo objectForKey:UIKeyboardAnimationCurveUserInfoKey] integerValue];
-    UIViewAnimationOptions options = (animationCurve << 16);
-    
-    [UIView animateWithDuration:animationDuration
-                          delay:0.0
-                        options:options
-                     animations:^{
-                         [self setTableViewInsetsFromBottom:0];
-                         
-                         CGRect containerFrame = self.containerView.frame;
-                         containerFrame.origin.y = self.view.bounds.size.height - containerFrame.size.height;
-                         self.containerView.frame = containerFrame;
-                     } completion:nil];
-    
-    [self.messageTable scrollToRowAtIndexPath:[NSIndexPath indexPathForRow:_messageArray.count - 1 inSection:0]
-                             atScrollPosition:UITableViewScrollPositionBottom
-                                     animated:YES];
 }
 
 #pragma mark - TableView

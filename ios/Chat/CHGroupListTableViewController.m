@@ -62,19 +62,6 @@
     [[CHNetworkManager sharedManager] getProfile:^(CHUser *userProfile) {
         
     }];
-
-}
-
-- (void)viewWillAppear:(BOOL)animated;
-{
-    [super viewWillAppear:animated];
-
-    ///
-    /// If we got here, it means we logged in
-    ///
-        
-    [[UIApplication sharedApplication] registerForRemoteNotificationTypes:
-     (UIRemoteNotificationTypeBadge | UIRemoteNotificationTypeSound | UIRemoteNotificationTypeAlert)];
     
     [[CHNetworkManager sharedManager] getGroups:^(NSArray *groups) {
         self.groups = [groups mutableCopy];
@@ -99,10 +86,23 @@
                     }];
                 }
             }];
-
+            
         }
         [self.tableView reloadData];
     }];
+
+}
+
+- (void)viewWillAppear:(BOOL)animated;
+{
+    [super viewWillAppear:animated];
+
+    ///
+    /// If we got here, it means we logged in
+    ///
+    [[UIApplication sharedApplication] registerForRemoteNotificationTypes:
+     (UIRemoteNotificationTypeBadge | UIRemoteNotificationTypeSound | UIRemoteNotificationTypeAlert)];
+    
 }
 
 - (NSString *)formatTime:(NSDate *)date;
