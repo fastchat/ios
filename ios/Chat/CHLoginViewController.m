@@ -68,7 +68,7 @@
                 [[CHSocketManager sharedManager] openSocket];
                 
                 // Fire a notification that will be picked up by the groupList controller to refresh
-                [[NSNotificationCenter defaultCenter] postNotificationName:@"ReloadGroupListTable" object:nil];
+                [[NSNotificationCenter defaultCenter] postNotificationName:kReloadGroupTablesNotification object:nil];
 
                 CHUser *loggedInAs = [[CHNetworkManager sharedManager] currentUser];
                 

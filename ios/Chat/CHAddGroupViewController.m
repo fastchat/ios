@@ -44,7 +44,7 @@
     
     if( members.count >= 1 ) {
         [[CHNetworkManager sharedManager] createGroupWithName:self.groupNameTextField.text members:members callback:^(bool successful, NSError *error) {
-            [[NSNotificationCenter defaultCenter] postNotificationName:@"ReloadGroupListTable" object:nil];
+            [[NSNotificationCenter defaultCenter] postNotificationName:kReloadGroupTablesNotification object:nil];
             [self.navigationController popViewControllerAnimated:YES];
         }];
     }

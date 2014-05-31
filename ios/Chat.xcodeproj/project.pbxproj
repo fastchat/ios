@@ -57,6 +57,7 @@
 		AA775A0818D54D3000E4E7AB /* ChatTests.m in Sources */ = {isa = PBXBuildFile; fileRef = AA775A0718D54D3000E4E7AB /* ChatTests.m */; };
 		AA8DDA931936DABD007F0196 /* HPGrowingTextView.m in Sources */ = {isa = PBXBuildFile; fileRef = AA8DDA901936DABD007F0196 /* HPGrowingTextView.m */; };
 		AA8DDA941936DABD007F0196 /* HPTextViewInternal.m in Sources */ = {isa = PBXBuildFile; fileRef = AA8DDA921936DABD007F0196 /* HPTextViewInternal.m */; };
+		AAAF1D02193A528C00B095E1 /* CHConstants.m in Sources */ = {isa = PBXBuildFile; fileRef = AAAF1D01193A528C00B095E1 /* CHConstants.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -149,6 +150,8 @@
 		AA8DDA901936DABD007F0196 /* HPGrowingTextView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HPGrowingTextView.m; sourceTree = "<group>"; };
 		AA8DDA911936DABD007F0196 /* HPTextViewInternal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HPTextViewInternal.h; sourceTree = "<group>"; };
 		AA8DDA921936DABD007F0196 /* HPTextViewInternal.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HPTextViewInternal.m; sourceTree = "<group>"; };
+		AAAF1D00193A528C00B095E1 /* CHConstants.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CHConstants.h; sourceTree = "<group>"; };
+		AAAF1D01193A528C00B095E1 /* CHConstants.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CHConstants.m; sourceTree = "<group>"; };
 		ED86F54EC1C64B14950512A1 /* libPods-Chat.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-Chat.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
@@ -309,6 +312,8 @@
 			children = (
 				AA7759E818D54D3000E4E7AB /* CHAppDelegate.h */,
 				AA7759E918D54D3000E4E7AB /* CHAppDelegate.m */,
+				AAAF1D00193A528C00B095E1 /* CHConstants.h */,
+				AAAF1D01193A528C00B095E1 /* CHConstants.m */,
 			);
 			name = "App Delegate";
 			sourceTree = "<group>";
@@ -566,6 +571,7 @@
 				2768EAAE18D9138D006D14BB /* CHMessageViewController.m in Sources */,
 				2768EAA218D888B6006D14BB /* CHGroupListTableViewController.m in Sources */,
 				2769B04618E7820A00CCE470 /* CHMessageTableViewCell.m in Sources */,
+				AAAF1D02193A528C00B095E1 /* CHConstants.m in Sources */,
 				2742F9991905A3DB00A879E8 /* CHGroupsCollectionAccessor.m in Sources */,
 				AA46331B193659EB00513578 /* CHTextField.m in Sources */,
 				AA7759E618D54D3000E4E7AB /* main.m in Sources */,

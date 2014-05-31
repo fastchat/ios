@@ -24,7 +24,7 @@
     NSSetUncaughtExceptionHandler(&uncaughtExceptionHandler);
     
     ///
-    /// Bar Color
+    /// UI Appearance, makes it all pretty.
     ///
     [[UINavigationBar appearance] setBarTintColor:kPurpleAppColor];
     [[UINavigationBar appearance] setTitleTextAttributes:@{NSForegroundColorAttributeName:[UIColor whiteColor]}];
@@ -35,6 +35,10 @@
     return YES;
 }
 
+/**
+ * This gives us a stack trace when the app crashes. Very useful for catching issues, especially
+ * when Xcode stops giving us stack traces. No idea why.
+ */
 void uncaughtExceptionHandler(NSException *exception) {
     NSLog(@"CRASH: %@", exception);
     NSLog(@"Stack Trace: %@", [exception callStackSymbols]);
@@ -61,7 +65,7 @@ void uncaughtExceptionHandler(NSException *exception) {
     
     // Reload message table
     [[CHSocketManager sharedManager] openSocket];
-    [[NSNotificationCenter defaultCenter] postNotificationName:@"ReloadAppDelegateTable" object:nil];
+    [[NSNotificationCenter defaultCenter] postNotificationName:kReloadGroupTablesNotification object:nil];
     [UIApplication sharedApplication].applicationIconBadgeNumber = 0;
     
 }
