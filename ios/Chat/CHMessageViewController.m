@@ -135,6 +135,8 @@ NSString *const CHOwnMesssageCellIdentifier = @"CHOwnMessageTableViewCell";
     [members enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
         CHUser *thisUser = obj;
         tempIds[thisUser.userId] = thisUser.username;
+        
+        
     }];
     
     self.userIds = tempIds;
@@ -145,7 +147,19 @@ NSString *const CHOwnMesssageCellIdentifier = @"CHOwnMessageTableViewCell";
     //
     self.members = [NSMutableDictionary dictionary];
     for (CHUser *aMember in self.group.members) {
-        self.members[aMember.userId] = aMember.username;
+        ///
+        /// Pre-load the colors of the Names
+        ///
+        UIImage *avatar = [_group memberFromId:aMember.username].avatar;
+        NSMutableDictionary *nameAndColor = [NSMutableDictionary dictionary];
+        
+        if (avatar) {
+            SLColorArt *colorArt = [avatar colorArt];
+            nameAndColor[@"color"] = colorArt.primaryColor;
+        }
+        
+        nameAndColor[@"username"] = aMember.username;
+        self.members[aMember.userId] = nameAndColor;
     }
     
     self.mediaWasAdded = NO;
@@ -172,10 +186,21 @@ NSString *const CHOwnMesssageCellIdentifier = @"CHOwnMessageTableViewCell";
     self.currentUser = [[CHNetworkManager sharedManager] currentUser];
     self.keyboardIsVisible = NO;
     [self setSendButtonEnabled:[self canSendMessage]];
+    
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(keyboardWillShow:)
+                                                 name:UIKeyboardWillShowNotification
+                                               object:nil];
+    
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(keyboardWillHide:)
+                                                 name:UIKeyboardWillHideNotification
+                                               object:nil];
 }
 
 
-
+/*
+ // I am sorry Mike. I tried. I really did. It's all sorts of fucked up.
 - (void)beginAppearanceTransition:(BOOL)isAppearing animated:(BOOL)animated;
 {
     [super beginAppearanceTransition:isAppearing animated:animated];
@@ -267,6 +292,7 @@ NSString *const CHOwnMesssageCellIdentifier = @"CHOwnMessageTableViewCell";
         }];
     }
 }
+*/
 
 - (void)viewWillDisappear:(BOOL)animated;
 {
@@ -305,8 +331,8 @@ NSString *const CHOwnMesssageCellIdentifier = @"CHOwnMessageTableViewCell";
 {
     
     
-    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.01 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-        
+//    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.01 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+    
         if (_beingDismissed) {
             return;
         }
@@ -333,7 +359,7 @@ NSString *const CHOwnMesssageCellIdentifier = @"CHOwnMessageTableViewCell";
                                  atScrollPosition:UITableViewScrollPositionBottom
                                          animated:YES];
 
-    });
+//    });
 }
 
 #pragma mark - Message Methods
@@ -472,9 +498,9 @@ NSString *const CHOwnMesssageCellIdentifier = @"CHOwnMessageTableViewCell";
     CHMessage *message = _messageArray[indexPath.row];
     CHMessageTableViewCell *cell;
     
-    UIColor *color = [UIColor whiteColor];;
+    UIColor *color = [UIColor whiteColor];
     
-    if ([self.members[message.author] isEqualToString:self.members[_currentUser.userId]]) {
+    if ( [self.members[message.author][@"username"] isEqualToString:self.members[_currentUser.userId][@"username"]] ) {
         cell = [tableView dequeueReusableCellWithIdentifier:CHOwnMesssageCellIdentifier forIndexPath:indexPath];
     } else {
         cell = [tableView dequeueReusableCellWithIdentifier:CHMesssageCellIdentifier forIndexPath:indexPath];
@@ -490,13 +516,18 @@ NSString *const CHOwnMesssageCellIdentifier = @"CHOwnMessageTableViewCell";
     cell.authorLabel.text = [self.group usernameFromId:message.author];
     cell.timestampLabel.text = [self formatDate:message.sent];
     
-    if ( [_group memberFromId:message.author].avatar != nil) {
-        UIImage *avatar = [_group memberFromId:message.author].avatar;
-        [cell.avatarImageView setImage:avatar];
-        SLColorArt *colorArt = [avatar colorArt];
-        cell.authorLabel.textColor = colorArt.primaryColor;
+    
+    static UIImage *defaultImage = nil;
+    if (!defaultImage) {
+        defaultImage = [UIImage imageNamed:@"profile-dark.png"];
+    }
+    
+    UIColor *nameColor = self.members[message.author][@"color"];
+    if (nameColor) {
+        cell.authorLabel.textColor = nameColor;
+        [cell.avatarImageView setImage:[_group memberFromId:message.author].avatar];
     } else {
-        [cell.avatarImageView setImage:[UIImage imageNamed:@"profile-dark.png"]];
+        [cell.avatarImageView setImage:defaultImage];
         cell.authorLabel.textColor = [UIColor blackColor];
     }
     

@@ -94,4 +94,19 @@ void uncaughtExceptionHandler(NSException *exception)
     }];
 }
 
+/**
+ * Called when we get a push notification, and also when the app opens.
+ */
+- (void)application:(UIApplication *)application
+        didReceiveRemoteNotification:(NSDictionary *)userInfo
+        fetchCompletionHandler:(void (^)(UIBackgroundFetchResult))completionHandler;
+{
+    
+    
+    
+    if (completionHandler) {
+        completionHandler(UIBackgroundFetchResultNoData);
+    }
+}
+
 @end

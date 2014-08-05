@@ -36,7 +36,7 @@
 - (void)viewDidLayoutSubviews;
 {
     [super viewDidLayoutSubviews];
-    [self.emailTextField becomeFirstResponder];
+//    [self.emailTextField becomeFirstResponder];
 }
 
 - (BOOL)textFieldShouldReturn:(UITextField *)textField;
