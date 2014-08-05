@@ -15,6 +15,8 @@
 #import "CHMessageViewController.h"
 #import "CHAppDelegate.h"
 #import "CHGroupsCollectionAccessor.h"
+#import "CHGroup.h"
+
 
 @class SocketIO;
 
@@ -84,7 +86,7 @@
                
 
               [TSMessage showNotificationInViewController:root
-                                                    title:[NSString stringWithFormat:@"%@: %@", message.author, message.text]
+                                                    title:[NSString stringWithFormat:@"%@: %@", [[CHGroupsCollectionAccessor sharedAccessor] getGroupWithId:message.group].groupName, message.text]
                                                  subtitle:nil image:nil type:TSMessageNotificationTypeMessage duration:3.0
                                                  callback:^{
                                                      UIStoryboard *storyboard = [UIStoryboard storyboardWithName:@"Main_iPhone" bundle:nil];
