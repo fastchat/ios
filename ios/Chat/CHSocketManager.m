@@ -80,7 +80,7 @@
             if( ![self.delegate manager:self doesCareAboutMessage:message] ) {
                 // add messages to list and send notification
                 
-                UIViewController *root = [[[UIApplication sharedApplication] windows][0] rootViewController];
+                UIViewController *root = [[[[UIApplication sharedApplication] windows][0] rootViewController] childViewControllers][0];
                
 
               [TSMessage showNotificationInViewController:root
@@ -91,8 +91,10 @@
                                                      CHMessageViewController *vc = [storyboard instantiateViewControllerWithIdentifier:@"CHMessageViewController"];
                                                      [vc setGroup:[[CHGroupsCollectionAccessor sharedAccessor] getGroupWithId:message.group]];
                                                      [vc setGroupId:message.group];
+                                                     
                                                      [((UINavigationController*)root) popViewControllerAnimated:NO];
                                                      [((UINavigationController*)root) pushViewController:vc animated:YES];
+
                                                  }
                                               buttonTitle:nil buttonCallback:nil
                                                atPosition:TSMessageNotificationPositionTop canBeDismissedByUser:YES];
