@@ -698,7 +698,7 @@ NSString *const CHOwnMesssageCellIdentifier = @"CHOwnMessageTableViewCell";
         timestampFormatter = [[NSDateFormatter alloc] init];
         [timestampFormatter setDateStyle:NSDateFormatterLongStyle];
         timestampFormatter.locale = [[NSLocale alloc] initWithLocaleIdentifier:@"en_US_POSIX"];
-        timestampFormatter.dateFormat = @"MMMM dd, HH:mm";
+        timestampFormatter.dateFormat = @"MMM dd, HH:mm";
     }
     return [timestampFormatter stringFromDate:date];
 }

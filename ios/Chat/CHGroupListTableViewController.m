@@ -67,7 +67,7 @@
         self.groups = [groups mutableCopy];
         
         // Get all member avatars
-        for( CHGroup *group in self.groups ) {
+        /*for( CHGroup *group in self.groups ) {
             
             [group.members enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
                 CHUser *user = obj;
@@ -87,7 +87,7 @@
                 }
             }];
             
-        }
+        }*/
         [self.tableView reloadData];
     }];
 
@@ -102,6 +102,13 @@
     ///
     [[UIApplication sharedApplication] registerForRemoteNotificationTypes:
      (UIRemoteNotificationTypeBadge | UIRemoteNotificationTypeSound | UIRemoteNotificationTypeAlert)];
+    
+    [[CHNetworkManager sharedManager] getGroups:^(NSArray *groups) {
+        self.groups = [groups mutableCopy];
+
+        [self.tableView reloadData];
+    }];
+
     
 }
 
