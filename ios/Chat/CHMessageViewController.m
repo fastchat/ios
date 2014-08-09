@@ -196,6 +196,28 @@ NSString *const CHOwnMesssageCellIdentifier = @"CHOwnMessageTableViewCell";
                                              selector:@selector(keyboardWillHide:)
                                                  name:UIKeyboardWillHideNotification
                                                object:nil];
+
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(reloadMessages) name:@"ReloadActiveGroupNotification" object:nil];
+    
+}
+
+- (void)reloadMessages;
+{
+    DLog(@"Reloading messages");
+    
+    ///
+    /// Load up old messages
+    ///
+    [[CHNetworkManager sharedManager] getMessagesForGroup:self.group._id page:0 callback:^(NSArray *messages) {
+        if( messages ) {
+            DLog(@"Got messages");
+            self.messageArray = [NSMutableArray arrayWithArray:messages];
+            
+            self.messageArray = [[[self.messageArray reverseObjectEnumerator] allObjects] mutableCopy];
+            [self.messageTable reloadData];
+            [self.messageTable scrollToRowAtIndexPath:[NSIndexPath indexPathForRow:_messageArray.count - 1 inSection:0] atScrollPosition:UITableViewScrollPositionBottom animated:NO];
+        }
+    }];
 }
 
 

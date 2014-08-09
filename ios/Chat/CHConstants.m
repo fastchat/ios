@@ -9,6 +9,7 @@
 #import "CHConstants.h"
 
 NSString *const kReloadGroupTablesNotification = @"ReloadGroupTablesNotification";
+NSString *const kReloadActiveGroupNotification = @"ReloadActiveGroupNotification";
 
 @implementation CHConstants
 

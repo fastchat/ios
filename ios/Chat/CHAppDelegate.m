@@ -60,6 +60,7 @@ void uncaughtExceptionHandler(NSException *exception)
 {
     [[CHSocketManager sharedManager] openSocket];
     [[NSNotificationCenter defaultCenter] postNotificationName:kReloadGroupTablesNotification object:nil];
+    [[NSNotificationCenter defaultCenter] postNotificationName:kReloadActiveGroupNotification object:nil];
     [UIApplication sharedApplication].applicationIconBadgeNumber = 0;
     
 }
@@ -79,6 +80,11 @@ void uncaughtExceptionHandler(NSException *exception)
             }];
         }
     }
+    
+    ///
+    /// Load any new messages if the app was inactive or phone was locked
+    ///
+    
 }
 
 - (void)applicationWillTerminate:(UIApplication *)application;
