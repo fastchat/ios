@@ -77,7 +77,9 @@
     if ([packet.dataAsJSON[@"name"] isEqualToString:@"message"]) {
         NSDictionary *data = [packet.dataAsJSON[@"args"] firstObject];
         CHMessage *message = [[CHMessage objectsFromJSON:@[data]] firstObject];
-        
+        DLog(@"here");
+        [[NSNotificationCenter defaultCenter] postNotificationName:kReloadGroupTablesNotification object:nil];
+
         if( [self.delegate respondsToSelector:@selector(manager:doesCareAboutMessage:)]) {
             if( ![self.delegate manager:self doesCareAboutMessage:message] ) {
                 // add messages to list and send notification
@@ -102,6 +104,7 @@
                                                atPosition:TSMessageNotificationPositionTop canBeDismissedByUser:YES];
             
             }
+            
         }
     }
     

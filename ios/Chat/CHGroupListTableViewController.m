@@ -90,6 +90,41 @@
         }*/
         [self.tableView reloadData];
     }];
+    
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(reloadTableView) name:@"ReloadGroupTablesNotification" object:nil];
+
+}
+
+- (void)reloadTableView;
+{
+    DLog(@"reloading table veiw");
+    [[CHNetworkManager sharedManager] getGroups:^(NSArray *groups) {
+        self.groups = [groups mutableCopy];
+        
+        // Get all member avatars
+        /*for( CHGroup *group in self.groups ) {
+         
+         [group.members enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
+         CHUser *user = obj;
+         if( user.avatar == nil ) {
+         [[CHNetworkManager sharedManager] getAvatarOfUser:user.userId callback:^(UIImage *avatar) {
+         ((CHUser *)group.memberDict[user.userId]).avatar = avatar;
+         }];
+         }
+         }];
+         
+         [group.pastMembers enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
+         CHUser *user = obj;
+         if( user.avatar == nil ) {
+         [[CHNetworkManager sharedManager] getAvatarOfUser:user.userId callback:^(UIImage *avatar) {
+         ((CHUser *)group.memberDict[user.userId]).avatar = avatar;
+         }];
+         }
+         }];
+         
+         }*/
+        [self.tableView reloadData];
+    }];
 
 }
 
