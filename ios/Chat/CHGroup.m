@@ -50,10 +50,10 @@
     };
 }
 
-- (NSString *)groupName;
+- (NSString *)name;
 {
-    if( _groupName != nil && ![_groupName isEqualToString:@""] ) {
-        return _groupName;
+    if( _name != nil && ![_name isEqualToString:@""] ) {
+        return _name;
     }
     
     NSMutableString *nameFromMembers = [@"" mutableCopy];

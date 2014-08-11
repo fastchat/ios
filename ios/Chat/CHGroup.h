@@ -15,7 +15,7 @@
 
 @property (nonatomic, copy) NSString *_id;
 @property (nonatomic, strong) NSNumber *unread;
-@property (nonatomic, copy) NSString *groupName;
+@property (nonatomic, copy) NSString *name;
 @property (nonatomic, copy) NSArray *pastMembers;
 @property (nonatomic, copy) NSArray *members;
 @property (nonatomic, strong) NSMutableDictionary *memberDict;

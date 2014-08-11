@@ -205,7 +205,7 @@
     CHGroupTableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"CHGroupTableViewCell" forIndexPath:indexPath];
     
     CHGroup *group = _groups[indexPath.row];
-    cell.groupTextLabel.text = group.groupName;
+    cell.groupTextLabel.text = group.name;
     cell.groupDetailLabel.text = group.lastMessage.text;
     cell.groupRightDetailLabel.text = [self formatTime:group.lastMessage.sent];
     [cell setUnread:[group hasUnread]];

@@ -60,7 +60,7 @@ NSString *const CHOwnMesssageCellIdentifier = @"CHOwnMessageTableViewCell";
     self.messageTable.backgroundColor = kLightBackgroundColor;
     
     self.shouldSlide = YES;
-    self.title = _group.groupName;
+    self.title = _group.name;
     self.messageEntryField.hidden = YES;
     _beingDismissed = NO;
     
