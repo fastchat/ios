@@ -14,5 +14,6 @@
 
 - (instancetype)initWithUnread:(BOOL)unread;
 - (void)setSelected:(BOOL)selected animated:(BOOL)animated;
+- (void)setToColor:(UIColor*)color;
 
 @end
