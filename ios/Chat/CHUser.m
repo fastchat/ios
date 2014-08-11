@@ -18,4 +18,10 @@
              };
 }
 
++ (NSDictionary *)managedObjectKeysByPropertyKey {
+    NSMutableDictionary *values = [[super managedObjectKeysByPropertyKey] mutableCopy];
+    
+    return values;
+}
+
 @end

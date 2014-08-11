@@ -1,4 +1,15 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <model userDefinedModelVersionIdentifier="" type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="5064" systemVersion="13E28" minimumToolsVersion="Xcode 4.3" macOSVersion="Automatic" iOSVersion="Automatic">
-    <elements/>
+    <entity name="CHGroup" syncable="YES">
+        <attribute name="avatar" optional="YES" attributeType="Transformable" syncable="YES"/>
+        <attribute name="userId" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="username" optional="YES" attributeType="String" syncable="YES"/>
+    </entity>
+    <entity name="CHMessage" syncable="YES"/>
+    <entity name="CHUser" syncable="YES"/>
+    <elements>
+        <element name="CHUser" positionX="-63" positionY="-18" width="128" height="45"/>
+        <element name="CHGroup" positionX="-54" positionY="-9" width="128" height="88"/>
+        <element name="CHMessage" positionX="-36" positionY="9" width="128" height="45"/>
+    </elements>
 </model>

@@ -9,12 +9,11 @@
 #import <Foundation/Foundation.h>
 #import "CHFastChatObject.h"
 
-@interface CHUser : CHFastChatObject
+@interface CHUser : CHFastChatObject <MTLManagedObjectSerializing>
 
-@property (strong, nonatomic) NSString *username;
-@property (strong, nonatomic) NSString *userId;
-@property NSArray *invites;
-@property NSArray *groups;
-@property UIImage *avatar;
+@property (nonatomic, strong) NSString *username;
+@property (nonatomic, strong) NSString *userId;
+@property (nonatomic, copy) NSArray *groups;
+@property (nonatomic, strong) UIImage *avatar;
 
 @end

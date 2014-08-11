@@ -9,7 +9,7 @@
 #import <Foundation/Foundation.h>
 #import "Mantle/Mantle.h"
 
-@interface CHFastChatObject : MTLModel <MTLJSONSerializing>
+@interface CHFastChatObject : MTLModel <MTLJSONSerializing, MTLManagedObjectSerializing>
 
 + (NSArray *)objectsFromJSON:(NSArray *)array;
 

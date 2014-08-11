@@ -59,7 +59,6 @@ NSString *const kMediaKey = @"com.fastchat.mediakey";
                     CHUser *user = [[CHUser alloc] init];
                     [user setUsername:responseObject[@"profile"][@"username"]];
                     [user setGroups:responseObject[@"profile"][@"groups"]];
-                    [user setInvites:responseObject[@"profile"][@"invites"]];
                     self.currentUser = user;
                     
                 }
@@ -217,7 +216,6 @@ NSString *const kMediaKey = @"com.fastchat.mediakey";
             CHUser *user = [[CHUser alloc] init];
             [user setUsername:responseObject[@"profile"][@"username"]];
             [user setGroups:responseObject[@"profile"][@"groups"]];
-            [user setInvites:responseObject[@"profile"][@"invites"]];
             user.userId = responseObject[@"profile"][@"_id"];
             
             self.currentUser = user;

@@ -16,7 +16,6 @@
 		2768EAAB18D8E02B006D14BB /* CHAddGroupViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2768EAAA18D8E02B006D14BB /* CHAddGroupViewController.m */; };
 		2768EAAE18D9138D006D14BB /* CHMessageViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2768EAAD18D9138D006D14BB /* CHMessageViewController.m */; };
 		2768EAB318DB119A006D14BB /* CHSocketManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 2768EAB218DB119A006D14BB /* CHSocketManager.m */; };
-		2768EABF18DE43F2006D14BB /* CHInvitationsTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2768EABE18DE43F2006D14BB /* CHInvitationsTableViewController.m */; };
 		2769B04618E7820A00CCE470 /* CHMessageTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 2769B04518E7820A00CCE470 /* CHMessageTableViewCell.m */; };
 		2769B04F18EDD40800CCE470 /* CHOwnMessageTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 2769B04E18EDD40800CCE470 /* CHOwnMessageTableViewCell.m */; };
 		2769B05B18F1258A00CCE470 /* MessageEntryBackground@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 2769B05318F1258A00CCE470 /* MessageEntryBackground@2x.png */; };
@@ -55,6 +54,7 @@
 		AA7759FE18D54D3000E4E7AB /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = AA7759DD18D54D3000E4E7AB /* UIKit.framework */; };
 		AA775A0618D54D3000E4E7AB /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = AA775A0418D54D3000E4E7AB /* InfoPlist.strings */; };
 		AA775A0818D54D3000E4E7AB /* ChatTests.m in Sources */ = {isa = PBXBuildFile; fileRef = AA775A0718D54D3000E4E7AB /* ChatTests.m */; };
+		AA7C691E19986636005DFFF5 /* FastChat.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = AA7C691C19986636005DFFF5 /* FastChat.xcdatamodeld */; };
 		AA8DDA931936DABD007F0196 /* HPGrowingTextView.m in Sources */ = {isa = PBXBuildFile; fileRef = AA8DDA901936DABD007F0196 /* HPGrowingTextView.m */; };
 		AA8DDA941936DABD007F0196 /* HPTextViewInternal.m in Sources */ = {isa = PBXBuildFile; fileRef = AA8DDA921936DABD007F0196 /* HPTextViewInternal.m */; };
 		AAAF1D02193A528C00B095E1 /* CHConstants.m in Sources */ = {isa = PBXBuildFile; fileRef = AAAF1D01193A528C00B095E1 /* CHConstants.m */; };
@@ -89,8 +89,6 @@
 		2768EAAD18D9138D006D14BB /* CHMessageViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CHMessageViewController.m; sourceTree = "<group>"; };
 		2768EAB118DB119A006D14BB /* CHSocketManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CHSocketManager.h; sourceTree = "<group>"; };
 		2768EAB218DB119A006D14BB /* CHSocketManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CHSocketManager.m; sourceTree = "<group>"; };
-		2768EABD18DE43F2006D14BB /* CHInvitationsTableViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CHInvitationsTableViewController.h; sourceTree = "<group>"; };
-		2768EABE18DE43F2006D14BB /* CHInvitationsTableViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CHInvitationsTableViewController.m; sourceTree = "<group>"; };
 		2769B04418E7820A00CCE470 /* CHMessageTableViewCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CHMessageTableViewCell.h; sourceTree = "<group>"; };
 		2769B04518E7820A00CCE470 /* CHMessageTableViewCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CHMessageTableViewCell.m; sourceTree = "<group>"; };
 		2769B04D18EDD40800CCE470 /* CHOwnMessageTableViewCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CHOwnMessageTableViewCell.h; sourceTree = "<group>"; };
@@ -146,6 +144,7 @@
 		AA775A0318D54D3000E4E7AB /* ChatTests-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "ChatTests-Info.plist"; sourceTree = "<group>"; };
 		AA775A0518D54D3000E4E7AB /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		AA775A0718D54D3000E4E7AB /* ChatTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ChatTests.m; sourceTree = "<group>"; };
+		AA7C691D19986636005DFFF5 /* FastChat.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = FastChat.xcdatamodel; sourceTree = "<group>"; };
 		AA8DDA8F1936DABD007F0196 /* HPGrowingTextView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HPGrowingTextView.h; sourceTree = "<group>"; };
 		AA8DDA901936DABD007F0196 /* HPGrowingTextView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HPGrowingTextView.m; sourceTree = "<group>"; };
 		AA8DDA911936DABD007F0196 /* HPTextViewInternal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HPTextViewInternal.h; sourceTree = "<group>"; };
@@ -218,6 +217,7 @@
 		279CF21E18DF777E00C82399 /* Model */ = {
 			isa = PBXGroup;
 			children = (
+				AA7C691C19986636005DFFF5 /* FastChat.xcdatamodeld */,
 				279CF21B18DF777400C82399 /* CHUser.h */,
 				279CF21C18DF777400C82399 /* CHUser.m */,
 				2769B06318F479CC00CCE470 /* CHGroup.h */,
@@ -266,8 +266,6 @@
 				AA4633231936735F00513578 /* CHGroupTableViewCell.m */,
 				279CF21F18DFD74D00C82399 /* CHInviteUserViewController.h */,
 				279CF22018DFD74D00C82399 /* CHInviteUserViewController.m */,
-				2768EABD18DE43F2006D14BB /* CHInvitationsTableViewController.h */,
-				2768EABE18DE43F2006D14BB /* CHInvitationsTableViewController.m */,
 				2768EAA918D8E02B006D14BB /* CHAddGroupViewController.h */,
 				2768EAAA18D8E02B006D14BB /* CHAddGroupViewController.m */,
 				AA46332519367A5F00513578 /* CHUnreadView.h */,
@@ -562,7 +560,6 @@
 				2768EA9F18D87059006D14BB /* CHRegisterViewController.m in Sources */,
 				2769B04F18EDD40800CCE470 /* CHOwnMessageTableViewCell.m in Sources */,
 				2769B06818F47E5E00CCE470 /* CHFastChatObject.m in Sources */,
-				2768EABF18DE43F2006D14BB /* CHInvitationsTableViewController.m in Sources */,
 				AA4633241936735F00513578 /* CHGroupTableViewCell.m in Sources */,
 				AA46332719367A5F00513578 /* CHUnreadView.m in Sources */,
 				2768EAB318DB119A006D14BB /* CHSocketManager.m in Sources */,
@@ -587,6 +584,7 @@
 				AA7759F318D54D3000E4E7AB /* CHLoginViewController.m in Sources */,
 				2769B06B18F495FD00CCE470 /* CHMessage.m in Sources */,
 				279CF22118DFD74D00C82399 /* CHInviteUserViewController.m in Sources */,
+				AA7C691E19986636005DFFF5 /* FastChat.xcdatamodeld in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -825,6 +823,19 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCVersionGroup section */
+		AA7C691C19986636005DFFF5 /* FastChat.xcdatamodeld */ = {
+			isa = XCVersionGroup;
+			children = (
+				AA7C691D19986636005DFFF5 /* FastChat.xcdatamodel */,
+			);
+			currentVersion = AA7C691D19986636005DFFF5 /* FastChat.xcdatamodel */;
+			path = FastChat.xcdatamodeld;
+			sourceTree = "<group>";
+			versionGroupType = wrapper.xcdatamodel;
+		};
+/* End XCVersionGroup section */
 	};
 	rootObject = AA7759CE18D54D3000E4E7AB /* Project object */;
 }

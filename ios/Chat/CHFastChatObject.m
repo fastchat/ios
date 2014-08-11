@@ -34,4 +34,14 @@
     return @{ };
 }
 
+#pragma mark - Managed Object Required Methods
+
++ (NSString *)managedObjectEntityName {
+    return NSStringFromClass(self);
+}
+
++ (NSDictionary *)managedObjectKeysByPropertyKey {
+    return @{};
+}
+
 @end
