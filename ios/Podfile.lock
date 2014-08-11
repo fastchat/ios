@@ -25,6 +25,9 @@ PODS:
     - GPUImage (~> 0.1)
   - GPUImage (0.1.4)
   - HexColors (2.2.1)
+  - MagicalRecord (2.2):
+    - MagicalRecord/Core
+  - MagicalRecord/Core (2.2)
   - Mantle (1.5):
     - Mantle/extobjc
   - Mantle/extobjc (1.5)
@@ -40,6 +43,7 @@ DEPENDENCIES:
   - AFNetworking (~> 2.3)
   - ColorArt (~> 0.1)
   - DBCamera (~> 2.3)
+  - MagicalRecord (~> 2.2)
   - Mantle (~> 1.5)
   - MBProgressHUD (~> 0.8)
   - socket.IO (~> 0.5)
@@ -52,6 +56,7 @@ SPEC CHECKSUMS:
   DBCamera: d1bf4699c496e982004223a4da33941c7389f4e2
   GPUImage: ac2bde5f4dbea02a81ced6313964cec1f2043ca9
   HexColors: 01384d2bbe8dc4ffa43c3b4135db6e976952d153
+  MagicalRecord: 2b471584fc9e3137f3d0a56967917baa4979e224
   Mantle: c67a7e45e14196ed42b2a7cbb98ff6a9920e6b92
   MBProgressHUD: c356980b0cd097f19acec959b49dca5eb8ec31be
   socket.IO: db3e71805c862038ab73209dda2b0ad6babc54b2

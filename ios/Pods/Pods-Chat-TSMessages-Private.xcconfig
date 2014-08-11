@@ -1,5 +1,5 @@
 #include "Pods-Chat-TSMessages.xcconfig"
 GCC_PREPROCESSOR_DEFINITIONS = COCOAPODS=1
-HEADER_SEARCH_PATHS = "${PODS_ROOT}/BuildHeaders" "${PODS_ROOT}/BuildHeaders/TSMessages" "${PODS_ROOT}/Headers" "${PODS_ROOT}/Headers/AFNetworking" "${PODS_ROOT}/Headers/ColorArt" "${PODS_ROOT}/Headers/DBCamera" "${PODS_ROOT}/Headers/GPUImage" "${PODS_ROOT}/Headers/HexColors" "${PODS_ROOT}/Headers/MBProgressHUD" "${PODS_ROOT}/Headers/Mantle" "${PODS_ROOT}/Headers/SocketRocket" "${PODS_ROOT}/Headers/TSMessages" "${PODS_ROOT}/Headers/URBMediaFocusViewController" "${PODS_ROOT}/Headers/socket.IO"
+HEADER_SEARCH_PATHS = "${PODS_ROOT}/BuildHeaders" "${PODS_ROOT}/BuildHeaders/TSMessages" "${PODS_ROOT}/Headers" "${PODS_ROOT}/Headers/AFNetworking" "${PODS_ROOT}/Headers/ColorArt" "${PODS_ROOT}/Headers/DBCamera" "${PODS_ROOT}/Headers/GPUImage" "${PODS_ROOT}/Headers/HexColors" "${PODS_ROOT}/Headers/MBProgressHUD" "${PODS_ROOT}/Headers/MagicalRecord" "${PODS_ROOT}/Headers/Mantle" "${PODS_ROOT}/Headers/SocketRocket" "${PODS_ROOT}/Headers/TSMessages" "${PODS_ROOT}/Headers/URBMediaFocusViewController" "${PODS_ROOT}/Headers/socket.IO"
 OTHER_LDFLAGS = -ObjC
 PODS_ROOT = ${SRCROOT}
