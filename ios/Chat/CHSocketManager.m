@@ -17,6 +17,8 @@
 #import "CHGroupsCollectionAccessor.h"
 #import "CHGroup.h"
 
+#import <AudioToolbox/AudioToolbox.h>
+
 
 @class SocketIO;
 
@@ -74,12 +76,19 @@
 // THIS NEEDS TO BE REFACTORED
 - (void) socketIO:(SocketIO *)socket didReceiveEvent:(SocketIOPacket *)packet;
 {
+    AudioServicesPlaySystemSound (kSystemSoundID_Vibrate);
     if ([packet.dataAsJSON[@"name"] isEqualToString:@"message"]) {
+        
+        
+        
         NSDictionary *data = [packet.dataAsJSON[@"args"] firstObject];
         CHMessage *message = [[CHMessage objectsFromJSON:@[data]] firstObject];
         DLog(@"here");
         [[NSNotificationCenter defaultCenter] postNotificationName:kReloadGroupTablesNotification object:nil];
-
+        CHGroup *group = [[CHGroupsCollectionAccessor sharedAccessor] getGroupWithId:message.group];
+        [group setUnread:[NSNumber numberWithInteger:[group.unread intValue] + 1]];
+        DLog(@"Unread: %@", group.unread);
+        
         if( [self.delegate respondsToSelector:@selector(manager:doesCareAboutMessage:)]) {
             if( ![self.delegate manager:self doesCareAboutMessage:message] ) {
                 // add messages to list and send notification

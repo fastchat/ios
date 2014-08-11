@@ -197,27 +197,34 @@ NSString *const CHOwnMesssageCellIdentifier = @"CHOwnMessageTableViewCell";
                                                  name:UIKeyboardWillHideNotification
                                                object:nil];
 
+    /// Using reloadMessages instead of reloadMessagesWithScroll because I haven't figured out how to make reloadMessagesWithScroll
+    /// work when being called as the selector. This should be fixed eventually.
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(reloadMessages) name:@"ReloadActiveGroupNotification" object:nil];
     
 }
 
 - (void)reloadMessages;
 {
-    DLog(@"Reloading messages");
     
     ///
     /// Load up old messages
     ///
     [[CHNetworkManager sharedManager] getMessagesForGroup:self.group._id page:0 callback:^(NSArray *messages) {
         if( messages ) {
-            DLog(@"Got messages");
             self.messageArray = [NSMutableArray arrayWithArray:messages];
             
             self.messageArray = [[[self.messageArray reverseObjectEnumerator] allObjects] mutableCopy];
             [self.messageTable reloadData];
-            [self.messageTable scrollToRowAtIndexPath:[NSIndexPath indexPathForRow:_messageArray.count - 1 inSection:0] atScrollPosition:UITableViewScrollPositionBottom animated:NO];
+            [self reloadMessagesWithScroll:YES];
         }
     }];
+}
+
+- (void)reloadMessagesWithScroll:(BOOL)shouldScroll;
+{
+    if( shouldScroll ) {
+        [self.messageTable scrollToRowAtIndexPath:[NSIndexPath indexPathForRow:_messageArray.count - 1 inSection:0] atScrollPosition:UITableViewScrollPositionBottom animated:NO];
+    }
 }
 
 
@@ -338,10 +345,11 @@ NSString *const CHOwnMesssageCellIdentifier = @"CHOwnMessageTableViewCell";
                         options:options
                      animations:^{
                          [self setTableViewInsetsFromBottom:keyboardHeight];
-                         
+                         ////// This may need some logic to scroll the text view with the keyboard
                          [self.messageTable scrollToRowAtIndexPath:[NSIndexPath indexPathForRow:_messageArray.count - 1 inSection:0]
                                                   atScrollPosition:UITableViewScrollPositionBottom
                                                           animated:YES];
+
                          
                          CGRect containerFrame = self.containerView.frame;
                          containerFrame.origin.y = self.view.bounds.size.height - (keyboardHeight + containerFrame.size.height);
@@ -352,36 +360,31 @@ NSString *const CHOwnMesssageCellIdentifier = @"CHOwnMessageTableViewCell";
 - (void)keyboardWillHide:(NSNotification *)notification;
 {
     
-    
-//    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.01 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-    
-        if (_beingDismissed) {
-            return;
-        }
-        self.heightOfKeyboard = 0;
-        NSTimeInterval animationDuration = [[notification.userInfo objectForKey:UIKeyboardAnimationDurationUserInfoKey] floatValue];
-        NSInteger animationCurve = [[notification.userInfo objectForKey:UIKeyboardAnimationCurveUserInfoKey] integerValue];
-        UIViewAnimationOptions options = (animationCurve << 16);
+    if (_beingDismissed) {
+        return;
+    }
+    self.heightOfKeyboard = 0;
+    NSTimeInterval animationDuration = [[notification.userInfo objectForKey:UIKeyboardAnimationDurationUserInfoKey] floatValue];
+    NSInteger animationCurve = [[notification.userInfo objectForKey:UIKeyboardAnimationCurveUserInfoKey] integerValue];
+    UIViewAnimationOptions options = (animationCurve << 16);
         
-        [UIView animateWithDuration:animationDuration
-                              delay:0.0
-                            options:options
-                         animations:^{
-                             [self setTableViewInsetsFromBottom:0];
+    [UIView animateWithDuration:animationDuration
+                          delay:0.0
+                        options:options
+                     animations:^{
+                        [self setTableViewInsetsFromBottom:0];
                              
-                             CGRect containerFrame = self.containerView.frame;
-                             containerFrame.origin.y = self.view.bounds.size.height - containerFrame.size.height;
-                             self.containerView.frame = containerFrame;
-                         } completion:^(BOOL finished) {
+                         CGRect containerFrame = self.containerView.frame;
+                         containerFrame.origin.y = self.view.bounds.size.height - containerFrame.size.height;
+                         self.containerView.frame = containerFrame;
+                     } completion:^(BOOL finished) {
                              
-                             self.previousResponder = nil;
-                         }];
-        
-        [self.messageTable scrollToRowAtIndexPath:[NSIndexPath indexPathForRow:_messageArray.count - 1 inSection:0]
+                         self.previousResponder = nil;
+                     }];
+ /////// This may need some logic to scroll the messages with the keyboard
+    [self.messageTable scrollToRowAtIndexPath:[NSIndexPath indexPathForRow:_messageArray.count - 1 inSection:0]
                                  atScrollPosition:UITableViewScrollPositionBottom
                                          animated:YES];
-
-//    });
 }
 
 #pragma mark - Message Methods
@@ -413,7 +416,7 @@ NSString *const CHOwnMesssageCellIdentifier = @"CHOwnMessageTableViewCell";
         [self.messageTable scrollToRowAtIndexPath:[NSIndexPath indexPathForRow:(_messageArray.count - newCount) inSection:0]
                                  atScrollPosition:UITableViewScrollPositionMiddle
                                          animated:NO];
-        
+        [self reloadMessagesWithScroll:NO];
         [self.refresh endRefreshing];
     }];
 }
@@ -490,6 +493,7 @@ NSString *const CHOwnMesssageCellIdentifier = @"CHOwnMessageTableViewCell";
                              withRowAnimation:UITableViewRowAnimationAutomatic];
     [self.messageTable endUpdates];
     
+
     [self.messageTable scrollToRowAtIndexPath:[NSIndexPath indexPathForRow:_messageArray.count - 1 inSection:0]
                              atScrollPosition:UITableViewScrollPositionBottom
                                      animated:YES];
@@ -553,14 +557,12 @@ NSString *const CHOwnMesssageCellIdentifier = @"CHOwnMessageTableViewCell";
         cell.authorLabel.textColor = [UIColor blackColor];
     }
     
-    if (message.hasMedia) {
+    if (message.hasMedia.boolValue) {
         [[CHNetworkManager sharedManager] getMediaForMessage:message._id groupId:self.group._id callback:^(UIImage *messageMedia) {
             [message setTheMediaSent:messageMedia];
             [self.messageArray replaceObjectAtIndex:indexPath.row withObject:message];
-//            [ ((CHMediaMessageTableViewCell *)cell).mediaMessageImageView setImage:messageMedia];
             
             CGSize size = [self boundsForImage:messageMedia];
-            DLog(@"SIZE??? %@", NSStringFromCGSize(size));
             NSTextAttachment *textAttachment = [[NSTextAttachment alloc] init];
             textAttachment.image = messageMedia;
             textAttachment.bounds = CGRectMake(0, 0, size.width, size.height);
@@ -615,7 +617,7 @@ NSString *const CHOwnMesssageCellIdentifier = @"CHOwnMessageTableViewCell";
     self.shouldSlide = YES;
     [self resignTextView];
     
-    if (message.hasMedia) {
+    if (message.hasMedia.boolValue) {
         [self expandImage:message.theMediaSent];
     }
 }
@@ -650,7 +652,13 @@ NSString *const CHOwnMesssageCellIdentifier = @"CHOwnMessageTableViewCell";
         // Magically add rows to table view
         [self.messageTable insertRowsAtIndexPaths:@[[NSIndexPath indexPathForRow:_messageArray.count - 1 inSection:0]] withRowAnimation:UITableViewRowAnimationAutomatic];
         [self.messageTable endUpdates];
-        [self.messageTable scrollToRowAtIndexPath:[NSIndexPath indexPathForRow:_messageArray.count - 1 inSection:0] atScrollPosition:UITableViewScrollPositionBottom animated:YES];
+
+        /// We are checking to see if the last added row is in the screen (most recent message). If it is, we assume that
+        /// the user is not scrolling and auto-scroll to the bottom. Otherwise, don't touch anything and allow user to continue
+        /// scrolling
+        if ([[self.messageTable indexPathsForVisibleRows] containsObject:[NSIndexPath indexPathForRow:_messageArray.count - 1 inSection:0]]) {
+            [self reloadMessagesWithScroll:YES];
+        }
     
         return YES;
     }
@@ -773,15 +781,10 @@ NSString *const CHOwnMesssageCellIdentifier = @"CHOwnMessageTableViewCell";
 - (void) captureImageDidFinish:(UIImage *)image withMetadata:(NSDictionary *)metadata
 {
     self.mediaWasAdded = YES;
-//    self.media = image;
     self.shouldSlide = NO;
     [self.textView.internalTextView addImage:image];
 
     [self.presentedViewController dismissViewControllerAnimated:YES completion:nil];
-    
-    if( self.keyboardIsVisible ) {
-        DLog(@"Keyboard should be visible");
-    }
     
     [self setSendButtonEnabled:[self canSendMessage]];
 }
