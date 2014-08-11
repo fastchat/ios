@@ -17,6 +17,7 @@
 #import "MBProgressHUD.h"
 #import "CHGroupTableViewCell.h"
 #import "CHMessage.h"
+#import "CHUnreadView.h"
 
 #define kSecondsInDay 86400
 
@@ -208,6 +209,7 @@
     cell.groupDetailLabel.text = group.lastMessage.text;
     cell.groupRightDetailLabel.text = [self formatTime:group.lastMessage.sent];
     [cell setUnread:[group hasUnread]];
+    cell.selectionStyle = UITableViewCellSelectionStyleNone;
     
     return cell;
 }
@@ -248,6 +250,7 @@
 {
     if ([segue.identifier isEqualToString:@"push CHMessageViewControllerFrom CHGroupListTableViewController"]) {
         NSIndexPath *indexPath = [self.tableView indexPathForSelectedRow];
+        
         CHMessageViewController *vc = segue.destinationViewController;
         
         CHGroup *group = _groups[indexPath.row];

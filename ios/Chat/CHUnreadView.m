@@ -33,6 +33,11 @@
     self.circleColor = selected ? [UIColor clearColor] : ( _unread ? kPurpleAppColor : kLightBackgroundColor );
 }
 
+- (void)setToColor:(UIColor*)color;
+{
+    self.circleColor = color;
+}
+
 // 12, 12
 - (void)drawRect:(CGRect)rect
 {
