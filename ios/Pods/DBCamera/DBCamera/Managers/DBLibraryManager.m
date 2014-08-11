@@ -114,11 +114,10 @@
     ALAssetsGroupEnumerationResultsBlock assetsEnumerator = ^(ALAsset *result, NSUInteger index, BOOL *stop) {
         if ( result ) {
             if( [[result valueForProperty:ALAssetPropertyType] isEqualToString:ALAssetTypePhoto] ) {
-                NSURL *url = [[result defaultRepresentation] url];
-                if( url ) {
-                    [items addObject:url];
+                if ( [result defaultRepresentation] ) {
+                    [items addObject:[[result defaultRepresentation] url]];
+                    assetResult = result;
                 }
-                assetResult = result;
             }
         }
         
@@ -142,8 +141,6 @@
                     [assetGroupsBlock insertObject:dictionaryGroup atIndex:0];
                 else if ( [(NSArray *)dictionaryGroup[@"groupAssets"] count] > 0 )
                     [assetGroupsBlock addObject:dictionaryGroup];
-                
-                NSLog( @"Group %@", dictionaryGroup);
             }
             
             items = nil;

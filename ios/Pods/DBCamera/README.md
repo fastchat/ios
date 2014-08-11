@@ -1,50 +1,26 @@
-DBCamera
-========
+![Alt text](http://bogodaniele.com/apps/development/dbcamera/github/dbcamera_splash.png)
 
 DBCamera is a simple custom camera with AVFoundation.
-
-![Alt text](http://paperstreetsoapdesign.com/development/dbcamera/github/dbcamera_screen_6.png)
 
 ##Getting Started
 
 ### Installation
 
-The recommended approach for installating DBCamera is via the [CocoaPods](http://cocoapods.org/) package manager, as it provides flexible dependency management and dead simple installation. For best results, it is recommended that you install via CocoaPods **>= 0.16.0** using Git **>= 1.8.0** installed via Homebrew.
+The recommended approach for installating DBCamera is via the [CocoaPods](http://cocoapods.org/) package manager, as it provides flexible dependency management and dead simple installation.
 
-#### via CocoaPods
+#### Podfile
 
-Install CocoaPods if not already available:
-
-``` bash
-$ [sudo] gem install cocoapods
-$ pod setup
-```
-
-Change to the directory of your Xcode project, and Create and Edit your Podfile and add DBCamera:
-
-``` bash
-$ cd /path/to/MyProject
-$ touch Podfile
-$ edit Podfile
+```ruby
 platform :ios, '6.0'
-pod 'DBCamera', '~> 2.1.2'
-```
-
-Install into your project:
-
-``` bash
-$ pod install
-```
-
-Open your project in Xcode from the .xcworkspace file (not the usual project file)
-
-``` bash
-$ open MyProject.xcworkspace
+pod 'DBCamera', '~> 2.3'
 ```
 
 #### via Apache Cordova
 
 DBCamera is available for use as an apache cordova plugin for ios. Visit [Cordova-DBCamera](https://github.com/vulume/Cordova-DBCamera) for more.
+
+## Example
+If you use the example project, run ``` pod install ``` to install GPUImage dependency
 
 ## Integration
 
@@ -52,7 +28,7 @@ DBCamera has a simple integration:
 
 ```objective-c
 #import "DBCameraViewController.h"
-#import "DBCameraContainer.h"
+#import "DBCameraContainerViewController.h"
 ```
 
 ```objective-c
@@ -66,6 +42,8 @@ DBCamera has a simple integration:
 - (void) openCamera
 {
     DBCameraContainerViewController *cameraContainer = [[DBCameraContainerViewController alloc] initWithDelegate:self];
+    [cameraContainer setFullScreenMode];
+
     UINavigationController *nav = [[UINavigationController alloc] initWithRootViewController:cameraContainer];
     [nav setNavigationBarHidden:YES];
     [self presentViewController:nav animated:YES completion:nil];
@@ -73,10 +51,13 @@ DBCamera has a simple integration:
 
 - (void) openCameraWithoutSegue
 {
-    DBCameraContainerViewController *container = [[DBCameraContainerViewController alloc] initWithDelegate:self];
     DBCameraViewController *cameraController = [DBCameraViewController initWithDelegate:self];
     [cameraController setUseCameraSegue:NO];
+
+    DBCameraContainerViewController *container = [[DBCameraContainerViewController alloc] initWithDelegate:self];
     [container setCameraViewController:cameraController];
+    [container setFullScreenMode];
+
     UINavigationController *nav = [[UINavigationController alloc] initWithRootViewController:container];
     [nav setNavigationBarHidden:YES];
     [self presentViewController:nav animated:YES completion:nil];
@@ -94,10 +75,18 @@ DBCamera has a simple integration:
 //Use your captured image
 #pragma mark - DBCameraViewControllerDelegate
 
-- (void) captureImageDidFinish:(UIImage *)image withMetadata:(NSDictionary *)metadata
+- (void) camera:(id)cameraViewController didFinishWithImage:(UIImage *)image withMetadata:(NSDictionary *)metadata
 {
-    [_imageView setImage:image];
+    DetailViewController *detail = [[DetailViewController alloc] init];
+    [detail setDetailImage:image];
+    [self.navigationController pushViewController:detail animated:NO];
+    [cameraViewController restoreFullScreenMode];
     [self.presentedViewController dismissViewControllerAnimated:YES completion:nil];
+}
+
+- (void) dismissCamera:(id)cameraViewController{
+    [self dismissViewControllerAnimated:YES completion:nil];
+    [cameraViewController restoreFullScreenMode];
 }
 ```
 By default, DBCameraViewController has another controller to display the image preview.
@@ -111,6 +100,36 @@ When you create DBCameraViewController instance, you can set ``` useCameraSegue:
     [container setCameraViewController:cameraController];
     UINavigationController *nav = [[UINavigationController alloc] initWithRootViewController:container];
     [nav setNavigationBarHidden:YES];
+    [container setFullScreenMode];
+    [self presentViewController:nav animated:YES completion:nil];
+}
+```
+If you want, you can force the crop option within segue view controller. Set ``` setForceQuadCrop:``` YES
+```objective-c
+- (void) openCameraWithForceQuad
+{
+    DBCameraViewController *cameraController = [DBCameraViewController initWithDelegate:self];
+    [cameraController setForceQuadCrop:YES];
+
+    DBCameraContainerViewController *container = [[DBCameraContainerViewController alloc] initWithDelegate:self];
+    [container setCameraViewController:cameraController];
+    [container setFullScreenMode];
+
+    UINavigationController *nav = [[UINavigationController alloc] initWithRootViewController:container];
+    [nav setNavigationBarHidden:YES];
+    [self presentViewController:nav animated:YES completion:nil];
+}
+```
+You can use the Library picker as separated view controller.
+```objective-c
+- (void) openLibrary
+{
+    DBCameraLibraryViewController *vc = [[DBCameraLibraryViewController alloc] init];
+    [vc setDelegate:self]; //DBCameraLibraryViewController must have a DBCameraViewControllerDelegate object
+//    [vc setForceQuadCrop:YES]; //Optional
+//    [vc setUseCameraSegue:YES]; //Optional
+    UINavigationController *nav = [[UINavigationController alloc] initWithRootViewController:vc];
+    [nav setNavigationBarHidden:YES];
     [self presentViewController:nav animated:YES completion:nil];
 }
 ```
@@ -123,16 +142,31 @@ For simple customizations, you can customize the built-in camera view by sending
 #import "DBCameraView.h"
 - (void)openCameraWithSettings:(CDVInvokedUrlCommand*)command
 {
-    DBCameraContainerViewController *cameraContainer = [[DBCameraContainerViewController alloc]
-        initWithDelegate:self
-        cameraSettingsBlock:^(DBCameraView *cameraView) {
-            [cameraView.gridButton setHidden:YES];
-        }];
+    DBCameraContainerViewController *cameraContainer = [[DBCameraContainerViewController alloc] initWithDelegate:self cameraSettingsBlock:^(DBCameraView *cameraView, DBCameraContainerViewController *container) {
+        [cameraView.photoLibraryButton setHidden:YES]; //Hide Library button
 
-    UINavigationController *nav = [[UINavigationController alloc] initWithRootViewController:cameraContainer];
-    [nav setNavigationBarHidden:YES];
-    [self presentViewController:nav animated:YES completion:nil];
+        //Override the camera grid
+        DBCameraGridView *cameraGridView = [[DBCameraGridView alloc] initWithFrame:cameraView.previewLayer.frame];
+        [cameraGridView setNumberOfColumns:4];
+        [cameraGridView setNumberOfRows:4];
+        [cameraGridView setAlpha:0];
+        [container.cameraViewController setCameraGridView:cameraGridView];
+    }];
+
+    //Set the Tint Color and the Selected Color
+    [cameraContainer setTintColor:[UIColor redColor]];
+    [cameraContainer setSelectedTintColor:[UIColor yellowColor]];
 }
+```
+
+##Customize the Segue View controller
+For a simple customization, you can use the block ``` cameraSegueConfigureBlock ```
+```objective-c
+#import "DBCameraSegueViewController.h"
+[cameraController setCameraSegueConfigureBlock:^( DBCameraSegueViewController *segue ) {
+  segue.cropMode = YES;
+  segue.cropRect = (CGRect){ 0, 0, 200, 400 };
+}];
 ```
 
 ### Advanced
@@ -234,7 +268,8 @@ You can also create a custom interface, using a subclass of DBCameraView
     CustomCamera *camera = [CustomCamera initWithFrame:[[UIScreen mainScreen] bounds]];
     [camera buildInterface];
 
-    UINavigationController *nav = [[UINavigationController alloc] initWithRootViewController:[[DBCameraViewController alloc] initWithDelegate:self cameraView:camera]];
+    UINavigationController *nav = [[UINavigationController alloc] initWithRootViewController:[[DBCameraViewController alloc] initWithDelegate:self
+                                                                                                                                   cameraView:camera]];
     [nav setNavigationBarHidden:YES];
     [self presentViewController:nav animated:YES completion:nil];
 }
@@ -244,7 +279,7 @@ You can also create a custom interface, using a subclass of DBCameraView
 6.0
 
 ###Version
-2.1.2
+2.3.3
 
 ###Created By
 
@@ -255,3 +290,5 @@ You can also create a custom interface, using a subclass of DBCameraView
 Apache Cordova: [mkcode](https://github.com/mkcode)
 
 Grid view & pinch gesture: [Jack](https://github.com/xhzengAIB)
+
+Filters segue and various improvements: [denadai2](https://github.com/denadai2)

@@ -24,10 +24,9 @@
 
 - (UIImage *) croppedImage:(CGRect)cropRect
 {
-    CGImageRef croppedCGImage = CGImageCreateWithImageInRect(self.CGImage ,cropRect);
-    UIImage *croppedImage = [UIImage imageWithCGImage:croppedCGImage scale:1 orientation:self.imageOrientation];
-    CGImageRelease(croppedCGImage);
-    
+    CGImageRef imageRef = CGImageCreateWithImageInRect( [self CGImage], cropRect );
+    UIImage *croppedImage = [UIImage imageWithCGImage:imageRef scale:1.0f orientation:self.imageOrientation];
+    CGImageRelease(imageRef);
     return croppedImage;
 }
 
@@ -156,7 +155,9 @@ static void addRoundedRectToPath(CGContextRef context, CGRect rect, CGFloat oval
     CGImageRef imageMasked = CGBitmapContextCreateImage(context);
     CGContextRelease(context);
     CGColorSpaceRelease(colorSpace);
-    return [UIImage imageWithCGImage:imageMasked];
+    UIImage *masked = [UIImage imageWithCGImage:imageMasked];
+    CGImageRelease(imageMasked);
+    return masked;
 }
 
 + (UIImage *) returnImage:(UIImage *)img withSize:(CGSize)finalSize

@@ -1,26 +1,29 @@
 PODS:
-  - AFNetworking (2.2.4):
+  - AFNetworking (2.3.1):
     - AFNetworking/NSURLConnection
     - AFNetworking/NSURLSession
     - AFNetworking/Reachability
     - AFNetworking/Security
     - AFNetworking/Serialization
     - AFNetworking/UIKit
-  - AFNetworking/NSURLConnection (2.2.4):
+  - AFNetworking/NSURLConnection (2.3.1):
     - AFNetworking/Reachability
     - AFNetworking/Security
     - AFNetworking/Serialization
-  - AFNetworking/NSURLSession (2.2.4):
-    - AFNetworking/NSURLConnection
-  - AFNetworking/Reachability (2.2.4)
-  - AFNetworking/Security (2.2.4)
-  - AFNetworking/Serialization (2.2.4)
-  - AFNetworking/UIKit (2.2.4):
+  - AFNetworking/NSURLSession (2.3.1):
+    - AFNetworking/Reachability
+    - AFNetworking/Security
+    - AFNetworking/Serialization
+  - AFNetworking/Reachability (2.3.1)
+  - AFNetworking/Security (2.3.1)
+  - AFNetworking/Serialization (2.3.1)
+  - AFNetworking/UIKit (2.3.1):
     - AFNetworking/NSURLConnection
     - AFNetworking/NSURLSession
   - ColorArt (0.1.1)
-  - CRNavigationController (1.1)
-  - DBCamera (2.1.2)
+  - DBCamera (2.3.3):
+    - GPUImage (~> 0.1)
+  - GPUImage (0.1.4)
   - HexColors (2.2.1)
   - Mantle (1.5):
     - Mantle/extobjc
@@ -34,21 +37,20 @@ PODS:
   - URBMediaFocusViewController (0.5.5)
 
 DEPENDENCIES:
-  - AFNetworking (~> 2.2)
+  - AFNetworking (~> 2.3)
   - ColorArt (~> 0.1)
-  - CRNavigationController (~> 1.1)
-  - DBCamera (~> 2.0)
-  - Mantle (~> 1.4)
+  - DBCamera (~> 2.3)
+  - Mantle (~> 1.5)
   - MBProgressHUD (~> 0.8)
   - socket.IO (~> 0.5)
   - TSMessages (~> 0.9)
   - URBMediaFocusViewController (~> 0.5)
 
 SPEC CHECKSUMS:
-  AFNetworking: ab63e259fe91eef4519b371ef0a4955af0e73e64
+  AFNetworking: 6d7b76aa5d04c8c37daad3eef4b7e3f2a7620da3
   ColorArt: f734aa2f988b2be4e9a064c1818d8f8320488110
-  CRNavigationController: e6f95ddaff76444a7083d546d5b9f08f915c6073
-  DBCamera: 202292ae99033e9e1983b39bca107b9c5bd1c1a4
+  DBCamera: d1bf4699c496e982004223a4da33941c7389f4e2
+  GPUImage: ac2bde5f4dbea02a81ced6313964cec1f2043ca9
   HexColors: 01384d2bbe8dc4ffa43c3b4135db6e976952d153
   Mantle: c67a7e45e14196ed42b2a7cbb98ff6a9920e6b92
   MBProgressHUD: c356980b0cd097f19acec959b49dca5eb8ec31be

@@ -12,6 +12,7 @@
  *  DBCameraView delegate protocol
  */
 @class DBCameraGridView;
+@class DBCameraViewController;
 @protocol DBCameraViewDelegate <NSObject>
 @optional
 /**
@@ -95,15 +96,16 @@
 /**
  *  Tells the delegate when the image is ready to use
  *
+ *  @param cameraViewController    The controller object managing the DBCamera interface.
  *  @param image    The captured image
  *  @param metadata The metadata of the image
  */
-- (void) captureImageDidFinish:(UIImage *)image withMetadata:(NSDictionary *)metadata;
+- (void) camera:(id)cameraViewController didFinishWithImage:(UIImage *)image withMetadata:(NSDictionary *)metadata;
 
 /**
  *  Tells the delegate when the camera must be dismissed
  */
-- (void) dismissCamera;
+- (void) dismissCamera:(id)cameraViewController;
 @end
 
 /**
@@ -164,6 +166,11 @@
  *  Set if Camera View Controller will use the camera segue
  */
 @property (nonatomic, assign) BOOL useCameraSegue;
+
+/**
+ *  Use this to alter the segue view before it is presented.
+ */
+@property (nonatomic, copy) void (^cameraSegueConfigureBlock)(id segueViewController);
 @end
 
 /**
