@@ -44,4 +44,14 @@
     return @{};
 }
 
+- (NSManagedObject *)managedObject;
+{
+    NSManagedObject *mob = [MTLManagedObjectAdapter managedObjectFromModel:self
+                                                      insertingIntoContext:[NSManagedObjectContext MR_defaultContext]
+                                                                     error:NULL];
+    
+    return mob;
+    
+}
+
 @end

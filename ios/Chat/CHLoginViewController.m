@@ -72,7 +72,7 @@
 
                 CHUser *loggedInAs = [[CHNetworkManager sharedManager] currentUser];
                 
-                [[CHNetworkManager sharedManager] getAvatarOfUser:loggedInAs.userId callback:^(UIImage *avatar) {
+                [[CHNetworkManager sharedManager] getAvatarOfUser:loggedInAs.chID callback:^(UIImage *avatar) {
                     [[CHNetworkManager sharedManager] currentUser].avatar = avatar;
                 }];
                 

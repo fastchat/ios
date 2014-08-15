@@ -1,29 +1,15 @@
 //
-//  CHGroup.h
 //  Chat
 //
-//  Created by Michael Caputo on 4/8/14.
+//  Created by Ethan Mick on 8/12/14.
 //
 //
+#import "_CHGroup.h"
 
-#import "Mantle/Mantle.h"
-#import "CHFastChatObject.h"
+@interface CHGroup : _CHGroup
 
-@class CHUser, CHMessage;
-
-@interface CHGroup : CHFastChatObject
-
-@property (nonatomic, copy) NSString *_id;
-@property (nonatomic, strong) NSNumber *unread;
-@property (nonatomic, copy) NSString *name;
-@property (nonatomic, copy) NSArray *pastMembers;
-@property (nonatomic, copy) NSArray *members;
-@property (nonatomic, strong) NSMutableDictionary *memberDict;
-@property (nonatomic, strong) CHMessage *lastMessage;
-
-- (NSString *)usernameFromId: (NSString *)theId;
-- (CHUser *)memberFromId: (NSString *)theId;
+- (NSString *)usernameFromId:(NSString *)theId;
+- (CHUser *)memberFromId:(NSString *)theId;
 - (BOOL)hasUnread;
-
 
 @end

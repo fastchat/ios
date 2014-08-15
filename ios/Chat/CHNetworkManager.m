@@ -216,7 +216,7 @@ NSString *const kMediaKey = @"com.fastchat.mediakey";
             CHUser *user = [[CHUser alloc] init];
             [user setUsername:responseObject[@"profile"][@"username"]];
             [user setGroups:responseObject[@"profile"][@"groups"]];
-            user.userId = responseObject[@"profile"][@"_id"];
+            user.chID = responseObject[@"profile"][@"_id"];
             
             self.currentUser = user;
             callback(user);

@@ -16,8 +16,19 @@
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions;
 {
-    // Override point for customization after application launch.
+    ///
+    /// Magical Record starting point
+    ///
+    [MagicalRecord setupAutoMigratingCoreDataStack];
+    
+    ///
+    ///
+    ///
     [[CHNetworkManager sharedManager] hasStoredSessionToken];
+    
+    ///
+    ///
+    ///
     [[CHSocketManager sharedManager] openSocket];
     [UIApplication sharedApplication].applicationIconBadgeNumber = 0;
     
@@ -73,7 +84,7 @@ void uncaughtExceptionHandler(NSException *exception)
             [[CHNetworkManager sharedManager] getProfile:^(CHUser *userProfile) {
                 CHUser *user = [[CHNetworkManager sharedManager] currentUser];
                 
-                [[CHNetworkManager sharedManager] getAvatarOfUser:user.userId callback:^(UIImage *avatar) {
+                [[CHNetworkManager sharedManager] getAvatarOfUser:user.chID callback:^(UIImage *avatar) {
                     user.avatar = avatar;
                     [[CHNetworkManager sharedManager] setCurrentUser:user];
                 }];
@@ -89,6 +100,7 @@ void uncaughtExceptionHandler(NSException *exception)
 
 - (void)applicationWillTerminate:(UIApplication *)application;
 {
+    [MagicalRecord cleanUp];
 }
 
 #pragma mark - Push Notifications

@@ -1,79 +1,62 @@
 //
-//  CHGroup.m
 //  Chat
 //
-//  Created by Michael Caputo on 4/8/14.
+//  Created by Ethan Mick on 8/12/14.
 //
 //
-
 #import "CHGroup.h"
 #import "CHUser.h"
-#import "CHNetworkManager.h"
-#import "CHMessage.h"
+
 
 @interface CHGroup ()
+
 @property (nonatomic, strong) NSMutableDictionary *allUsers;
+
 @end
+
 
 @implementation CHGroup
 
-- (instancetype)initWithDictionary:(NSDictionary *)dictionary error:(NSError **)error;
+- (void)awakeFromFetch;
 {
-    self = [super initWithDictionary:dictionary error:error];
-    self.allUsers = [[NSMutableDictionary alloc] init];
-    self.memberDict = [[NSMutableDictionary alloc] init];
-    
-    if (self) {
-        
-        for (CHUser *user in self.members) {
-            self.allUsers[user.userId] = user.username;
-            self.memberDict[user.userId] = user;
-        }
-        
-        for (CHUser *user in self.pastMembers) {
-            self.allUsers[user.userId] = user.username;
-            if (!self.memberDict[user.userId]) {
-                self.memberDict[user.userId] = user;
-            }
-        }
-    }
-    
-    return self;
+    [super awakeFromFetch];
+    [self commonInit];
 }
 
-+ (NSDictionary *)JSONKeyPathsByPropertyKey;
+- (void)awakeFromInsert;
 {
-    return @{
-             // Other attributes are mapped inheritently because they have the same name
-             @"groupName": @"name",
-             @"pastMembers": @"leftMembers",
-    };
+    [self awakeFromInsert];
+    [self commonInit];
+}
+
+- (void)commonInit;
+{
+    self.allUsers = [NSMutableDictionary dictionary];
 }
 
 - (NSString *)name;
 {
-    if( _name != nil && ![_name isEqualToString:@""] ) {
-        return _name;
+    if( self.name.length != 0 ) {
+        return self.name;
     }
     
-    NSMutableString *nameFromMembers = [@"" mutableCopy];
+    NSMutableString *nameFromMembers = [[NSMutableString alloc] init];
     if( self.members.count == 1 ) {
         [nameFromMembers appendString:[NSString stringWithFormat:@"Empty chat!"]];
     }
     else if( self.members.count == 2 ) {
-        if (((CHUser *)self.members[0]).userId == [[CHNetworkManager sharedManager] currentUser].userId) {
+        if (((CHUser *)self.members.firstObject).chID == [CHUser currentUser].chID) {
             [nameFromMembers appendString:[NSString stringWithFormat:@"%@", ((CHUser *)self.members[1]).username]];
         }
         else {
             [nameFromMembers appendString:[NSString stringWithFormat:@"%@", ((CHUser *)self.members[0]).username]];
         }
-    }
-    else {
-        CHUser *currLoggedInUser = [[CHNetworkManager sharedManager] currentUser];
+    } else {
+        CHUser *currLoggedInUser = [CHUser currentUser];
         for (int i = 0; i < self.members.count; i++) {
             CHUser *currMember = self.members[i];
             
-            if (![currMember.userId isEqualToString:currLoggedInUser.userId]) {
+            if (![currMember.chID isEqualToString:currLoggedInUser.chID]) {
                 if (i == self.members.count - 1) {
                     [nameFromMembers appendString:[NSString stringWithFormat:@"%@",((CHUser *)self.members[i]).username]];
                 }
@@ -86,17 +69,17 @@
     return nameFromMembers;
 }
 
-- (NSString *)usernameFromId: (NSString *)theId;
+- (NSString *)usernameFromId:(NSString *)theId;
 {
     return self.allUsers[theId];
 }
 
-- (CHUser *)memberFromId: (NSString *)theId;
+- (CHUser *)memberFromId:(NSString *)theId;
 {
     CHUser *userToReturn = nil;
- 
+    
     if (theId) {
-        userToReturn = self.memberDict[theId];
+        //        userToReturn = self.memberDict[theId];
     }
     
     return userToReturn;
@@ -105,38 +88,6 @@
 - (BOOL)hasUnread;
 {
     return self.unread.integerValue > 0;
-}
-
-+ (MTLValueTransformer *)membersJSONTransformer;
-{
-    //return [MTLValueTransformer [CHFastChatObject objectsFromJSON:self.members]];
-
-    return [MTLValueTransformer reversibleTransformerWithForwardBlock:^id (NSArray *members) {
-        return [CHUser objectsFromJSON:members];
-    } reverseBlock:^id(NSArray *members) {
-        return @[];
-    }];
-}
-
-+ (MTLValueTransformer *)pastMembersJSONTransformer;
-{
-    //return [MTLValueTransformer [CHFastChatObject objectsFromJSON:self.members]];
-    
-    return [MTLValueTransformer reversibleTransformerWithForwardBlock:^id (NSArray *pastMembers) {
-        return [CHUser objectsFromJSON:pastMembers];
-    } reverseBlock:^id(NSArray *pastMembers) {
-        return @[];
-    }];
-}
-
-+ (MTLValueTransformer *)lastMessageJSONTransformer;
-{
-    return [MTLValueTransformer transformerWithBlock:^id (NSDictionary *messageData) {
-        if (messageData) {
-            return [[CHMessage objectsFromJSON:@[messageData]] lastObject];
-        }
-        return nil;
-    }];
 }
 
 

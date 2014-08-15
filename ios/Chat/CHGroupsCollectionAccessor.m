@@ -35,7 +35,7 @@
         self.groups = [[NSMutableDictionary alloc] init];
     }
     for (CHGroup *group in arrayOfGroups) {
-        self.groups[group._id] = group;
+        self.groups[group.chID] = group;
     }
 }
 
@@ -51,7 +51,9 @@
 
 - (NSDictionary *) getAllMembersForGroupWithId: (NSString *)groupId;
 {
-    return ((CHGroup *)self.groups[groupId]).memberDict;
+//    return ((CHGroup *)self.groups[groupId]).memberDict;
+#warning what
+    __builtin_unreachable();
 }
 
 @end

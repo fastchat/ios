@@ -23,7 +23,7 @@ PODS:
   - ColorArt (0.1.1)
   - DBCamera (2.3.3):
     - GPUImage (~> 0.1)
-  - GPUImage (0.1.4)
+  - GPUImage (0.1.5)
   - HexColors (2.2.1)
   - MagicalRecord (2.2):
     - MagicalRecord/Core
@@ -32,6 +32,45 @@ PODS:
     - Mantle/extobjc
   - Mantle/extobjc (1.5)
   - MBProgressHUD (0.8)
+  - OMGHTTPURLRQ (1.1.5):
+    - OMGHTTPURLRQ/RQ
+    - OMGHTTPURLRQ/UserAgent
+    - OMGHTTPURLRQ/UserAgent
+  - OMGHTTPURLRQ/RQ (1.1.5):
+    - OMGHTTPURLRQ/UserAgent
+  - OMGHTTPURLRQ/UserAgent (1.1.5):
+    - OMGHTTPURLRQ/UserAgent
+  - PromiseKit (0.9.14.3):
+    - PromiseKit/NSNotificationCenter
+    - PromiseKit/NSURLConnection
+    - PromiseKit/Pause
+    - PromiseKit/UIActionSheet
+    - PromiseKit/UIAlertView
+    - PromiseKit/UIView
+    - PromiseKit/UIViewController
+    - PromiseKit/Until
+    - PromiseKit/When
+  - PromiseKit/NSNotificationCenter (0.9.14.3):
+    - PromiseKit/Promise
+  - PromiseKit/NSURLConnection (0.9.14.3):
+    - OMGHTTPURLRQ
+    - PromiseKit/Promise
+  - PromiseKit/Pause (0.9.14.3):
+    - PromiseKit/Promise
+  - PromiseKit/Promise (0.9.14.3)
+  - PromiseKit/UIActionSheet (0.9.14.3):
+    - PromiseKit/Promise
+  - PromiseKit/UIAlertView (0.9.14.3):
+    - PromiseKit/Promise
+  - PromiseKit/UIView (0.9.14.3):
+    - PromiseKit/Promise
+  - PromiseKit/UIViewController (0.9.14.3):
+    - PromiseKit/Promise
+  - PromiseKit/Until (0.9.14.3):
+    - PromiseKit/Promise
+    - PromiseKit/When
+  - PromiseKit/When (0.9.14.3):
+    - PromiseKit/Promise
   - socket.IO (0.5.2):
     - SocketRocket (~> 0.2)
   - SocketRocket (0.3.1-beta2)
@@ -46,6 +85,7 @@ DEPENDENCIES:
   - MagicalRecord (~> 2.2)
   - Mantle (~> 1.5)
   - MBProgressHUD (~> 0.8)
+  - PromiseKit (~> 0.9)
   - socket.IO (~> 0.5)
   - TSMessages (~> 0.9)
   - URBMediaFocusViewController (~> 0.5)
@@ -54,11 +94,13 @@ SPEC CHECKSUMS:
   AFNetworking: 6d7b76aa5d04c8c37daad3eef4b7e3f2a7620da3
   ColorArt: f734aa2f988b2be4e9a064c1818d8f8320488110
   DBCamera: d1bf4699c496e982004223a4da33941c7389f4e2
-  GPUImage: ac2bde5f4dbea02a81ced6313964cec1f2043ca9
+  GPUImage: 5114a47f5fc33eb312f3731550a3cea379416d04
   HexColors: 01384d2bbe8dc4ffa43c3b4135db6e976952d153
   MagicalRecord: 2b471584fc9e3137f3d0a56967917baa4979e224
   Mantle: c67a7e45e14196ed42b2a7cbb98ff6a9920e6b92
   MBProgressHUD: c356980b0cd097f19acec959b49dca5eb8ec31be
+  OMGHTTPURLRQ: c8dd3f83341702f0a3cae94e09d7e368d79a8b6e
+  PromiseKit: 2eba66fea7b3f7cdb1143f1659ee49125bbb145c
   socket.IO: db3e71805c862038ab73209dda2b0ad6babc54b2
   SocketRocket: 79a68ae186063c65e1fe6f638b1ae2927aa5f304
   TSMessages: 2999ef55e532378692e9d14d32da2bb60e285129

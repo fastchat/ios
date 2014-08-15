@@ -51,7 +51,7 @@
     CHNetworkManager *manager = [CHNetworkManager sharedManager];
     [manager getProfile:^(CHUser *userProfile) {
         
-        [manager getAvatarOfUser:[[CHNetworkManager sharedManager] currentUser].userId callback:^(UIImage *avatar) {
+        [manager getAvatarOfUser:[[CHNetworkManager sharedManager] currentUser].chID callback:^(UIImage *avatar) {
             
             [manager currentUser].avatar = avatar;
         }];
@@ -67,28 +67,9 @@
     [[CHNetworkManager sharedManager] getGroups:^(NSArray *groups) {
         self.groups = [groups mutableCopy];
         
-        // Get all member avatars
-        /*for( CHGroup *group in self.groups ) {
-            
-            [group.members enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
-                CHUser *user = obj;
-                if( user.avatar == nil ) {
-                    [[CHNetworkManager sharedManager] getAvatarOfUser:user.userId callback:^(UIImage *avatar) {
-                        ((CHUser *)group.memberDict[user.userId]).avatar = avatar;
-                    }];
-                }
-            }];
-            
-            [group.pastMembers enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
-                CHUser *user = obj;
-                if( user.avatar == nil ) {
-                    [[CHNetworkManager sharedManager] getAvatarOfUser:user.userId callback:^(UIImage *avatar) {
-                        ((CHUser *)group.memberDict[user.userId]).avatar = avatar;
-                    }];
-                }
-            }];
-            
-        }*/
+        CHGroup *group = self.groups[0];
+//        NSManagedObject *object = []
+        
         [self.tableView reloadData];
     }];
     
@@ -232,7 +213,7 @@
 
 - (void)tableView:(UITableView *)tableView commitEditingStyle:(UITableViewCellEditingStyle)editingStyle forRowAtIndexPath:(NSIndexPath *)indexPath;
 {
-    [[CHNetworkManager sharedManager] putLeaveGroup:((CHGroup *)self.groups[indexPath.row])._id callback:^(BOOL success, NSError *error) {
+    [[CHNetworkManager sharedManager] putLeaveGroup:((CHGroup *)self.groups[indexPath.row]).chID callback:^(BOOL success, NSError *error) {
        
     }];
     [self.groups removeObjectAtIndex:indexPath.row];

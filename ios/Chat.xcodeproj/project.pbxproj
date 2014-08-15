@@ -6,6 +6,20 @@
 	objectVersion = 46;
 	objects = {
 
+/* Begin PBXAggregateTarget section */
+		AAC6603F199EA878006B806B /* Mogenerator */ = {
+			isa = PBXAggregateTarget;
+			buildConfigurationList = AAC66040199EA879006B806B /* Build configuration list for PBXAggregateTarget "Mogenerator" */;
+			buildPhases = (
+				AAC66043199EA886006B806B /* ShellScript */,
+			);
+			dependencies = (
+			);
+			name = Mogenerator;
+			productName = Mogenerator;
+		};
+/* End PBXAggregateTarget section */
+
 /* Begin PBXBuildFile section */
 		2742F9991905A3DB00A879E8 /* CHGroupsCollectionAccessor.m in Sources */ = {isa = PBXBuildFile; fileRef = 2742F9981905A3DB00A879E8 /* CHGroupsCollectionAccessor.m */; };
 		2762621B18F706FA001F7754 /* CHProfileViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2762621A18F706FA001F7754 /* CHProfileViewController.m */; };
@@ -26,10 +40,10 @@
 		2769B06018F1258A00CCE470 /* MessageEntrySendButton@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 2769B05818F1258A00CCE470 /* MessageEntrySendButton@2x.png */; };
 		2769B06118F1258A00CCE470 /* MessageEntrySendButtonPressed.png in Resources */ = {isa = PBXBuildFile; fileRef = 2769B05918F1258A00CCE470 /* MessageEntrySendButtonPressed.png */; };
 		2769B06218F1258A00CCE470 /* MessageEntrySendButtonPressed@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 2769B05A18F1258A00CCE470 /* MessageEntrySendButtonPressed@2x.png */; };
-		2769B06518F479CC00CCE470 /* CHGroup.m in Sources */ = {isa = PBXBuildFile; fileRef = 2769B06418F479CC00CCE470 /* CHGroup.m */; };
+		2769B06518F479CC00CCE470 /* CHMTLGroup.m in Sources */ = {isa = PBXBuildFile; fileRef = 2769B06418F479CC00CCE470 /* CHMTLGroup.m */; };
 		2769B06818F47E5E00CCE470 /* CHFastChatObject.m in Sources */ = {isa = PBXBuildFile; fileRef = 2769B06718F47E5E00CCE470 /* CHFastChatObject.m */; };
-		2769B06B18F495FD00CCE470 /* CHMessage.m in Sources */ = {isa = PBXBuildFile; fileRef = 2769B06A18F495FD00CCE470 /* CHMessage.m */; };
-		279CF21D18DF777500C82399 /* CHUser.m in Sources */ = {isa = PBXBuildFile; fileRef = 279CF21C18DF777400C82399 /* CHUser.m */; };
+		2769B06B18F495FD00CCE470 /* CHMTLMessage.m in Sources */ = {isa = PBXBuildFile; fileRef = 2769B06A18F495FD00CCE470 /* CHMTLMessage.m */; };
+		279CF21D18DF777500C82399 /* CHMTLUser.m in Sources */ = {isa = PBXBuildFile; fileRef = 279CF21C18DF777400C82399 /* CHMTLUser.m */; };
 		279CF22118DFD74D00C82399 /* CHInviteUserViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 279CF22018DFD74D00C82399 /* CHInviteUserViewController.m */; };
 		27BAD7A9192E3B6600C8569A /* inprogress.png in Resources */ = {isa = PBXBuildFile; fileRef = 27BAD7A8192E3B6600C8569A /* inprogress.png */; };
 		27BEB10D18F85D82003BB97C /* profile-dark.png in Resources */ = {isa = PBXBuildFile; fileRef = 27BEB10C18F85D82003BB97C /* profile-dark.png */; };
@@ -58,6 +72,14 @@
 		AA8DDA931936DABD007F0196 /* HPGrowingTextView.m in Sources */ = {isa = PBXBuildFile; fileRef = AA8DDA901936DABD007F0196 /* HPGrowingTextView.m */; };
 		AA8DDA941936DABD007F0196 /* HPTextViewInternal.m in Sources */ = {isa = PBXBuildFile; fileRef = AA8DDA921936DABD007F0196 /* HPTextViewInternal.m */; };
 		AAAF1D02193A528C00B095E1 /* CHConstants.m in Sources */ = {isa = PBXBuildFile; fileRef = AAAF1D01193A528C00B095E1 /* CHConstants.m */; };
+		AABD8A01199EAA6B002962A4 /* _CHGroup.m in Sources */ = {isa = PBXBuildFile; fileRef = AABD89F2199EAA6B002962A4 /* _CHGroup.m */; };
+		AABD8A02199EAA6B002962A4 /* _CHMessage.m in Sources */ = {isa = PBXBuildFile; fileRef = AABD89F4199EAA6B002962A4 /* _CHMessage.m */; };
+		AABD8A03199EAA6B002962A4 /* _CHModel.m in Sources */ = {isa = PBXBuildFile; fileRef = AABD89F6199EAA6B002962A4 /* _CHModel.m */; };
+		AABD8A04199EAA6B002962A4 /* _CHUser.m in Sources */ = {isa = PBXBuildFile; fileRef = AABD89F8199EAA6B002962A4 /* _CHUser.m */; };
+		AABD8A05199EAA6B002962A4 /* CHGroup.m in Sources */ = {isa = PBXBuildFile; fileRef = AABD89FA199EAA6B002962A4 /* CHGroup.m */; };
+		AABD8A06199EAA6B002962A4 /* CHMessage.m in Sources */ = {isa = PBXBuildFile; fileRef = AABD89FC199EAA6B002962A4 /* CHMessage.m */; };
+		AABD8A07199EAA6B002962A4 /* CHModel.m in Sources */ = {isa = PBXBuildFile; fileRef = AABD89FE199EAA6B002962A4 /* CHModel.m */; };
+		AABD8A08199EAA6B002962A4 /* CHUser.m in Sources */ = {isa = PBXBuildFile; fileRef = AABD8A00199EAA6B002962A4 /* CHUser.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -101,14 +123,14 @@
 		2769B05818F1258A00CCE470 /* MessageEntrySendButton@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "MessageEntrySendButton@2x.png"; sourceTree = "<group>"; };
 		2769B05918F1258A00CCE470 /* MessageEntrySendButtonPressed.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = MessageEntrySendButtonPressed.png; sourceTree = "<group>"; };
 		2769B05A18F1258A00CCE470 /* MessageEntrySendButtonPressed@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "MessageEntrySendButtonPressed@2x.png"; sourceTree = "<group>"; };
-		2769B06318F479CC00CCE470 /* CHGroup.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CHGroup.h; sourceTree = "<group>"; };
-		2769B06418F479CC00CCE470 /* CHGroup.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CHGroup.m; sourceTree = "<group>"; };
+		2769B06318F479CC00CCE470 /* CHMTLGroup.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CHMTLGroup.h; sourceTree = "<group>"; };
+		2769B06418F479CC00CCE470 /* CHMTLGroup.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CHMTLGroup.m; sourceTree = "<group>"; };
 		2769B06618F47E5E00CCE470 /* CHFastChatObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CHFastChatObject.h; sourceTree = "<group>"; };
 		2769B06718F47E5E00CCE470 /* CHFastChatObject.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CHFastChatObject.m; sourceTree = "<group>"; };
-		2769B06918F495FD00CCE470 /* CHMessage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CHMessage.h; sourceTree = "<group>"; };
-		2769B06A18F495FD00CCE470 /* CHMessage.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CHMessage.m; sourceTree = "<group>"; };
-		279CF21B18DF777400C82399 /* CHUser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CHUser.h; sourceTree = "<group>"; };
-		279CF21C18DF777400C82399 /* CHUser.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CHUser.m; sourceTree = "<group>"; };
+		2769B06918F495FD00CCE470 /* CHMTLMessage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CHMTLMessage.h; sourceTree = "<group>"; };
+		2769B06A18F495FD00CCE470 /* CHMTLMessage.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CHMTLMessage.m; sourceTree = "<group>"; };
+		279CF21B18DF777400C82399 /* CHMTLUser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CHMTLUser.h; sourceTree = "<group>"; };
+		279CF21C18DF777400C82399 /* CHMTLUser.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CHMTLUser.m; sourceTree = "<group>"; };
 		279CF21F18DFD74D00C82399 /* CHInviteUserViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CHInviteUserViewController.h; sourceTree = "<group>"; };
 		279CF22018DFD74D00C82399 /* CHInviteUserViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CHInviteUserViewController.m; sourceTree = "<group>"; };
 		27BAD7A8192E3B6600C8569A /* inprogress.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = inprogress.png; sourceTree = "<group>"; };
@@ -151,6 +173,22 @@
 		AA8DDA921936DABD007F0196 /* HPTextViewInternal.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HPTextViewInternal.m; sourceTree = "<group>"; };
 		AAAF1D00193A528C00B095E1 /* CHConstants.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CHConstants.h; sourceTree = "<group>"; };
 		AAAF1D01193A528C00B095E1 /* CHConstants.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CHConstants.m; sourceTree = "<group>"; };
+		AABD89F1199EAA6B002962A4 /* _CHGroup.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = _CHGroup.h; sourceTree = "<group>"; };
+		AABD89F2199EAA6B002962A4 /* _CHGroup.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = _CHGroup.m; sourceTree = "<group>"; };
+		AABD89F3199EAA6B002962A4 /* _CHMessage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = _CHMessage.h; sourceTree = "<group>"; };
+		AABD89F4199EAA6B002962A4 /* _CHMessage.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = _CHMessage.m; sourceTree = "<group>"; };
+		AABD89F5199EAA6B002962A4 /* _CHModel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = _CHModel.h; sourceTree = "<group>"; };
+		AABD89F6199EAA6B002962A4 /* _CHModel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = _CHModel.m; sourceTree = "<group>"; };
+		AABD89F7199EAA6B002962A4 /* _CHUser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = _CHUser.h; sourceTree = "<group>"; };
+		AABD89F8199EAA6B002962A4 /* _CHUser.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = _CHUser.m; sourceTree = "<group>"; };
+		AABD89F9199EAA6B002962A4 /* CHGroup.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CHGroup.h; sourceTree = "<group>"; };
+		AABD89FA199EAA6B002962A4 /* CHGroup.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CHGroup.m; sourceTree = "<group>"; };
+		AABD89FB199EAA6B002962A4 /* CHMessage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CHMessage.h; sourceTree = "<group>"; };
+		AABD89FC199EAA6B002962A4 /* CHMessage.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CHMessage.m; sourceTree = "<group>"; };
+		AABD89FD199EAA6B002962A4 /* CHModel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CHModel.h; sourceTree = "<group>"; };
+		AABD89FE199EAA6B002962A4 /* CHModel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CHModel.m; sourceTree = "<group>"; };
+		AABD89FF199EAA6B002962A4 /* CHUser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CHUser.h; sourceTree = "<group>"; };
+		AABD8A00199EAA6B002962A4 /* CHUser.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CHUser.m; sourceTree = "<group>"; };
 		ED86F54EC1C64B14950512A1 /* libPods-Chat.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-Chat.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
@@ -217,15 +255,8 @@
 		279CF21E18DF777E00C82399 /* Model */ = {
 			isa = PBXGroup;
 			children = (
-				AA7C691C19986636005DFFF5 /* FastChat.xcdatamodeld */,
-				279CF21B18DF777400C82399 /* CHUser.h */,
-				279CF21C18DF777400C82399 /* CHUser.m */,
-				2769B06318F479CC00CCE470 /* CHGroup.h */,
-				2769B06418F479CC00CCE470 /* CHGroup.m */,
-				2769B06618F47E5E00CCE470 /* CHFastChatObject.h */,
-				2769B06718F47E5E00CCE470 /* CHFastChatObject.m */,
-				2769B06918F495FD00CCE470 /* CHMessage.h */,
-				2769B06A18F495FD00CCE470 /* CHMessage.m */,
+				AAF6A2F8199AE12F002526C4 /* Core Data */,
+				AAF6A2F9199AE136002526C4 /* Mantle */,
 				2742F9971905A3DB00A879E8 /* CHGroupsCollectionAccessor.h */,
 				2742F9981905A3DB00A879E8 /* CHGroupsCollectionAccessor.m */,
 			);
@@ -235,8 +266,7 @@
 		279CF22218E218E000C82399 /* UI files */ = {
 			isa = PBXGroup;
 			children = (
-				AA46331C19365BB700513578 /* CHColors.h */,
-				AA46331D19365BB700513578 /* CHColors.m */,
+				AA7C691F19986B17005DFFF5 /* Colors */,
 				AA463318193659DB00513578 /* UI Elements */,
 				2762621818F706DF001F7754 /* User Info */,
 				2768EAB018D91538006D14BB /* Authentication */,
@@ -411,6 +441,62 @@
 			name = "Supporting Files";
 			sourceTree = "<group>";
 		};
+		AA7C691F19986B17005DFFF5 /* Colors */ = {
+			isa = PBXGroup;
+			children = (
+				AA46331C19365BB700513578 /* CHColors.h */,
+				AA46331D19365BB700513578 /* CHColors.m */,
+			);
+			name = Colors;
+			sourceTree = "<group>";
+		};
+		AA9CD704199EACED007931D5 /* Private */ = {
+			isa = PBXGroup;
+			children = (
+				AABD89F1199EAA6B002962A4 /* _CHGroup.h */,
+				AABD89F2199EAA6B002962A4 /* _CHGroup.m */,
+				AABD89F3199EAA6B002962A4 /* _CHMessage.h */,
+				AABD89F4199EAA6B002962A4 /* _CHMessage.m */,
+				AABD89F5199EAA6B002962A4 /* _CHModel.h */,
+				AABD89F6199EAA6B002962A4 /* _CHModel.m */,
+				AABD89F7199EAA6B002962A4 /* _CHUser.h */,
+				AABD89F8199EAA6B002962A4 /* _CHUser.m */,
+			);
+			name = Private;
+			sourceTree = "<group>";
+		};
+		AAF6A2F8199AE12F002526C4 /* Core Data */ = {
+			isa = PBXGroup;
+			children = (
+				AA7C691C19986636005DFFF5 /* FastChat.xcdatamodeld */,
+				AABD89FD199EAA6B002962A4 /* CHModel.h */,
+				AABD89FE199EAA6B002962A4 /* CHModel.m */,
+				AABD89FF199EAA6B002962A4 /* CHUser.h */,
+				AABD8A00199EAA6B002962A4 /* CHUser.m */,
+				AABD89F9199EAA6B002962A4 /* CHGroup.h */,
+				AABD89FA199EAA6B002962A4 /* CHGroup.m */,
+				AABD89FB199EAA6B002962A4 /* CHMessage.h */,
+				AABD89FC199EAA6B002962A4 /* CHMessage.m */,
+				AA9CD704199EACED007931D5 /* Private */,
+			);
+			name = "Core Data";
+			sourceTree = "<group>";
+		};
+		AAF6A2F9199AE136002526C4 /* Mantle */ = {
+			isa = PBXGroup;
+			children = (
+				2769B06618F47E5E00CCE470 /* CHFastChatObject.h */,
+				2769B06718F47E5E00CCE470 /* CHFastChatObject.m */,
+				279CF21B18DF777400C82399 /* CHMTLUser.h */,
+				279CF21C18DF777400C82399 /* CHMTLUser.m */,
+				2769B06318F479CC00CCE470 /* CHMTLGroup.h */,
+				2769B06418F479CC00CCE470 /* CHMTLGroup.m */,
+				2769B06918F495FD00CCE470 /* CHMTLMessage.h */,
+				2769B06A18F495FD00CCE470 /* CHMTLMessage.m */,
+			);
+			name = Mantle;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -483,6 +569,7 @@
 			targets = (
 				AA7759D518D54D3000E4E7AB /* Chat */,
 				AA7759F918D54D3000E4E7AB /* ChatTests */,
+				AAC6603F199EA878006B806B /* Mogenerator */,
 			);
 		};
 /* End PBXProject section */
@@ -550,6 +637,19 @@
 			shellScript = "diff \"${PODS_ROOT}/../Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [[ $? != 0 ]] ; then\n    cat << EOM\nerror: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\nEOM\n    exit 1\nfi\n";
 			showEnvVarsInLog = 0;
 		};
+		AAC66043199EA886006B806B /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "/usr/local/bin/mogenerator -m Chat/FastChat.xcdatamodeld/FastChat.xcdatamodel -O Chat/ --template-var arc=true";
+		};
 /* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
@@ -564,25 +664,33 @@
 				AA46332719367A5F00513578 /* CHUnreadView.m in Sources */,
 				2768EAB318DB119A006D14BB /* CHSocketManager.m in Sources */,
 				2762622218F82B08001F7754 /* CHCircleImageView.m in Sources */,
-				279CF21D18DF777500C82399 /* CHUser.m in Sources */,
+				279CF21D18DF777500C82399 /* CHMTLUser.m in Sources */,
 				2768EAAE18D9138D006D14BB /* CHMessageViewController.m in Sources */,
 				2768EAA218D888B6006D14BB /* CHGroupListTableViewController.m in Sources */,
 				2769B04618E7820A00CCE470 /* CHMessageTableViewCell.m in Sources */,
 				AAAF1D02193A528C00B095E1 /* CHConstants.m in Sources */,
 				2742F9991905A3DB00A879E8 /* CHGroupsCollectionAccessor.m in Sources */,
+				AABD8A04199EAA6B002962A4 /* _CHUser.m in Sources */,
+				AABD8A06199EAA6B002962A4 /* CHMessage.m in Sources */,
 				AA46331B193659EB00513578 /* CHTextField.m in Sources */,
 				AA7759E618D54D3000E4E7AB /* main.m in Sources */,
 				AA7759EA18D54D3000E4E7AB /* CHAppDelegate.m in Sources */,
+				AABD8A07199EAA6B002962A4 /* CHModel.m in Sources */,
 				AA8DDA941936DABD007F0196 /* HPTextViewInternal.m in Sources */,
 				AA46331E19365BB700513578 /* CHColors.m in Sources */,
 				2762621B18F706FA001F7754 /* CHProfileViewController.m in Sources */,
+				AABD8A05199EAA6B002962A4 /* CHGroup.m in Sources */,
 				2768EAAB18D8E02B006D14BB /* CHAddGroupViewController.m in Sources */,
+				AABD8A02199EAA6B002962A4 /* _CHMessage.m in Sources */,
 				AA46332119365DDF00513578 /* CHAuthTextField.m in Sources */,
-				2769B06518F479CC00CCE470 /* CHGroup.m in Sources */,
+				AABD8A08199EAA6B002962A4 /* CHUser.m in Sources */,
+				2769B06518F479CC00CCE470 /* CHMTLGroup.m in Sources */,
+				AABD8A01199EAA6B002962A4 /* _CHGroup.m in Sources */,
 				AA8DDA931936DABD007F0196 /* HPGrowingTextView.m in Sources */,
+				AABD8A03199EAA6B002962A4 /* _CHModel.m in Sources */,
 				2768EAA818D8C90B006D14BB /* CHNetworkManager.m in Sources */,
 				AA7759F318D54D3000E4E7AB /* CHLoginViewController.m in Sources */,
-				2769B06B18F495FD00CCE470 /* CHMessage.m in Sources */,
+				2769B06B18F495FD00CCE470 /* CHMTLMessage.m in Sources */,
 				279CF22118DFD74D00C82399 /* CHInviteUserViewController.m in Sources */,
 				AA7C691E19986636005DFFF5 /* FastChat.xcdatamodeld in Sources */,
 			);
@@ -792,6 +900,20 @@
 			};
 			name = Release;
 		};
+		AAC66041199EA879006B806B /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Debug;
+		};
+		AAC66042199EA879006B806B /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Release;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -818,6 +940,15 @@
 			buildConfigurations = (
 				AA775A0F18D54D3000E4E7AB /* Debug */,
 				AA775A1018D54D3000E4E7AB /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		AAC66040199EA879006B806B /* Build configuration list for PBXAggregateTarget "Mogenerator" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				AAC66041199EA879006B806B /* Debug */,
+				AAC66042199EA879006B806B /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

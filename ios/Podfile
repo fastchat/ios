@@ -12,6 +12,7 @@ target "Chat" do
   pod 'URBMediaFocusViewController', '~> 0.5'
   pod 'ColorArt', '~> 0.1'
   pod 'MagicalRecord', '~> 2.2'
+  pod 'PromiseKit', '~> 0.9'
 end
 
 target "ChatTests" do

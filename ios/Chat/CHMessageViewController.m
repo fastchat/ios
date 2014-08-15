@@ -17,7 +17,6 @@
 #import "CHMessage.h"
 #import "CHCircleImageView.h"
 #import "URBMediaFocusViewController.h"
-#import "UIImage+ColorArt.h"
 #import "HPTextViewInternal.h"
 
 #define kDefaultContentOffset self.navigationController.navigationBar.frame.size.height + 20
@@ -134,7 +133,7 @@ NSString *const CHOwnMesssageCellIdentifier = @"CHOwnMessageTableViewCell";
     NSMutableDictionary *tempIds = [NSMutableDictionary dictionary];
     [members enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
         CHUser *thisUser = obj;
-        tempIds[thisUser.userId] = thisUser.username;
+        tempIds[thisUser.chID] = thisUser.username;
         
         
     }];
@@ -150,16 +149,16 @@ NSString *const CHOwnMesssageCellIdentifier = @"CHOwnMessageTableViewCell";
         ///
         /// Pre-load the colors of the Names
         ///
-        UIImage *avatar = [_group memberFromId:aMember.username].avatar;
+//        UIImage *avatar = [_group memberFromId:aMember.username].avatar;
         NSMutableDictionary *nameAndColor = [NSMutableDictionary dictionary];
-        
-        if (avatar) {
-            SLColorArt *colorArt = [avatar colorArt];
-            nameAndColor[@"color"] = colorArt.primaryColor;
-        }
+//
+//        if (avatar) {
+//            SLColorArt *colorArt = [avatar colorArt];
+//            nameAndColor[@"color"] = colorArt.primaryColor;
+//        }
         
         nameAndColor[@"username"] = aMember.username;
-        self.members[aMember.userId] = nameAndColor;
+        self.members[aMember.chID] = nameAndColor;
     }
     
     self.mediaWasAdded = NO;
@@ -167,7 +166,7 @@ NSString *const CHOwnMesssageCellIdentifier = @"CHOwnMessageTableViewCell";
     ///
     /// Load up old messages
     ///
-    [[CHNetworkManager sharedManager] getMessagesForGroup:self.group._id page:0 callback:^(NSArray *messages) {
+    [[CHNetworkManager sharedManager] getMessagesForGroup:self.group.chID page:0 callback:^(NSArray *messages) {
         if( messages ) {
             self.messageArray = [NSMutableArray arrayWithArray:messages];
 
@@ -209,7 +208,7 @@ NSString *const CHOwnMesssageCellIdentifier = @"CHOwnMessageTableViewCell";
     ///
     /// Load up old messages
     ///
-    [[CHNetworkManager sharedManager] getMessagesForGroup:self.group._id page:0 callback:^(NSArray *messages) {
+    [[CHNetworkManager sharedManager] getMessagesForGroup:self.group.chID page:0 callback:^(NSArray *messages) {
         if( messages ) {
             self.messageArray = [NSMutableArray arrayWithArray:messages];
             
@@ -393,7 +392,7 @@ NSString *const CHOwnMesssageCellIdentifier = @"CHOwnMessageTableViewCell";
 {
     self.currPage = self.currPage + 1;
     
-    [[CHNetworkManager sharedManager] getMessagesForGroup:self.group._id page:self.currPage callback:^(NSArray *messages) {
+    [[CHNetworkManager sharedManager] getMessagesForGroup:self.group.chID page:self.currPage callback:^(NSArray *messages) {
         messages = [[[messages reverseObjectEnumerator] allObjects] mutableCopy];
 
         NSInteger newCount = messages.count;
@@ -439,7 +438,7 @@ NSString *const CHOwnMesssageCellIdentifier = @"CHOwnMessageTableViewCell";
 //    self.progressBar.hidden = NO;
     
     CHUser *currUser = [[CHNetworkManager sharedManager] currentUser];
-    NSMutableDictionary *data = [[NSMutableDictionary alloc] initWithDictionary:@{@"from": currUser.userId, @"text" : msg, @"group": self.group._id}];
+    NSMutableDictionary *data = [[NSMutableDictionary alloc] initWithDictionary:@{@"from": currUser.chID, @"text" : msg, @"group": self.group.chID}];
     
     CHMessage *newMessage = [[CHMessage alloc] init];
     newMessage.text = self.textView.text;
@@ -449,7 +448,7 @@ NSString *const CHOwnMesssageCellIdentifier = @"CHOwnMessageTableViewCell";
         newMessage.hasMedia = @YES;
         newMessage.theMediaSent = self.textView.internalTextView.attachedImage;
         [[CHNetworkManager sharedManager] postMediaMessageWithImage:self.textView.internalTextView.attachedImage
-                                                            groupId:self.group._id
+                                                            groupId:self.group.chID
                                                             message:self.textView.text
                                                            callback:^(BOOL success, NSError *error) {
                                                                
@@ -477,8 +476,8 @@ NSString *const CHOwnMesssageCellIdentifier = @"CHOwnMessageTableViewCell";
         }];
     }
     
-    newMessage.author = currUser.userId;
-    newMessage.group = _group._id;
+    newMessage.author = currUser.chID;
+    newMessage.group = _group.chID;
     newMessage.sent = [NSDate date];
     
     [self addNewMessage:newMessage];
@@ -526,7 +525,7 @@ NSString *const CHOwnMesssageCellIdentifier = @"CHOwnMessageTableViewCell";
     
     UIColor *color = [UIColor whiteColor];
     
-    if ( [self.members[message.author][@"username"] isEqualToString:self.members[_currentUser.userId][@"username"]] ) {
+    if ( [self.members[message.author][@"username"] isEqualToString:self.members[_currentUser.chID][@"username"]] ) {
         cell = [tableView dequeueReusableCellWithIdentifier:CHOwnMesssageCellIdentifier forIndexPath:indexPath];
     } else {
         cell = [tableView dequeueReusableCellWithIdentifier:CHMesssageCellIdentifier forIndexPath:indexPath];
@@ -558,7 +557,7 @@ NSString *const CHOwnMesssageCellIdentifier = @"CHOwnMessageTableViewCell";
     }
     
     if (message.hasMedia.boolValue) {
-        [[CHNetworkManager sharedManager] getMediaForMessage:message._id groupId:self.group._id callback:^(UIImage *messageMedia) {
+        [[CHNetworkManager sharedManager] getMediaForMessage:message.chID groupId:self.group.chID callback:^(UIImage *messageMedia) {
             [message setTheMediaSent:messageMedia];
             [self.messageArray replaceObjectAtIndex:indexPath.row withObject:message];
             
@@ -642,7 +641,7 @@ NSString *const CHOwnMesssageCellIdentifier = @"CHOwnMessageTableViewCell";
 
 - (BOOL)manager:(CHSocketManager *)manager doesCareAboutMessage:(CHMessage *)message;
 {
-    if( [message.group isEqualToString:self.group._id] ) {
+    if( [message.group.chID isEqualToString:self.group.chID] ) {
         
         
         [self.messageTable beginUpdates];
@@ -670,7 +669,7 @@ NSString *const CHOwnMesssageCellIdentifier = @"CHOwnMessageTableViewCell";
     ///
     /// Load up old messages
     ///
-    [[CHNetworkManager sharedManager] getMessagesForGroup:self.group._id page:_currPage callback:^(NSArray *messages) {
+    [[CHNetworkManager sharedManager] getMessagesForGroup:self.group.chID page:_currPage callback:^(NSArray *messages) {
         self.messageArray = nil;
         self.messageArray = [[NSMutableArray alloc] init];
         

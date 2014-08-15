@@ -37,7 +37,7 @@
     DLog(@"Curr User: %@", currUser);
     
     if( currUser.avatar == nil ) {
-        [[CHNetworkManager sharedManager] getAvatarOfUser:currUser.userId callback:^(UIImage *avatar) {
+        [[CHNetworkManager sharedManager] getAvatarOfUser:currUser.chID callback:^(UIImage *avatar) {
             if( avatar == nil ) {
                 [self.avatarImageView setImage:[UIImage imageWithContentsOfFile:@"profile-dark.png"]];
             }
@@ -62,7 +62,7 @@
     
     if( imageSize/1024.0 <= 200 ) {
 
-        [[CHNetworkManager sharedManager] pushNewAvatarForUser:[[CHNetworkManager sharedManager] currentUser].userId avatarImage:image callback:^(bool successful, NSError *error) {
+        [[CHNetworkManager sharedManager] pushNewAvatarForUser:[[CHNetworkManager sharedManager] currentUser].chID avatarImage:image callback:^(bool successful, NSError *error) {
 
             if( successful ) {
                 [self.avatarImageView setImage:image];

@@ -1,19 +1,18 @@
 //
-//  CHUser.h
 //  Chat
 //
-//  Created by Michael Caputo on 3/23/14.
+//  Created by Ethan Mick on 8/12/14.
 //
 //
+#import "_CHUser.h"
 
-#import <Foundation/Foundation.h>
-#import "CHFastChatObject.h"
+@class PMKPromise;
 
-@interface CHUser : CHFastChatObject <MTLManagedObjectSerializing>
+@interface CHUser : _CHUser
 
-@property (nonatomic, strong) NSString *username;
-@property (nonatomic, strong) NSString *userId;
-@property (nonatomic, copy) NSArray *groups;
-@property (nonatomic, strong) UIImage *avatar;
++ (instancetype)currentUser;
+- (PMKPromise *)remoteGroups;
+- (PMKPromise *)avatar;
+- (void)setAvatar:(UIImage *)avatar;
 
 @end

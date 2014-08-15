@@ -15,6 +15,7 @@
     #import <Foundation/Foundation.h>
     #import "CHColors.h"
     #import "CHConstants.h"
+    #import "CoreData+MagicalRecord.h"
 
 #ifdef DEBUG
 #   define DLog(fmt, ...) NSLog((@"%s [Line %d] " fmt), __PRETTY_FUNCTION__, __LINE__, ##__VA_ARGS__);
