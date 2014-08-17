@@ -6,6 +6,6 @@
 //
 #import "_CHMessage.h"
 
-@interface CHMessage : _CHMessage {}
-// Custom logic goes here.
+@interface CHMessage : _CHMessage
+
 @end

@@ -19,10 +19,11 @@
 
 
 @implementation CHUser
+@synthesize avatarColor;
 
 + (instancetype)currentUser;
 {
-    return [CHUser MR_findFirst];
+    return [CHUser MR_findFirstWithPredicate:[NSPredicate predicateWithFormat:@"_id = '%@'", @""]];
 }
 
 - (PMKPromise *)remoteGroups;

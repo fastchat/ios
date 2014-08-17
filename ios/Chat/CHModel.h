@@ -7,7 +7,7 @@
 
 #import "_CHModel.h"
 
-@interface CHModel : _CHModel {}
+@interface CHModel : _CHModel
 
 + (instancetype)objectFromJSON:(NSDictionary *)dict;
 + (NSArray *)objectsFromJSON:(NSArray *)array;

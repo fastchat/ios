@@ -20,7 +20,7 @@
 
 + (NSDictionary *)managedObjectKeysByPropertyKey {
     NSMutableDictionary *values = [[super managedObjectKeysByPropertyKey] mutableCopy];
-    
+    values[@"userId"] = @"chId";
     return values;
 }
 
