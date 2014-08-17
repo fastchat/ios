@@ -76,7 +76,6 @@
 // THIS NEEDS TO BE REFACTORED
 - (void) socketIO:(SocketIO *)socket didReceiveEvent:(SocketIOPacket *)packet;
 {
-    AudioServicesPlaySystemSound (kSystemSoundID_Vibrate);
     if ([packet.dataAsJSON[@"name"] isEqualToString:@"message"]) {
         
         
@@ -89,9 +88,13 @@
         [group setUnread:[NSNumber numberWithInteger:[group.unread intValue] + 1]];
         DLog(@"Unread: %@", group.unread);
         
+       
+        
         if( [self.delegate respondsToSelector:@selector(manager:doesCareAboutMessage:)]) {
             if( ![self.delegate manager:self doesCareAboutMessage:message] ) {
                 // add messages to list and send notification
+                
+                AudioServicesPlaySystemSound (kSystemSoundID_Vibrate);
                 
                 UIViewController *root = [[[[UIApplication sharedApplication] windows][0] rootViewController] childViewControllers][0];
                
