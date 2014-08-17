@@ -5,6 +5,7 @@
 #import "CHModel.h"
 
 extern const struct CHUserAttributes {
+	__unsafe_unretained NSString *currentUser;
 	__unsafe_unretained NSString *privateAvatar;
 	__unsafe_unretained NSString *sessionToken;
 	__unsafe_unretained NSString *username;
@@ -23,6 +24,7 @@ extern const struct CHUserFetchedProperties {
 @class CHMessage;
 @class CHGroup;
 
+
 @class NSObject;
 
 
@@ -35,6 +37,20 @@ extern const struct CHUserFetchedProperties {
 + (NSString*)entityName;
 + (NSEntityDescription*)entityInManagedObjectContext:(NSManagedObjectContext*)moc_;
 - (CHUserID*)objectID;
+
+
+
+
+
+@property (nonatomic, strong) NSNumber* currentUser;
+
+
+
+@property BOOL currentUserValue;
+- (BOOL)currentUserValue;
+- (void)setCurrentUserValue:(BOOL)value_;
+
+//- (BOOL)validateCurrentUser:(id*)value_ error:(NSError**)error_;
 
 
 
@@ -114,6 +130,15 @@ extern const struct CHUserFetchedProperties {
 @end
 
 @interface _CHUser (CoreDataGeneratedPrimitiveAccessors)
+
+
+- (NSNumber*)primitiveCurrentUser;
+- (void)setPrimitiveCurrentUser:(NSNumber*)value;
+
+- (BOOL)primitiveCurrentUserValue;
+- (void)setPrimitiveCurrentUserValue:(BOOL)value_;
+
+
 
 
 - (id)primitivePrivateAvatar;

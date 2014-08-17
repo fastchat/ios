@@ -4,6 +4,7 @@
 #import "_CHUser.h"
 
 const struct CHUserAttributes CHUserAttributes = {
+	.currentUser = @"currentUser",
 	.privateAvatar = @"privateAvatar",
 	.sessionToken = @"sessionToken",
 	.username = @"username",
@@ -44,9 +45,40 @@ const struct CHUserFetchedProperties CHUserFetchedProperties = {
 + (NSSet*)keyPathsForValuesAffectingValueForKey:(NSString*)key {
 	NSSet *keyPaths = [super keyPathsForValuesAffectingValueForKey:key];
 	
+	if ([key isEqualToString:@"currentUserValue"]) {
+		NSSet *affectingKey = [NSSet setWithObject:@"currentUser"];
+		keyPaths = [keyPaths setByAddingObjectsFromSet:affectingKey];
+		return keyPaths;
+	}
 
 	return keyPaths;
 }
+
+
+
+
+@dynamic currentUser;
+
+
+
+- (BOOL)currentUserValue {
+	NSNumber *result = [self currentUser];
+	return [result boolValue];
+}
+
+- (void)setCurrentUserValue:(BOOL)value_ {
+	[self setCurrentUser:[NSNumber numberWithBool:value_]];
+}
+
+- (BOOL)primitiveCurrentUserValue {
+	NSNumber *result = [self primitiveCurrentUser];
+	return [result boolValue];
+}
+
+- (void)setPrimitiveCurrentUserValue:(BOOL)value_ {
+	[self setPrimitiveCurrentUser:[NSNumber numberWithBool:value_]];
+}
+
 
 
 
