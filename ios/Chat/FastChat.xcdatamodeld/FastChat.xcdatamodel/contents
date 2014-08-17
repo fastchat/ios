@@ -24,6 +24,7 @@
     </entity>
     <entity name="CHUser" representedClassName="CHUser" parentEntity="CHModel" syncable="YES">
         <attribute name="privateAvatar" optional="YES" attributeType="Transformable" syncable="YES"/>
+        <attribute name="sessionToken" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="username" optional="YES" attributeType="String" syncable="YES"/>
         <relationship name="groups" optional="YES" toMany="YES" deletionRule="Nullify" ordered="YES" destinationEntity="CHGroup" inverseName="members" inverseEntity="CHGroup" syncable="YES"/>
         <relationship name="messages" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="CHMessage" inverseName="author" inverseEntity="CHMessage" syncable="YES"/>
@@ -33,6 +34,6 @@
         <element name="CHGroup" positionX="0" positionY="0" width="128" height="135"/>
         <element name="CHMessage" positionX="0" positionY="0" width="128" height="178"/>
         <element name="CHModel" positionX="18" positionY="81" width="128" height="58"/>
-        <element name="CHUser" positionX="0" positionY="0" width="128" height="120"/>
+        <element name="CHUser" positionX="0" positionY="0" width="128" height="135"/>
     </elements>
 </model>

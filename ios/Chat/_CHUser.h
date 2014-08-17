@@ -6,6 +6,7 @@
 
 extern const struct CHUserAttributes {
 	__unsafe_unretained NSString *privateAvatar;
+	__unsafe_unretained NSString *sessionToken;
 	__unsafe_unretained NSString *username;
 } CHUserAttributes;
 
@@ -25,6 +26,7 @@ extern const struct CHUserFetchedProperties {
 @class NSObject;
 
 
+
 @interface CHUserID : NSManagedObjectID {}
 @end
 
@@ -38,11 +40,21 @@ extern const struct CHUserFetchedProperties {
 
 
 
-@property (nonatomic, strong) UIImage * privateAvatar;
+@property (nonatomic, strong) id privateAvatar;
 
 
 
 //- (BOOL)validatePrivateAvatar:(id*)value_ error:(NSError**)error_;
+
+
+
+
+
+@property (nonatomic, strong) NSString* sessionToken;
+
+
+
+//- (BOOL)validateSessionToken:(id*)value_ error:(NSError**)error_;
 
 
 
@@ -106,6 +118,12 @@ extern const struct CHUserFetchedProperties {
 
 - (id)primitivePrivateAvatar;
 - (void)setPrimitivePrivateAvatar:(id)value;
+
+
+
+
+- (NSString*)primitiveSessionToken;
+- (void)setPrimitiveSessionToken:(NSString*)value;
 
 
 

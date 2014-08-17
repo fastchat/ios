@@ -5,6 +5,7 @@
 
 const struct CHUserAttributes CHUserAttributes = {
 	.privateAvatar = @"privateAvatar",
+	.sessionToken = @"sessionToken",
 	.username = @"username",
 };
 
@@ -51,6 +52,13 @@ const struct CHUserFetchedProperties CHUserFetchedProperties = {
 
 
 @dynamic privateAvatar;
+
+
+
+
+
+
+@dynamic sessionToken;
 
 
 
