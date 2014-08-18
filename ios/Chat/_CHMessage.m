@@ -4,6 +4,7 @@
 #import "_CHMessage.h"
 
 const struct CHMessageAttributes CHMessageAttributes = {
+	.authorId = @"authorId",
 	.hasMedia = @"hasMedia",
 	.mediaHeight = @"mediaHeight",
 	.mediaWidth = @"mediaWidth",
@@ -65,6 +66,13 @@ const struct CHMessageFetchedProperties CHMessageFetchedProperties = {
 
 	return keyPaths;
 }
+
+
+
+
+@dynamic authorId;
+
+
 
 
 

@@ -5,6 +5,7 @@
 #import "CHModel.h"
 
 extern const struct CHMessageAttributes {
+	__unsafe_unretained NSString *authorId;
 	__unsafe_unretained NSString *hasMedia;
 	__unsafe_unretained NSString *mediaHeight;
 	__unsafe_unretained NSString *mediaWidth;
@@ -31,6 +32,7 @@ extern const struct CHMessageFetchedProperties {
 
 
 
+
 @class NSObject;
 
 @interface CHMessageID : NSManagedObjectID {}
@@ -41,6 +43,16 @@ extern const struct CHMessageFetchedProperties {
 + (NSString*)entityName;
 + (NSEntityDescription*)entityInManagedObjectContext:(NSManagedObjectContext*)moc_;
 - (CHMessageID*)objectID;
+
+
+
+
+
+@property (nonatomic, strong) NSString* authorId;
+
+
+
+//- (BOOL)validateAuthorId:(id*)value_ error:(NSError**)error_;
 
 
 
@@ -147,6 +159,12 @@ extern const struct CHMessageFetchedProperties {
 @end
 
 @interface _CHMessage (CoreDataGeneratedPrimitiveAccessors)
+
+
+- (NSString*)primitiveAuthorId;
+- (void)setPrimitiveAuthorId:(NSString*)value;
+
+
 
 
 - (NSNumber*)primitiveHasMedia;
