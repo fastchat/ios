@@ -49,6 +49,7 @@ NSString *const SESSION_TOKEN = @"session-token";
 
 - (void)setSessionToken:(NSString *)token;
 {
+    DLog(@"Setting Token: %@", token);
     [self.requestSerializer setValue:token forHTTPHeaderField:SESSION_TOKEN];
 }
 
@@ -60,15 +61,12 @@ NSString *const SESSION_TOKEN = @"session-token";
         [self POST:@"/login" parameters:@{@"username": user.username, @"password" : user.password}
            success:^(NSURLSessionDataTask *task, id responseObject) {
                
+               DLog(@"Response Object Login: %@", responseObject);
                NSString *token = responseObject[SESSION_TOKEN];
                user.sessionToken = token;
-               [self.requestSerializer setValue:token forHTTPHeaderField:SESSION_TOKEN];
+               [self setSessionToken:token];
+               fulfiller(user);
                
-               [self currentUserProfile].then(^(CHUser *user){
-                   fulfiller(user);
-               }).catch(^(NSError *error){
-                   rejecter(error);
-               });
            } failure:^(NSURLSessionDataTask *task, NSError *error) {
                DLog(@"Error: %@", error);
                rejecter(error);
@@ -80,6 +78,7 @@ NSString *const SESSION_TOKEN = @"session-token";
 {
     return [PMKPromise new:^(PMKPromiseFulfiller fulfiller, PMKPromiseRejecter rejecter) {
         [self GET:@"/user" parameters:nil success:^(NSURLSessionDataTask *task, id responseObject) {
+            DLog(@"Profile: %@", responseObject);
             CHUser *user = [CHUser currentUser];
             user.username = responseObject[@"profile"][@"username"];
             user.chID = responseObject[@"profile"][@"_id"];
@@ -108,11 +107,13 @@ NSString *const SESSION_TOKEN = @"session-token";
 
 - (PMKPromise *)currentUserGroups;
 {
+    DLog(@"Tokens? %@", self.requestSerializer.HTTPRequestHeaders);
     return [PMKPromise new:^(PMKPromiseFulfiller fulfiller, PMKPromiseRejecter rejecter) {
         [self GET:@"/group" parameters:nil success:^(NSURLSessionDataTask *task, id responseObject) {
             CHUser *user = [CHUser currentUser];
             NSArray *groups = [CHGroup objectsFromJSON:responseObject];
             user.groups = [NSOrderedSet orderedSetWithSet:[NSSet setWithArray:groups]];
+            [self save];
             fulfiller(user);
         } failure:^(NSURLSessionDataTask *task, NSError *error) {
             DLog(@"Error: %@", error);
@@ -131,6 +132,47 @@ NSString *const SESSION_TOKEN = @"session-token";
             DLog(@"Error: %@", error);
             rejecter(error);
         }];
+    }];
+}
+
+- (PMKPromise *)avatarForUser:(CHUser *)user;
+{
+    DLog(@"Avatar FOR: %@", user);
+    
+    return [PMKPromise new:^(PMKPromiseFulfiller fulfiller, PMKPromiseRejecter rejecter) {
+        ///
+        /// First check our secret cache
+        ///
+        NSString *key = [NSString stringWithFormat:@"%@-%@", kAvatarKey, user.chID];
+        NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+        NSData *data = [defaults objectForKey:key];
+        UIImage *avatar = [UIImage imageWithData:data];
+        if (avatar) {
+            fulfiller(avatar);
+        }
+        
+        NSMutableURLRequest *request = [[NSMutableURLRequest alloc] initWithURL:
+                                        [NSURL URLWithString:[NSString stringWithFormat:@"%@/user/%@/avatar", BASE_URL, user.chID]]];
+        [request setValue:[CHUser currentUser].sessionToken forHTTPHeaderField:@"session-token"];
+        
+        
+        AFHTTPRequestOperation *requestOperation = [[AFHTTPRequestOperation alloc] initWithRequest:request];
+        requestOperation.responseSerializer = [AFImageResponseSerializer serializer];
+        [requestOperation setCompletionBlockWithSuccess:^(AFHTTPRequestOperation *operation, id responseObject) {
+            
+            if (responseObject) {
+                dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+                    [defaults setObject:UIImagePNGRepresentation(responseObject) forKey:key];
+                    [defaults synchronize];
+                });
+            }
+            fulfiller(responseObject);
+        } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+            DLog(@"Error: %@", error);
+            rejecter(error);
+        }];
+        
+        [requestOperation start];
     }];
 }
 
@@ -258,91 +300,6 @@ NSString *const SESSION_TOKEN = @"session-token";
 }
 
 
-- (PMKPromise *)avatarForUser:(CHUser *)user;
-{
-    return [PMKPromise new:^(PMKPromiseFulfiller fulfiller, PMKPromiseRejecter rejecter) {
-        ///
-        /// First check our secret cache
-        ///
-        NSString *key = [NSString stringWithFormat:@"%@-%@", kAvatarKey, user.chID];
-        NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
-        NSData *data = [defaults objectForKey:key];
-        UIImage *avatar = [UIImage imageWithData:data];
-        if (avatar) {
-            fulfiller(avatar);
-        }
-        
-        NSMutableURLRequest *request = [[NSMutableURLRequest alloc] initWithURL:
-                                        [NSURL URLWithString:[NSString stringWithFormat:@"%@/user/%@/avatar", BASE_URL, user.chID]]];
-        [request setValue:[CHUser currentUser].sessionToken forHTTPHeaderField:@"session-token"];
-        
-        
-        AFHTTPRequestOperation *requestOperation = [[AFHTTPRequestOperation alloc] initWithRequest:request];
-        requestOperation.responseSerializer = [AFImageResponseSerializer serializer];
-        [requestOperation setCompletionBlockWithSuccess:^(AFHTTPRequestOperation *operation, id responseObject) {
-            
-            if (responseObject) {
-                dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
-                    [defaults setObject:UIImagePNGRepresentation(responseObject) forKey:key];
-                    [defaults synchronize];
-                });
-            }
-            fulfiller(responseObject);
-        } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
-            rejecter(error);
-        }];
-        
-        [requestOperation start];
-    }];
-}
-
-- (void)getAvatarOfUser:(NSString *)userId
-               callback:(void (^)(UIImage *avatar))callback;
-{
-    ///
-    /// First check our secret cache
-    ///
-    NSString *key = [NSString stringWithFormat:@"%@-%@", kAvatarKey, userId];
-    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
-    NSData *data = [defaults objectForKey:key];
-    UIImage *avatar = [UIImage imageWithData:data];
-    if (avatar) {
-        if (callback) {
-            callback(avatar);
-            return;
-        }
-    }
-    
-    NSMutableURLRequest *request = [[NSMutableURLRequest alloc] initWithURL:
-                                    [NSURL URLWithString:[NSString stringWithFormat:@"%@/user/%@/avatar", BASE_URL, userId]]];
-    [request setValue:[CHUser currentUser].sessionToken forHTTPHeaderField:@"session-token"];
-    
-    
-    AFHTTPRequestOperation *requestOperation = [[AFHTTPRequestOperation alloc] initWithRequest:request];
-    requestOperation.responseSerializer = [AFImageResponseSerializer serializer];
-    [requestOperation setCompletionBlockWithSuccess:^(AFHTTPRequestOperation *operation, id responseObject) {
-        
-        if (responseObject) {
-            dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
-                [defaults setObject:UIImagePNGRepresentation(responseObject) forKey:key];
-                [defaults synchronize];
-            });
-        }
-        
-        if(callback) {
-            callback(responseObject);
-        }
-        
-    } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
-        NSLog(@"Image error: %@", error);
-        if (callback) {
-            callback(nil);
-        }
-    }];
-    
-    [requestOperation start];
-}
-
 - (void)pushNewAvatarForUser: (NSString *)userId avatarImage: (UIImage *)avatarImage callback: (void (^)(bool successful, NSError *error))callback;
 {
     NSData *imageData = UIImagePNGRepresentation(avatarImage);
@@ -457,20 +414,6 @@ NSString *const SESSION_TOKEN = @"session-token";
     
 }
 
-
-- (BOOL)hasStoredSessionToken;
-{
-    
-    NSString *savedValue = [[NSUserDefaults standardUserDefaults]
-                            stringForKey:@"session-token"];
-    
-    if( savedValue != nil ) {
-//        self.sessiontoken = savedValue;
-//        [self.requestSerializer setValue:self.sessiontoken forHTTPHeaderField:@"session-token"];
-    }
-    
-    return savedValue != nil;
-}
 
 - (AFHTTPRequestOperation *)HTTPRequestOperationWithRequest:(NSURLRequest *)request
                                                     success:(void (^)(AFHTTPRequestOperation *operation, id responseObject))success

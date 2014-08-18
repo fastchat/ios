@@ -85,7 +85,7 @@
             </objects>
             <point key="canvasLocation" x="-775" y="-39"/>
         </scene>
-        <!--Group List Table View Controller-->
+        <!--Group List Table View Controller - Groups-->
         <scene sceneID="pPb-Ll-dyZ">
             <objects>
                 <tableViewController storyboardIdentifier="CHGroupListTableViewController" id="XBv-ZM-NJH" customClass="CHGroupListTableViewController" sceneMemberID="viewController">
@@ -144,7 +144,7 @@
                             <outlet property="delegate" destination="XBv-ZM-NJH" id="l8z-VS-XXN"/>
                         </connections>
                     </tableView>
-                    <navigationItem key="navigationItem" id="ecR-oG-DDs">
+                    <navigationItem key="navigationItem" title="Groups" id="ecR-oG-DDs">
                         <barButtonItem key="rightBarButtonItem" systemItem="compose" id="Ruj-gk-kLm">
                             <connections>
                                 <segue destination="Nfa-iP-SEa" kind="push" id="pc8-Qc-lut"/>

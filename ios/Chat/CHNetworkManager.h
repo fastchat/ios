@@ -12,6 +12,9 @@
 
 @interface CHNetworkManager : AFHTTPSessionManager
 
+#pragma mark - Init
+
++ (CHNetworkManager *)sharedManager;
 - (void)setSessionToken:(NSString *)token;
 
 #pragma mark - New Methods
@@ -31,15 +34,13 @@
 - (void)getMediaForMessage:(NSString *)messageId groupId:(NSString *)groupId callback:(void (^)(UIImage *messageMedia))callback;
 - (void)getMessagesForGroup:(NSString *)group page:(NSInteger)page callback:(void (^)(NSArray *messages))callback;
 
-- (void)getAvatarOfUser: (NSString *)userId callback: (void (^)(UIImage *avatar))callback;
 - (void)pushNewAvatarForUser: (NSString *)userId avatarImage: (UIImage *)avatarImage callback: (void (^)(bool successful, NSError *error))callback;
 - (void)addNewUsers: (NSArray *)invitees groupId: (NSString *) groupId callback: (void (^)(bool successful, NSError *error))callback;
 - (void)acceptInviteAtIndex: (NSNumber *)index callback: (void (^)(bool successful, NSError *error))callback;
 - (void)postDeviceToken:(NSData *)token callback:(void (^)(BOOL success, NSError *error))callback;
 - (void)postMediaMessageWithImage:(UIImage *)image groupId:(NSString *)groupId message:(NSString *)message callback:(void (^)(BOOL success, NSError *error))callback;
-- (BOOL)hasStoredSessionToken;
 
-+ (CHNetworkManager *)sharedManager;
+
 
 @end
 

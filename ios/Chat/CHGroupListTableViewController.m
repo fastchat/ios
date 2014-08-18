@@ -30,16 +30,14 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-    self.navigationItem.title = @"Groups";
     self.view.backgroundColor = kLightBackgroundColor;
-    
-    UIEdgeInsets insets = UIEdgeInsetsMake(5, 0, 0, 0);
-    self.tableView.contentInset = insets;
+    self.tableView.contentInset = UIEdgeInsetsMake(5, 0, 0, 0);
     
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(reloadTableView) name:@"ReloadGroupTablesNotification" object:nil];
     
-    [self user].then(^(CHUser *user){
-        
+    [self user].then(^(CHUser *user) {
+        [[UIApplication sharedApplication] registerForRemoteNotificationTypes:
+         (UIRemoteNotificationTypeBadge | UIRemoteNotificationTypeSound | UIRemoteNotificationTypeAlert)];
         self.currentUser = user;
         [self.tableView reloadData];
         return user.remoteGroups;
@@ -47,13 +45,8 @@
         [self.tableView reloadData];
         return user.avatar;
     }).catch(^(NSError *error){
-        [[[UIAlertView alloc] initWithTitle:@"Error!"
-                                   message:error.localizedDescription
-                                  delegate:nil
-                         cancelButtonTitle:@"Ok"
-                          otherButtonTitles:nil] show];
+        DLog(@"Error Occured! %@", error);
     });
-    
 }
 
 - (PMKPromise *)user;
@@ -70,7 +63,8 @@
 
 - (void)reloadTableView;
 {
-    DLog(@"reloading table veiw");
+    DLog(@"reloading table view");
+    [self.tableView reloadData];
 //    [[CHNetworkManager sharedManager] getGroups:^(NSArray *groups) {
 //        self.groups = [groups mutableCopy];
     
@@ -108,15 +102,6 @@
     ///
     /// If we got here, it means we logged in
     ///
-    [[UIApplication sharedApplication] registerForRemoteNotificationTypes:
-     (UIRemoteNotificationTypeBadge | UIRemoteNotificationTypeSound | UIRemoteNotificationTypeAlert)];
-    
-//    [[CHNetworkManager sharedManager] getGroups:^(NSArray *groups) {
-//        self.groups = [groups mutableCopy];
-//
-//        [self.tableView reloadData];
-//    }];
-
     
 }
 
@@ -177,6 +162,8 @@
     CHGroupTableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"CHGroupTableViewCell" forIndexPath:indexPath];
     
     CHGroup *group = _currentUser.groups[indexPath.row];
+    DLog(@"Group: %@", group);
+    DLog(@"Group Last: %@", group.lastMessage);
     cell.groupTextLabel.text = group.name;
     cell.groupDetailLabel.text = group.lastMessage.text;
     cell.groupRightDetailLabel.text = [self formatTime:group.lastMessage.sent];

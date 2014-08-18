@@ -47,7 +47,8 @@
     if( !_socket ) {
         _socket = [[SocketIO alloc] initWithDelegate:self];
     }
-    if( [[CHNetworkManager sharedManager] hasStoredSessionToken]) {
+    
+    if ([CHUser currentUser].sessionToken) {
         [_socket connectToHost:@"powerful-cliffs-9562.herokuapp.com" onPort:80 withParams:@{@"token": [CHUser currentUser].sessionToken}];
     }
 }
@@ -78,18 +79,15 @@
 {
     if ([packet.dataAsJSON[@"name"] isEqualToString:@"message"]) {
         
-        
-        
         NSDictionary *data = [packet.dataAsJSON[@"args"] firstObject];
-        CHMessage *message = [[CHMessage objectsFromJSON:@[data]] firstObject];
+        CHMessage *message = [CHMessage objectFromJSON:data];
+        message.group.lastMessage = message;
+        [message.group unreadIncrement];
+        [[NSManagedObjectContext MR_defaultContext] MR_saveToPersistentStoreAndWait];
+        
         DLog(@"here");
         [[NSNotificationCenter defaultCenter] postNotificationName:kReloadGroupTablesNotification object:nil];
-        CHGroup *group = [[CHGroupsCollectionAccessor sharedAccessor] getGroupWithId:message.group];
-        [group setUnread:[NSNumber numberWithInteger:[group.unread intValue] + 1]];
-        DLog(@"Unread: %@", group.unread);
-        
-       
-        
+    
         if( [self.delegate respondsToSelector:@selector(manager:doesCareAboutMessage:)]) {
             if( ![self.delegate manager:self doesCareAboutMessage:message] ) {
                 // add messages to list and send notification
@@ -97,29 +95,30 @@
                 AudioServicesPlaySystemSound (kSystemSoundID_Vibrate);
                 
                 UIViewController *root = [[[[UIApplication sharedApplication] windows][0] rootViewController] childViewControllers][0];
-               
-
-              [TSMessage showNotificationInViewController:root
-                                                    title:[NSString stringWithFormat:@"%@: %@", [[CHGroupsCollectionAccessor sharedAccessor] getGroupWithId:message.group].name, message.text]
-                                                 subtitle:nil image:nil type:TSMessageNotificationTypeMessage duration:3.0
-                                                 callback:^{
-                                                     UIStoryboard *storyboard = [UIStoryboard storyboardWithName:@"Main_iPhone" bundle:nil];
-                                                     CHMessageViewController *vc = [storyboard instantiateViewControllerWithIdentifier:@"CHMessageViewController"];
-                                                     [vc setGroup:[[CHGroupsCollectionAccessor sharedAccessor] getGroupWithId:message.group]];
-                                                     [vc setGroupId:message.group];
-                                                     
-                                                     [((UINavigationController*)root) popViewControllerAnimated:NO];
-                                                     [((UINavigationController*)root) pushViewController:vc animated:YES];
-
-                                                 }
-                                              buttonTitle:nil buttonCallback:nil
-                                               atPosition:TSMessageNotificationPositionTop canBeDismissedByUser:YES];
-            
+                
+                
+                [TSMessage showNotificationInViewController:root
+                                                      title:[NSString stringWithFormat:@"%@: %@", message.group.name, message.text]
+                                                   subtitle:nil
+                                                      image:nil
+                                                       type:TSMessageNotificationTypeMessage
+                                                   duration:3.0
+                                                   callback:^{
+                                                       UIStoryboard *storyboard = [UIStoryboard storyboardWithName:@"Main_iPhone" bundle:nil];
+                                                       CHMessageViewController *vc = [storyboard instantiateViewControllerWithIdentifier:@"CHMessageViewController"];
+                                                       vc.group = message.group;
+                                                       vc.groupId = message.groupId;
+                                                       
+                                                       [((UINavigationController*)root) popViewControllerAnimated:NO];
+                                                       [((UINavigationController*)root) pushViewController:vc animated:YES];
+                                                   }
+                                                buttonTitle:nil
+                                             buttonCallback:nil
+                                                 atPosition:TSMessageNotificationPositionTop
+                                       canBeDismissedByUser:YES];
             }
-            
         }
     }
-    
 }
 
 -(void) sendMessageWithEvent: (NSString *)message data: (NSDictionary *)data acknowledgement:(void (^)(id argsData))acknowledgement;
