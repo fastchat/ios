@@ -7,8 +7,7 @@
 //
 
 #import "CHAddGroupViewController.h"
-#import "CHNetworkManager.h"
-#include "CHAppDelegate.h"
+#import "CHGroup.h"
 
 @interface CHAddGroupViewController ()
 
@@ -16,20 +15,8 @@
 
 @implementation CHAddGroupViewController
 
-- (void)viewDidLoad;
-{
-    [super viewDidLoad];
-    self.title = @"Create Group";
-    
-    
-    UIBarButtonItem *saveButton = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemSave target:self action:@selector(createGroup)];
-    self.navigationItem.rightBarButtonItem = saveButton;
-    
-    [self.groupNameTextField setPlaceholder:@"Group name (optional)"];
-}
 
-
-- (void)createGroup;
+- (IBAction)saveGroup:(id)sender;
 {
     NSMutableArray *members = [[NSMutableArray alloc] init];
     if (![self.firstMemberTextField.text isEqualToString:@""]) {
@@ -43,12 +30,11 @@
     }
     
     if( members.count >= 1 ) {
-        [[CHNetworkManager sharedManager] createGroupWithName:self.groupNameTextField.text members:members callback:^(bool successful, NSError *error) {
+        [CHGroup groupWithName:self.groupNameTextField.text members:members].then(^(CHGroup *group){
             [[NSNotificationCenter defaultCenter] postNotificationName:kReloadGroupTablesNotification object:nil];
-            [self.navigationController popViewControllerAnimated:YES];
-        }];
+            [self dismissViewControllerAnimated:YES completion:nil];
+        });
     }
 }
-
 
 @end

@@ -21,7 +21,6 @@
 /* End PBXAggregateTarget section */
 
 /* Begin PBXBuildFile section */
-		2742F9991905A3DB00A879E8 /* CHGroupsCollectionAccessor.m in Sources */ = {isa = PBXBuildFile; fileRef = 2742F9981905A3DB00A879E8 /* CHGroupsCollectionAccessor.m */; };
 		2762621B18F706FA001F7754 /* CHProfileViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2762621A18F706FA001F7754 /* CHProfileViewController.m */; };
 		2762622218F82B08001F7754 /* CHCircleImageView.m in Sources */ = {isa = PBXBuildFile; fileRef = 2762622118F82B08001F7754 /* CHCircleImageView.m */; };
 		2768EA9F18D87059006D14BB /* CHRegisterViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2768EA9E18D87059006D14BB /* CHRegisterViewController.m */; };
@@ -93,8 +92,6 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
-		2742F9971905A3DB00A879E8 /* CHGroupsCollectionAccessor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CHGroupsCollectionAccessor.h; sourceTree = "<group>"; };
-		2742F9981905A3DB00A879E8 /* CHGroupsCollectionAccessor.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CHGroupsCollectionAccessor.m; sourceTree = "<group>"; };
 		2762621918F706FA001F7754 /* CHProfileViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CHProfileViewController.h; sourceTree = "<group>"; };
 		2762621A18F706FA001F7754 /* CHProfileViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CHProfileViewController.m; sourceTree = "<group>"; };
 		2762622018F82B08001F7754 /* CHCircleImageView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CHCircleImageView.h; sourceTree = "<group>"; };
@@ -257,8 +254,6 @@
 			children = (
 				AAF6A2F8199AE12F002526C4 /* Core Data */,
 				AAF6A2F9199AE136002526C4 /* Mantle */,
-				2742F9971905A3DB00A879E8 /* CHGroupsCollectionAccessor.h */,
-				2742F9981905A3DB00A879E8 /* CHGroupsCollectionAccessor.m */,
 			);
 			name = Model;
 			sourceTree = "<group>";
@@ -283,6 +278,7 @@
 				2768EAAD18D9138D006D14BB /* CHMessageViewController.m */,
 				AA4633291936933000513578 /* Message Views */,
 				AA4633281936902600513578 /* Message Cells */,
+				AA86ED8C19A1A8AD00ABFA53 /* Invite User */,
 			);
 			name = Messaging;
 			sourceTree = "<group>";
@@ -291,12 +287,7 @@
 			isa = PBXGroup;
 			children = (
 				AA86ED8B19A19A7900ABFA53 /* Groups View */,
-				279CF21F18DFD74D00C82399 /* CHInviteUserViewController.h */,
-				279CF22018DFD74D00C82399 /* CHInviteUserViewController.m */,
-				2768EAA918D8E02B006D14BB /* CHAddGroupViewController.h */,
-				2768EAAA18D8E02B006D14BB /* CHAddGroupViewController.m */,
-				AA46332519367A5F00513578 /* CHUnreadView.h */,
-				AA46332619367A5F00513578 /* CHUnreadView.m */,
+				AA86ED8D19A1A8B300ABFA53 /* New Group */,
 			);
 			name = Groups;
 			sourceTree = "<group>";
@@ -454,8 +445,28 @@
 				2768EAA118D888B6006D14BB /* CHGroupListTableViewController.m */,
 				AA4633221936735F00513578 /* CHGroupTableViewCell.h */,
 				AA4633231936735F00513578 /* CHGroupTableViewCell.m */,
+				AA46332519367A5F00513578 /* CHUnreadView.h */,
+				AA46332619367A5F00513578 /* CHUnreadView.m */,
 			);
 			name = "Groups View";
+			sourceTree = "<group>";
+		};
+		AA86ED8C19A1A8AD00ABFA53 /* Invite User */ = {
+			isa = PBXGroup;
+			children = (
+				279CF21F18DFD74D00C82399 /* CHInviteUserViewController.h */,
+				279CF22018DFD74D00C82399 /* CHInviteUserViewController.m */,
+			);
+			name = "Invite User";
+			sourceTree = "<group>";
+		};
+		AA86ED8D19A1A8B300ABFA53 /* New Group */ = {
+			isa = PBXGroup;
+			children = (
+				2768EAA918D8E02B006D14BB /* CHAddGroupViewController.h */,
+				2768EAAA18D8E02B006D14BB /* CHAddGroupViewController.m */,
+			);
+			name = "New Group";
 			sourceTree = "<group>";
 		};
 		AA9CD704199EACED007931D5 /* Private */ = {
@@ -677,7 +688,6 @@
 				2768EAA218D888B6006D14BB /* CHGroupListTableViewController.m in Sources */,
 				2769B04618E7820A00CCE470 /* CHMessageTableViewCell.m in Sources */,
 				AAAF1D02193A528C00B095E1 /* CHConstants.m in Sources */,
-				2742F9991905A3DB00A879E8 /* CHGroupsCollectionAccessor.m in Sources */,
 				AABD8A04199EAA6B002962A4 /* _CHUser.m in Sources */,
 				AABD8A06199EAA6B002962A4 /* CHMessage.m in Sources */,
 				AA46331B193659EB00513578 /* CHTextField.m in Sources */,

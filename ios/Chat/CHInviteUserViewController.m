@@ -15,21 +15,14 @@
 
 @implementation CHInviteUserViewController
 
-- (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
-{
-    self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
-    if (self) {
-        // Custom initialization
-    }
-    return self;
-}
 
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-    // Do any additional setup after loading the view.
     
-    UIBarButtonItem *cancelButton = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemCancel target:self action:@selector(cancelWasTouched)];
+    UIBarButtonItem *cancelButton = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemCancel
+                                                                                  target:self
+                                                                                  action:@selector(cancelWasTouched)];
     self.navigationItem.leftBarButtonItem = cancelButton;
 }
 
@@ -41,7 +34,8 @@
 }
 
 
-- (IBAction)sendInviteTouched:(id)sender {
+- (IBAction)sendInviteTouched:(id)sender;
+{
     NSArray *invitees = @[self.usernameTextField.text];
     
     [[CHNetworkManager sharedManager] addNewUsers:invitees groupId:self.groupId callback:^(bool successful, NSError *error) {

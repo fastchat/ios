@@ -7,6 +7,7 @@
 //
 
 #import "CHMTLMessage.h"
+#import "CHGroup.h"
 
 @implementation CHMTLMessage
 
@@ -43,7 +44,7 @@
     NSMutableDictionary *values = [[super managedObjectKeysByPropertyKey] mutableCopy];
     values[@"_id"] = @"chID";
     values[@"author"] = @"authorId";
-    values[@"group"] = [NSNull null];
+    values[@"group"] = @"groupId";
     return values;
 }
 
@@ -51,6 +52,9 @@
 {
     return [NSSet setWithObjects:@"_id", nil];
 }
+
+
+
 
 
 

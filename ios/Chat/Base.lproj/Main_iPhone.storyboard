@@ -147,7 +147,7 @@
                     <navigationItem key="navigationItem" title="Groups" id="ecR-oG-DDs">
                         <barButtonItem key="rightBarButtonItem" systemItem="compose" id="Ruj-gk-kLm">
                             <connections>
-                                <segue destination="Nfa-iP-SEa" kind="push" id="pc8-Qc-lut"/>
+                                <segue destination="gXb-HX-H7r" kind="modal" id="pc8-Qc-lut"/>
                             </connections>
                         </barButtonItem>
                     </navigationItem>
@@ -352,7 +352,7 @@
             </objects>
             <point key="canvasLocation" x="1049" y="467"/>
         </scene>
-        <!--Add Group View Controller-->
+        <!--Add Group View Controller - Create Group-->
         <scene sceneID="Yyw-gc-GC0">
             <objects>
                 <viewController storyboardIdentifier="CHAddGroupViewController" id="Nfa-iP-SEa" customClass="CHAddGroupViewController" sceneMemberID="viewController">
@@ -370,7 +370,7 @@
                                 <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                 <nil key="highlightedColor"/>
                             </label>
-                            <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="Cj7-tU-nx0">
+                            <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="Group name (optional)" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="Cj7-tU-nx0">
                                 <rect key="frame" x="138" y="95" width="172" height="30"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="14"/>
@@ -418,7 +418,13 @@
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
                     </view>
-                    <navigationItem key="navigationItem" id="NkM-vd-q6Y"/>
+                    <navigationItem key="navigationItem" title="Create Group" id="NkM-vd-q6Y">
+                        <barButtonItem key="rightBarButtonItem" systemItem="save" id="Vzd-nG-LRg">
+                            <connections>
+                                <action selector="saveGroup:" destination="Nfa-iP-SEa" id="u1i-Xd-oZW"/>
+                            </connections>
+                        </barButtonItem>
+                    </navigationItem>
                     <connections>
                         <outlet property="firstMemberTextField" destination="9w1-2B-U6k" id="Pjq-n4-reX"/>
                         <outlet property="groupNameTextField" destination="Cj7-tU-nx0" id="dbm-Ej-OaG"/>
@@ -428,7 +434,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="R4L-bU-Txy" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="1049" y="-235"/>
+            <point key="canvasLocation" x="1575" y="-235"/>
         </scene>
         <!--Invite User View Controller-->
         <scene sceneID="OXX-ED-a1k">
@@ -688,6 +694,24 @@
                 <placeholder placeholderIdentifier="IBFirstResponder" id="fPc-Cu-tvD" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="54" y="1022"/>
+        </scene>
+        <!--Navigation Controller-->
+        <scene sceneID="lgl-iM-H5t">
+            <objects>
+                <navigationController automaticallyAdjustsScrollViewInsets="NO" id="gXb-HX-H7r" sceneMemberID="viewController">
+                    <toolbarItems/>
+                    <navigationBar key="navigationBar" contentMode="scaleToFill" id="Okr-35-oLZ">
+                        <rect key="frame" x="0.0" y="0.0" width="320" height="44"/>
+                        <autoresizingMask key="autoresizingMask"/>
+                    </navigationBar>
+                    <nil name="viewControllers"/>
+                    <connections>
+                        <segue destination="Nfa-iP-SEa" kind="relationship" relationship="rootViewController" id="Ala-q2-Njf"/>
+                    </connections>
+                </navigationController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="Bqn-cs-TKh" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="1049" y="-235"/>
         </scene>
     </scenes>
     <resources>

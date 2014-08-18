@@ -15,4 +15,6 @@
 @property (weak, nonatomic) IBOutlet UITextField *secondMemberTextField;
 @property (weak, nonatomic) IBOutlet UITextField *thirdMemberTextField;
 
+- (IBAction)saveGroup:(id)sender;
+
 @end

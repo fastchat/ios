@@ -10,7 +10,7 @@
 #import "CHMTLUser.h"
 #import "CHUser.h"
 #import "CHNetworkManager.h"
-#import "CHMessage.h"
+#import "CHMTLMessage.h"
 
 @interface CHMTLGroup ()
 @property (nonatomic, strong) NSMutableDictionary *allUsers;
@@ -26,17 +26,17 @@
     
     if (self) {
         
-        for (CHUser *user in self.members) {
-            self.allUsers[user.chID] = user.username;
-            self.memberDict[user.chID] = user;
-        }
-        
-        for (CHUser *user in self.pastMembers) {
-            self.allUsers[user.chID] = user.username;
-            if (!self.memberDict[user.chID]) {
-                self.memberDict[user.chID] = user;
-            }
-        }
+//        for (CHUser *user in self.members) {
+//            self.allUsers[user.chID] = user.username;
+//            self.memberDict[user.chID] = user;
+//        }
+//        
+//        for (CHUser *user in self.pastMembers) {
+//            self.allUsers[user.chID] = user.username;
+//            if (!self.memberDict[user.chID]) {
+//                self.memberDict[user.chID] = user;
+//            }
+//        }
     }
     
     return self;
@@ -95,9 +95,14 @@
 
 + (MTLValueTransformer *)lastMessageJSONTransformer;
 {
-    return [MTLValueTransformer transformerWithBlock:^id (NSDictionary *messageData) {
+    return [MTLValueTransformer reversibleTransformerWithForwardBlock:^id(NSDictionary *messageData) {
         if (messageData) {
-            return [[CHMessage objectsFromJSON:@[messageData]] lastObject];
+            return [[CHMTLMessage objectsFromJSON:@[messageData]] lastObject];
+        }
+        return nil;
+    } reverseBlock:^id(CHMTLMessage *lastMessage) {
+        if (lastMessage) {
+            [MTLJSONAdapter JSONDictionaryFromModel:lastMessage];
         }
         return nil;
     }];
@@ -110,7 +115,6 @@
     NSMutableDictionary *values = [[super managedObjectKeysByPropertyKey] mutableCopy];
     values[@"_id"] = @"chID";
     values[@"memberDict"] = [NSNull null];
-    values[@"lastMessage"] = [NSNull null];
     values[@"messages"] = [NSNull null];
     values[@"allUsers"] = [NSNull null];
     return values;

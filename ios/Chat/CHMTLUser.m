@@ -18,9 +18,11 @@
             };
 }
 
-+ (NSDictionary *)managedObjectKeysByPropertyKey {
++ (NSDictionary *)managedObjectKeysByPropertyKey;
+{
     NSMutableDictionary *values = [[super managedObjectKeysByPropertyKey] mutableCopy];
-    values[@"userId"] = @"chId";
+    values[@"userId"] = @"chID";
+    values[@"avatar"] = [NSNull null];
     return values;
 }
 

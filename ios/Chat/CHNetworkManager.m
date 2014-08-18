@@ -11,7 +11,6 @@
 #import "CHGroup.h"
 #import "CHMessage.h"
 #import "AFNetworking.h"
-#import "CHGroupsCollectionAccessor.h"
 #import "CHModel.h"
 
 NSString *const kAvatarKey = @"com.fastchat.avatarkey";
@@ -107,7 +106,6 @@ NSString *const SESSION_TOKEN = @"session-token";
 
 - (PMKPromise *)currentUserGroups;
 {
-    DLog(@"Tokens? %@", self.requestSerializer.HTTPRequestHeaders);
     return [PMKPromise new:^(PMKPromiseFulfiller fulfiller, PMKPromiseRejecter rejecter) {
         [self GET:@"/group" parameters:nil success:^(NSURLSessionDataTask *task, id responseObject) {
             CHUser *user = [CHUser currentUser];
@@ -176,30 +174,23 @@ NSString *const SESSION_TOKEN = @"session-token";
     }];
 }
 
-#pragma mark - Old
-
-- (void)registerWithUsername: (NSString *)username password:(NSString *)password callback:(void (^)(NSArray *userData))callback;
+- (PMKPromise *)newGroupWithName:(id)name members:(NSArray *)members;
 {
-    [self POST:@"/user" parameters:@{@"username" : username, @"password" : password} success:^(NSURLSessionDataTask *task, id responseObject) {
-        if( callback ) {
-            callback(responseObject);
-        }
-    } failure:^(NSURLSessionDataTask *task, NSError *error) {
-        DLog(@"Error: %@", error);
-    }];
-}
-
-- (void)getGroups: (void (^)(NSArray *groups))callback {
-    [self GET:[NSString stringWithFormat:@"/group"] parameters:nil success:^(NSURLSessionDataTask *task, id responseObject) {
-        if( callback ) {
-            NSArray *groups = [CHGroup objectsFromJSON:responseObject];
-
-            [[CHGroupsCollectionAccessor sharedAccessor] addGroupsWithArray:groups];
-            
-            callback(groups);
-        }
-    } failure:^(NSURLSessionDataTask *task, NSError *error) {
-        DLog(@"Error: %@", error);
+    if (!name) {
+        name = [NSNull null];
+    }
+    
+    return [PMKPromise new:^(PMKPromiseFulfiller fulfiller, PMKPromiseRejecter rejecter) {
+        [self POST:@"/group"
+        parameters:@{@"name" : name, @"members" : members, @"text" : @"Group created"}
+           success:^(NSURLSessionDataTask *task, id responseObject) {
+               CHGroup *newGroup = [CHGroup objectFromJSON:responseObject];
+               [self save];
+               fulfiller(newGroup);
+           } failure:^(NSURLSessionDataTask *task, NSError *error) {
+               DLog(@"Error: %@", error);
+               rejecter(error);
+           }];
     }];
 }
 
@@ -212,6 +203,19 @@ NSString *const SESSION_TOKEN = @"session-token";
     } failure:^(NSURLSessionDataTask *task, NSError *error) {
         DLog(@"Error: %@", error);
         callback(NO, error);
+    }];
+}
+
+#pragma mark - Old
+
+- (void)registerWithUsername: (NSString *)username password:(NSString *)password callback:(void (^)(NSArray *userData))callback;
+{
+    [self POST:@"/user" parameters:@{@"username" : username, @"password" : password} success:^(NSURLSessionDataTask *task, id responseObject) {
+        if( callback ) {
+            callback(responseObject);
+        }
+    } failure:^(NSURLSessionDataTask *task, NSError *error) {
+        DLog(@"Error: %@", error);
     }];
 }
 

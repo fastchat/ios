@@ -65,33 +65,6 @@
 {
     DLog(@"reloading table view");
     [self.tableView reloadData];
-//    [[CHNetworkManager sharedManager] getGroups:^(NSArray *groups) {
-//        self.groups = [groups mutableCopy];
-    
-        // Get all member avatars
-        /*for( CHGroup *group in self.groups ) {
-         
-         [group.members enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
-         CHUser *user = obj;
-         if( user.avatar == nil ) {
-         [[CHNetworkManager sharedManager] getAvatarOfUser:user.userId callback:^(UIImage *avatar) {
-         ((CHUser *)group.memberDict[user.userId]).avatar = avatar;
-         }];
-         }
-         }];
-         
-         [group.pastMembers enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
-         CHUser *user = obj;
-         if( user.avatar == nil ) {
-         [[CHNetworkManager sharedManager] getAvatarOfUser:user.userId callback:^(UIImage *avatar) {
-         ((CHUser *)group.memberDict[user.userId]).avatar = avatar;
-         }];
-         }
-         }];
-         
-         }*/
-//        [self.tableView reloadData];
-//    }];
 }
 
 - (void)viewWillAppear:(BOOL)animated;
@@ -105,50 +78,6 @@
     
 }
 
-- (NSString *)formatTime:(NSDate *)date;
-{
-    if (!date) {
-        return @"";
-    }
-    
-    NSCalendar *cal = [NSCalendar currentCalendar];
-    NSDateComponents *components = [cal components:(NSEraCalendarUnit|NSYearCalendarUnit|NSMonthCalendarUnit|NSDayCalendarUnit)
-                                          fromDate:[NSDate date]];
-    NSDate *today = [cal dateFromComponents:components];
-    components = [cal components:(NSEraCalendarUnit|NSYearCalendarUnit|NSMonthCalendarUnit|NSDayCalendarUnit)
-                        fromDate:date];
-    NSDate *otherDate = [cal dateFromComponents:components];
-    
-    // if today
-    if([today isEqualToDate:otherDate]) {
-        static NSDateFormatter *formatter = nil;
-        if (!formatter) {
-            formatter = [[NSDateFormatter alloc] init];
-            [formatter setDateFormat:@"h:mm a"];
-        }
-        return [formatter stringFromDate:date];
-    }
-    
-    NSDateComponents *componentsYesterday = [cal components:(NSEraCalendarUnit|NSYearCalendarUnit|NSMonthCalendarUnit|NSDayCalendarUnit)
-                                          fromDate:[NSDate dateWithTimeIntervalSinceNow:-kSecondsInDay]];
-    NSDate *yesterday = [cal dateFromComponents:componentsYesterday];
-    // if yesterday
-    if ([yesterday isEqualToDate:otherDate]) {
-        return @"Yesterday";
-    }
-    
-    // if within a week (get weekday and say "sunday"
-    // do this later.
-    
-    //else, show date 5/12/14
-    static NSDateFormatter *dateFormatter = nil;
-    if (!dateFormatter) {
-        dateFormatter = [[NSDateFormatter alloc] init];
-        [dateFormatter setDateFormat:@"d/M/yy"];
-    }
-    return [dateFormatter stringFromDate:date];
-}
-
 #pragma mark - Table view data source
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section;
@@ -156,14 +85,11 @@
     return _currentUser.groups.count;
 }
 
-
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
     CHGroupTableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"CHGroupTableViewCell" forIndexPath:indexPath];
     
     CHGroup *group = _currentUser.groups[indexPath.row];
-    DLog(@"Group: %@", group);
-    DLog(@"Group Last: %@", group.lastMessage);
     cell.groupTextLabel.text = group.name;
     cell.groupDetailLabel.text = group.lastMessage.text;
     cell.groupRightDetailLabel.text = [self formatTime:group.lastMessage.sent];
@@ -217,6 +143,52 @@
         
         [self.tableView reloadData];
     }
+}
+
+#pragma mark - Time Formatting
+
+- (NSString *)formatTime:(NSDate *)date;
+{
+    if (!date) {
+        return @"";
+    }
+    
+    NSCalendar *cal = [NSCalendar currentCalendar];
+    NSDateComponents *components = [cal components:(NSEraCalendarUnit|NSYearCalendarUnit|NSMonthCalendarUnit|NSDayCalendarUnit)
+                                          fromDate:[NSDate date]];
+    NSDate *today = [cal dateFromComponents:components];
+    components = [cal components:(NSEraCalendarUnit|NSYearCalendarUnit|NSMonthCalendarUnit|NSDayCalendarUnit)
+                        fromDate:date];
+    NSDate *otherDate = [cal dateFromComponents:components];
+    
+    // if today
+    if([today isEqualToDate:otherDate]) {
+        static NSDateFormatter *formatter = nil;
+        if (!formatter) {
+            formatter = [[NSDateFormatter alloc] init];
+            [formatter setDateFormat:@"h:mm a"];
+        }
+        return [formatter stringFromDate:date];
+    }
+    
+    NSDateComponents *componentsYesterday = [cal components:(NSEraCalendarUnit|NSYearCalendarUnit|NSMonthCalendarUnit|NSDayCalendarUnit)
+                                                   fromDate:[NSDate dateWithTimeIntervalSinceNow:-kSecondsInDay]];
+    NSDate *yesterday = [cal dateFromComponents:componentsYesterday];
+    // if yesterday
+    if ([yesterday isEqualToDate:otherDate]) {
+        return @"Yesterday";
+    }
+    
+    // if within a week (get weekday and say "sunday"
+    // do this later.
+    
+    //else, show date 5/12/14
+    static NSDateFormatter *dateFormatter = nil;
+    if (!dateFormatter) {
+        dateFormatter = [[NSDateFormatter alloc] init];
+        [dateFormatter setDateFormat:@"d/M/yy"];
+    }
+    return [dateFormatter stringFromDate:date];
 }
 
 @end

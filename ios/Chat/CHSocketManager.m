@@ -14,7 +14,6 @@
 #import "CHGroupListTableViewController.h"
 #import "CHMessageViewController.h"
 #import "CHAppDelegate.h"
-#import "CHGroupsCollectionAccessor.h"
 #import "CHGroup.h"
 #import "CHUser.h"
 #import <AudioToolbox/AudioToolbox.h>

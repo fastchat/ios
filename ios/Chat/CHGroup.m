@@ -7,6 +7,7 @@
 #import "CHGroup.h"
 #import "CHUser.h"
 #import "CHMessage.h"
+#import "CHNetworkManager.h"
 
 
 @interface CHGroup ()
@@ -19,6 +20,11 @@
 @implementation CHGroup
 
 @synthesize allUsers = _allUsers;
+
++ (PMKPromise *)groupWithName:(NSString *)name members:(NSArray *)members;
+{
+    return [[CHNetworkManager sharedManager] newGroupWithName:name members:members];
+}
 
 - (void)awakeFromFetch;
 {
@@ -91,6 +97,11 @@
 - (BOOL)hasUnread;
 {
     return self.unread.integerValue > 0;
+}
+
+- (void)unreadIncrement;
+{
+    [self setPrimitiveUnreadValue:[self primitiveUnreadValue] + 1];
 }
 
 + (CHGroup *)groupForMessage:(CHMessage *)message;

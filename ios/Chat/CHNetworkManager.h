@@ -25,11 +25,11 @@
 - (PMKPromise *)logout;
 - (PMKPromise *)avatarForUser:(CHUser *)user;
 - (PMKPromise *)leaveGroup:(NSString *)groupId;
+- (PMKPromise *)newGroupWithName:(id)name members:(NSArray *)members;
 
 #pragma mark - Old Method
 
 - (void)registerWithUsername: (NSString *)username password:(NSString *)password callback:(void (^)(NSArray *userData))callback;
-- (void)getGroups: (void (^)(NSArray *groups))callback;
 - (void)createGroupWithName: (NSString *)groupName members: (NSArray *)members callback: (void (^)(bool successful, NSError *error))callback;
 - (void)getMediaForMessage:(NSString *)messageId groupId:(NSString *)groupId callback:(void (^)(UIImage *messageMedia))callback;
 - (void)getMessagesForGroup:(NSString *)group page:(NSInteger)page callback:(void (^)(NSArray *messages))callback;
