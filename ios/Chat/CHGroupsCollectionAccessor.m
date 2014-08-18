@@ -54,4 +54,9 @@
     return ((CHGroup *)self.groups[groupId]).memberDict;
 }
 
+- (NSArray *) getActiveMembersForGroupWithId: (NSString *)groupId;
+{
+    return [self.groups[groupId] members];
+}
+
 @end

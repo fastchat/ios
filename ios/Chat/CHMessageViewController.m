@@ -14,6 +14,7 @@
 #import "CHOwnMessageTableViewCell.h"
 #import "CHSocketManager.h"
 #import "CHGroup.h"
+#import "CHGroupsCollectionAccessor.h"
 #import "CHMessage.h"
 #import "CHCircleImageView.h"
 #import "URBMediaFocusViewController.h"
@@ -200,7 +201,36 @@ NSString *const CHOwnMesssageCellIdentifier = @"CHOwnMessageTableViewCell";
     /// Using reloadMessages instead of reloadMessagesWithScroll because I haven't figured out how to make reloadMessagesWithScroll
     /// work when being called as the selector. This should be fixed eventually.
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(reloadMessages) name:@"ReloadActiveGroupNotification" object:nil];
+
+}
+
+-(void)sendUserTypingAction;
+{
+    DLog(@"User changed text field");
+}
+
+///
+/// Set the section title to the names of the members in chat
+///
+-(NSString *)tableView:(UITableView *)tableView titleForHeaderInSection:(NSInteger)section;
+{
+    NSMutableString *sectionTitle = [@"To: " mutableCopy];
+    DLog(@"Group id %@", self.group._id);
+    NSArray *activeMembers = [[CHGroupsCollectionAccessor sharedAccessor] getActiveMembersForGroupWithId:self.group._id];
+
+    for (CHUser *member in activeMembers) {
+        [sectionTitle appendString:[NSMutableString stringWithFormat:@"%@, ", ((CHUser *)member).username]];
+    }
     
+    return [self trimString:sectionTitle];
+}
+
+- (NSMutableString *)trimString: (NSString *)stringToTrim;
+{
+    // Remove trailing ','
+    NSMutableString *trimmedString = [[stringToTrim substringToIndex:stringToTrim.length - 2] mutableCopy];
+    
+    return trimmedString;
 }
 
 - (void)reloadMessages;

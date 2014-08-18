@@ -17,5 +17,6 @@
 - (void) addGroupWithId: (NSString *)groupId group: (CHGroup *)group;
 - (CHGroup *) getGroupWithId: (NSString *)groupId;
 - (NSDictionary *) getAllMembersForGroupWithId: (NSString *)groupId;
+- (NSArray *) getActiveMembersForGroupWithId: (NSString *)groupId;
 
 @end

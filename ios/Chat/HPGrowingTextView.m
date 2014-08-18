@@ -27,6 +27,9 @@
 
 #import "HPGrowingTextView.h"
 #import "HPTextViewInternal.h"
+#import "CHSocketManager.h"
+#import "CHNetworkManager.h"
+#import "CHUser.h"
 
 @interface HPGrowingTextView(private)
 -(void)commonInitialiser;
@@ -254,6 +257,13 @@
 
 - (void)textViewDidChange:(UITextView *)textView
 {
+    CHUser *currUser = [[CHNetworkManager sharedManager] currentUser];
+    NSMutableDictionary *data = [[NSMutableDictionary alloc] initWithDictionary:@{@"from": currUser.userId, @"text" : @"", @"group": @""}];
+    
+    [[CHSocketManager sharedManager] sendMessageWithEvent:@"typing" data:data acknowledgement:^(id argsData) {
+
+    }];
+    
     [self refreshHeight];
 }
 
