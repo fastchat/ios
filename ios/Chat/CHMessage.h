@@ -8,4 +8,5 @@
 
 @interface CHMessage : _CHMessage
 
+
 @end

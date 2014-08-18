@@ -6,6 +6,7 @@
 
 extern const struct CHMessageAttributes {
 	__unsafe_unretained NSString *authorId;
+	__unsafe_unretained NSString *groupId;
 	__unsafe_unretained NSString *hasMedia;
 	__unsafe_unretained NSString *mediaHeight;
 	__unsafe_unretained NSString *mediaWidth;
@@ -33,6 +34,7 @@ extern const struct CHMessageFetchedProperties {
 
 
 
+
 @class NSObject;
 
 @interface CHMessageID : NSManagedObjectID {}
@@ -53,6 +55,16 @@ extern const struct CHMessageFetchedProperties {
 
 
 //- (BOOL)validateAuthorId:(id*)value_ error:(NSError**)error_;
+
+
+
+
+
+@property (nonatomic, strong) NSString* groupId;
+
+
+
+//- (BOOL)validateGroupId:(id*)value_ error:(NSError**)error_;
 
 
 
@@ -163,6 +175,12 @@ extern const struct CHMessageFetchedProperties {
 
 - (NSString*)primitiveAuthorId;
 - (void)setPrimitiveAuthorId:(NSString*)value;
+
+
+
+
+- (NSString*)primitiveGroupId;
+- (void)setPrimitiveGroupId:(NSString*)value;
 
 
 

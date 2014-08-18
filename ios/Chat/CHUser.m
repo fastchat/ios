@@ -30,7 +30,9 @@ static CHUser *_currentUser = nil;
 {
     if (!_currentUser) {
         _currentUser = [CHUser MR_findFirstWithPredicate:[NSPredicate predicateWithFormat:@"currentUser = YES"]];
-        [[CHNetworkManager sharedManager] setSessionToken:_currentUser.sessionToken];
+        if (_currentUser.sessionToken) {
+            [[CHNetworkManager sharedManager] setSessionToken:_currentUser.sessionToken];
+        }
     }
     return _currentUser;
 }
@@ -48,7 +50,7 @@ static CHUser *_currentUser = nil;
     return [[CHNetworkManager sharedManager] loginWithUser:self].then(^(CHUser *user){
         self.currentUserValue = YES;
         [[NSManagedObjectContext MR_defaultContext] MR_saveToPersistentStoreAndWait];
-        return self;
+        return [[CHNetworkManager sharedManager] currentUserProfile];
     });
 }
 
@@ -72,6 +74,13 @@ static CHUser *_currentUser = nil;
     [self addPastGroupsObject:group];
     [[NSManagedObjectContext MR_defaultContext] MR_saveToPersistentStoreAndWait];
     return [[CHNetworkManager sharedManager] leaveGroup:group.chID];
+}
+
+- (NSOrderedSet *)groups;
+{
+    NSMutableOrderedSet *unsortedGroups = [self primitiveGroups];
+    [unsortedGroups sortUsingDescriptors:@[[NSSortDescriptor sortDescriptorWithKey:@"lastMessage.sent" ascending:NO]]];
+    return unsortedGroups;
 }
 
 #pragma mark - Remote Getters

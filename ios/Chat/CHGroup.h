@@ -8,8 +8,10 @@
 
 @interface CHGroup : _CHGroup
 
++ (CHGroup *)groupForMessage:(CHMessage *)message;
 - (NSString *)usernameFromId:(NSString *)theId;
 - (CHUser *)memberFromId:(NSString *)theId;
 - (BOOL)hasUnread;
+- (NSValueTransformer *)lastMessageEntityAttributeTransformer;
 
 @end

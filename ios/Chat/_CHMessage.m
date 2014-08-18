@@ -5,6 +5,7 @@
 
 const struct CHMessageAttributes CHMessageAttributes = {
 	.authorId = @"authorId",
+	.groupId = @"groupId",
 	.hasMedia = @"hasMedia",
 	.mediaHeight = @"mediaHeight",
 	.mediaWidth = @"mediaWidth",
@@ -71,6 +72,13 @@ const struct CHMessageFetchedProperties CHMessageFetchedProperties = {
 
 
 @dynamic authorId;
+
+
+
+
+
+
+@dynamic groupId;
 
 
 

@@ -10,6 +10,7 @@
     </entity>
     <entity name="CHMessage" representedClassName="CHMessage" parentEntity="CHModel" syncable="YES">
         <attribute name="authorId" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="groupId" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="hasMedia" optional="YES" attributeType="Boolean" syncable="YES"/>
         <attribute name="mediaHeight" optional="YES" attributeType="Double" defaultValueString="0.0" syncable="YES"/>
         <attribute name="mediaWidth" optional="YES" attributeType="Double" defaultValueString="0.0" syncable="YES"/>
@@ -34,7 +35,7 @@
     </entity>
     <elements>
         <element name="CHGroup" positionX="0" positionY="0" width="128" height="135"/>
-        <element name="CHMessage" positionX="0" positionY="0" width="128" height="195"/>
+        <element name="CHMessage" positionX="0" positionY="0" width="128" height="208"/>
         <element name="CHModel" positionX="18" positionY="81" width="128" height="58"/>
         <element name="CHUser" positionX="0" positionY="0" width="128" height="150"/>
     </elements>

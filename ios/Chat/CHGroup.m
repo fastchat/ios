@@ -6,6 +6,7 @@
 //
 #import "CHGroup.h"
 #import "CHUser.h"
+#import "CHMessage.h"
 
 
 @interface CHGroup ()
@@ -91,6 +92,22 @@
 {
     return self.unread.integerValue > 0;
 }
+
++ (CHGroup *)groupForMessage:(CHMessage *)message;
+{
+    return [CHGroup MR_findFirstByAttribute:@"chID" withValue:message.group];
+}
+
+#pragma mark - Core Data
+
+- (NSValueTransformer *)lastMessageEntityAttributeTransformer;
+{
+    return [MTLValueTransformer transformerWithBlock:^id(id obj) {
+        return [CHMessage objectFromJSON:obj];
+    }];
+}
+
+
 
 
 @end
