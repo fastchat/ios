@@ -182,7 +182,7 @@ NSString *const CHOwnMesssageCellIdentifier = @"CHOwnMessageTableViewCell";
         self.messageArray = [NSMutableArray array];
     }
     
-    self.currentUser = [[CHNetworkManager sharedManager] currentUser];
+    self.currentUser = [CHUser currentUser];
     self.keyboardIsVisible = NO;
     [self setSendButtonEnabled:[self canSendMessage]];
     
@@ -437,7 +437,7 @@ NSString *const CHOwnMesssageCellIdentifier = @"CHOwnMessageTableViewCell";
     self.progressBar.progress = 0.0;
 //    self.progressBar.hidden = NO;
     
-    CHUser *currUser = [[CHNetworkManager sharedManager] currentUser];
+    CHUser *currUser = [CHUser currentUser];
     NSMutableDictionary *data = [[NSMutableDictionary alloc] initWithDictionary:@{@"from": currUser.chID, @"text" : msg, @"group": self.group.chID}];
     
     CHMessage *newMessage = [[CHMessage alloc] init];

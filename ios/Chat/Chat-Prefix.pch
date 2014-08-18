@@ -17,6 +17,8 @@
     #import "CHConstants.h"
     #import "CoreData+MagicalRecord.h"
     #import "Promise.h"
+    #import "UIViewController+PromiseKit.h"
+
 
     #ifdef DEBUG
         #define DLog(fmt, ...) NSLog((@"%s [Line %d] " fmt), __PRETTY_FUNCTION__, __LINE__, ##__VA_ARGS__);

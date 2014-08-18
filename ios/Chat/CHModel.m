@@ -20,6 +20,7 @@
 
 + (instancetype)objectFromJSON:(NSDictionary *)dict;
 {
+    DLog(@"Transcoding: %@", dict);
     NSString *className = NSStringFromClass([self class]);
     className = [className substringFromIndex:CLASS_PREFIX.length];
     className = [NSString stringWithFormat:@"%@%@%@", CLASS_PREFIX, MTL_CLASS_PREFIX, className];

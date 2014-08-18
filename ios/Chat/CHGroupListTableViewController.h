@@ -8,8 +8,10 @@
 
 #import <UIKit/UIKit.h>
 
+@class CHUser;
+
 @interface CHGroupListTableViewController : UITableViewController <UITableViewDataSource, UITableViewDelegate>
 
-@property (nonatomic, strong) NSMutableArray *groups;
+@property (nonatomic, strong) CHUser *currentUser;
 
 @end

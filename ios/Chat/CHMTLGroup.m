@@ -50,42 +50,6 @@
     };
 }
 
-- (NSString *)name;
-{
-    if( _name != nil && ![_name isEqualToString:@""] ) {
-        return _name;
-    }
-    
-    NSMutableString *nameFromMembers = [@"" mutableCopy];
-    if( self.members.count == 1 ) {
-        [nameFromMembers appendString:[NSString stringWithFormat:@"Empty chat!"]];
-    }
-    else if( self.members.count == 2 ) {
-        if (((CHUser *)self.members[0]).chID == [[CHNetworkManager sharedManager] currentUser].chID) {
-            [nameFromMembers appendString:[NSString stringWithFormat:@"%@", ((CHUser *)self.members[1]).username]];
-        }
-        else {
-            [nameFromMembers appendString:[NSString stringWithFormat:@"%@", ((CHUser *)self.members[0]).username]];
-        }
-    }
-    else {
-        CHUser *currLoggedInUser = [[CHNetworkManager sharedManager] currentUser];
-        for (int i = 0; i < self.members.count; i++) {
-            CHUser *currMember = self.members[i];
-            
-            if (![currMember.chID isEqualToString:currLoggedInUser.chID]) {
-                if (i == self.members.count - 1) {
-                    [nameFromMembers appendString:[NSString stringWithFormat:@"%@",((CHUser *)self.members[i]).username]];
-                }
-                else {
-                    [nameFromMembers appendString:[NSString stringWithFormat:@"%@,",((CHUser *)self.members[i]).username]];
-                }
-            }
-        }
-    }
-    return nameFromMembers;
-}
-
 - (NSString *)usernameFromId: (NSString *)theId;
 {
     return self.allUsers[theId];
@@ -151,8 +115,6 @@
     values[@"allUsers"] = [NSNull null];
     return values;
 }
-
-
 
 + (NSSet *)propertyKeysForManagedObjectUniquing;
 {

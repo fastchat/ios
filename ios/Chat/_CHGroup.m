@@ -44,6 +44,11 @@ const struct CHGroupFetchedProperties CHGroupFetchedProperties = {
 + (NSSet*)keyPathsForValuesAffectingValueForKey:(NSString*)key {
 	NSSet *keyPaths = [super keyPathsForValuesAffectingValueForKey:key];
 	
+	if ([key isEqualToString:@"unreadValue"]) {
+		NSSet *affectingKey = [NSSet setWithObject:@"unread"];
+		keyPaths = [keyPaths setByAddingObjectsFromSet:affectingKey];
+		return keyPaths;
+	}
 
 	return keyPaths;
 }
@@ -60,6 +65,25 @@ const struct CHGroupFetchedProperties CHGroupFetchedProperties = {
 
 @dynamic unread;
 
+
+
+- (int16_t)unreadValue {
+	NSNumber *result = [self unread];
+	return [result shortValue];
+}
+
+- (void)setUnreadValue:(int16_t)value_ {
+	[self setUnread:[NSNumber numberWithShort:value_]];
+}
+
+- (int16_t)primitiveUnreadValue {
+	NSNumber *result = [self primitiveUnread];
+	return [result shortValue];
+}
+
+- (void)setPrimitiveUnreadValue:(int16_t)value_ {
+	[self setPrimitiveUnread:[NSNumber numberWithShort:value_]];
+}
 
 
 

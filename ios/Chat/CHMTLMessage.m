@@ -38,15 +38,20 @@
 
 #pragma mark - Core Data
 
-+ (NSDictionary *)managedObjectKeysByPropertyKey {
++ (NSDictionary *)managedObjectKeysByPropertyKey;
+{
     NSMutableDictionary *values = [[super managedObjectKeysByPropertyKey] mutableCopy];
-    values[@"_id"] = @"messageId";
+    values[@"_id"] = @"chID";
+    values[@"author"] = @"authorId";
+    values[@"group"] = [NSNull null];
     return values;
 }
 
 + (NSSet *)propertyKeysForManagedObjectUniquing;
 {
-    return [NSSet setWithObjects:@"messageId", nil];
+    return [NSSet setWithObjects:@"_id", nil];
 }
+
+
 
 @end

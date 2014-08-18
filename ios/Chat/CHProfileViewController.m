@@ -22,7 +22,7 @@
     [super viewDidLoad];
     // Do any additional setup after loading the view.
 
-    CHUser *currUser = [[CHNetworkManager sharedManager] currentUser];
+    CHUser *currUser = [CHUser currentUser];
     self.title = @"Profile";
     self.userNameLabel.text = currUser.username;
     
@@ -33,7 +33,7 @@
 {
     [super viewWillAppear:animated];
     
-    CHUser *currUser = [[CHNetworkManager sharedManager] currentUser];
+    CHUser *currUser = [CHUser currentUser];
     DLog(@"Curr User: %@", currUser);
     
     if( currUser.avatar == nil ) {
@@ -47,7 +47,9 @@
         }];
     }
     else {
-        [self.avatarImageView setImage:currUser.avatar];
+        currUser.avatar.then(^(CHUser *user, UIImage *avatar){
+            [self.avatarImageView setImage:avatar];
+        });
     }
 }
 
@@ -62,7 +64,7 @@
     
     if( imageSize/1024.0 <= 200 ) {
 
-        [[CHNetworkManager sharedManager] pushNewAvatarForUser:[[CHNetworkManager sharedManager] currentUser].chID avatarImage:image callback:^(bool successful, NSError *error) {
+        [[CHNetworkManager sharedManager] pushNewAvatarForUser:[CHUser currentUser].chID avatarImage:image callback:^(bool successful, NSError *error) {
 
             if( successful ) {
                 [self.avatarImageView setImage:image];

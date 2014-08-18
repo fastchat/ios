@@ -15,9 +15,11 @@
 + (instancetype)currentUser;
 + (instancetype)userWithUsername:(NSString *)username password:(NSString *)password;
 - (PMKPromise *)login;
+- (BOOL)isLoggedIn;
 
 
 - (PMKPromise *)remoteGroups;
+- (PMKPromise *)leaveGroupAtIndex:(NSUInteger)index;
 - (PMKPromise *)avatar;
 - (void)setAvatar:(UIImage *)avatar;
 

@@ -455,12 +455,12 @@
 			children = (
 				AABD89F5199EAA6B002962A4 /* _CHModel.h */,
 				AABD89F6199EAA6B002962A4 /* _CHModel.m */,
+				AABD89F7199EAA6B002962A4 /* _CHUser.h */,
+				AABD89F8199EAA6B002962A4 /* _CHUser.m */,
 				AABD89F1199EAA6B002962A4 /* _CHGroup.h */,
 				AABD89F2199EAA6B002962A4 /* _CHGroup.m */,
 				AABD89F3199EAA6B002962A4 /* _CHMessage.h */,
 				AABD89F4199EAA6B002962A4 /* _CHMessage.m */,
-				AABD89F7199EAA6B002962A4 /* _CHUser.h */,
-				AABD89F8199EAA6B002962A4 /* _CHUser.m */,
 			);
 			name = Private;
 			sourceTree = "<group>";

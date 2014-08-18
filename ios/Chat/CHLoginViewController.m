@@ -7,15 +7,10 @@
 //
 
 #import "CHLoginViewController.h"
-#import "SocketIOPacket.h"
-#import "AFNetworking.h"
 #import "CHRegisterViewController.h"
 #import "CHGroupListTableViewController.h"
-#import "CHNetworkManager.h"
-#import "CHUser.h"
 #import "CHSocketManager.h"
-
-#define URL @"localhost" //localhost
+#import "CHUser.h"
 
 @interface CHLoginViewController ()
 
@@ -63,31 +58,15 @@
     self.errorLabel.text = @"";
     
     CHUser *user = [CHUser userWithUsername:self.emailTextField.text password:self.passwordTextField.text];
-    user.login.then(^(CHUser *user){
-        
-    });
     
-//    [[CHNetworkManager sharedManager] postLoginWithUsername:self.emailTextField.text password:self.passwordTextField.text
-//        callback:^(bool successful, NSError *error) {
-//            if( successful ) {
-//                [[CHSocketManager sharedManager] openSocket];
-//                
-//                // Fire a notification that will be picked up by the groupList controller to refresh
-//                [[NSNotificationCenter defaultCenter] postNotificationName:kReloadGroupTablesNotification object:nil];
-//
-//                CHUser *loggedInAs = [[CHNetworkManager sharedManager] currentUser];
-//                
-//                [[CHNetworkManager sharedManager] getAvatarOfUser:loggedInAs.chID callback:^(UIImage *avatar) {
-//                    [[CHNetworkManager sharedManager] currentUser].avatar = avatar;
-//                }];
-//                
-//                [self dismissViewControllerAnimated:YES completion:nil];
-//
-//            }
-//            else {
-//                self.errorLabel.text = error.localizedDescription;
-//            }
-//        }];
+    user.login.then(^(CHUser *user){
+        [[CHSocketManager sharedManager] openSocket];
+        [[NSNotificationCenter defaultCenter] postNotificationName:kReloadGroupTablesNotification object:nil];
+        
+        [self fulfill:user];
+    }).catch(^(NSError *error){
+        self.errorLabel.text = error.localizedDescription;
+    });
 }
 
 - (IBAction)textfieldChanged:(UITextField *)sender;

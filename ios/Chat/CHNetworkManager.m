@@ -26,6 +26,8 @@ NSString *const SESSION_TOKEN = @"session-token";
 
 @implementation CHNetworkManager
 
+#pragma mark - LifeCycle
+
 + (CHNetworkManager *)sharedManager;
 {
     static CHNetworkManager *_sharedManager;
@@ -45,6 +47,13 @@ NSString *const SESSION_TOKEN = @"session-token";
     return self;
 }
 
+- (void)setSessionToken:(NSString *)token;
+{
+    [self.requestSerializer setValue:token forHTTPHeaderField:SESSION_TOKEN];
+}
+
+#pragma mark - Promises
+
 - (PMKPromise *)loginWithUser:(CHUser *)user;
 {
     return [PMKPromise new:^(PMKPromiseFulfiller fulfiller, PMKPromiseRejecter rejecter) {
@@ -55,71 +64,77 @@ NSString *const SESSION_TOKEN = @"session-token";
                user.sessionToken = token;
                [self.requestSerializer setValue:token forHTTPHeaderField:SESSION_TOKEN];
                
-               [self GET:@"/user" parameters:nil success:^(NSURLSessionDataTask *task, id responseObject) {
-                   user.username = responseObject[@"profile"][@"username"];
-                   
-                   DLog(@"Got Groups: %@", responseObject[@"profile"][@"groups"]);
-                   
-                   NSArray *coreData = [CHGroup objectsFromJSON:responseObject[@"profile"][@"groups"]];
-                   
-                   DLog(@"Core data groups: %@", coreData);
-                   
-                   //gotta serialize dem groups
-//                   [user setGroups:responseObject[@"profile"][@"groups"]];
+               [self currentUserProfile].then(^(CHUser *user){
                    fulfiller(user);
-               } failure:^(NSURLSessionDataTask *task, NSError *error) {
+               }).catch(^(NSError *error){
                    rejecter(error);
-               }];
+               });
            } failure:^(NSURLSessionDataTask *task, NSError *error) {
+               DLog(@"Error: %@", error);
                rejecter(error);
            }];
     }];
 }
 
--(void)postLoginWithUsername: (NSString *)username password:(NSString *)password callback:(void (^)(bool successful, NSError *error))callback;
+- (PMKPromise *)currentUserProfile;
 {
-    [self POST:@"/login" parameters:@{@"username" : username, @"password" : password} success:^(NSURLSessionDataTask *task, id responseObject) {
-        if( callback ) {
-//            self.sessiontoken = responseObject[@"session-token"];
-//            [self.requestSerializer setValue:self.sessiontoken forHTTPHeaderField:@"session-token"];
-            
-            // Save the session token to avoid future login
-//            [[NSUserDefaults standardUserDefaults]
-//             setObject:self.sessiontoken forKey:@"session-token"];
-
-            [self GET:@"/user" parameters:nil success:^(NSURLSessionDataTask *task, id responseObject) {
-                if( callback ) {
-                    CHUser *user = [[CHUser alloc] init];
-                    [user setUsername:responseObject[@"profile"][@"username"]];
-                    [user setGroups:responseObject[@"profile"][@"groups"]];
-                    self.currentUser = user;
-                    
-                }
-            } failure:^(NSURLSessionDataTask *task, NSError *error) {
-                DLog(@"Error: %@", error);
-
-            }];
-
-            
-            callback(YES,nil);
-        }
-    } failure:^(NSURLSessionDataTask *task, NSError *error) {
-        DLog(@"Error: %@", error);
-        callback(NO, error);
+    return [PMKPromise new:^(PMKPromiseFulfiller fulfiller, PMKPromiseRejecter rejecter) {
+        [self GET:@"/user" parameters:nil success:^(NSURLSessionDataTask *task, id responseObject) {
+            CHUser *user = [CHUser currentUser];
+            user.username = responseObject[@"profile"][@"username"];
+            user.chID = responseObject[@"profile"][@"_id"];
+            NSArray *groups = [CHGroup objectsFromJSON:responseObject[@"profile"][@"groups"]];
+            user.groups = [NSOrderedSet orderedSetWithSet:[NSSet setWithArray:groups]];
+            [self save];
+            fulfiller(user);
+        } failure:^(NSURLSessionDataTask *task, NSError *error) {
+            DLog(@"Error: %@", error);
+            rejecter(error);
+        }];
     }];
 }
 
--(void)logoutWithCallback: (void (^)(bool successful, NSError *error))callback;
+- (PMKPromise *)logout;
 {
-    [self DELETE:@"/logout" parameters:nil success:^(NSURLSessionDataTask *task, id responseObject) {
-//        self.sessiontoken = nil;
-        self.currentUser = nil;
-        callback(YES, nil);
-    } failure:^(NSURLSessionDataTask *task, NSError *error) {
-        DLog(@"Error logging out: %@", error);
-        callback(NO, error);
+    return [PMKPromise new:^(PMKPromiseFulfiller fulfiller, PMKPromiseRejecter rejecter) {
+        [self DELETE:@"/logout" parameters:nil success:^(NSURLSessionDataTask *task, id responseObject) {
+            fulfiller(nil);
+        } failure:^(NSURLSessionDataTask *task, NSError *error) {
+            DLog(@"Error: %@", error);
+            rejecter(error);
+        }];
     }];
 }
+
+- (PMKPromise *)currentUserGroups;
+{
+    return [PMKPromise new:^(PMKPromiseFulfiller fulfiller, PMKPromiseRejecter rejecter) {
+        [self GET:@"/group" parameters:nil success:^(NSURLSessionDataTask *task, id responseObject) {
+            CHUser *user = [CHUser currentUser];
+            NSArray *groups = [CHGroup objectsFromJSON:responseObject];
+            user.groups = [NSOrderedSet orderedSetWithSet:[NSSet setWithArray:groups]];
+            fulfiller(user);
+        } failure:^(NSURLSessionDataTask *task, NSError *error) {
+            DLog(@"Error: %@", error);
+            rejecter(error);
+        }];
+    }];
+}
+
+- (PMKPromise *)leaveGroup:(NSString *)groupId;
+{
+    NSString *url = [NSString stringWithFormat:@"%@/group/%@/leave", BASE_URL, groupId];
+    return [PMKPromise new:^(PMKPromiseFulfiller fulfiller, PMKPromiseRejecter rejecter) {
+        [self PUT:url parameters:nil success:^(NSURLSessionDataTask *task, id responseObject) {
+            fulfiller(nil);
+        } failure:^(NSURLSessionDataTask *task, NSError *error) {
+            DLog(@"Error: %@", error);
+            rejecter(error);
+        }];
+    }];
+}
+
+#pragma mark - Old
 
 - (void)registerWithUsername: (NSString *)username password:(NSString *)password callback:(void (^)(NSArray *userData))callback;
 {
@@ -242,23 +257,43 @@ NSString *const SESSION_TOKEN = @"session-token";
     }
 }
 
-- (void)getProfile: (void (^)(CHUser *userProfile))callback;
-{
-    [self GET:@"/user" parameters:nil success:^(NSURLSessionDataTask *task, id responseObject) {
-        if( callback ) {
-            CHUser *user = [[CHUser alloc] init];
-            [user setUsername:responseObject[@"profile"][@"username"]];
-            [user setGroups:responseObject[@"profile"][@"groups"]];
-            user.chID = responseObject[@"profile"][@"_id"];
-            
-            self.currentUser = user;
-            callback(user);
-        }
-    } failure:^(NSURLSessionDataTask *task, NSError *error) {
-        DLog(@"Error: %@", error);
-        callback(nil);
-    }];
 
+- (PMKPromise *)avatarForUser:(CHUser *)user;
+{
+    return [PMKPromise new:^(PMKPromiseFulfiller fulfiller, PMKPromiseRejecter rejecter) {
+        ///
+        /// First check our secret cache
+        ///
+        NSString *key = [NSString stringWithFormat:@"%@-%@", kAvatarKey, user.chID];
+        NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+        NSData *data = [defaults objectForKey:key];
+        UIImage *avatar = [UIImage imageWithData:data];
+        if (avatar) {
+            fulfiller(avatar);
+        }
+        
+        NSMutableURLRequest *request = [[NSMutableURLRequest alloc] initWithURL:
+                                        [NSURL URLWithString:[NSString stringWithFormat:@"%@/user/%@/avatar", BASE_URL, user.chID]]];
+        [request setValue:[CHUser currentUser].sessionToken forHTTPHeaderField:@"session-token"];
+        
+        
+        AFHTTPRequestOperation *requestOperation = [[AFHTTPRequestOperation alloc] initWithRequest:request];
+        requestOperation.responseSerializer = [AFImageResponseSerializer serializer];
+        [requestOperation setCompletionBlockWithSuccess:^(AFHTTPRequestOperation *operation, id responseObject) {
+            
+            if (responseObject) {
+                dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+                    [defaults setObject:UIImagePNGRepresentation(responseObject) forKey:key];
+                    [defaults synchronize];
+                });
+            }
+            fulfiller(responseObject);
+        } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+            rejecter(error);
+        }];
+        
+        [requestOperation start];
+    }];
 }
 
 - (void)getAvatarOfUser:(NSString *)userId
@@ -381,15 +416,6 @@ NSString *const SESSION_TOKEN = @"session-token";
     }];
 }
 
-- (void)putLeaveGroup:(NSString *)groupId callback:(void (^)(BOOL success, NSError *error))callback;
-{
-    NSString *url = [NSString stringWithFormat:@"%@/group/%@/leave", BASE_URL, groupId];
-    [self PUT:url parameters:nil success:^(NSURLSessionDataTask *task, id responseObject) {
-        callback(YES, nil);
-    } failure:^(NSURLSessionDataTask *task, NSError *error) {
-        callback(NO, error);
-    }];
-}
 
 - (void)postMediaMessageWithImage:(UIImage *)image
                           groupId:(NSString *)groupId
@@ -458,6 +484,11 @@ NSString *const SESSION_TOKEN = @"session-token";
     [operation setCompletionBlockWithSuccess:success failure:failure];
     
     return operation;
+}
+
+- (void)save;
+{
+    [[NSManagedObjectContext MR_defaultContext] MR_saveToPersistentStoreAndWait];
 }
                                          
                                          

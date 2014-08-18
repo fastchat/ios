@@ -36,53 +36,44 @@
     UIEdgeInsets insets = UIEdgeInsetsMake(5, 0, 0, 0);
     self.tableView.contentInset = insets;
     
-    ///
-    /// Check to see if we are logged in. If we are not, login and stop.
-    ///
-    if( ![[CHNetworkManager sharedManager] hasStoredSessionToken] ) {
-        UIViewController *loginController = [self.storyboard instantiateViewControllerWithIdentifier:@"CHViewNavController"];
-        [self presentViewController:loginController animated:NO completion:nil];
-        return;
-    }
-    
-    ///
-    /// Get the user profile to ensure we have a user
-    ///
-    CHNetworkManager *manager = [CHNetworkManager sharedManager];
-    [manager getProfile:^(CHUser *userProfile) {
-        
-        [manager getAvatarOfUser:[[CHNetworkManager sharedManager] currentUser].chID callback:^(UIImage *avatar) {
-            
-            [manager currentUser].avatar = avatar;
-        }];
-    }];
-    
-    [self.tableView reloadData];
-    
-    
-    [[CHNetworkManager sharedManager] getProfile:^(CHUser *userProfile) {
-        
-    }];
-    
-    [[CHNetworkManager sharedManager] getGroups:^(NSArray *groups) {
-        self.groups = [groups mutableCopy];
-        
-        CHGroup *group = self.groups[0];
-//        NSManagedObject *object = []
-        
-        [self.tableView reloadData];
-    }];
-    
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(reloadTableView) name:@"ReloadGroupTablesNotification" object:nil];
+    
+    [self user].then(^(CHUser *user){
+        
+        self.currentUser = user;
+        [self.tableView reloadData];
+        return user.remoteGroups;
+    }).then(^(CHUser *user){
+        [self.tableView reloadData];
+        return user.avatar;
+    }).catch(^(NSError *error){
+        [[[UIAlertView alloc] initWithTitle:@"Error!"
+                                   message:error.localizedDescription
+                                  delegate:nil
+                         cancelButtonTitle:@"Ok"
+                          otherButtonTitles:nil] show];
+    });
+    
+}
 
+- (PMKPromise *)user;
+{
+    if (!CHUser.currentUser.isLoggedIn) {
+        CHLoginViewController *loginController = [self.storyboard instantiateViewControllerWithIdentifier:@"CHViewNavController"];
+        return [self promiseViewController:loginController animated:YES completion:nil];
+    } else {
+        return [PMKPromise new:^(PMKPromiseFulfiller fulfiller, PMKPromiseRejecter rejecter) {
+            fulfiller([CHUser currentUser]);
+        }];
+    }
 }
 
 - (void)reloadTableView;
 {
     DLog(@"reloading table veiw");
-    [[CHNetworkManager sharedManager] getGroups:^(NSArray *groups) {
-        self.groups = [groups mutableCopy];
-        
+//    [[CHNetworkManager sharedManager] getGroups:^(NSArray *groups) {
+//        self.groups = [groups mutableCopy];
+    
         // Get all member avatars
         /*for( CHGroup *group in self.groups ) {
          
@@ -105,14 +96,14 @@
          }];
          
          }*/
-        [self.tableView reloadData];
-    }];
-
+//        [self.tableView reloadData];
+//    }];
 }
 
 - (void)viewWillAppear:(BOOL)animated;
 {
     [super viewWillAppear:animated];
+    [self.tableView reloadData];
 
     ///
     /// If we got here, it means we logged in
@@ -120,11 +111,11 @@
     [[UIApplication sharedApplication] registerForRemoteNotificationTypes:
      (UIRemoteNotificationTypeBadge | UIRemoteNotificationTypeSound | UIRemoteNotificationTypeAlert)];
     
-    [[CHNetworkManager sharedManager] getGroups:^(NSArray *groups) {
-        self.groups = [groups mutableCopy];
-
-        [self.tableView reloadData];
-    }];
+//    [[CHNetworkManager sharedManager] getGroups:^(NSArray *groups) {
+//        self.groups = [groups mutableCopy];
+//
+//        [self.tableView reloadData];
+//    }];
 
     
 }
@@ -177,7 +168,7 @@
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section;
 {
-    return self.groups.count;
+    return _currentUser.groups.count;
 }
 
 
@@ -185,7 +176,7 @@
 {
     CHGroupTableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"CHGroupTableViewCell" forIndexPath:indexPath];
     
-    CHGroup *group = _groups[indexPath.row];
+    CHGroup *group = _currentUser.groups[indexPath.row];
     cell.groupTextLabel.text = group.name;
     cell.groupDetailLabel.text = group.lastMessage.text;
     cell.groupRightDetailLabel.text = [self formatTime:group.lastMessage.sent];
@@ -213,11 +204,10 @@
 
 - (void)tableView:(UITableView *)tableView commitEditingStyle:(UITableViewCellEditingStyle)editingStyle forRowAtIndexPath:(NSIndexPath *)indexPath;
 {
-    [[CHNetworkManager sharedManager] putLeaveGroup:((CHGroup *)self.groups[indexPath.row]).chID callback:^(BOOL success, NSError *error) {
-       
-    }];
-    [self.groups removeObjectAtIndex:indexPath.row];
-    [tableView reloadData];
+    [tableView beginUpdates];
+    [_currentUser leaveGroupAtIndex:indexPath.row];
+    [tableView deleteRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationAutomatic];
+    [tableView endUpdates];
 }
 
 - (NSString *)tableView:(UITableView *)tableView titleForDeleteConfirmationButtonForRowAtIndexPath:(NSIndexPath *)indexPath;
@@ -234,8 +224,8 @@
         
         CHMessageViewController *vc = segue.destinationViewController;
         
-        CHGroup *group = _groups[indexPath.row];
-        group.unread = @0;
+        CHGroup *group = _currentUser.groups[indexPath.row];
+        [group setUnreadValue:0];
         [vc setGroup:group];
         
         [self.tableView reloadData];

@@ -50,9 +50,13 @@ extern const struct CHGroupFetchedProperties {
 
 
 
-@property (nonatomic, strong) NSString* unread;
+@property (nonatomic, strong) NSNumber* unread;
 
 
+
+@property int16_t unreadValue;
+- (int16_t)unreadValue;
+- (void)setUnreadValue:(int16_t)value_;
 
 //- (BOOL)validateUnread:(id*)value_ error:(NSError**)error_;
 
@@ -119,8 +123,11 @@ extern const struct CHGroupFetchedProperties {
 
 
 
-- (NSString*)primitiveUnread;
-- (void)setPrimitiveUnread:(NSString*)value;
+- (NSNumber*)primitiveUnread;
+- (void)setPrimitiveUnread:(NSNumber*)value;
+
+- (int16_t)primitiveUnreadValue;
+- (void)setPrimitiveUnreadValue:(int16_t)value_;
 
 
 

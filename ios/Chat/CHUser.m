@@ -5,6 +5,7 @@
 //
 //
 #import "CHUser.h"
+#import "CHGroup.h"
 #import "Promise.h"
 #import "Mantle.h"
 #import "CHNetworkManager.h"
@@ -29,6 +30,7 @@ static CHUser *_currentUser = nil;
 {
     if (!_currentUser) {
         _currentUser = [CHUser MR_findFirstWithPredicate:[NSPredicate predicateWithFormat:@"currentUser = YES"]];
+        [[CHNetworkManager sharedManager] setSessionToken:_currentUser.sessionToken];
     }
     return _currentUser;
 }
@@ -43,50 +45,55 @@ static CHUser *_currentUser = nil;
 
 - (PMKPromise *)login;
 {
-    return [[CHNetworkManager sharedManager] loginWithUser:self];
+    return [[CHNetworkManager sharedManager] loginWithUser:self].then(^(CHUser *user){
+        self.currentUserValue = YES;
+        [[NSManagedObjectContext MR_defaultContext] MR_saveToPersistentStoreAndWait];
+        return self;
+    });
+}
+
+- (BOOL)isLoggedIn;
+{
+    return self.sessionToken != nil;
 }
 
 - (PMKPromise *)logout;
 {
-#warning logout
-    _currentUser = nil; //also nil out the currentUser.
-    
-    return nil;
+    _currentUser = nil;
+    self.currentUserValue = NO;
+    [[NSManagedObjectContext MR_defaultContext] MR_saveToPersistentStoreAndWait];
+    return [[CHNetworkManager sharedManager] logout];
+}
+
+- (PMKPromise *)leaveGroupAtIndex:(NSUInteger)index;
+{
+    CHGroup *group = self.groups[index];
+    [self removeGroupsObject:group];
+    [self addPastGroupsObject:group];
+    [[NSManagedObjectContext MR_defaultContext] MR_saveToPersistentStoreAndWait];
+    return [[CHNetworkManager sharedManager] leaveGroup:group.chID];
 }
 
 #pragma mark - Remote Getters
 
 - (PMKPromise *)remoteGroups;
 {
-    return [PMKPromise new:^(PMKPromiseFulfiller fulfiller, PMKPromiseRejecter rejecter) {
-        [[CHNetworkManager sharedManager] getGroups:^(NSArray *groups) {
-            if (groups) {
-                fulfiller(groups);
-            } else {
-                rejecter(nil);
-            }
-        }];
-    }];
+    return [[CHNetworkManager sharedManager] currentUserGroups];
 }
 
 - (PMKPromise *)avatar;
 {
-    return [PMKPromise new:^(PMKPromiseFulfiller fulfiller, PMKPromiseRejecter rejecter) {
-        
-        if (self.privateAvatar) {
-            fulfiller(self.privateAvatar);
-            return;
-        }
-        
-        [[CHNetworkManager sharedManager] getAvatarOfUser:self.chID callback:^(UIImage *avatar) {
-            self.privateAvatar = avatar;
-            if (avatar) {
-                fulfiller(fulfiller);
-            } else {
-                rejecter(nil);
-            }
+    if (self.privateAvatar) {
+        return [PMKPromise new:^(PMKPromiseFulfiller fulfiller, PMKPromiseRejecter rejecter) {
+            fulfiller(PMKManifold(self, self.privateAvatar));
         }];
-    }];
+    }
+    
+    return [[CHNetworkManager sharedManager] avatarForUser:self].then(^(UIImage *avatar){
+        self.privateAvatar = avatar;
+        [[NSManagedObjectContext MR_defaultContext] MR_saveToPersistentStoreAndWait];
+        return PMKManifold(self, self.privateAvatar);
+    });
 }
 
 - (void)setAvatar:(UIImage *)avatar;

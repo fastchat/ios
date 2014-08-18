@@ -79,18 +79,18 @@ void uncaughtExceptionHandler(NSException *exception)
 - (void)applicationDidBecomeActive:(UIApplication *)application;
 {
     [[CHSocketManager sharedManager] openSocket];
-    if ( [CHUser currentUser] != nil ) {
-        if ( [[CHNetworkManager sharedManager] currentUser] == nil ) {
-            [[CHNetworkManager sharedManager] getProfile:^(CHUser *userProfile) {
-                CHUser *user = [[CHNetworkManager sharedManager] currentUser];
-                
-                [[CHNetworkManager sharedManager] getAvatarOfUser:user.chID callback:^(UIImage *avatar) {
-                    user.avatar = avatar;
-                    [[CHNetworkManager sharedManager] setCurrentUser:user];
-                }];
-            }];
-        }
-    }
+//    if ( [CHUser currentUser] != nil ) {
+////        if ( [[CHNetworkManager sharedManager] currentUser] == nil ) {
+//            [[CHNetworkManager sharedManager] getProfile:^(CHUser *userProfile) {
+//                CHUser *user = [[CHNetworkManager sharedManager] currentUser];
+//                
+//                [[CHNetworkManager sharedManager] getAvatarOfUser:user.chID callback:^(UIImage *avatar) {
+//                    user.avatar = avatar;
+//                    [[CHNetworkManager sharedManager] setCurrentUser:user];
+//                }];
+//            }];
+////        }
+//    }
     
     ///
     /// Load any new messages if the app was inactive or phone was locked
