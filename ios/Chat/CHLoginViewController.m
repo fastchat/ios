@@ -62,27 +62,32 @@
     
     self.errorLabel.text = @"";
     
-    [[CHNetworkManager sharedManager] postLoginWithUsername:self.emailTextField.text password:self.passwordTextField.text
-        callback:^(bool successful, NSError *error) {
-            if( successful ) {
-                [[CHSocketManager sharedManager] openSocket];
-                
-                // Fire a notification that will be picked up by the groupList controller to refresh
-                [[NSNotificationCenter defaultCenter] postNotificationName:kReloadGroupTablesNotification object:nil];
-
-                CHUser *loggedInAs = [[CHNetworkManager sharedManager] currentUser];
-                
-                [[CHNetworkManager sharedManager] getAvatarOfUser:loggedInAs.chID callback:^(UIImage *avatar) {
-                    [[CHNetworkManager sharedManager] currentUser].avatar = avatar;
-                }];
-                
-                [self dismissViewControllerAnimated:YES completion:nil];
-
-            }
-            else {
-                self.errorLabel.text = error.localizedDescription;
-            }
-        }];
+    CHUser *user = [CHUser userWithUsername:self.emailTextField.text password:self.passwordTextField.text];
+    user.login.then(^(CHUser *user){
+        
+    });
+    
+//    [[CHNetworkManager sharedManager] postLoginWithUsername:self.emailTextField.text password:self.passwordTextField.text
+//        callback:^(bool successful, NSError *error) {
+//            if( successful ) {
+//                [[CHSocketManager sharedManager] openSocket];
+//                
+//                // Fire a notification that will be picked up by the groupList controller to refresh
+//                [[NSNotificationCenter defaultCenter] postNotificationName:kReloadGroupTablesNotification object:nil];
+//
+//                CHUser *loggedInAs = [[CHNetworkManager sharedManager] currentUser];
+//                
+//                [[CHNetworkManager sharedManager] getAvatarOfUser:loggedInAs.chID callback:^(UIImage *avatar) {
+//                    [[CHNetworkManager sharedManager] currentUser].avatar = avatar;
+//                }];
+//                
+//                [self dismissViewControllerAnimated:YES completion:nil];
+//
+//            }
+//            else {
+//                self.errorLabel.text = error.localizedDescription;
+//            }
+//        }];
 }
 
 - (IBAction)textfieldChanged:(UITextField *)sender;

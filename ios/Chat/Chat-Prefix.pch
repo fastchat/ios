@@ -16,11 +16,12 @@
     #import "CHColors.h"
     #import "CHConstants.h"
     #import "CoreData+MagicalRecord.h"
+    #import "Promise.h"
 
-#ifdef DEBUG
-#   define DLog(fmt, ...) NSLog((@"%s [Line %d] " fmt), __PRETTY_FUNCTION__, __LINE__, ##__VA_ARGS__);
-#else
-#   define DLog(...)
-#endif
+    #ifdef DEBUG
+        #define DLog(fmt, ...) NSLog((@"%s [Line %d] " fmt), __PRETTY_FUNCTION__, __LINE__, ##__VA_ARGS__);
+    #else
+        #define DLog(...)
+    #endif
 
 #endif

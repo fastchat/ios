@@ -9,6 +9,7 @@
 #import "Mantle.h"
 #import "CHNetworkManager.h"
 #import "UIImage+ColorArt.h"
+#import "CHNetworkManager.h"
 
 
 @interface CHUser ()
@@ -19,12 +20,41 @@
 
 
 @implementation CHUser
-@synthesize avatarColor;
 
+@synthesize avatarColor = _avatarColor;
+@synthesize password = _password;
+
+static CHUser *_currentUser = nil;
 + (instancetype)currentUser;
 {
-    return [CHUser MR_findFirstWithPredicate:[NSPredicate predicateWithFormat:@"_id = '%@'", @""]];
+    if (!_currentUser) {
+        _currentUser = [CHUser MR_findFirstWithPredicate:[NSPredicate predicateWithFormat:@"currentUser = YES"]];
+    }
+    return _currentUser;
 }
+
++ (instancetype)userWithUsername:(NSString *)username password:(NSString *)password;
+{
+    CHUser *user = [CHUser MR_createEntity];
+    user.username = username;
+    user.password = password;
+    return user;
+}
+
+- (PMKPromise *)login;
+{
+    return [[CHNetworkManager sharedManager] loginWithUser:self];
+}
+
+- (PMKPromise *)logout;
+{
+#warning logout
+    _currentUser = nil; //also nil out the currentUser.
+    
+    return nil;
+}
+
+#pragma mark - Remote Getters
 
 - (PMKPromise *)remoteGroups;
 {
@@ -76,6 +106,11 @@
         return [UIColor blackColor];
     }
 }
+
+#pragma mark - Mantle / Core Data
+
+
+
 
 
 @end

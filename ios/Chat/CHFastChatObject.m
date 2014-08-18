@@ -9,6 +9,8 @@
 #import "CHFastChatObject.h"
 #import "Mantle/Mantle.h"
 
+NSString *const CLASS_PREFIX_MANTLE = @"CHMTL";
+
 @implementation CHFastChatObject
 
 + (NSArray *)objectsFromJSON:(NSArray *)array {
@@ -37,7 +39,9 @@
 #pragma mark - Managed Object Required Methods
 
 + (NSString *)managedObjectEntityName {
-    return NSStringFromClass(self);
+    NSString *className = NSStringFromClass(self);
+    className = [className substringFromIndex:CLASS_PREFIX_MANTLE.length];
+    return [NSString stringWithFormat:@"%@%@", CLASS_PREFIX, className];
 }
 
 + (NSDictionary *)managedObjectKeysByPropertyKey {

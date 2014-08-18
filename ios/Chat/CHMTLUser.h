@@ -11,8 +11,8 @@
 
 @interface CHMTLUser : CHFastChatObject <MTLManagedObjectSerializing>
 
-@property (nonatomic, strong) NSString *username;
 @property (nonatomic, strong) NSString *userId;
+@property (nonatomic, strong) NSString *username;
 @property (nonatomic, copy) NSArray *groups;
 @property (nonatomic, strong) UIImage *avatar;
 

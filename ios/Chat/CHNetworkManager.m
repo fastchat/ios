@@ -12,9 +12,11 @@
 #import "CHMessage.h"
 #import "AFNetworking.h"
 #import "CHGroupsCollectionAccessor.h"
+#import "CHModel.h"
 
 NSString *const kAvatarKey = @"com.fastchat.avatarkey";
 NSString *const kMediaKey = @"com.fastchat.mediakey";
+NSString *const SESSION_TOKEN = @"session-token";
 //#define BASE_URL @"http://10.0.0.10:3000"
 #define BASE_URL @"http://powerful-cliffs-9562.herokuapp.com:80"
 
@@ -38,21 +40,52 @@ NSString *const kMediaKey = @"com.fastchat.mediakey";
 
 - (instancetype)initWithBaseURL:(NSURL *)url {
     if( (self = [super initWithBaseURL:[NSURL URLWithString:BASE_URL]]) ) {
-
+        
     }
     return self;
+}
+
+- (PMKPromise *)loginWithUser:(CHUser *)user;
+{
+    return [PMKPromise new:^(PMKPromiseFulfiller fulfiller, PMKPromiseRejecter rejecter) {
+        [self POST:@"/login" parameters:@{@"username": user.username, @"password" : user.password}
+           success:^(NSURLSessionDataTask *task, id responseObject) {
+               
+               NSString *token = responseObject[SESSION_TOKEN];
+               user.sessionToken = token;
+               [self.requestSerializer setValue:token forHTTPHeaderField:SESSION_TOKEN];
+               
+               [self GET:@"/user" parameters:nil success:^(NSURLSessionDataTask *task, id responseObject) {
+                   user.username = responseObject[@"profile"][@"username"];
+                   
+                   DLog(@"Got Groups: %@", responseObject[@"profile"][@"groups"]);
+                   
+                   NSArray *coreData = [CHGroup objectsFromJSON:responseObject[@"profile"][@"groups"]];
+                   
+                   DLog(@"Core data groups: %@", coreData);
+                   
+                   //gotta serialize dem groups
+//                   [user setGroups:responseObject[@"profile"][@"groups"]];
+                   fulfiller(user);
+               } failure:^(NSURLSessionDataTask *task, NSError *error) {
+                   rejecter(error);
+               }];
+           } failure:^(NSURLSessionDataTask *task, NSError *error) {
+               rejecter(error);
+           }];
+    }];
 }
 
 -(void)postLoginWithUsername: (NSString *)username password:(NSString *)password callback:(void (^)(bool successful, NSError *error))callback;
 {
     [self POST:@"/login" parameters:@{@"username" : username, @"password" : password} success:^(NSURLSessionDataTask *task, id responseObject) {
         if( callback ) {
-            self.sessiontoken = responseObject[@"session-token"];
-            [self.requestSerializer setValue:self.sessiontoken forHTTPHeaderField:@"session-token"];
+//            self.sessiontoken = responseObject[@"session-token"];
+//            [self.requestSerializer setValue:self.sessiontoken forHTTPHeaderField:@"session-token"];
             
             // Save the session token to avoid future login
-            [[NSUserDefaults standardUserDefaults]
-             setObject:self.sessiontoken forKey:@"session-token"];
+//            [[NSUserDefaults standardUserDefaults]
+//             setObject:self.sessiontoken forKey:@"session-token"];
 
             [self GET:@"/user" parameters:nil success:^(NSURLSessionDataTask *task, id responseObject) {
                 if( callback ) {
@@ -79,7 +112,7 @@ NSString *const kMediaKey = @"com.fastchat.mediakey";
 -(void)logoutWithCallback: (void (^)(bool successful, NSError *error))callback;
 {
     [self DELETE:@"/logout" parameters:nil success:^(NSURLSessionDataTask *task, id responseObject) {
-        self.sessiontoken = nil;
+//        self.sessiontoken = nil;
         self.currentUser = nil;
         callback(YES, nil);
     } failure:^(NSURLSessionDataTask *task, NSError *error) {
@@ -152,7 +185,7 @@ NSString *const kMediaKey = @"com.fastchat.mediakey";
     NSMutableURLRequest *request = [[NSMutableURLRequest alloc] initWithURL:
                                     [NSURL URLWithString:
                                      [NSString stringWithFormat:@"%@/group/%@/message/%@/media", BASE_URL, groupId, messageId]]];
-    [request setValue:self.sessiontoken forHTTPHeaderField:@"session-token"];
+    [request setValue:[CHUser currentUser].sessionToken forHTTPHeaderField:@"session-token"];
     
     AFHTTPRequestOperation *requestOperation = [[AFHTTPRequestOperation alloc] initWithRequest:request];
     requestOperation.responseSerializer = [AFImageResponseSerializer serializer];
@@ -247,7 +280,7 @@ NSString *const kMediaKey = @"com.fastchat.mediakey";
     
     NSMutableURLRequest *request = [[NSMutableURLRequest alloc] initWithURL:
                                     [NSURL URLWithString:[NSString stringWithFormat:@"%@/user/%@/avatar", BASE_URL, userId]]];
-    [request setValue:self.sessiontoken forHTTPHeaderField:@"session-token"];
+    [request setValue:[CHUser currentUser].sessionToken forHTTPHeaderField:@"session-token"];
     
     
     AFHTTPRequestOperation *requestOperation = [[AFHTTPRequestOperation alloc] initWithRequest:request];
@@ -293,7 +326,7 @@ NSString *const kMediaKey = @"com.fastchat.mediakey";
                                                                                             mimeType:@"image/png"];
                                                                 } error:&error];
     
-    [request setValue:self.sessiontoken forHTTPHeaderField:@"session-token"];
+    [request setValue:[CHUser currentUser].sessionToken forHTTPHeaderField:@"session-token"];
 
     AFHTTPRequestOperation *operation = [self HTTPRequestOperationWithRequest:request
                                                                       success:^(AFHTTPRequestOperation *operation, id responseObject) {
@@ -384,7 +417,7 @@ NSString *const kMediaKey = @"com.fastchat.mediakey";
                                                                                                 name:@"text"];
                                                                 } error:&error];
     
-    [request setValue:self.sessiontoken forHTTPHeaderField:@"session-token"];
+    [request setValue:[CHUser currentUser].sessionToken forHTTPHeaderField:@"session-token"];
     
     AFHTTPRequestOperation *operation = [self HTTPRequestOperationWithRequest:request
                                                                       success:^(AFHTTPRequestOperation *operation, id responseObject) {
@@ -406,8 +439,8 @@ NSString *const kMediaKey = @"com.fastchat.mediakey";
                             stringForKey:@"session-token"];
     
     if( savedValue != nil ) {
-        self.sessiontoken = savedValue;
-        [self.requestSerializer setValue:self.sessiontoken forHTTPHeaderField:@"session-token"];
+//        self.sessiontoken = savedValue;
+//        [self.requestSerializer setValue:self.sessiontoken forHTTPHeaderField:@"session-token"];
     }
     
     return savedValue != nil;

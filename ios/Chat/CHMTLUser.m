@@ -24,4 +24,11 @@
     return values;
 }
 
++ (NSSet *)propertyKeysForManagedObjectUniquing;
+{
+    return [NSSet setWithObjects:@"userId", nil];
+}
+
+
+
 @end

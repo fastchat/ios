@@ -44,4 +44,9 @@
     return values;
 }
 
++ (NSSet *)propertyKeysForManagedObjectUniquing;
+{
+    return [NSSet setWithObjects:@"messageId", nil];
+}
+
 @end

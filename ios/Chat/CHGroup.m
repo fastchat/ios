@@ -17,6 +17,8 @@
 
 @implementation CHGroup
 
+@synthesize allUsers = _allUsers;
+
 - (void)awakeFromFetch;
 {
     [super awakeFromFetch];
@@ -25,7 +27,7 @@
 
 - (void)awakeFromInsert;
 {
-    [self awakeFromInsert];
+    [super awakeFromInsert];
     [self commonInit];
 }
 
@@ -36,8 +38,8 @@
 
 - (NSString *)name;
 {
-    if( self.name.length != 0 ) {
-        return self.name;
+    if( self.primitiveName.length != 0 ) {
+        return self.primitiveName;
     }
     
     NSMutableString *nameFromMembers = [[NSMutableString alloc] init];

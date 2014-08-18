@@ -46,8 +46,7 @@
 {
     return @{
              // Other attributes are mapped inheritently because they have the same name
-             @"groupName": @"name",
-             @"pastMembers": @"leftMembers",
+             @"pastMembers": @"leftMembers"
     };
 }
 
@@ -142,18 +141,22 @@
 
 #pragma mark - Core Data
 
-+ (NSDictionary *)managedObjectKeysByPropertyKey {
++ (NSDictionary *)managedObjectKeysByPropertyKey;
+{
     NSMutableDictionary *values = [[super managedObjectKeysByPropertyKey] mutableCopy];
-    values[@"_id"] = @"groupId";
+    values[@"_id"] = @"chID";
+    values[@"memberDict"] = [NSNull null];
+    values[@"lastMessage"] = [NSNull null];
+    values[@"messages"] = [NSNull null];
+    values[@"allUsers"] = [NSNull null];
     return values;
 }
 
 
-+ (NSDictionary *)relationshipModelClassesByPropertyKey;
+
++ (NSSet *)propertyKeysForManagedObjectUniquing;
 {
-    return @{
-             @"groupId" : @"_id"
-            };
+    return [NSSet setWithObjects:@"_id", nil];
 }
 
 

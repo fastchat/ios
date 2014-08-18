@@ -7,6 +7,7 @@
 #import "CHModel.h"
 #import "Mantle.h"
 
+#define MTL_CLASS_PREFIX @"MTL"
 
 @interface CHModel ()
 
@@ -19,22 +20,31 @@
 
 + (instancetype)objectFromJSON:(NSDictionary *)dict;
 {
+    NSString *className = NSStringFromClass([self class]);
+    className = [className substringFromIndex:CLASS_PREFIX.length];
+    className = [NSString stringWithFormat:@"%@%@%@", CLASS_PREFIX, MTL_CLASS_PREFIX, className];
+    DLog(@"Class Name: %@", className);
+    
     NSError *error = nil;
-    MTLModel<MTLManagedObjectSerializing> *object = [MTLJSONAdapter modelOfClass:[self class] fromJSONDictionary:dict error:&error];
+    MTLModel<MTLManagedObjectSerializing> *object = [MTLJSONAdapter modelOfClass:NSClassFromString(className) fromJSONDictionary:dict error:&error];
     if (error) {
         DLog(@"Error Creating Object: %@", error);
     }
     
     error = nil;
-    id finalObject = [MTLManagedObjectAdapter managedObjectFromModel:object
-                                                insertingIntoContext:[NSManagedObjectContext MR_defaultContext]
-                                                               error:&error];
-    
-    if (error) {
-        DLog(@"Error Creating Managed Object: %@", error);
+    if (object) {
+        id finalObject = [MTLManagedObjectAdapter managedObjectFromModel:object
+                                                    insertingIntoContext:[NSManagedObjectContext MR_defaultContext]
+                                                                   error:&error];
+        
+        if (error) {
+            DLog(@"Error Creating Managed Object: %@", error);
+        }
+
+        return finalObject;
     }
     
-    return finalObject;
+    return nil;
 }
 
 + (NSArray *)objectsFromJSON:(NSArray *)array;

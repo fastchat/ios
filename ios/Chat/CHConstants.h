@@ -8,6 +8,8 @@
 
 #import <Foundation/Foundation.h>
 
+#define CLASS_PREFIX @"CH"
+
 FOUNDATION_EXPORT NSString *const kReloadGroupTablesNotification;
 FOUNDATION_EXPORT NSString *const kReloadActiveGroupNotification;
 

@@ -6,6 +6,7 @@
 //
 
 #import "_CHModel.h"
+#import "Mantle.h"
 
 @interface CHModel : _CHModel
 

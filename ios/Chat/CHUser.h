@@ -10,7 +10,13 @@
 
 @interface CHUser : _CHUser
 
+@property (nonatomic, copy) NSString *password;
+
 + (instancetype)currentUser;
++ (instancetype)userWithUsername:(NSString *)username password:(NSString *)password;
+- (PMKPromise *)login;
+
+
 - (PMKPromise *)remoteGroups;
 - (PMKPromise *)avatar;
 - (void)setAvatar:(UIImage *)avatar;

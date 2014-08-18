@@ -16,7 +16,7 @@
 #import "CHAppDelegate.h"
 #import "CHGroupsCollectionAccessor.h"
 #import "CHGroup.h"
-
+#import "CHUser.h"
 #import <AudioToolbox/AudioToolbox.h>
 
 
@@ -48,7 +48,7 @@
         _socket = [[SocketIO alloc] initWithDelegate:self];
     }
     if( [[CHNetworkManager sharedManager] hasStoredSessionToken]) {
-        [_socket connectToHost:@"powerful-cliffs-9562.herokuapp.com" onPort:80 withParams:@{@"token": [CHNetworkManager sharedManager].sessiontoken}];
+        [_socket connectToHost:@"powerful-cliffs-9562.herokuapp.com" onPort:80 withParams:@{@"token": [CHUser currentUser].sessionToken}];
     }
 }
 
