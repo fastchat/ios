@@ -57,6 +57,7 @@ NSString *const kMediaKey = @"com.fastchat.mediakey";
             [self GET:@"/user" parameters:nil success:^(NSURLSessionDataTask *task, id responseObject) {
                 if( callback ) {
                     CHUser *user = [[CHUser alloc] init];
+                    user.userId = responseObject[@"profile"][@"_id"];
                     [user setUsername:responseObject[@"profile"][@"username"]];
                     [user setGroups:responseObject[@"profile"][@"groups"]];
                     [user setInvites:responseObject[@"profile"][@"invites"]];

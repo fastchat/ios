@@ -156,6 +156,8 @@
     UIImage *image = [gpBoard image];
     if (image) {
         [self addImage:image];
+    } else {
+        [super paste:sender];
     }
 }
 
