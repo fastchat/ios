@@ -290,10 +290,7 @@
 		279CF22518E2198800C82399 /* Groups */ = {
 			isa = PBXGroup;
 			children = (
-				2768EAA018D888B6006D14BB /* CHGroupListTableViewController.h */,
-				2768EAA118D888B6006D14BB /* CHGroupListTableViewController.m */,
-				AA4633221936735F00513578 /* CHGroupTableViewCell.h */,
-				AA4633231936735F00513578 /* CHGroupTableViewCell.m */,
+				AA86ED8B19A19A7900ABFA53 /* Groups View */,
 				279CF21F18DFD74D00C82399 /* CHInviteUserViewController.h */,
 				279CF22018DFD74D00C82399 /* CHInviteUserViewController.m */,
 				2768EAA918D8E02B006D14BB /* CHAddGroupViewController.h */,
@@ -448,6 +445,17 @@
 				AA46331D19365BB700513578 /* CHColors.m */,
 			);
 			name = Colors;
+			sourceTree = "<group>";
+		};
+		AA86ED8B19A19A7900ABFA53 /* Groups View */ = {
+			isa = PBXGroup;
+			children = (
+				2768EAA018D888B6006D14BB /* CHGroupListTableViewController.h */,
+				2768EAA118D888B6006D14BB /* CHGroupListTableViewController.m */,
+				AA4633221936735F00513578 /* CHGroupTableViewCell.h */,
+				AA4633231936735F00513578 /* CHGroupTableViewCell.m */,
+			);
+			name = "Groups View";
 			sourceTree = "<group>";
 		};
 		AA9CD704199EACED007931D5 /* Private */ = {

@@ -34,23 +34,11 @@
     [super viewWillAppear:animated];
     
     CHUser *currUser = [CHUser currentUser];
-    DLog(@"Curr User: %@", currUser);
-    
-    if( currUser.avatar == nil ) {
-        [[CHNetworkManager sharedManager] getAvatarOfUser:currUser.chID callback:^(UIImage *avatar) {
-            if( avatar == nil ) {
-                [self.avatarImageView setImage:[UIImage imageWithContentsOfFile:@"profile-dark.png"]];
-            }
-            else {
-                [self.avatarImageView setImage:avatar];
-            }
-        }];
-    }
-    else {
-        currUser.avatar.then(^(CHUser *user, UIImage *avatar){
-            [self.avatarImageView setImage:avatar];
-        });
-    }
+    currUser.avatar.then(^(CHUser *user, UIImage *avatar){
+        [self.avatarImageView setImage:avatar];
+    }).catch(^(NSError *error){
+        [self.avatarImageView setImage:[UIImage imageNamed:@"profile-dark.png"]];
+    });
 }
 
 - (void) imagePickerController:(UIImagePickerController *)picker didFinishPickingMediaWithInfo:(NSDictionary *)info;
