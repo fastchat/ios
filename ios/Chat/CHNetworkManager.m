@@ -184,8 +184,10 @@ NSString *const SESSION_TOKEN = @"session-token";
         [self POST:@"/group"
         parameters:@{@"name" : name, @"members" : members, @"text" : @"Group created"}
            success:^(NSURLSessionDataTask *task, id responseObject) {
+               DLog(@"New Group Response: %@", responseObject);
                CHGroup *newGroup = [CHGroup objectFromJSON:responseObject];
                [self save];
+               DLog(@"Group: %@", newGroup);
                fulfiller(newGroup);
            } failure:^(NSURLSessionDataTask *task, NSError *error) {
                DLog(@"Error: %@", error);

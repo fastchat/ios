@@ -23,7 +23,9 @@
 
 + (PMKPromise *)groupWithName:(NSString *)name members:(NSArray *)members;
 {
-    return [[CHNetworkManager sharedManager] newGroupWithName:name members:members];
+    return [[CHNetworkManager sharedManager] newGroupWithName:name members:members].then(^(CHGroup *group){
+        
+    });
 }
 
 - (void)awakeFromFetch;
@@ -110,13 +112,6 @@
 }
 
 #pragma mark - Core Data
-
-- (NSValueTransformer *)lastMessageEntityAttributeTransformer;
-{
-    return [MTLValueTransformer transformerWithBlock:^id(id obj) {
-        return [CHMessage objectFromJSON:obj];
-    }];
-}
 
 
 

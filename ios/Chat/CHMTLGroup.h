@@ -9,7 +9,7 @@
 #import "Mantle/Mantle.h"
 #import "CHFastChatObject.h"
 
-@class CHUser, CHMessage;
+@class CHUser, CHMTLMessage;
 
 @interface CHMTLGroup : CHFastChatObject
 
@@ -19,7 +19,7 @@
 @property (nonatomic, copy) NSArray *members;
 @property (nonatomic, strong) NSNumber *unread;
 @property (nonatomic, strong) NSMutableDictionary *memberDict;
-@property (nonatomic, strong) CHMessage *lastMessage;
+@property (nonatomic, strong) CHMTLMessage *lastMessage;
 @property (nonatomic, strong) NSMutableArray *messages;
 
 - (NSString *)usernameFromId: (NSString *)theId;

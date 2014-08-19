@@ -125,7 +125,29 @@ static CHUser *_currentUser = nil;
 
 #pragma mark - Mantle / Core Data
 
+- (void)removeGroupsObject:(CHGroup *)value_;
+{
+    NSMutableOrderedSet *tmpOrderedSet = [NSMutableOrderedSet orderedSetWithOrderedSet:[self mutableOrderedSetValueForKey:@"groups"]];
+    NSUInteger idx = [tmpOrderedSet indexOfObject:value_];
+    if (idx != NSNotFound) {
+        NSIndexSet* indexes = [NSIndexSet indexSetWithIndex:idx];
+        [self willChange:NSKeyValueChangeRemoval valuesAtIndexes:indexes forKey:@"groups"];
+        [tmpOrderedSet removeObject:value_];
+        [self setPrimitiveValue:tmpOrderedSet forKey:@"groups"];
+        [self didChange:NSKeyValueChangeRemoval valuesAtIndexes:indexes forKey:@"groups"];
+    }
+}
 
+- (void)addPastGroupsObject:(CHGroup*)value_;
+{
+    NSMutableOrderedSet *tmpOrderedSet = [NSMutableOrderedSet orderedSetWithOrderedSet:[self mutableOrderedSetValueForKey:@"pastGroups"]];
+    NSUInteger idx = [tmpOrderedSet count];
+    NSIndexSet* indexes = [NSIndexSet indexSetWithIndex:idx];
+    [self willChange:NSKeyValueChangeInsertion valuesAtIndexes:indexes forKey:@"pastGroups"];
+    [tmpOrderedSet addObject:value_];
+    [self setPrimitiveValue:tmpOrderedSet forKey:@"pastGroups"];
+    [self didChange:NSKeyValueChangeInsertion valuesAtIndexes:indexes forKey:@"pastGroups"];
+}
 
 
 

@@ -11,10 +11,11 @@
 + (CHGroup *)groupForMessage:(CHMessage *)message;
 + (PMKPromise *)groupWithName:(NSString *)name members:(NSArray *)members;
 
+
+
 - (NSString *)usernameFromId:(NSString *)theId;
 - (CHUser *)memberFromId:(NSString *)theId;
 - (BOOL)hasUnread;
-- (NSValueTransformer *)lastMessageEntityAttributeTransformer;
 - (void)unreadIncrement;
 
 @end
