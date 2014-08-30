@@ -7,17 +7,31 @@
 #import "CHMessage.h"
 #import "CHGroup.h"
 #import "CHUser.h"
+#import "CHNetworkManager.h"
 
 @interface CHMessage ()
-
-// Private interface goes here.
 
 @end
 
 
 @implementation CHMessage
 
-@synthesize groupId = _groupId;
+- (PMKPromise *)media;
+{
+    if (self.theMediaSent) {
+        return [PMKPromise new:^(PMKPromiseFulfiller fulfiller, PMKPromiseRejecter rejecter) {
+            fulfiller(self.theMediaSent);
+        }];
+    }
+    
+    return [[CHNetworkManager sharedManager] mediaForMessage:self].then(^(UIImage *image){
+        self.theMediaSent = image;
+        [[NSManagedObjectContext MR_defaultContext] MR_saveOnlySelfWithCompletion:^(BOOL success, NSError *error) {
+            NSLog(@"Background save of image downloaded. Success?: %@", success ? @"YES" : @"NO");
+        }];
+        return image;
+    });
+}
 
 - (void)setAuthorId:(NSString *)authorId;
 {

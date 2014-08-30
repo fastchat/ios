@@ -12,27 +12,14 @@
 
 @class CHMessage;
 
-//@class SocketIO;
-@protocol CHSocketManagerDelegate;
-
 @interface CHSocketManager : NSObject <SocketIODelegate>
-
-
-@property (nonatomic, weak) id <CHSocketManagerDelegate> delegate;
-@property (nonatomic, strong) SocketIO *socket;
 
 @property (nonatomic, strong) UIViewController *_defaultViewController;
 
 + (CHSocketManager *)sharedManager;
--(SocketIO *)getSocket;
--(void)openSocket;
-- (void) sendMessageWithEvent: (NSString *)message data: (NSDictionary *)data acknowledgement:(void (^)(id argsData))acknowledgement;
--(void) closeSocket;
-
-@end
-
-@protocol CHSocketManagerDelegate <NSObject>
-
--(BOOL)manager: (CHSocketManager *)manager doesCareAboutMessage: (CHMessage *)message;
+- (SocketIO *)getSocket;
+- (void)openSocket;
+- (void)sendMessageWithData:(NSDictionary *)data acknowledgement:(void (^)(id argsData))acknowledgement;
+- (void)closeSocket;
 
 @end

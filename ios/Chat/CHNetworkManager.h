@@ -8,7 +8,7 @@
 
 #import "AFHTTPSessionManager.h"
 
-@class CHUser;
+@class CHUser, CHGroup, CHMessage;
 
 @interface CHNetworkManager : AFHTTPSessionManager
 
@@ -19,6 +19,7 @@
 
 #pragma mark - New Methods
 
+- (PMKPromise *)registerWithUser:(CHUser *)user;
 - (PMKPromise *)loginWithUser:(CHUser *)user;
 - (PMKPromise *)currentUserProfile;
 - (PMKPromise *)currentUserGroups;
@@ -26,19 +27,17 @@
 - (PMKPromise *)avatarForUser:(CHUser *)user;
 - (PMKPromise *)leaveGroup:(NSString *)groupId;
 - (PMKPromise *)newGroupWithName:(id)name members:(NSArray *)members;
+- (PMKPromise *)messagesForGroup:(CHGroup *)group page:(NSInteger)page;
+- (PMKPromise *)postMediaMessageWithImage:(UIImage *)image
+                                  groupId:(NSString *)groupId
+                                  message:(NSString *)message;
+- (PMKPromise *)mediaForMessage:(CHMessage *)message;
 
 #pragma mark - Old Method
 
-- (void)registerWithUsername: (NSString *)username password:(NSString *)password callback:(void (^)(NSArray *userData))callback;
-- (void)createGroupWithName: (NSString *)groupName members: (NSArray *)members callback: (void (^)(bool successful, NSError *error))callback;
-- (void)getMediaForMessage:(NSString *)messageId groupId:(NSString *)groupId callback:(void (^)(UIImage *messageMedia))callback;
-- (void)getMessagesForGroup:(NSString *)group page:(NSInteger)page callback:(void (^)(NSArray *messages))callback;
-
 - (void)pushNewAvatarForUser: (NSString *)userId avatarImage: (UIImage *)avatarImage callback: (void (^)(bool successful, NSError *error))callback;
 - (void)addNewUsers: (NSArray *)invitees groupId: (NSString *) groupId callback: (void (^)(bool successful, NSError *error))callback;
-- (void)acceptInviteAtIndex: (NSNumber *)index callback: (void (^)(bool successful, NSError *error))callback;
 - (void)postDeviceToken:(NSData *)token callback:(void (^)(BOOL success, NSError *error))callback;
-- (void)postMediaMessageWithImage:(UIImage *)image groupId:(NSString *)groupId message:(NSString *)message callback:(void (^)(BOOL success, NSError *error))callback;
 
 
 

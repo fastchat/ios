@@ -8,13 +8,12 @@
 
 @interface CHGroup : _CHGroup
 
+@property (nonatomic, strong) NSMutableDictionary *membersDict;
+
 + (CHGroup *)groupForMessage:(CHMessage *)message;
 + (PMKPromise *)groupWithName:(NSString *)name members:(NSArray *)members;
+- (PMKPromise *)remoteMessagesAtPage:(NSInteger)page;
 
-
-
-- (NSString *)usernameFromId:(NSString *)theId;
-- (CHUser *)memberFromId:(NSString *)theId;
 - (BOOL)hasUnread;
 - (void)unreadIncrement;
 

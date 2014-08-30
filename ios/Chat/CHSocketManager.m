@@ -21,6 +21,11 @@
 
 @class SocketIO;
 
+@interface CHSocketManager ()
+
+@property (nonatomic, strong) SocketIO *socket;
+
+@end
 
 @implementation CHSocketManager
 
@@ -53,22 +58,22 @@
 }
 
 // Socket io stuff
-- (void) socketIODidConnect:(SocketIO *)socket;
+- (void)socketIODidConnect:(SocketIO *)socket;
 {
     DLog(@"Connected! %@", socket);
 }
 
-- (void) socketIODidDisconnect:(SocketIO *)socket disconnectedWithError:(NSError *)error;
+- (void)socketIODidDisconnect:(SocketIO *)socket disconnectedWithError:(NSError *)error;
 {
     DLog(@"Disconnected! %@ %@", socket, error);
 }
 
-- (void) socketIO:(SocketIO *)socket didReceiveMessage:(SocketIOPacket *)packet;
+- (void)socketIO:(SocketIO *)socket didReceiveMessage:(SocketIOPacket *)packet;
 {
 
 }
 
-- (void) socketIO:(SocketIO *)socket didReceiveJSON:(SocketIOPacket *)packet;
+- (void)socketIO:(SocketIO *)socket didReceiveJSON:(SocketIOPacket *)packet;
 {
 
 }
@@ -84,48 +89,50 @@
         [message.group unreadIncrement];
         [[NSManagedObjectContext MR_defaultContext] MR_saveToPersistentStoreAndWait];
         
-        DLog(@"here");
-        [[NSNotificationCenter defaultCenter] postNotificationName:kReloadGroupTablesNotification object:nil];
-    
-        if( [self.delegate respondsToSelector:@selector(manager:doesCareAboutMessage:)]) {
-            if( ![self.delegate manager:self doesCareAboutMessage:message] ) {
-                // add messages to list and send notification
-                
-                AudioServicesPlaySystemSound (kSystemSoundID_Vibrate);
-                
-                UIViewController *root = [[[[UIApplication sharedApplication] windows][0] rootViewController] childViewControllers][0];
-                
-                
-                [TSMessage showNotificationInViewController:root
-                                                      title:[NSString stringWithFormat:@"%@: %@", message.group.name, message.text]
-                                                   subtitle:nil
-                                                      image:nil
-                                                       type:TSMessageNotificationTypeMessage
-                                                   duration:3.0
-                                                   callback:^{
-                                                       UIStoryboard *storyboard = [UIStoryboard storyboardWithName:@"Main_iPhone" bundle:nil];
-                                                       CHMessageViewController *vc = [storyboard instantiateViewControllerWithIdentifier:@"CHMessageViewController"];
-                                                       vc.group = message.group;
-                                                       vc.groupId = message.groupId;
-                                                       
-                                                       [((UINavigationController*)root) popViewControllerAnimated:NO];
-                                                       [((UINavigationController*)root) pushViewController:vc animated:YES];
-                                                   }
-                                                buttonTitle:nil
-                                             buttonCallback:nil
-                                                 atPosition:TSMessageNotificationPositionTop
-                                       canBeDismissedByUser:YES];
-            }
-        }
+        /// Observers of the groups will pick up on the change
+        
+//        DLog(@"here");
+//        [[NSNotificationCenter defaultCenter] postNotificationName:kReloadGroupTablesNotification object:nil];
+//    
+//        if( [self.delegate respondsToSelector:@selector(manager:doesCareAboutMessage:)]) {
+//            if( ![self.delegate manager:self doesCareAboutMessage:message] ) {
+//                // add messages to list and send notification
+//                
+//                AudioServicesPlaySystemSound (kSystemSoundID_Vibrate);
+//                
+//                UIViewController *root = [[[[UIApplication sharedApplication] windows][0] rootViewController] childViewControllers][0];
+//                
+//                
+//                [TSMessage showNotificationInViewController:root
+//                                                      title:[NSString stringWithFormat:@"%@: %@", message.group.name, message.text]
+//                                                   subtitle:nil
+//                                                      image:nil
+//                                                       type:TSMessageNotificationTypeMessage
+//                                                   duration:3.0
+//                                                   callback:^{
+//                                                       UIStoryboard *storyboard = [UIStoryboard storyboardWithName:@"Main_iPhone" bundle:nil];
+//                                                       CHMessageViewController *vc = [storyboard instantiateViewControllerWithIdentifier:@"CHMessageViewController"];
+//                                                       vc.group = message.group;
+//                                                       vc.groupId = message.groupId;
+//                                                       
+//                                                       [((UINavigationController*)root) popViewControllerAnimated:NO];
+//                                                       [((UINavigationController*)root) pushViewController:vc animated:YES];
+//                                                   }
+//                                                buttonTitle:nil
+//                                             buttonCallback:nil
+//                                                 atPosition:TSMessageNotificationPositionTop
+//                                       canBeDismissedByUser:YES];
+//            }
+//        }
     }
 }
 
--(void) sendMessageWithEvent: (NSString *)message data: (NSDictionary *)data acknowledgement:(void (^)(id argsData))acknowledgement;
+- (void)sendMessageWithData:(NSDictionary *)data acknowledgement:(void (^)(id argsData))acknowledgement;
 {
-    [_socket sendEvent:message withData:data andAcknowledge:acknowledgement];
+    [_socket sendEvent:@"message" withData:data andAcknowledge:acknowledgement];
 }
 
--(void) closeSocket;
+- (void)closeSocket;
 {
     [_socket disconnect];
     _socket = nil;

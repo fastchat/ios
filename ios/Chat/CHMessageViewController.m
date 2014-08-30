@@ -27,24 +27,17 @@ NSString *const CHOwnMesssageCellIdentifier = @"CHOwnMessageTableViewCell";
 @interface CHMessageViewController ()
 
 @property (nonatomic, strong) URBMediaFocusViewController *mediaFocus;
-@property (nonatomic, strong) CHUser *currentUser;
 @property (nonatomic, strong) UIButton *sendButton;
-@property (nonatomic, strong) NSMutableArray *messageArray;
 @property (nonatomic, assign) NSInteger currPage;
 @property (nonatomic, strong) UIResponder *previousResponder;
 @property (nonatomic, assign) BOOL beingDismissed;
+@property (nonatomic, assign) CGFloat heightOfKeyboard;
+@property (nonatomic, strong) UIRefreshControl *refresh;
 
-
-@property (nonatomic, strong) SocketIO *socket;
-@property CGRect previousMessageTextViewRect;
-@property (nonatomic, strong) NSMutableDictionary *members;
-@property float heightOfKeyboard;
-
-@property UIRefreshControl *refresh;
-@property BOOL shouldSlide;
-@property BOOL keyboardIsVisible;
-@property BOOL mediaWasAdded;
-@property UIImage *media;
+@property (nonatomic, assign) BOOL shouldSlide;
+@property (nonatomic, assign) BOOL keyboardIsVisible;
+@property (nonatomic, assign) BOOL mediaWasAdded;
+@property (nonatomic, strong) UIImage *media;
 
 @end
 
@@ -115,7 +108,6 @@ NSString *const CHOwnMesssageCellIdentifier = @"CHOwnMessageTableViewCell";
     [_sendButton addTarget:self action:@selector(sendMessage) forControlEvents:UIControlEventTouchUpInside];
  	[self.containerView addSubview:_sendButton];
     
-    self.previousMessageTextViewRect = CGRectZero;
     
     UIEdgeInsets insets = UIEdgeInsetsMake(0,
                                            0,
@@ -124,65 +116,20 @@ NSString *const CHOwnMesssageCellIdentifier = @"CHOwnMessageTableViewCell";
     self.messageTable.contentInset = insets;
     self.messageTable.scrollIndicatorInsets = insets;
     
-    ///
-    /// Data
-    ///
-    [[CHSocketManager sharedManager] setDelegate:self];
-    
-    NSArray *members = _group.members;
-    NSMutableDictionary *tempIds = [NSMutableDictionary dictionary];
-    [members enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
-        CHUser *thisUser = obj;
-        tempIds[thisUser.chID] = thisUser.username;
-        
-        
-    }];
-    
-    self.userIds = tempIds;
-    self.messageArray = [NSMutableArray array];
-    
-    //
-    // make a memebrs hash
-    //
-    self.members = [NSMutableDictionary dictionary];
-    for (CHUser *aMember in self.group.members) {
-        ///
-        /// Pre-load the colors of the Names
-        ///
-//        UIImage *avatar = [_group memberFromId:aMember.username].avatar;
-        NSMutableDictionary *nameAndColor = [NSMutableDictionary dictionary];
-//
-//        if (avatar) {
-//            SLColorArt *colorArt = [avatar colorArt];
-//            nameAndColor[@"color"] = colorArt.primaryColor;
-//        }
-        
-        nameAndColor[@"username"] = aMember.username;
-        self.members[aMember.chID] = nameAndColor;
-    }
-    
     self.mediaWasAdded = NO;
     
     ///
     /// Load up old messages
     ///
-    [[CHNetworkManager sharedManager] getMessagesForGroup:self.group.chID page:0 callback:^(NSArray *messages) {
-        if( messages ) {
-            self.messageArray = [NSMutableArray arrayWithArray:messages];
-
-            self.messageArray = [[[self.messageArray reverseObjectEnumerator] allObjects] mutableCopy];
-            [self.messageTable reloadData];
-            [self.messageTable scrollToRowAtIndexPath:[NSIndexPath indexPathForRow:_messageArray.count - 1 inSection:0] atScrollPosition:UITableViewScrollPositionBottom animated:NO];
-        }
-    }];
-
-    /// Don't crash if we don't have messages pl0x
-    /// I laughed out loud - EM
-    if( !self.messageArray ) {
-        self.messageArray = [NSMutableArray array];
-    }
+    [_group remoteMessagesAtPage:0].then(^{
+        [self.messageTable reloadData];
+        [self.messageTable scrollToRowAtIndexPath:[NSIndexPath indexPathForRow:_group.messages.count - 1 inSection:0]
+                                 atScrollPosition:UITableViewScrollPositionBottom
+                                         animated:NO];
+    });
     
-    self.currentUser = [CHUser currentUser];
+#warning Add in Core Data observers for the group
+    
     self.keyboardIsVisible = NO;
     [self setSendButtonEnabled:[self canSendMessage]];
     
@@ -199,134 +146,29 @@ NSString *const CHOwnMesssageCellIdentifier = @"CHOwnMessageTableViewCell";
     /// Using reloadMessages instead of reloadMessagesWithScroll because I haven't figured out how to make reloadMessagesWithScroll
     /// work when being called as the selector. This should be fixed eventually.
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(reloadMessages) name:@"ReloadActiveGroupNotification" object:nil];
-    
 }
 
 - (void)reloadMessages;
 {
-    
     ///
     /// Load up old messages
     ///
-    [[CHNetworkManager sharedManager] getMessagesForGroup:self.group.chID page:0 callback:^(NSArray *messages) {
-        if( messages ) {
-            self.messageArray = [NSMutableArray arrayWithArray:messages];
-            
-            self.messageArray = [[[self.messageArray reverseObjectEnumerator] allObjects] mutableCopy];
-            [self.messageTable reloadData];
-            [self reloadMessagesWithScroll:YES];
-        }
-    }];
+    [_group remoteMessagesAtPage:0].then(^{
+        [self.messageTable reloadData];
+        [self reloadMessagesWithScroll:YES];
+    });
 }
 
 - (void)reloadMessagesWithScroll:(BOOL)shouldScroll;
 {
     if( shouldScroll ) {
-        [self.messageTable scrollToRowAtIndexPath:[NSIndexPath indexPathForRow:_messageArray.count - 1 inSection:0] atScrollPosition:UITableViewScrollPositionBottom animated:NO];
+        [self.messageTable scrollToRowAtIndexPath:[NSIndexPath
+                                                   indexPathForRow:_group.messages.count - 1 inSection:0]
+                                 atScrollPosition:UITableViewScrollPositionBottom
+                                         animated:NO];
     }
 }
 
-
-/*
- // I am sorry Mike. I tried. I really did. It's all sorts of fucked up.
-- (void)beginAppearanceTransition:(BOOL)isAppearing animated:(BOOL)animated;
-{
-    [super beginAppearanceTransition:isAppearing animated:animated];
-    
-    if (!isAppearing) {
-        _beingDismissed = YES;
-    }
-    
-    if (isAppearing) {
-        [self.transitionCoordinator animateAlongsideTransitionInView:nil animation:^(id<UIViewControllerTransitionCoordinatorContext> context) {
-
-        } completion:^(id<UIViewControllerTransitionCoordinatorContext> context) {
-            
-            if (![context isCancelled]) {
-                DLog(@"Showed successfully.");
-                [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(reloadTableViewData) name:@"ReloadAppDelegateTable" object:nil];
-                
-                [[NSNotificationCenter defaultCenter] addObserver:self
-                                                         selector:@selector(keyboardWillShow:)
-                                                             name:UIKeyboardWillShowNotification
-                                                           object:nil];
-                
-                [[NSNotificationCenter defaultCenter] addObserver:self
-                                                         selector:@selector(keyboardWillHide:)
-                                                             name:UIKeyboardWillHideNotification
-                                                           object:nil];
-                
-                ///
-                /// This all needs to be refactored. AKA, it should never happen
-                ///
-                if (self.group == nil) {
-                    [[CHNetworkManager sharedManager] getGroups:^(NSArray *groups) {
-                        for (CHGroup *group in groups) {
-                            if( [group._id isEqualToString:self.groupId] ) {
-                                self.group = group;
-                            }
-                        }
-                    }];
-                }
-                // Get all member avatars
-                NSArray *members = _group.members;
-                for( CHUser *user in members ) {
-                    if( user.avatar == nil ) {
-                        [[CHNetworkManager sharedManager] getAvatarOfUser:user.userId callback:^(UIImage *avatar) {
-                            if( avatar ) {
-                                user.avatar = avatar;
-                                _group.memberDict[user.userId] = user;
-                            }
-                            else {
-                                user.avatar = [UIImage imageNamed:@"profile-dark.png"];
-                            }
-                        }];
-                    }
-                }
-
-            }
-            
-           
-        }];
-    } else if (!isAppearing && animated && self.previousResponder != nil) {
-        UIView *keyboardView = self.previousResponder.inputAccessoryView.superview;
-        if (!keyboardView) {
-            [self.previousResponder becomeFirstResponder];
-            keyboardView = self.previousResponder.inputAccessoryView.superview;
-            if (!keyboardView) {
-                return;
-            } else {
-                [self.previousResponder resignFirstResponder];
-            }
-        }
-        
-        [self.previousResponder becomeFirstResponder];
-        [self.transitionCoordinator animateAlongsideTransitionInView:keyboardView animation:^(id<UIViewControllerTransitionCoordinatorContext> context) {
-            UIView* fromView = [[context viewControllerForKey:UITransitionContextFromViewControllerKey] view];
-            CGRect endFrame = keyboardView.frame;
-            endFrame.origin.x = fromView.frame.origin.x;
-            keyboardView.frame = endFrame;
-        } completion:^(id<UIViewControllerTransitionCoordinatorContext> context) {
-            
-            if ([context isCancelled]) {
-                _beingDismissed = NO;
-                return;
-            }
-            
-            DLog(@"FINISHED GONE");
-            [[NSNotificationCenter defaultCenter] removeObserver:self];
-            [self.previousResponder resignFirstResponder];
-            self.previousResponder = nil;
-        }];
-    }
-}
-*/
-
-- (void)viewWillDisappear:(BOOL)animated;
-{
-    [super viewWillDisappear:animated];
-
-}
 
 #pragma mark - Keyboard Methods
 
@@ -345,10 +187,10 @@ NSString *const CHOwnMesssageCellIdentifier = @"CHOwnMessageTableViewCell";
                      animations:^{
                          [self setTableViewInsetsFromBottom:keyboardHeight];
                          ////// This may need some logic to scroll the text view with the keyboard
-                         [self.messageTable scrollToRowAtIndexPath:[NSIndexPath indexPathForRow:_messageArray.count - 1 inSection:0]
+                         [self.messageTable scrollToRowAtIndexPath:[NSIndexPath
+                                                                    indexPathForRow:_group.messages.count - 1 inSection:0]
                                                   atScrollPosition:UITableViewScrollPositionBottom
                                                           animated:YES];
-
                          
                          CGRect containerFrame = self.containerView.frame;
                          containerFrame.origin.y = self.view.bounds.size.height - (keyboardHeight + containerFrame.size.height);
@@ -381,9 +223,10 @@ NSString *const CHOwnMesssageCellIdentifier = @"CHOwnMessageTableViewCell";
                          self.previousResponder = nil;
                      }];
  /////// This may need some logic to scroll the messages with the keyboard
-    [self.messageTable scrollToRowAtIndexPath:[NSIndexPath indexPathForRow:_messageArray.count - 1 inSection:0]
-                                 atScrollPosition:UITableViewScrollPositionBottom
-                                         animated:YES];
+    [self.messageTable scrollToRowAtIndexPath:[NSIndexPath
+                                               indexPathForRow:_group.messages.count - 1 inSection:0]
+                             atScrollPosition:UITableViewScrollPositionBottom
+                                     animated:YES];
 }
 
 #pragma mark - Message Methods
@@ -392,32 +235,9 @@ NSString *const CHOwnMesssageCellIdentifier = @"CHOwnMessageTableViewCell";
 {
     self.currPage = self.currPage + 1;
     
-    [[CHNetworkManager sharedManager] getMessagesForGroup:self.group.chID page:self.currPage callback:^(NSArray *messages) {
-        messages = [[[messages reverseObjectEnumerator] allObjects] mutableCopy];
-
-        NSInteger newCount = messages.count;
-        NSMutableArray *indexPaths = [NSMutableArray array];
-        for (NSInteger i = 0; i < newCount; i++) {
-            [indexPaths addObject:[NSIndexPath indexPathForRow:i inSection:0]];
-        }
-        
-        NSRange range = NSMakeRange(0, messages.count);
-        NSIndexSet *indexSet = [NSIndexSet indexSetWithIndexesInRange:range];
-
-        ///
-        /// Actually add the rows animatedly
-        ///
-        [self.messageArray insertObjects:messages atIndexes:indexSet];
-        [self.messageTable beginUpdates];
-        [self.messageTable insertRowsAtIndexPaths:indexPaths withRowAnimation:UITableViewRowAnimationAutomatic];
-        [self.messageTable endUpdates];
-        
-        [self.messageTable scrollToRowAtIndexPath:[NSIndexPath indexPathForRow:(_messageArray.count - newCount) inSection:0]
-                                 atScrollPosition:UITableViewScrollPositionMiddle
-                                         animated:NO];
-        [self reloadMessagesWithScroll:NO];
-        [self.refresh endRefreshing];
-    }];
+    [_group remoteMessagesAtPage:_currPage].then(^{
+        [self.messageTable reloadData];
+    });
 }
 
 - (void)resignTextView;
@@ -434,70 +254,43 @@ NSString *const CHOwnMesssageCellIdentifier = @"CHOwnMessageTableViewCell";
         return;
     }
     
-    self.progressBar.progress = 0.0;
-//    self.progressBar.hidden = NO;
+    CHUser *user = [CHUser currentUser];
     
-    CHUser *currUser = [CHUser currentUser];
-    NSMutableDictionary *data = [[NSMutableDictionary alloc] initWithDictionary:@{@"from": currUser.chID, @"text" : msg, @"group": self.group.chID}];
+    CHMessage *newMessage = [CHMessage MR_createEntity];
+    newMessage.text = msg;
+    newMessage.author = user;
+    newMessage.group = self.group;
+    newMessage.sent = [NSDate date];
     
-    CHMessage *newMessage = [[CHMessage alloc] init];
-    newMessage.text = self.textView.text;
-    
-    [_progressBar setProgress:0.5 animated:YES];
-    if (self.textView.internalTextView.attachedImage) {
+    UIImage *media = self.textView.internalTextView.attachedImage;
+    if (media) {
         newMessage.hasMedia = @YES;
-        newMessage.theMediaSent = self.textView.internalTextView.attachedImage;
-        [[CHNetworkManager sharedManager] postMediaMessageWithImage:self.textView.internalTextView.attachedImage
-                                                            groupId:self.group.chID
-                                                            message:self.textView.text
-                                                           callback:^(BOOL success, NSError *error) {
-                                                               
-                                                               self.textView.text = @"";
-                                                               
-                                                               [self.progressBar setProgress:1.0 animated:YES];
-                                                               dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1.5 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-                                                                   self.progressBar.hidden = YES;
-                                                               });
-                                                               
-                                                               if( success ) {
-                                                                   DLog(@"Successful post!");
-                                                               }
-                                                               else {
-                                                                   DLog(@"Error posting image");
-                                                               }
-                                                           }];
-        
-    } else {
-        [[CHSocketManager sharedManager] sendMessageWithEvent:@"message" data:data acknowledgement:^(id argsData) {
-            [self.progressBar setProgress:1.0 animated:YES];
-            dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1.5 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-                self.progressBar.hidden = YES;
-            });
-        }];
+        newMessage.theMediaSent = media;
     }
     
-    newMessage.author = currUser.chID;
-    newMessage.group = _group.chID;
-    newMessage.sent = [NSDate date];
+    self.textView.text = @"";
+    [self addNewMessage:newMessage];
+    [user sendMessage:newMessage toGroup:self.group].then(^{
+        
+    });
     
     [self addNewMessage:newMessage];
 }
 
 - (void)addNewMessage:(CHMessage *)message;
 {
-    [self.messageArray addObject:message];
+    [self.group addMessagesObject:message];
 
     [self.messageTable beginUpdates];
-    [self.messageTable insertRowsAtIndexPaths:@[[NSIndexPath indexPathForRow:_messageArray.count - 1 inSection:0]]
+    [self.messageTable insertRowsAtIndexPaths:@[[NSIndexPath indexPathForRow:_group.messages.count - 1 inSection:0]]
                              withRowAnimation:UITableViewRowAnimationAutomatic];
     [self.messageTable endUpdates];
     
 
-    [self.messageTable scrollToRowAtIndexPath:[NSIndexPath indexPathForRow:_messageArray.count - 1 inSection:0]
+    [self.messageTable scrollToRowAtIndexPath:[NSIndexPath indexPathForRow:_group.messages.count - 1 inSection:0]
                              atScrollPosition:UITableViewScrollPositionBottom
                                      animated:YES];
     
-    self.textView.text = @"";
     self.shouldSlide = NO;
     
     if( self.keyboardIsVisible ) {
@@ -515,17 +308,18 @@ NSString *const CHOwnMesssageCellIdentifier = @"CHOwnMessageTableViewCell";
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section;
 {
-    return _messageArray.count;
+    return _group.messages.count;
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath;
 {
-    CHMessage *message = _messageArray[indexPath.row];
+    CHMessage *message = _group.messages[indexPath.row];
     CHMessageTableViewCell *cell;
     
     UIColor *color = [UIColor whiteColor];
     
-    if ( [self.members[message.author][@"username"] isEqualToString:self.members[_currentUser.chID][@"username"]] ) {
+    CHUser *author = message.author;
+    if ( [message.author isEqual:[CHUser currentUser]] ) {
         cell = [tableView dequeueReusableCellWithIdentifier:CHOwnMesssageCellIdentifier forIndexPath:indexPath];
     } else {
         cell = [tableView dequeueReusableCellWithIdentifier:CHMesssageCellIdentifier forIndexPath:indexPath];
@@ -538,32 +332,24 @@ NSString *const CHOwnMesssageCellIdentifier = @"CHOwnMessageTableViewCell";
     cell.messageTextView.attributedText = nil;
     cell.messageTextView.attributedText = [[NSAttributedString alloc] initWithString:message.text ? message.text : @""
                                                                           attributes:attributes];
-    cell.authorLabel.text = [self.group usernameFromId:message.author];
+    cell.authorLabel.text = author.username;
     cell.timestampLabel.text = [self formatDate:message.sent];
-    
     
     static UIImage *defaultImage = nil;
     if (!defaultImage) {
         defaultImage = [UIImage imageNamed:@"profile-dark.png"];
     }
     
-    UIColor *nameColor = self.members[message.author][@"color"];
-    if (nameColor) {
-        cell.authorLabel.textColor = nameColor;
-        [cell.avatarImageView setImage:[_group memberFromId:message.author].avatar];
-    } else {
-        [cell.avatarImageView setImage:defaultImage];
-        cell.authorLabel.textColor = [UIColor blackColor];
-    }
+    cell.authorLabel.textColor = author.color;
+    author.avatar.then(^(CHUser *user, UIImage *avatar){
+        cell.avatarImageView.image = avatar;
+    });
     
-    if (message.hasMedia.boolValue) {
-        [[CHNetworkManager sharedManager] getMediaForMessage:message.chID groupId:self.group.chID callback:^(UIImage *messageMedia) {
-            [message setTheMediaSent:messageMedia];
-            [self.messageArray replaceObjectAtIndex:indexPath.row withObject:message];
-            
-            CGSize size = [self boundsForImage:messageMedia];
+    if (message.hasMediaValue) {
+        message.media.then(^(UIImage *image){
+            CGSize size = [self boundsForImage:image];
             NSTextAttachment *textAttachment = [[NSTextAttachment alloc] init];
-            textAttachment.image = messageMedia;
+            textAttachment.image = image;
             textAttachment.bounds = CGRectMake(0, 0, size.width, size.height);
             
             NSMutableAttributedString *string = [[NSMutableAttributedString alloc] init];
@@ -571,7 +357,7 @@ NSString *const CHOwnMesssageCellIdentifier = @"CHOwnMessageTableViewCell";
             [string appendAttributedString:[NSAttributedString attributedStringWithAttachment:textAttachment]];
             [string addAttributes:attributes range:NSMakeRange(0, string.length)];
             cell.messageTextView.attributedText = string;
-        }];
+        });
     }
     
     UITapGestureRecognizer *tapper = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(textViewTapped:)];
@@ -611,19 +397,21 @@ NSString *const CHOwnMesssageCellIdentifier = @"CHOwnMessageTableViewCell";
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath;
 {
-    CHMessage *message = _messageArray[indexPath.row];
+    CHMessage *message = _group.messages[indexPath.row];
     
     self.shouldSlide = YES;
     [self resignTextView];
     
-    if (message.hasMedia.boolValue) {
-        [self expandImage:message.theMediaSent];
+    if (message.hasMediaValue) {
+        message.media.then(^(UIImage *image){
+            [self expandImage:image];
+        });
     }
 }
 
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath;
 {
-    CHMessage *message = _messageArray[indexPath.row];
+    CHMessage *message = _group.messages[indexPath.row];
     CGRect rect = [message.text boundingRectWithSize:CGSizeMake(205 - 16, CGFLOAT_MAX)
                                              options:NSStringDrawingUsesFontLeading | NSStringDrawingUsesLineFragmentOrigin
                                           attributes:@{NSFontAttributeName: [UIFont systemFontOfSize:16]}
@@ -639,49 +427,14 @@ NSString *const CHOwnMesssageCellIdentifier = @"CHOwnMessageTableViewCell";
 
 }
 
-- (BOOL)manager:(CHSocketManager *)manager doesCareAboutMessage:(CHMessage *)message;
-{
-    if( [message.group.chID isEqualToString:self.group.chID] ) {
-        
-        
-        [self.messageTable beginUpdates];
-       
-        [self.messageArray addObject:message];
-        
-        // Magically add rows to table view
-        [self.messageTable insertRowsAtIndexPaths:@[[NSIndexPath indexPathForRow:_messageArray.count - 1 inSection:0]] withRowAnimation:UITableViewRowAnimationAutomatic];
-        [self.messageTable endUpdates];
-
-        /// We are checking to see if the last added row is in the screen (most recent message). If it is, we assume that
-        /// the user is not scrolling and auto-scroll to the bottom. Otherwise, don't touch anything and allow user to continue
-        /// scrolling
-        if ([[self.messageTable indexPathsForVisibleRows] containsObject:[NSIndexPath indexPathForRow:_messageArray.count - 1 inSection:0]]) {
-            [self reloadMessagesWithScroll:YES];
-        }
-    
-        return YES;
-    }
-    return NO;
-}
-
 - (void)reloadTableViewData;
 {
     ///
     /// Load up old messages
     ///
-    [[CHNetworkManager sharedManager] getMessagesForGroup:self.group.chID page:_currPage callback:^(NSArray *messages) {
-        self.messageArray = nil;
-        self.messageArray = [[NSMutableArray alloc] init];
-        
-        for ( CHMessage *message in messages) {
-            [self.messageArray addObject:message];
-        }
-        
-        self.messageArray = [[[self.messageArray reverseObjectEnumerator] allObjects] mutableCopy];
-
+    [_group remoteMessagesAtPage:_currPage].then(^{
         [self.messageTable reloadData];
-    }];
-
+    });
 }
 
 - (void)growingTextView:(HPGrowingTextView *)growingTextView willChangeHeight:(float)height
@@ -696,8 +449,8 @@ NSString *const CHOwnMesssageCellIdentifier = @"CHOwnMessageTableViewCell";
     // Resize table
     [self setTableViewInsetsFromBottom:self.heightOfKeyboard];
 
-    if (_messageArray.count > 0) {
-        [self.messageTable scrollToRowAtIndexPath:[NSIndexPath indexPathForRow:_messageArray.count - 1 inSection:0]
+    if (_group.messages.count > 0) {
+        [self.messageTable scrollToRowAtIndexPath:[NSIndexPath indexPathForRow:_group.messages.count - 1 inSection:0]
                                  atScrollPosition:UITableViewScrollPositionBottom
                                          animated:YES];
     }

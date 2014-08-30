@@ -47,11 +47,11 @@
 - (IBAction)createAccount:(id)sender;
 {
     if ([self canRegister]) {
-        [[CHNetworkManager sharedManager] registerWithUsername:self.usernameTextField.text password:self.passwordTextField.text callback:^(NSArray *userData) {
-            DLog(@"Registered user: %@", userData);
-            
-            [self dismissViewControllerAnimated:YES completion:nil];
-        }];
+#warning Not sure if this works
+        CHUser *user = [CHUser userWithUsername:_usernameTextField.text password:_passwordTextField.text];
+        user.registr.then(^{
+            [self fulfill:user];
+        });
     }
 }
 

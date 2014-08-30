@@ -7,8 +7,10 @@
 #import "CHUser.h"
 #import "CHGroup.h"
 #import "Promise.h"
+#import "CHMessage.h"
 #import "Mantle.h"
 #import "CHNetworkManager.h"
+#import "CHSocketManager.h"
 #import "UIImage+ColorArt.h"
 #import "CHNetworkManager.h"
 
@@ -51,6 +53,15 @@ static CHUser *_currentUser = nil;
         self.currentUserValue = YES;
         [[NSManagedObjectContext MR_defaultContext] MR_saveToPersistentStoreAndWait];
         return [[CHNetworkManager sharedManager] currentUserProfile];
+    });
+}
+
+- (PMKPromise *)registr;
+{
+    return [[CHNetworkManager sharedManager] registerWithUser:self].then(^(NSDictionary *response){
+#warning Not done, set last values here
+        [[NSManagedObjectContext MR_defaultContext] MR_saveToPersistentStoreAndWait];
+        return self;
     });
 }
 
@@ -103,6 +114,22 @@ static CHUser *_currentUser = nil;
         [[NSManagedObjectContext MR_defaultContext] MR_saveToPersistentStoreAndWait];
         return PMKManifold(self, self.privateAvatar);
     });
+}
+
+- (PMKPromise *)sendMessage:(CHMessage *)message toGroup:(CHGroup *)group;
+{
+    if (message.hasMediaValue) {
+        return [[CHNetworkManager sharedManager] postMediaMessageWithImage:message.theMediaSent groupId:group.chID message:message.text];
+        
+    } else {
+        return [PMKPromise new:^(PMKPromiseFulfiller fulfiller, PMKPromiseRejecter rejecter) {
+            [[CHSocketManager sharedManager] sendMessageWithData:@{@"from": self.chID, @"text" : message, @"group": group.chID}
+                                                  acknowledgement:^(id argsData) {
+                                                      NSLog(@"Acknowledgement");
+                                                  }];
+            fulfiller(nil);
+        }];
+    }
 }
 
 - (void)setAvatar:(UIImage *)avatar;

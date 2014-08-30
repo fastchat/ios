@@ -9,6 +9,7 @@
 #import "CHMessage.h"
 #import "CHNetworkManager.h"
 
+static NSString *const MESSAGES_KEY = @"messages";
 
 @interface CHGroup ()
 
@@ -20,12 +21,11 @@
 @implementation CHGroup
 
 @synthesize allUsers = _allUsers;
+@synthesize membersDict = _membersDict;
 
 + (PMKPromise *)groupWithName:(NSString *)name members:(NSArray *)members;
 {
-    return [[CHNetworkManager sharedManager] newGroupWithName:name members:members].then(^(CHGroup *group){
-        
-    });
+    return [[CHNetworkManager sharedManager] newGroupWithName:name members:members];
 }
 
 - (void)awakeFromFetch;
@@ -43,6 +43,11 @@
 - (void)commonInit;
 {
     self.allUsers = [NSMutableDictionary dictionary];
+}
+
+- (PMKPromise *)remoteMessagesAtPage:(NSInteger)page;
+{
+    return [[CHNetworkManager sharedManager] messagesForGroup:self page:page];
 }
 
 - (NSString *)name;
@@ -80,25 +85,24 @@
     return nameFromMembers;
 }
 
-- (NSString *)usernameFromId:(NSString *)theId;
+- (NSMutableDictionary *)membersDict;
 {
-    return self.allUsers[theId];
-}
-
-- (CHUser *)memberFromId:(NSString *)theId;
-{
-    CHUser *userToReturn = nil;
-    
-    if (theId) {
-        //        userToReturn = self.memberDict[theId];
+    if (!_membersDict) {
+        _membersDict = [NSMutableDictionary dictionary];
+        for (CHUser *aUser in self.members) {
+            _membersDict[aUser.chID] = aUser;
+        }
+        
+        for (CHUser *aUser in self.pastMembers) {
+            _membersDict[aUser.chID] = aUser;
+        }
     }
-    
-    return userToReturn;
+    return _membersDict;
 }
 
 - (BOOL)hasUnread;
 {
-    return self.unread.integerValue > 0;
+    return [self unreadValue] > 0;
 }
 
 - (void)unreadIncrement;
@@ -113,6 +117,33 @@
 
 #pragma mark - Core Data
 
+- (void)addMessagesObject:(CHMessage *)value_;
+{
+    NSMutableOrderedSet *tmpOrderedSet = [NSMutableOrderedSet orderedSetWithOrderedSet:[self mutableOrderedSetValueForKey:MESSAGES_KEY]];
+    NSUInteger idx = [tmpOrderedSet count];
+    NSIndexSet* indexes = [NSIndexSet indexSetWithIndex:idx];
+    [self willChange:NSKeyValueChangeInsertion valuesAtIndexes:indexes forKey:MESSAGES_KEY];
+    [tmpOrderedSet addObject:value_];
+    [self setPrimitiveValue:tmpOrderedSet forKey:MESSAGES_KEY];
+    [self didChange:NSKeyValueChangeInsertion valuesAtIndexes:indexes forKey:MESSAGES_KEY];
+}
+
+- (void)addMessages:(NSOrderedSet*)value_;
+{
+    NSMutableOrderedSet *tmpOrderedSet = [NSMutableOrderedSet orderedSetWithOrderedSet:[self mutableOrderedSetValueForKey:MESSAGES_KEY]];
+    NSMutableIndexSet *indexes = [NSMutableIndexSet indexSet];
+    NSUInteger valuesCount = [value_ count];
+    NSUInteger objectsCount = [tmpOrderedSet count];
+    for (NSUInteger i = 0; i < valuesCount; ++i) {
+        [indexes addIndex:(objectsCount + i)];
+    }
+    if (valuesCount > 0) {
+        [self willChange:NSKeyValueChangeInsertion valuesAtIndexes:indexes forKey:MESSAGES_KEY];
+        [tmpOrderedSet addObjectsFromArray:[value_ array]];
+        [self setPrimitiveValue:tmpOrderedSet forKey:MESSAGES_KEY];
+        [self didChange:NSKeyValueChangeInsertion valuesAtIndexes:indexes forKey:MESSAGES_KEY];
+    }
+}
 
 
 

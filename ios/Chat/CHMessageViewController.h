@@ -15,11 +15,10 @@
 
 @class CHGroup;
 
-@interface CHMessageViewController : UIViewController <UITextFieldDelegate, SocketIODelegate, UITableViewDataSource,UITableViewDelegate, CHSocketManagerDelegate, UITextViewDelegate, HPGrowingTextViewDelegate, DBCameraViewControllerDelegate>
+@interface CHMessageViewController : UIViewController <UITextFieldDelegate, SocketIODelegate, UITableViewDataSource,UITableViewDelegate, UITextViewDelegate, HPGrowingTextViewDelegate, DBCameraViewControllerDelegate>
 
 @property (nonatomic, strong) CHGroup *group;
 @property (nonatomic, strong) NSString *groupId;
-@property (nonatomic, strong) NSDictionary *userIds;
 @property (weak, nonatomic) IBOutlet UITextField *messageField;
 @property (weak, nonatomic) IBOutlet UITextView *messageEntryField;
 @property (weak, nonatomic) IBOutlet UITableView *messageTable;
@@ -27,8 +26,8 @@
 @property (weak, nonatomic) IBOutlet UIView *messageBarView;
 @property (weak, nonatomic) IBOutlet UIProgressView *progressBar;
 
-@property UIView *containerView;
-@property HPGrowingTextView *textView;
+@property (nonatomic, strong) UIView *containerView;
+@property (nonatomic, strong) HPGrowingTextView *textView;
 
 -(void)expandImage:(UIImage *)image;
 

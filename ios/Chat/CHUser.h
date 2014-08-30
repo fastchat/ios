@@ -6,7 +6,7 @@
 //
 #import "_CHUser.h"
 
-@class PMKPromise;
+@class CHMessage;
 
 @interface CHUser : _CHUser
 
@@ -15,12 +15,14 @@
 + (instancetype)currentUser;
 + (instancetype)userWithUsername:(NSString *)username password:(NSString *)password;
 - (PMKPromise *)login;
+- (PMKPromise *)registr; //not a spelling mistake, register is a protected word
 - (BOOL)isLoggedIn;
-
+- (UIColor *)color;
 
 - (PMKPromise *)remoteGroups;
 - (PMKPromise *)leaveGroupAtIndex:(NSUInteger)index;
 - (PMKPromise *)avatar;
+- (PMKPromise *)sendMessage:(CHMessage *)message toGroup:(CHGroup *)group;
 - (void)setAvatar:(UIImage *)avatar;
 
 @end

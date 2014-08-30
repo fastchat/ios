@@ -8,5 +8,6 @@
 
 @interface CHMessage : _CHMessage
 
+- (PMKPromise *)media;
 
 @end
