@@ -115,6 +115,11 @@ static NSString *const MESSAGES_KEY = @"messages";
     return [CHGroup MR_findFirstByAttribute:@"chID" withValue:message.group];
 }
 
+- (PMKPromise *)addUsers:(NSArray *)users;
+{
+    return [[CHNetworkManager sharedManager] newUsers:users forGroup:self];
+}
+
 #pragma mark - Core Data
 
 - (void)addMessagesObject:(CHMessage *)value_;

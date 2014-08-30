@@ -18,6 +18,7 @@
 @interface CHUser ()
 
 @property (nonatomic, retain) UIColor * avatarColor;
+@property (nonatomic, retain) NSDate * lastAvatarFetch;
 
 @end
 
@@ -103,6 +104,10 @@ static CHUser *_currentUser = nil;
 
 - (PMKPromise *)avatar;
 {
+    if (!self.lastAvatarFetch) {
+        self.lastAvatarFetch = [NSDate date];
+    }
+    
     if (self.privateAvatar) {
         return [PMKPromise new:^(PMKPromiseFulfiller fulfiller, PMKPromiseRejecter rejecter) {
             fulfiller(PMKManifold(self, self.privateAvatar));
@@ -116,6 +121,14 @@ static CHUser *_currentUser = nil;
     });
 }
 
+- (PMKPromise *)avatar:(UIImage *)image;
+{
+    self.privateAvatar = image;
+    [[NSManagedObjectContext MR_defaultContext] MR_saveToPersistentStoreAndWait];
+    return [[CHNetworkManager sharedManager] newAvatar:image forUser:self].then(^{
+    });
+}
+
 - (PMKPromise *)sendMessage:(CHMessage *)message toGroup:(CHGroup *)group;
 {
     if (message.hasMediaValue) {
@@ -123,7 +136,7 @@ static CHUser *_currentUser = nil;
         
     } else {
         return [PMKPromise new:^(PMKPromiseFulfiller fulfiller, PMKPromiseRejecter rejecter) {
-            [[CHSocketManager sharedManager] sendMessageWithData:@{@"from": self.chID, @"text" : message, @"group": group.chID}
+            [[CHSocketManager sharedManager] sendMessageWithData:@{@"from": self.chID, @"text" : message.text, @"group": group.chID}
                                                   acknowledgement:^(id argsData) {
                                                       NSLog(@"Acknowledgement");
                                                   }];

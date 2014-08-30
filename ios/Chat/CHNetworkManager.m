@@ -285,71 +285,57 @@ NSString *const SESSION_TOKEN = @"session-token";
     }];
 }
 
-- (void)getMediaForMessage:(NSString *)messageId groupId:(NSString *)groupId callback:(void (^)(UIImage *messageMedia))callback;
+- (PMKPromise *)newUsers:(NSArray *)invitees forGroup:(CHGroup *)group;
 {
-    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
-    NSString *key = [NSString stringWithFormat:@"%@-%@-%@", kMediaKey, groupId, messageId];
-    NSData *data = [defaults objectForKey:key];
-    UIImage *image = [UIImage imageWithData:data];
-    if (image) {
-        if (callback) {
-            callback(image);
-            return;
-        }
+    if (!invitees) {
+        return [PMKPromise new:^(PMKPromiseFulfiller fulfiller, PMKPromiseRejecter rejecter) {
+            fulfiller(nil);
+        }];
     }
+    NSString *url =[NSString stringWithFormat:@"/group/%@/add", group.chID];
     
-    NSMutableURLRequest *request = [[NSMutableURLRequest alloc] initWithURL:
-                                    [NSURL URLWithString:
-                                     [NSString stringWithFormat:@"%@/group/%@/message/%@/media", BASE_URL, groupId, messageId]]];
-    [request setValue:[CHUser currentUser].sessionToken forHTTPHeaderField:@"session-token"];
-    
-    AFHTTPRequestOperation *requestOperation = [[AFHTTPRequestOperation alloc] initWithRequest:request];
-    requestOperation.responseSerializer = [AFImageResponseSerializer serializer];
-    [requestOperation setCompletionBlockWithSuccess:^(AFHTTPRequestOperation *operation, id responseObject) {
-        if (responseObject) {
-            dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
-                NSData *data = UIImagePNGRepresentation(responseObject);
-                [defaults setObject:data forKey:key];
-                [defaults synchronize];
-            });
-        }
-        if(callback) {
-            callback(responseObject);
-        }
-        
-    } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
-        NSLog(@"Image error: %@", error);
-        if (callback) {
-            callback(nil);
-        }
-    }];
-    
-    [requestOperation start];
-}
-
-
-#pragma mark - Old
-
-
-
-- (void)getMessagesFromDate: (NSDate *)date group:(NSString *)group callback:(void (^)(NSArray *messages))callback;
-{
-    [self GET:[NSString stringWithFormat:@"/group/%@/message?20140101", group/*, date*/] parameters:nil success:^(NSURLSessionDataTask *task, id responseObject) {
-        if( callback ) {
-
-        }
-    } failure:^(NSURLSessionDataTask *task, NSError *error) {
-        DLog(@"Error retrieving messages: %@", error);
+    return [PMKPromise new:^(PMKPromiseFulfiller fulfiller, PMKPromiseRejecter rejecter) {
+        [self PUT:url
+       parameters:@{@"invitees": invitees}
+          success:^(NSURLSessionDataTask *task, id responseObject) {
+              fulfiller(responseObject);
+          } failure:^(NSURLSessionDataTask *task, NSError *error) {
+              rejecter(error);
+          }];
     }];
 }
 
-
-- (void)pushNewAvatarForUser: (NSString *)userId avatarImage: (UIImage *)avatarImage callback: (void (^)(bool successful, NSError *error))callback;
+- (PMKPromise *)postDeviceToken:(NSData *)token;
 {
-    NSData *imageData = UIImagePNGRepresentation(avatarImage);
+    NSString *tokenString = [NSString stringWithFormat:@"%@", token];
+    NSRegularExpression *regex = [NSRegularExpression regularExpressionWithPattern:@"(<|\\s|>)"
+                                                                           options:NSRegularExpressionCaseInsensitive
+                                                                             error:nil];
+    
+    tokenString = [regex stringByReplacingMatchesInString:tokenString
+                                                  options:0
+                                                    range:NSMakeRange(0, [tokenString length])
+                                             withTemplate:@""];
+    
+    return [PMKPromise new:^(PMKPromiseFulfiller fulfiller, PMKPromiseRejecter rejecter) {
+        [self POST:@"/user/device"
+        parameters:@{@"token": tokenString, @"type" : @"ios"}
+           success:^(NSURLSessionDataTask *task, id responseObject) {
+               fulfiller(responseObject);
+        } failure:^(NSURLSessionDataTask *task, NSError *error) {
+            rejecter(error);
+        }];
+    }];
+    
+}
+
+
+- (PMKPromise *)newAvatar:(UIImage *)image forUser:(CHUser *)user;
+{
+    NSData *imageData = UIImagePNGRepresentation(image);
     NSDictionary *parameters = nil;
     
-    NSString *url = [NSString stringWithFormat:@"%@/user/%@/avatar", BASE_URL, userId];
+    NSString *url = [NSString stringWithFormat:@"%@/user/%@/avatar", BASE_URL, user.chID];
     NSError *error = nil;
     
     NSMutableURLRequest *request = [self.requestSerializer multipartFormRequestWithMethod:@"POST"
@@ -363,48 +349,15 @@ NSString *const SESSION_TOKEN = @"session-token";
                                                                 } error:&error];
     
     [request setValue:[CHUser currentUser].sessionToken forHTTPHeaderField:@"session-token"];
-
-    AFHTTPRequestOperation *operation = [self HTTPRequestOperationWithRequest:request
-                                                                      success:^(AFHTTPRequestOperation *operation, id responseObject) {
-                                                                          callback(YES, nil);
-                                                                      } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
-                                                                          NSLog(@"Error: %@", error);
-                                                                          callback(NO, error);
-                                                                      }];
-    [self.operationQueue addOperation:operation];
-}
-
-- (void)addNewUsers: (NSArray *)invitees groupId: (NSString *) groupId callback: (void (^)(bool successful, NSError *error))callback;
-{
-    // Add id
-    NSString *url =[[NSString alloc] initWithFormat:@"/group/%@/add",groupId];
-   
-    [self PUT:url parameters:@{@"invitees" : invitees} success:^(NSURLSessionDataTask *task, NSError *error) {
-        
-        callback(YES, nil);
-    }failure:^(NSURLSessionDataTask *task, NSError *error) {
-        DLog(@"Error sending invite %@", error);
-        callback(NO, error);
-    }];
-
-}
-
-- (void)postDeviceToken:(NSData *)token callback:(void (^)(BOOL success, NSError *error))callback;
-{
-    NSString *tokenString = [NSString stringWithFormat:@"%@", token];
-    NSRegularExpression *regex = [NSRegularExpression regularExpressionWithPattern:@"(<|\\s|>)" options:NSRegularExpressionCaseInsensitive error:nil];
-    tokenString = [regex stringByReplacingMatchesInString:tokenString options:0 range:NSMakeRange(0, [tokenString length]) withTemplate:@""];
     
-    [self POST:@"/user/device" parameters:@{@"token": tokenString, @"type" : @"ios"} success:^(NSURLSessionDataTask *task, id responseObject) {
-        
-        if (callback) {
-            callback(YES, nil);
-        }
-        
-    } failure:^(NSURLSessionDataTask *task, NSError *error) {
-        if (callback) {
-            callback(NO, error);
-        }
+    return [PMKPromise new:^(PMKPromiseFulfiller fulfiller, PMKPromiseRejecter rejecter) {
+        AFHTTPRequestOperation *operation = [self HTTPRequestOperationWithRequest:request
+                                                                          success:^(AFHTTPRequestOperation *operation, id responseObject) {
+                                                                              fulfiller(responseObject);
+                                                                          } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+                                                                              rejecter(error);
+                                                                          }];
+        [self.operationQueue addOperation:operation];
     }];
 }
 

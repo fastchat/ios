@@ -8,10 +8,13 @@
 
 #import <UIKit/UIKit.h>
 
+@class CHGroup;
+
 @interface CHInviteUserViewController : UIViewController
 
+@property (strong, nonatomic) CHGroup *group;
+
 @property (weak, nonatomic) IBOutlet UITextField *usernameTextField;
-@property (strong, nonatomic) NSString *groupId;
 
 - (IBAction)sendInviteTouched:(id)sender;
 

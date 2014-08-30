@@ -93,9 +93,11 @@ void uncaughtExceptionHandler(NSException *exception)
 
 - (void)application:(UIApplication*)application didRegisterForRemoteNotificationsWithDeviceToken:(NSData*)deviceToken
 {
-    [[CHNetworkManager sharedManager] postDeviceToken:deviceToken callback:^(BOOL success, NSError *error) {
+    [[CHNetworkManager sharedManager] postDeviceToken:deviceToken].then(^{
+        DLog(@"Posted Device Token");
+    }).catch(^(NSError *error){
         DLog(@"Error Posting Token: %@", error);
-    }];
+    });
 }
 
 /**

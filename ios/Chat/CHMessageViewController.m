@@ -128,7 +128,6 @@ NSString *const CHOwnMesssageCellIdentifier = @"CHOwnMessageTableViewCell";
                                          animated:NO];
     });
     
-#warning Add in Core Data observers for the group
     
     self.keyboardIsVisible = NO;
     [self setSendButtonEnabled:[self canSendMessage]];
@@ -142,6 +141,11 @@ NSString *const CHOwnMesssageCellIdentifier = @"CHOwnMessageTableViewCell";
                                              selector:@selector(keyboardWillHide:)
                                                  name:UIKeyboardWillHideNotification
                                                object:nil];
+    
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(managedContextChanged:)
+                                                 name:NSManagedObjectContextObjectsDidChangeNotification
+                                               object:[NSManagedObjectContext MR_defaultContext]];
 
     /// Using reloadMessages instead of reloadMessagesWithScroll because I haven't figured out how to make reloadMessagesWithScroll
     /// work when being called as the selector. This should be fixed eventually.
@@ -167,6 +171,33 @@ NSString *const CHOwnMesssageCellIdentifier = @"CHOwnMessageTableViewCell";
                                  atScrollPosition:UITableViewScrollPositionBottom
                                          animated:NO];
     }
+}
+
+- (void)managedContextChanged:(NSNotification *)notification;
+{
+    NSArray *insertedObjects = [[[notification userInfo] objectForKey:NSInsertedObjectsKey] allObjects];
+    
+    if (insertedObjects.count > 0) {
+        NSManagedObject *first = insertedObjects[0];
+        if ([first isKindOfClass:[CHMessage class]]) {
+            CHMessage *message = (CHMessage *)first;
+            if ([message.group isEqual:self.group]) {
+                [self addRemoteMessage:message];
+                self.group.unreadValue = 0;
+            }
+
+
+        }
+    }
+}
+
+- (void)addRemoteMessage:(CHMessage *)message;
+{
+    [self.messageTable reloadData];
+    [self.messageTable scrollToRowAtIndexPath:[NSIndexPath
+                                               indexPathForRow:_group.messages.count - 1 inSection:0]
+                             atScrollPosition:UITableViewScrollPositionBottom
+                                     animated:YES];
 }
 
 
@@ -268,24 +299,19 @@ NSString *const CHOwnMesssageCellIdentifier = @"CHOwnMessageTableViewCell";
         newMessage.theMediaSent = media;
     }
     
-    self.textView.text = @"";
     [self addNewMessage:newMessage];
+    
     [user sendMessage:newMessage toGroup:self.group].then(^{
         
     });
     
     [self addNewMessage:newMessage];
+    self.textView.text = @"";
 }
 
 - (void)addNewMessage:(CHMessage *)message;
 {
-    [self.group addMessagesObject:message];
-
-    [self.messageTable beginUpdates];
-    [self.messageTable insertRowsAtIndexPaths:@[[NSIndexPath indexPathForRow:_group.messages.count - 1 inSection:0]]
-                             withRowAnimation:UITableViewRowAnimationAutomatic];
-    [self.messageTable endUpdates];
-    
+    [self.messageTable reloadData];
 
     [self.messageTable scrollToRowAtIndexPath:[NSIndexPath indexPathForRow:_group.messages.count - 1 inSection:0]
                              atScrollPosition:UITableViewScrollPositionBottom
@@ -343,6 +369,8 @@ NSString *const CHOwnMesssageCellIdentifier = @"CHOwnMessageTableViewCell";
     cell.authorLabel.textColor = author.color;
     author.avatar.then(^(CHUser *user, UIImage *avatar){
         cell.avatarImageView.image = avatar;
+    }).catch(^(NSError *error){
+        DLog(@"Could not get the user's avatar.");
     });
     
     if (message.hasMediaValue) {

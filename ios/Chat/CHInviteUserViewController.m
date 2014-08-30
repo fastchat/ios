@@ -8,6 +8,7 @@
 
 #import "CHInviteUserViewController.h"
 #import "CHNetworkManager.h"
+#import "CHGroup.h"
 
 @interface CHInviteUserViewController ()
 
@@ -28,21 +29,19 @@
 
 - (void)cancelWasTouched;
 {
-    [self dismissViewControllerAnimated:YES completion:^{
-        
-    }];
+    [self fulfill:nil];
 }
 
 
 - (IBAction)sendInviteTouched:(id)sender;
 {
-    NSArray *invitees = @[self.usernameTextField.text];
-    
-    [[CHNetworkManager sharedManager] addNewUsers:invitees groupId:self.groupId callback:^(bool successful, NSError *error) {
-        [self dismissViewControllerAnimated:YES completion:^{
-            
-        }];
-    }];
-
+    if (self.usernameTextField.text.length > 0) {
+        NSArray *invitees = @[self.usernameTextField.text];
+        
+        [self.group addUsers:invitees].then(^{
+            [self fulfill:nil];
+        });
+    }
 }
+
 @end

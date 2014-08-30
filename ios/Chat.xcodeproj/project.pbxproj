@@ -261,6 +261,8 @@
 		279CF22218E218E000C82399 /* UI files */ = {
 			isa = PBXGroup;
 			children = (
+				AA7759EB18D54D3000E4E7AB /* Main_iPhone.storyboard */,
+				AA7759EE18D54D3000E4E7AB /* Main_iPad.storyboard */,
 				AA7C691F19986B17005DFFF5 /* Colors */,
 				AA463318193659DB00513578 /* UI Elements */,
 				2762621818F706DF001F7754 /* User Info */,
@@ -338,8 +340,6 @@
 			isa = PBXGroup;
 			children = (
 				279CF22218E218E000C82399 /* UI files */,
-				AA7759EB18D54D3000E4E7AB /* Main_iPhone.storyboard */,
-				AA7759EE18D54D3000E4E7AB /* Main_iPad.storyboard */,
 			);
 			name = "User Interface";
 			sourceTree = "<group>";

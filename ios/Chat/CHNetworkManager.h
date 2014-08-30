@@ -32,13 +32,9 @@
                                   groupId:(NSString *)groupId
                                   message:(NSString *)message;
 - (PMKPromise *)mediaForMessage:(CHMessage *)message;
-
-#pragma mark - Old Method
-
-- (void)pushNewAvatarForUser: (NSString *)userId avatarImage: (UIImage *)avatarImage callback: (void (^)(bool successful, NSError *error))callback;
-- (void)addNewUsers: (NSArray *)invitees groupId: (NSString *) groupId callback: (void (^)(bool successful, NSError *error))callback;
-- (void)postDeviceToken:(NSData *)token callback:(void (^)(BOOL success, NSError *error))callback;
-
+- (PMKPromise *)newUsers:(NSArray *)invitees forGroup:(CHGroup *)group;
+- (PMKPromise *)newAvatar:(UIImage *)image forUser:(CHUser *)user;
+- (PMKPromise *)postDeviceToken:(NSData *)token;
 
 
 @end

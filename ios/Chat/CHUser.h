@@ -22,6 +22,7 @@
 - (PMKPromise *)remoteGroups;
 - (PMKPromise *)leaveGroupAtIndex:(NSUInteger)index;
 - (PMKPromise *)avatar;
+- (PMKPromise *)avatar:(UIImage *)image;
 - (PMKPromise *)sendMessage:(CHMessage *)message toGroup:(CHGroup *)group;
 - (void)setAvatar:(UIImage *)avatar;
 

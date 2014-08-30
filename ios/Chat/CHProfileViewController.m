@@ -13,6 +13,8 @@
 @interface CHProfileViewController ()
 
 @property (weak, nonatomic) UIButton *cameraButton;
+@property (nonatomic, strong) CHUser *user;
+
 @end
 
 @implementation CHProfileViewController
@@ -22,9 +24,9 @@
     [super viewDidLoad];
     // Do any additional setup after loading the view.
 
-    CHUser *currUser = [CHUser currentUser];
+    self.user = [CHUser currentUser];
     self.title = @"Profile";
-    self.userNameLabel.text = currUser.username;
+    self.userNameLabel.text = self.user.username;
     
    self.avatarImageView.contentMode = UIViewContentModeScaleAspectFill;
 }
@@ -41,26 +43,17 @@
     });
 }
 
-- (void) imagePickerController:(UIImagePickerController *)picker didFinishPickingMediaWithInfo:(NSDictionary *)info;
+- (void)imagePickerController:(UIImagePickerController *)picker didFinishPickingMediaWithInfo:(NSDictionary *)info;
 {
     UIImage *image = [info objectForKey:UIImagePickerControllerOriginalImage];
-    
     
     // Ensure size is less than 200KB
     NSData *imgData = [[NSData alloc] initWithData:UIImageJPEGRepresentation((image), 0.5)];
     unsigned long imageSize = imgData.length;
     
     if( imageSize/1024.0 <= 200 ) {
-
-        [[CHNetworkManager sharedManager] pushNewAvatarForUser:[CHUser currentUser].chID avatarImage:image callback:^(bool successful, NSError *error) {
-
-            if( successful ) {
-                [self.avatarImageView setImage:image];
-            }
-            else {
-                DLog(@"Something went wrong: %@", error);
-            }
-        }];
+        [self.avatarImageView setImage:image];
+        [self.user avatar:image];
     }
     else {
         UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"File Size error"
