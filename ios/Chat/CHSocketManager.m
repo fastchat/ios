@@ -81,6 +81,7 @@
 // THIS NEEDS TO BE REFACTORED
 - (void) socketIO:(SocketIO *)socket didReceiveEvent:(SocketIOPacket *)packet;
 {
+    DLog("PACKET: %@", packet);
     if ([packet.dataAsJSON[@"name"] isEqualToString:@"message"]) {
         
         NSDictionary *data = [packet.dataAsJSON[@"args"] firstObject];
@@ -124,6 +125,10 @@
 //                                       canBeDismissedByUser:YES];
 //            }
 //        }
+    } else if ([packet.dataAsJSON[@"name"] isEqualToString:@"typing"]) {
+        NSDictionary *data = [packet.dataAsJSON[@"args"] firstObject];
+        //CHMessage *typer = [[CHMessage objectsFromJSON:@[data]] firstObject];
+        DLog(@"Someone is typing: %@", [[CHMessage objectsFromJSON:@[data]] firstObject]);
     }
 }
 

@@ -1,5 +1,10 @@
+#import <CoreFoundation/CFURL.h>
+#import <Foundation/NSSortDescriptor.h>
+#import <Foundation/NSJSONSerialization.h>
+#import <Foundation/NSURL.h>
 #import "OMGHTTPURLRQ.h"
 #import "OMGUserAgent.h"
+#include <stdlib.h>
 
 static inline NSString *enc(NSString *in) {
 	return (__bridge_transfer  NSString *) CFURLCreateStringByAddingPercentEscapes(
@@ -129,6 +134,12 @@ static NSMutableURLRequest *OMGFormURLEncodedRequest(NSString *url, NSString *me
 
 + (NSMutableURLRequest *)PUT:(NSString *)url :(NSDictionary *)parameters {
     return OMGFormURLEncodedRequest(url, @"PUT", parameters);
+}
+
++ (NSMutableURLRequest *)PUT:(NSString *)url JSON:(id)params {
+    NSMutableURLRequest *rq = [OMGHTTPURLRQ POST:url JSON:params];
+    rq.HTTPMethod = @"PUT";
+    return rq;
 }
 
 + (NSMutableURLRequest *)DELETE:(NSString *)url :(NSDictionary *)parameters {

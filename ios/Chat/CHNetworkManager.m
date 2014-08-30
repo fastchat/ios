@@ -52,6 +52,7 @@ NSString *const SESSION_TOKEN = @"session-token";
     [self.requestSerializer setValue:token forHTTPHeaderField:SESSION_TOKEN];
 }
 
+
 #pragma mark - Promises
 
 - (PMKPromise *)loginWithUser:(CHUser *)user;

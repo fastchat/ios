@@ -14,6 +14,7 @@
 #import "CHOwnMessageTableViewCell.h"
 #import "CHSocketManager.h"
 #import "CHGroup.h"
+#import "CHGroupsCollectionAccessor.h"
 #import "CHMessage.h"
 #import "CHCircleImageView.h"
 #import "URBMediaFocusViewController.h"
@@ -186,6 +187,36 @@ NSString *const CHOwnMesssageCellIdentifier = @"CHOwnMessageTableViewCell";
                                                indexPathForRow:([self tableView:self.messageTable numberOfRowsInSection:0] - 1) inSection:0]
                              atScrollPosition:UITableViewScrollPositionBottom
                                      animated:NO];
+}
+
+-(void)sendUserTypingAction;
+{
+    DLog(@"User changed text field");
+}
+
+#warning FIX THIS
+///
+/// Set the section title to the names of the members in chat
+///
+//-(NSString *)tableView:(UITableView *)tableView titleForHeaderInSection:(NSInteger)section;
+//{
+//    NSMutableString *sectionTitle = [@"To: " mutableCopy];
+//    DLog(@"Group id %@", self.group._id);
+//    NSArray *activeMembers = [[CHGroupsCollectionAccessor sharedAccessor] getActiveMembersForGroupWithId:self.group._id];
+//
+//    for (CHUser *member in activeMembers) {
+//        [sectionTitle appendString:[NSMutableString stringWithFormat:@"%@, ", ((CHUser *)member).username]];
+//    }
+//    
+//    return [self trimString:sectionTitle];
+//}
+
+- (NSMutableString *)trimString: (NSString *)stringToTrim;
+{
+    // Remove trailing ','
+    NSMutableString *trimmedString = [[stringToTrim substringToIndex:stringToTrim.length - 2] mutableCopy];
+    
+    return trimmedString;
 }
 
 - (void)reloadMessages;
