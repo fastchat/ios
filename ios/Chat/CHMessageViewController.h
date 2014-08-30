@@ -15,7 +15,7 @@
 
 @class CHGroup;
 
-@interface CHMessageViewController : UIViewController <UITextFieldDelegate, UITableViewDataSource, UITableViewDelegate, UITextViewDelegate, HPGrowingTextViewDelegate, DBCameraViewControllerDelegate>
+@interface CHMessageViewController : UIViewController <UITextFieldDelegate, UITableViewDataSource, UITableViewDelegate, UITextViewDelegate, HPGrowingTextViewDelegate, DBCameraViewControllerDelegate, NSFetchedResultsControllerDelegate>
 
 @property (nonatomic, strong) CHGroup *group;
 @property (nonatomic, strong) NSString *groupId;

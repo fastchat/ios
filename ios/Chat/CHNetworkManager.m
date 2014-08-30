@@ -151,16 +151,6 @@ NSString *const SESSION_TOKEN = @"session-token";
     DLog(@"Avatar FOR: %@", user);
     
     return [PMKPromise new:^(PMKPromiseFulfiller fulfiller, PMKPromiseRejecter rejecter) {
-        ///
-        /// First check our secret cache
-        ///
-        NSString *key = [NSString stringWithFormat:@"%@-%@", kAvatarKey, user.chID];
-        NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
-        NSData *data = [defaults objectForKey:key];
-        UIImage *avatar = [UIImage imageWithData:data];
-        if (avatar) {
-            fulfiller(avatar);
-        }
         
         NSMutableURLRequest *request = [[NSMutableURLRequest alloc] initWithURL:
                                         [NSURL URLWithString:[NSString stringWithFormat:@"%@/user/%@/avatar", BASE_URL, user.chID]]];
@@ -170,14 +160,11 @@ NSString *const SESSION_TOKEN = @"session-token";
         AFHTTPRequestOperation *requestOperation = [[AFHTTPRequestOperation alloc] initWithRequest:request];
         requestOperation.responseSerializer = [AFImageResponseSerializer serializer];
         [requestOperation setCompletionBlockWithSuccess:^(AFHTTPRequestOperation *operation, id responseObject) {
-            
             if (responseObject) {
-                dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
-                    [defaults setObject:UIImagePNGRepresentation(responseObject) forKey:key];
-                    [defaults synchronize];
-                });
+                fulfiller(responseObject);
+            } else {
+                rejecter([NSError errorWithDomain:@"FastChat" code:1 userInfo:@{NSLocalizedDescriptionKey: @"No Avatar Found!"}]);
             }
-            fulfiller(responseObject);
         } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
             DLog(@"Error: %@", error);
             rejecter(error);

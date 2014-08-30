@@ -26,7 +26,7 @@ NSString *const CHOwnMesssageCellIdentifier = @"CHOwnMessageTableViewCell";
 
 @interface CHMessageViewController ()
 
-@property (nonatomic, strong) NSMutableArray *messages;
+@property (nonatomic, strong) NSFetchedResultsController *fetchedResultsController;
 
 @property (nonatomic, strong) URBMediaFocusViewController *mediaFocus;
 @property (nonatomic, strong) UIButton *sendButton;
@@ -53,7 +53,6 @@ NSString *const CHOwnMesssageCellIdentifier = @"CHOwnMessageTableViewCell";
     self.view.backgroundColor = kLightBackgroundColor;
     self.messageTable.backgroundColor = kLightBackgroundColor;
     
-    self.messages = [NSMutableArray array];
     self.shouldSlide = YES;
     self.title = _group.name;
     _beingDismissed = NO;
@@ -123,13 +122,41 @@ NSString *const CHOwnMesssageCellIdentifier = @"CHOwnMessageTableViewCell";
     ///
     /// Load up old messages
     ///
-    [_group remoteMessagesAtPage:_currPage].then(^{
-        [self.messageTable reloadData];
-        [self.messageTable scrollToRowAtIndexPath:[NSIndexPath indexPathForRow:_group.messages.count - 1 inSection:0]
-                                 atScrollPosition:UITableViewScrollPositionBottom
-                                         animated:NO];
+    
+    NSManagedObjectContext *context = [NSManagedObjectContext MR_defaultContext];
+    NSFetchRequest *fetchRequest = [NSFetchRequest fetchRequestWithEntityName:@"CHMessage"];
+    NSSortDescriptor *sortDescriptor = [[NSSortDescriptor alloc] initWithKey:@"sent" ascending:YES];
+    [fetchRequest setSortDescriptors: @[sortDescriptor]];
+    [fetchRequest setPredicate:[NSPredicate predicateWithFormat:@"SELF.group == %@", self.group]];
+    
+    NSFetchedResultsController *controller = [[NSFetchedResultsController alloc] initWithFetchRequest:fetchRequest
+                                                                                 managedObjectContext:context
+                                                                                   sectionNameKeyPath:nil
+                                                                                            cacheName:@"messageCache"];
+    
+    controller.delegate = self;
+    self.fetchedResultsController = controller;
+    
+    NSError *error;
+    BOOL success = [controller performFetch:&error];
+    if (!success || error) {
+        DLog(@"What: %@", error);
+    }
+    
+    ///
+    /// Scroll to bottom
+    ///
+    [self.messageTable scrollToRowAtIndexPath:[NSIndexPath
+                                               indexPathForRow:([self tableView:self.messageTable numberOfRowsInSection:0] - 1) inSection:0]
+                             atScrollPosition:UITableViewScrollPositionBottom
+                                     animated:NO];
+    
+    ///
+    /// Load new messages
+    ///
+    [self.group remoteMessagesAtPage:_currPage].then(^{
+        [self reloadTableWithScroll:YES animated:YES];
     });
-
     
     
     self.keyboardIsVisible = NO;
@@ -144,15 +171,21 @@ NSString *const CHOwnMesssageCellIdentifier = @"CHOwnMessageTableViewCell";
                                              selector:@selector(keyboardWillHide:)
                                                  name:UIKeyboardWillHideNotification
                                                object:nil];
-    
-    [[NSNotificationCenter defaultCenter] addObserver:self
-                                             selector:@selector(managedContextChanged:)
-                                                 name:NSManagedObjectContextObjectsDidChangeNotification
-                                               object:[NSManagedObjectContext MR_defaultContext]];
+
 
     /// Using reloadMessages instead of reloadMessagesWithScroll because I haven't figured out how to make reloadMessagesWithScroll
     /// work when being called as the selector. This should be fixed eventually.
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(reloadMessages) name:@"ReloadActiveGroupNotification" object:nil];
+}
+
+- (void)viewWillLayoutSubviews;
+{
+    [super viewWillLayoutSubviews];
+    
+    [self.messageTable scrollToRowAtIndexPath:[NSIndexPath
+                                               indexPathForRow:([self tableView:self.messageTable numberOfRowsInSection:0] - 1) inSection:0]
+                             atScrollPosition:UITableViewScrollPositionBottom
+                                     animated:NO];
 }
 
 - (void)reloadMessages;
@@ -161,46 +194,24 @@ NSString *const CHOwnMesssageCellIdentifier = @"CHOwnMessageTableViewCell";
     /// Load up old messages
     ///
     [_group remoteMessagesAtPage:0].then(^{
-        [self.messageTable reloadData];
-        [self reloadMessagesWithScroll:YES];
+        [self reloadTableWithScroll:YES animated:YES];
     });
 }
 
-- (void)reloadMessagesWithScroll:(BOOL)shouldScroll;
+- (void)reloadTableWithScroll:(BOOL)scroll animated:(BOOL)animated;
 {
-    if( shouldScroll ) {
+    [self.messageTable reloadData];
+    if (scroll) {
         [self.messageTable scrollToRowAtIndexPath:[NSIndexPath
-                                                   indexPathForRow:_group.messages.count - 1 inSection:0]
+                                                   indexPathForRow:([self tableView:self.messageTable numberOfRowsInSection:0] - 1) inSection:0]
                                  atScrollPosition:UITableViewScrollPositionBottom
-                                         animated:NO];
-    }
-}
-
-- (void)managedContextChanged:(NSNotification *)notification;
-{
-    NSArray *insertedObjects = [[[notification userInfo] objectForKey:NSInsertedObjectsKey] allObjects];
-    
-    if (insertedObjects.count > 0) {
-        NSManagedObject *first = insertedObjects[0];
-        if ([first isKindOfClass:[CHMessage class]]) {
-            CHMessage *message = (CHMessage *)first;
-            if ([message.group isEqual:self.group]) {
-                [self addRemoteMessage:message];
-                self.group.unreadValue = 0;
-            }
-
-
-        }
+                                         animated:animated];
     }
 }
 
 - (void)addRemoteMessage:(CHMessage *)message;
 {
-    [self.messageTable reloadData];
-    [self.messageTable scrollToRowAtIndexPath:[NSIndexPath
-                                               indexPathForRow:_group.messages.count - 1 inSection:0]
-                             atScrollPosition:UITableViewScrollPositionBottom
-                                     animated:YES];
+    [self reloadTableWithScroll:YES animated:YES];
 }
 
 
@@ -222,7 +233,7 @@ NSString *const CHOwnMesssageCellIdentifier = @"CHOwnMessageTableViewCell";
                          [self setTableViewInsetsFromBottom:keyboardHeight];
                          ////// This may need some logic to scroll the text view with the keyboard
                          [self.messageTable scrollToRowAtIndexPath:[NSIndexPath
-                                                                    indexPathForRow:_group.messages.count - 1 inSection:0]
+                                                                    indexPathForRow:([self tableView:self.messageTable numberOfRowsInSection:0] - 1) inSection:0]
                                                   atScrollPosition:UITableViewScrollPositionBottom
                                                           animated:YES];
                          
@@ -258,7 +269,7 @@ NSString *const CHOwnMesssageCellIdentifier = @"CHOwnMessageTableViewCell";
                      }];
  /////// This may need some logic to scroll the messages with the keyboard
     [self.messageTable scrollToRowAtIndexPath:[NSIndexPath
-                                               indexPathForRow:_group.messages.count - 1 inSection:0]
+                                               indexPathForRow:([self tableView:self.messageTable numberOfRowsInSection:0] - 1) inSection:0]
                              atScrollPosition:UITableViewScrollPositionBottom
                                      animated:YES];
 }
@@ -267,10 +278,10 @@ NSString *const CHOwnMesssageCellIdentifier = @"CHOwnMessageTableViewCell";
 
 - (void)loadMoreMessages;
 {
-    self.currPage = self.currPage + 1;
+    _currPage++;
     
     [_group remoteMessagesAtPage:_currPage].then(^{
-        [self.messageTable reloadData];
+        [self.refresh endRefreshing];
     });
 }
 
@@ -305,7 +316,7 @@ NSString *const CHOwnMesssageCellIdentifier = @"CHOwnMessageTableViewCell";
     [self addNewMessage:newMessage];
     
     [user sendMessage:newMessage toGroup:self.group].then(^{
-        
+        //update progress bar?
     });
     
     [self addNewMessage:newMessage];
@@ -314,11 +325,7 @@ NSString *const CHOwnMesssageCellIdentifier = @"CHOwnMessageTableViewCell";
 
 - (void)addNewMessage:(CHMessage *)message;
 {
-    [self.messageTable reloadData];
-
-    [self.messageTable scrollToRowAtIndexPath:[NSIndexPath indexPathForRow:_group.messages.count - 1 inSection:0]
-                             atScrollPosition:UITableViewScrollPositionBottom
-                                     animated:YES];
+    [self reloadTableWithScroll:YES animated:YES];
     
     self.shouldSlide = NO;
     
@@ -335,14 +342,82 @@ NSString *const CHOwnMesssageCellIdentifier = @"CHOwnMessageTableViewCell";
 
 #pragma mark - TableView
 
+- (void)controllerWillChangeContent:(NSFetchedResultsController *)controller {
+    [self.messageTable beginUpdates];
+}
+
+
+- (void)controller:(NSFetchedResultsController *)controller
+  didChangeSection:(id <NSFetchedResultsSectionInfo>)sectionInfo
+           atIndex:(NSUInteger)sectionIndex
+     forChangeType:(NSFetchedResultsChangeType)type {
+    
+    switch(type) {
+        case NSFetchedResultsChangeInsert:
+            [self.messageTable insertSections:[NSIndexSet indexSetWithIndex:sectionIndex]
+                          withRowAnimation:UITableViewRowAnimationFade];
+            break;
+            
+        case NSFetchedResultsChangeDelete:
+            [self.messageTable deleteSections:[NSIndexSet indexSetWithIndex:sectionIndex]
+                          withRowAnimation:UITableViewRowAnimationFade];
+            break;
+    }
+}
+
+
+- (void)controller:(NSFetchedResultsController *)controller
+   didChangeObject:(id)anObject
+       atIndexPath:(NSIndexPath *)indexPath
+     forChangeType:(NSFetchedResultsChangeType)type
+      newIndexPath:(NSIndexPath *)newIndexPath {
+    
+    UITableView *tableView = self.messageTable;
+    
+    switch(type) {
+            
+        case NSFetchedResultsChangeInsert:
+            [tableView insertRowsAtIndexPaths:[NSArray arrayWithObject:newIndexPath]
+                             withRowAnimation:UITableViewRowAnimationFade];
+            break;
+            
+        case NSFetchedResultsChangeDelete:
+            [tableView deleteRowsAtIndexPaths:[NSArray arrayWithObject:indexPath]
+                             withRowAnimation:UITableViewRowAnimationFade];
+            break;
+            
+        case NSFetchedResultsChangeUpdate:
+            //probably don't need.
+            break;
+            
+        case NSFetchedResultsChangeMove:
+            [tableView deleteRowsAtIndexPaths:[NSArray arrayWithObject:indexPath]
+                             withRowAnimation:UITableViewRowAnimationFade];
+            [tableView insertRowsAtIndexPaths:[NSArray arrayWithObject:newIndexPath]
+                             withRowAnimation:UITableViewRowAnimationFade];
+            break;
+    }
+}
+
+
+- (void)controllerDidChangeContent:(NSFetchedResultsController *)controller {
+    [self.messageTable endUpdates];
+    [self reloadTableWithScroll:YES animated:YES];
+}
+
+
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section;
 {
-    return _group.messages.count;
+    if ([[self.fetchedResultsController sections] count] > 0) {
+        id <NSFetchedResultsSectionInfo> sectionInfo = [[self.fetchedResultsController sections] objectAtIndex:section];
+        return [sectionInfo numberOfObjects];
+    }
+    return 0;
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath;
 {
-    CHMessage *message = _group.messages[indexPath.row];
+    CHMessage *message = [self.fetchedResultsController objectAtIndexPath:indexPath];
     CHMessageTableViewCell *cell;
     
     UIColor *color = [UIColor whiteColor];
@@ -373,7 +448,7 @@ NSString *const CHOwnMesssageCellIdentifier = @"CHOwnMessageTableViewCell";
     author.avatar.then(^(CHUser *user, UIImage *avatar){
         cell.avatarImageView.image = avatar;
     }).catch(^(NSError *error){
-        DLog(@"Could not get the user's avatar.");
+        cell.avatarImageView.image = defaultImage;
     });
     
     if (message.hasMediaValue) {
@@ -428,7 +503,8 @@ NSString *const CHOwnMesssageCellIdentifier = @"CHOwnMessageTableViewCell";
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath;
 {
-    CHMessage *message = _group.messages[indexPath.row];
+    CHMessage *message = [self.fetchedResultsController objectAtIndexPath:indexPath];
+
     
     self.shouldSlide = YES;
     [self resignTextView];
@@ -442,7 +518,7 @@ NSString *const CHOwnMesssageCellIdentifier = @"CHOwnMessageTableViewCell";
 
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath;
 {
-    CHMessage *message = _group.messages[indexPath.row];
+    CHMessage *message = [self.fetchedResultsController objectAtIndexPath:indexPath];
     CGRect rect = [message.text boundingRectWithSize:CGSizeMake(205 - 16, CGFLOAT_MAX)
                                              options:NSStringDrawingUsesFontLeading | NSStringDrawingUsesLineFragmentOrigin
                                           attributes:@{NSFontAttributeName: [UIFont systemFontOfSize:16]}
@@ -481,7 +557,8 @@ NSString *const CHOwnMesssageCellIdentifier = @"CHOwnMessageTableViewCell";
     [self setTableViewInsetsFromBottom:self.heightOfKeyboard];
 
     if (_group.messages.count > 0) {
-        [self.messageTable scrollToRowAtIndexPath:[NSIndexPath indexPathForRow:_group.messages.count - 1 inSection:0]
+        [self.messageTable scrollToRowAtIndexPath:[NSIndexPath
+                                                   indexPathForRow:([self tableView:self.messageTable numberOfRowsInSection:0] - 1) inSection:0]
                                  atScrollPosition:UITableViewScrollPositionBottom
                                          animated:YES];
     }

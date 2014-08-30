@@ -53,7 +53,7 @@
 {
     if (!CHUser.currentUser.isLoggedIn) {
         CHLoginViewController *loginController = [self.storyboard instantiateViewControllerWithIdentifier:@"CHViewNavController"];
-        return [self promiseViewController:loginController animated:YES completion:nil];
+        return [self promiseViewController:loginController animated:NO completion:nil];
     } else {
         return [PMKPromise new:^(PMKPromiseFulfiller fulfiller, PMKPromiseRejecter rejecter) {
             fulfiller([CHUser currentUser]);

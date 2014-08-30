@@ -14,6 +14,7 @@
 #import "UIImage+ColorArt.h"
 #import "CHNetworkManager.h"
 
+#define ONE_HOUR 60*60
 
 @interface CHUser ()
 
@@ -27,6 +28,7 @@
 
 @synthesize avatarColor = _avatarColor;
 @synthesize password = _password;
+@synthesize lastAvatarFetch = _lastAvatarFetch;
 
 static CHUser *_currentUser = nil;
 + (instancetype)currentUser;
@@ -104,20 +106,24 @@ static CHUser *_currentUser = nil;
 
 - (PMKPromise *)avatar;
 {
-    if (!self.lastAvatarFetch) {
-        self.lastAvatarFetch = [NSDate date];
-    }
-    
-    if (self.privateAvatar) {
+    if (self.privateAvatar || (self.lastAvatarFetch && ABS([self.lastAvatarFetch timeIntervalSinceNow]) < ONE_HOUR)) {
         return [PMKPromise new:^(PMKPromiseFulfiller fulfiller, PMKPromiseRejecter rejecter) {
-            fulfiller(PMKManifold(self, self.privateAvatar));
+            if (!self.privateAvatar) {
+                rejecter(nil);
+            } else {
+                fulfiller(PMKManifold(self, self.privateAvatar));
+            }
         }];
     }
     
     return [[CHNetworkManager sharedManager] avatarForUser:self].then(^(UIImage *avatar){
+        self.lastAvatarFetch = [NSDate date];
         self.privateAvatar = avatar;
         [[NSManagedObjectContext MR_defaultContext] MR_saveToPersistentStoreAndWait];
         return PMKManifold(self, self.privateAvatar);
+    }).catch(^(NSError *error){
+        self.lastAvatarFetch = [NSDate date];
+        return error;
     });
 }
 
