@@ -26,6 +26,8 @@ NSString *const CHOwnMesssageCellIdentifier = @"CHOwnMessageTableViewCell";
 
 @interface CHMessageViewController ()
 
+@property (nonatomic, strong) NSMutableArray *messages;
+
 @property (nonatomic, strong) URBMediaFocusViewController *mediaFocus;
 @property (nonatomic, strong) UIButton *sendButton;
 @property (nonatomic, assign) NSInteger currPage;
@@ -51,9 +53,9 @@ NSString *const CHOwnMesssageCellIdentifier = @"CHOwnMessageTableViewCell";
     self.view.backgroundColor = kLightBackgroundColor;
     self.messageTable.backgroundColor = kLightBackgroundColor;
     
+    self.messages = [NSMutableArray array];
     self.shouldSlide = YES;
     self.title = _group.name;
-    self.messageEntryField.hidden = YES;
     _beingDismissed = NO;
     
     self.currPage = 0;
@@ -121,12 +123,13 @@ NSString *const CHOwnMesssageCellIdentifier = @"CHOwnMessageTableViewCell";
     ///
     /// Load up old messages
     ///
-    [_group remoteMessagesAtPage:0].then(^{
+    [_group remoteMessagesAtPage:_currPage].then(^{
         [self.messageTable reloadData];
         [self.messageTable scrollToRowAtIndexPath:[NSIndexPath indexPathForRow:_group.messages.count - 1 inSection:0]
                                  atScrollPosition:UITableViewScrollPositionBottom
                                          animated:NO];
     });
+
     
     
     self.keyboardIsVisible = NO;
