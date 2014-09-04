@@ -35,16 +35,18 @@
     
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(reloadTableView) name:@"ReloadGroupTablesNotification" object:nil];
     
-    [self user].then(^(CHUser *user) {
+    dispatch_queue_t q = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0);
+    
+    [self user].thenOn(q, ^(CHUser *user) {
         [[UIApplication sharedApplication] registerForRemoteNotificationTypes:
          (UIRemoteNotificationTypeBadge | UIRemoteNotificationTypeSound | UIRemoteNotificationTypeAlert)];
         self.currentUser = user;
-        [self.tableView reloadData];
+        [self reloadTableView];
         return user.remoteGroups;
-    }).then(^(CHUser *user){
-        [self.tableView reloadData];
+    }).thenOn(q, ^(CHUser *user){
+        [self reloadTableView];
         return user.avatar;
-    }).catch(^(NSError *error){
+    }).catchOn(q, ^(NSError *error){
         DLog(@"Error Occured! %@", error);
     });
 }
@@ -64,7 +66,14 @@
 - (void)reloadTableView;
 {
     DLog(@"reloading table view");
-    [self.tableView reloadData];
+    
+    void (^reload)() = ^{[self.tableView reloadData]; };
+    
+    if ([NSThread isMainThread]) {
+        reload();
+    } else {
+        dispatch_async(dispatch_get_main_queue(), reload);
+    }
 }
 
 - (void)viewWillAppear:(BOOL)animated;
