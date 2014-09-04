@@ -57,16 +57,17 @@
 
 + (PMKPromise *)objectsFromJSON:(NSArray *)array;
 {
-    return dispatch_promise(^{
+    return dispatch_promise_on(CHBackgroundContext.backgroundContext.queue, ^{
         NSMutableArray *created = [NSMutableArray array];
         NSManagedObjectContext *context = CHBackgroundContext.backgroundContext.context;
         
-        [array enumerateObjectsWithOptions:0 usingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
-            NSManagedObjectID *objectID = [self objectIDFromJSON:obj justID:YES context:context];
+        for (NSDictionary *dict in array) {
+            NSManagedObjectID *objectID = [self objectIDFromJSON:dict justID:YES context:context];
             if (objectID) {
                 [created addObject:objectID];
             }
-        }];
+        }
+
         [context MR_saveOnlySelfAndWait];
         return created;
     }).then(^(NSArray *ids){ //Main Thread!

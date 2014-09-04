@@ -16,7 +16,9 @@
 @interface CHBackgroundContext : NSObject
 
 @property (nonatomic, strong, readonly) NSManagedObjectContext *context;
+@property (nonatomic, strong, readonly) dispatch_queue_t queue;
 
 + (instancetype)backgroundContext;
+- (PMKPromise *)start;
 
 @end

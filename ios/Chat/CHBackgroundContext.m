@@ -29,9 +29,21 @@
 - (instancetype)init;
 {
     if ( (self = [super init]) ) {
-        _context = [NSManagedObjectContext MR_context];
+        
     }
     return self;
+}
+
+- (PMKPromise *)start;
+{
+    return [PMKPromise new:^(PMKPromiseFulfiller fulfiller, PMKPromiseRejecter rejecter) {
+        _queue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0);
+        dispatch_async(_queue, ^{
+            _context = [NSManagedObjectContext MR_context];
+            fulfiller(self);
+        });
+    }];
+    
 }
 
 

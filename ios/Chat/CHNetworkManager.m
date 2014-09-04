@@ -12,6 +12,8 @@
 #import "CHMessage.h"
 #import "AFNetworking.h"
 #import "CHModel.h"
+#import "AFNetworkActivityIndicatorManager.h"
+#import "CHBackgroundContext.h"
 
 NSString *const kAvatarKey = @"com.fastchat.avatarkey";
 NSString *const kMediaKey = @"com.fastchat.mediakey";
@@ -41,7 +43,7 @@ NSString *const SESSION_TOKEN = @"session-token";
 
 - (instancetype)initWithBaseURL:(NSURL *)url {
     if( (self = [super initWithBaseURL:[NSURL URLWithString:BASE_URL]]) ) {
-        
+        [AFNetworkActivityIndicatorManager sharedManager].enabled = YES;
     }
     return self;
 }
@@ -95,7 +97,7 @@ NSString *const SESSION_TOKEN = @"session-token";
             CHUser *user = [CHUser currentUser];
             user.username = responseObject[@"profile"][@"username"];
             user.chID = responseObject[@"profile"][@"_id"];
-            id q = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0);
+            id q = [CHBackgroundContext backgroundContext].queue;
             [CHGroup objectsFromJSON:responseObject[@"profile"][@"groups"]].thenOn(q, ^(NSArray *groups){
                 user.groups = [NSOrderedSet orderedSetWithSet:[NSSet setWithArray:groups]];
                 [self save];
@@ -125,7 +127,7 @@ NSString *const SESSION_TOKEN = @"session-token";
     return [PMKPromise new:^(PMKPromiseFulfiller fulfiller, PMKPromiseRejecter rejecter) {
         [self GET:@"/group" parameters:nil success:^(NSURLSessionDataTask *task, id responseObject) {
             CHUser *user = [CHUser currentUser];
-            id q = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0);
+            id q = [CHBackgroundContext backgroundContext].queue;
             [CHGroup objectsFromJSON:responseObject].thenOn(q, ^(NSArray *groups){
                 user.groups = [NSOrderedSet orderedSetWithSet:[NSSet setWithArray:groups]];
                 [self save];
@@ -153,8 +155,6 @@ NSString *const SESSION_TOKEN = @"session-token";
 
 - (PMKPromise *)avatarForUser:(CHUser *)user;
 {
-    DLog(@"Avatar FOR: %@", user);
-    
     return [PMKPromise new:^(PMKPromiseFulfiller fulfiller, PMKPromiseRejecter rejecter) {
         
         NSMutableURLRequest *request = [[NSMutableURLRequest alloc] initWithURL:
@@ -206,7 +206,7 @@ NSString *const SESSION_TOKEN = @"session-token";
     NSString *url = [NSString stringWithFormat:@"/group/%@/message?page=%ld", group.chID, (long)page];
     return [PMKPromise new:^(PMKPromiseFulfiller fulfiller, PMKPromiseRejecter rejecter) {
         [self GET:url parameters:nil success:^(NSURLSessionDataTask *task, id responseObject) {
-            id q = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0);
+            id q = [CHBackgroundContext backgroundContext].queue;
             [CHMessage objectsFromJSON:responseObject].thenOn(q, ^(NSArray *messages){
                 NSOrderedSet *set = [NSOrderedSet orderedSetWithArray:messages];
                 [group addMessages:set];
