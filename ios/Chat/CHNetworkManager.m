@@ -95,10 +95,12 @@ NSString *const SESSION_TOKEN = @"session-token";
             CHUser *user = [CHUser currentUser];
             user.username = responseObject[@"profile"][@"username"];
             user.chID = responseObject[@"profile"][@"_id"];
-            NSArray *groups = [CHGroup objectsFromJSON:responseObject[@"profile"][@"groups"]];
-            user.groups = [NSOrderedSet orderedSetWithSet:[NSSet setWithArray:groups]];
-            [self save];
-            fulfiller(user);
+            id q = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0);
+            [CHGroup objectsFromJSON:responseObject[@"profile"][@"groups"]].thenOn(q, ^(NSArray *groups){
+                user.groups = [NSOrderedSet orderedSetWithSet:[NSSet setWithArray:groups]];
+                [self save];
+                fulfiller(user);
+            });
         } failure:^(NSURLSessionDataTask *task, NSError *error) {
             DLog(@"Error: %@", error);
             rejecter(error);
@@ -123,10 +125,12 @@ NSString *const SESSION_TOKEN = @"session-token";
     return [PMKPromise new:^(PMKPromiseFulfiller fulfiller, PMKPromiseRejecter rejecter) {
         [self GET:@"/group" parameters:nil success:^(NSURLSessionDataTask *task, id responseObject) {
             CHUser *user = [CHUser currentUser];
-            NSArray *groups = [CHGroup objectsFromJSON:responseObject];
-            user.groups = [NSOrderedSet orderedSetWithSet:[NSSet setWithArray:groups]];
-            [self save];
-            fulfiller(user);
+            id q = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0);
+            [CHGroup objectsFromJSON:responseObject].thenOn(q, ^(NSArray *groups){
+                user.groups = [NSOrderedSet orderedSetWithSet:[NSSet setWithArray:groups]];
+                [self save];
+                fulfiller(user);
+            });
         } failure:^(NSURLSessionDataTask *task, NSError *error) {
             DLog(@"Error: %@", error);
             rejecter(error);
@@ -202,11 +206,13 @@ NSString *const SESSION_TOKEN = @"session-token";
     NSString *url = [NSString stringWithFormat:@"/group/%@/message?page=%ld", group.chID, (long)page];
     return [PMKPromise new:^(PMKPromiseFulfiller fulfiller, PMKPromiseRejecter rejecter) {
         [self GET:url parameters:nil success:^(NSURLSessionDataTask *task, id responseObject) {
-            NSArray *messages = [CHMessage objectsFromJSON:responseObject];
-            NSOrderedSet *set = [NSOrderedSet orderedSetWithArray:messages];
-            [group addMessages:set];
-            [self save];
-            fulfiller(messages);
+            id q = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0);
+            [CHMessage objectsFromJSON:responseObject].thenOn(q, ^(NSArray *messages){
+                NSOrderedSet *set = [NSOrderedSet orderedSetWithArray:messages];
+                [group addMessages:set];
+                [self save];
+                fulfiller(messages);
+            });
         } failure:^(NSURLSessionDataTask *task, NSError *error) {
             DLog(@"Error retrieving messages: %@", error);
             rejecter(error);
@@ -366,7 +372,9 @@ NSString *const SESSION_TOKEN = @"session-token";
 
 - (void)save;
 {
-    [[NSManagedObjectContext MR_defaultContext] MR_saveToPersistentStoreAndWait];
+    [[NSManagedObjectContext MR_defaultContext] MR_saveToPersistentStoreWithCompletion:^(BOOL success, NSError *error) {
+        NSLog(@"Background Save Completed: Error? %@", error);
+    }];
 }
                                          
                                          

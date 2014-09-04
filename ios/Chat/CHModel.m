@@ -35,12 +35,7 @@
         NSManagedObject *finalObject = [MTLManagedObjectAdapter managedObjectFromModel:object
                                                                   insertingIntoContext:context
                                                                                  error:&error];
-        
-        if (justID) {
-            // Already in a background thread
-            [context MR_saveToPersistentStoreAndWait];
-        }
-        
+
         if (error) {
             DLog(@"Error Creating Managed Object: %@", error);
         }
@@ -66,12 +61,13 @@
         NSMutableArray *created = [NSMutableArray array];
         NSManagedObjectContext *context = CHBackgroundContext.backgroundContext.context;
         
-        [array enumerateObjectsWithOptions:NSEnumerationConcurrent usingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
+        [array enumerateObjectsWithOptions:0 usingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
             NSManagedObjectID *objectID = [self objectIDFromJSON:obj justID:YES context:context];
             if (objectID) {
                 [created addObject:objectID];
             }
         }];
+        [context MR_saveOnlySelfAndWait];
         return created;
     }).then(^(NSArray *ids){ //Main Thread!
         NSMutableArray *created = [NSMutableArray array];

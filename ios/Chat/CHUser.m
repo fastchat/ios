@@ -34,10 +34,12 @@ static CHUser *_currentUser = nil;
 + (instancetype)currentUser;
 {
     if (!_currentUser) {
+        DLog(@"Start");
         _currentUser = [CHUser MR_findFirstWithPredicate:[NSPredicate predicateWithFormat:@"currentUser = YES"]];
         if (_currentUser.sessionToken) {
             [[CHNetworkManager sharedManager] setSessionToken:_currentUser.sessionToken];
         }
+        DLog(@"End");
     }
     return _currentUser;
 }
@@ -86,7 +88,9 @@ static CHUser *_currentUser = nil;
     CHGroup *group = self.groups[index];
     [self removeGroupsObject:group];
     [self addPastGroupsObject:group];
-    [[NSManagedObjectContext MR_defaultContext] MR_saveToPersistentStoreAndWait];
+    [[NSManagedObjectContext MR_defaultContext] MR_saveToPersistentStoreWithCompletion:^(BOOL success, NSError *error) {
+        DLog(@"Leave Ground Background Save Completed: Error? %@", error);
+    }];
     return [[CHNetworkManager sharedManager] leaveGroup:group.chID];
 }
 
@@ -119,7 +123,9 @@ static CHUser *_currentUser = nil;
     return [[CHNetworkManager sharedManager] avatarForUser:self].then(^(UIImage *avatar){
         self.lastAvatarFetch = [NSDate date];
         self.privateAvatar = avatar;
-        [[NSManagedObjectContext MR_defaultContext] MR_saveToPersistentStoreAndWait];
+        [[NSManagedObjectContext MR_defaultContext] MR_saveToPersistentStoreWithCompletion:^(BOOL success, NSError *error) {
+            DLog(@"Background Save Avatar Completed: Error? %@", error);
+        }];
         return PMKManifold(self, self.privateAvatar);
     }).catch(^(NSError *error){
         self.lastAvatarFetch = [NSDate date];

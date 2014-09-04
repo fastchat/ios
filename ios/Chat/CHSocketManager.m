@@ -48,6 +48,8 @@
 
 -(void)openSocket;
 {
+    DLog(@"Open Socket Start");
+
     if( !_socket ) {
         _socket = [[SocketIO alloc] initWithDelegate:self];
     }
@@ -55,6 +57,7 @@
     if ([CHUser currentUser].sessionToken) {
         [_socket connectToHost:@"powerful-cliffs-9562.herokuapp.com" onPort:80 withParams:@{@"token": [CHUser currentUser].sessionToken}];
     }
+    DLog(@"Open Socket End");
 }
 
 // Socket io stuff
@@ -88,7 +91,9 @@
         CHMessage *message = [CHMessage objectFromJSON:data];
         message.group.lastMessage = message;
         [message.group unreadIncrement];
-        [[NSManagedObjectContext MR_defaultContext] MR_saveToPersistentStoreAndWait];
+        [[NSManagedObjectContext MR_defaultContext] MR_saveToPersistentStoreWithCompletion:^(BOOL success, NSError *error) {
+            DLog(@"Socket IO Background Save Completed. Error? %@", error);
+        }];
         
         /// Observers of the groups will pick up on the change
         
@@ -126,9 +131,9 @@
 //            }
 //        }
     } else if ([packet.dataAsJSON[@"name"] isEqualToString:@"typing"]) {
-        NSDictionary *data = [packet.dataAsJSON[@"args"] firstObject];
+//        NSDictionary *data = [packet.dataAsJSON[@"args"] firstObject];
         //CHMessage *typer = [[CHMessage objectsFromJSON:@[data]] firstObject];
-        DLog(@"Someone is typing: %@", [[CHMessage objectsFromJSON:@[data]] firstObject]);
+//        DLog(@"Someone is typing: %@", [[CHMessage objectsFromJSON:@[data]] firstObject]);
     }
 }
 
