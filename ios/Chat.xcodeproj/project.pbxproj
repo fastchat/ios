@@ -79,6 +79,7 @@
 		AABD8A06199EAA6B002962A4 /* CHMessage.m in Sources */ = {isa = PBXBuildFile; fileRef = AABD89FC199EAA6B002962A4 /* CHMessage.m */; };
 		AABD8A07199EAA6B002962A4 /* CHModel.m in Sources */ = {isa = PBXBuildFile; fileRef = AABD89FE199EAA6B002962A4 /* CHModel.m */; };
 		AABD8A08199EAA6B002962A4 /* CHUser.m in Sources */ = {isa = PBXBuildFile; fileRef = AABD8A00199EAA6B002962A4 /* CHUser.m */; };
+		AAC681A319B7E1EB00878CF9 /* CHBackgroundContext.m in Sources */ = {isa = PBXBuildFile; fileRef = AAC681A219B7E1EB00878CF9 /* CHBackgroundContext.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -186,6 +187,8 @@
 		AABD89FE199EAA6B002962A4 /* CHModel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CHModel.m; sourceTree = "<group>"; };
 		AABD89FF199EAA6B002962A4 /* CHUser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CHUser.h; sourceTree = "<group>"; };
 		AABD8A00199EAA6B002962A4 /* CHUser.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CHUser.m; sourceTree = "<group>"; };
+		AAC681A119B7E1EB00878CF9 /* CHBackgroundContext.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CHBackgroundContext.h; sourceTree = "<group>"; };
+		AAC681A219B7E1EB00878CF9 /* CHBackgroundContext.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CHBackgroundContext.m; sourceTree = "<group>"; };
 		ED86F54EC1C64B14950512A1 /* libPods-Chat.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-Chat.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
@@ -487,6 +490,8 @@
 		AAF6A2F8199AE12F002526C4 /* Core Data */ = {
 			isa = PBXGroup;
 			children = (
+				AAC681A119B7E1EB00878CF9 /* CHBackgroundContext.h */,
+				AAC681A219B7E1EB00878CF9 /* CHBackgroundContext.m */,
 				AA7C691C19986636005DFFF5 /* FastChat.xcdatamodeld */,
 				AABD89FD199EAA6B002962A4 /* CHModel.h */,
 				AABD89FE199EAA6B002962A4 /* CHModel.m */,
@@ -676,6 +681,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				AAC681A319B7E1EB00878CF9 /* CHBackgroundContext.m in Sources */,
 				2768EA9F18D87059006D14BB /* CHRegisterViewController.m in Sources */,
 				2769B04F18EDD40800CCE470 /* CHOwnMessageTableViewCell.m in Sources */,
 				2769B06818F47E5E00CCE470 /* CHFastChatObject.m in Sources */,
@@ -853,7 +859,7 @@
 				INFOPLIST_FILE = "Chat/Chat-Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 7.0;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE = "4376303f-c98e-4734-a957-0bb22458c5e4";
+				PROVISIONING_PROFILE = "BC656D80-1256-40C4-8A11-8166FBD4209F";
 				TARGETED_DEVICE_FAMILY = 1;
 				WRAPPER_EXTENSION = app;
 			};

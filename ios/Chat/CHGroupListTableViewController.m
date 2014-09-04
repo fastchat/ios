@@ -18,6 +18,7 @@
 #import "CHGroupTableViewCell.h"
 #import "CHMessage.h"
 #import "CHUnreadView.h"
+#import "CHBackgroundContext.h"
 
 #define kSecondsInDay 86400
 
@@ -35,7 +36,7 @@
     
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(reloadTableView) name:@"ReloadGroupTablesNotification" object:nil];
     
-    dispatch_queue_t q = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0);
+    __block dispatch_queue_t q = [CHBackgroundContext backgroundContext].queue;
     
     [self user].thenOn(q, ^(CHUser *user) {
         [[UIApplication sharedApplication] registerForRemoteNotificationTypes:

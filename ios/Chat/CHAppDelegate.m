@@ -11,6 +11,7 @@
 #import "CHSocketManager.h"
 #import "CHUser.h"
 #import "TSMessage.h"
+#import "CHBackgroundContext.h"
 
 @implementation CHAppDelegate
 
@@ -20,6 +21,13 @@
     /// Magical Record starting point
     ///
     [MagicalRecord setupAutoMigratingCoreDataStack];
+    
+    ///
+    /// Race Conditions, go!
+    ///
+    [CHBackgroundContext backgroundContext].start.then(^{
+        DLog(@"Done Background Context.");
+    });
     
     ///
     /// Setup the networking layer and get ready to connect
@@ -44,6 +52,7 @@
     [[UINavigationBar appearance] setTintColor:[UIColor whiteColor]];
     [[UITabBar appearance] setTintColor:kPurpleAppColor];
     [[UIButton appearance] setTintColor:kPurpleAppColor];
+    
     
     return YES;
 }
