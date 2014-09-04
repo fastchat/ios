@@ -6,25 +6,23 @@
 //
 #import "CHModel.h"
 #import "Mantle.h"
+#import "CHBackgroundContext.h"
 
 #define MTL_CLASS_PREFIX @"MTL"
 
 @interface CHModel ()
 
-// Private interface goes here.
 
 @end
 
 
 @implementation CHModel
 
-+ (instancetype)objectFromJSON:(NSDictionary *)dict;
++ (id)objectIDFromJSON:(NSDictionary *)dict justID:(BOOL)justID context:(NSManagedObjectContext *)context;
 {
-    DLog(@"Transcoding: %@", dict);
     NSString *className = NSStringFromClass([self class]);
     className = [className substringFromIndex:CLASS_PREFIX.length];
     className = [NSString stringWithFormat:@"%@%@%@", CLASS_PREFIX, MTL_CLASS_PREFIX, className];
-    DLog(@"Class Name: %@", className);
     
     NSError *error = nil;
     MTLModel<MTLManagedObjectSerializing> *object = [MTLJSONAdapter modelOfClass:NSClassFromString(className) fromJSONDictionary:dict error:&error];
@@ -34,34 +32,54 @@
     
     error = nil;
     if (object) {
-        id finalObject = [MTLManagedObjectAdapter managedObjectFromModel:object
-                                                    insertingIntoContext:[NSManagedObjectContext MR_defaultContext]
-                                                                   error:&error];
+        NSManagedObject *finalObject = [MTLManagedObjectAdapter managedObjectFromModel:object
+                                                                  insertingIntoContext:context
+                                                                                 error:&error];
+        
+        if (justID) {
+            // Already in a background thread
+            [context MR_saveToPersistentStoreAndWait];
+        }
         
         if (error) {
             DLog(@"Error Creating Managed Object: %@", error);
         }
-
-        return finalObject;
+        
+        if (justID) {
+            return finalObject.objectID;
+        } else {
+            return finalObject;
+        }
     }
     
     return nil;
 }
 
-+ (NSArray *)objectsFromJSON:(NSArray *)array;
++ (instancetype)objectFromJSON:(NSDictionary *)dict;
 {
-    NSMutableArray *created = [NSMutableArray array];
-    
-    for (NSDictionary *dict in array) {
+    return [self objectIDFromJSON:dict justID:NO context:[NSManagedObjectContext MR_defaultContext]];
+}
+
++ (PMKPromise *)objectsFromJSON:(NSArray *)array;
+{
+    return dispatch_promise(^{
+        NSMutableArray *created = [NSMutableArray array];
+        NSManagedObjectContext *context = CHBackgroundContext.backgroundContext.context;
         
-        id object = [self objectFromJSON:dict];
-        
-        if (object) {
-            [created addObject:object];
+        [array enumerateObjectsWithOptions:NSEnumerationConcurrent usingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
+            NSManagedObjectID *objectID = [self objectIDFromJSON:obj justID:YES context:context];
+            if (objectID) {
+                [created addObject:objectID];
+            }
+        }];
+        return created;
+    }).then(^(NSArray *ids){ //Main Thread!
+        NSMutableArray *created = [NSMutableArray array];
+        for (NSManagedObjectID *anID in ids) {
+            [created addObject:[[NSManagedObjectContext MR_defaultContext] objectWithID:anID]];
         }
-    }
-    
-    return created;
+        return created;
+    });
 }
 
 @end
