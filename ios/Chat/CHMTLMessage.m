@@ -21,10 +21,12 @@
 
 + (NSDateFormatter *)dateFormatter {
     static NSDateFormatter *dateFormatter = nil;
-    if (!dateFormatter) {
-        dateFormatter = [[NSDateFormatter alloc] init];
-        dateFormatter.locale = [[NSLocale alloc] initWithLocaleIdentifier:@"en_US_POSIX"];
-        dateFormatter.dateFormat = @"yyyy-MM-dd'T'HH:mm:ss.SSSz";
+    @synchronized(self) {
+        if (!dateFormatter) {
+            dateFormatter = [[NSDateFormatter alloc] init];
+            dateFormatter.locale = [[NSLocale alloc] initWithLocaleIdentifier:@"en_US_POSIX"];
+            dateFormatter.dateFormat = @"yyyy-MM-dd'T'HH:mm:ss.SSSz";
+        }
     }
     return dateFormatter;
 }

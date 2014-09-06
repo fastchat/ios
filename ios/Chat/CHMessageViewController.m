@@ -160,7 +160,7 @@ NSString *const CHOwnMesssageCellIdentifier = @"CHOwnMessageTableViewCell";
     dispatch_promise_on([CHBackgroundContext backgroundContext].queue, ^{
         return [self.group remoteMessagesAtPage:_currPage];
     }).then(^{
-        [self reloadTableWithScroll:YES animated:YES];
+        [self reload:YES withScroll:YES animated:YES];
     });
     
     self.keyboardIsVisible = NO;
@@ -181,17 +181,14 @@ NSString *const CHOwnMesssageCellIdentifier = @"CHOwnMessageTableViewCell";
     /// work when being called as the selector. This should be fixed eventually.
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(reloadMessages) name:@"ReloadActiveGroupNotification" object:nil];
     
+    [self reload:NO withScroll:YES animated:NO];
     DLog(@"End");
 }
 
 - (void)viewWillLayoutSubviews;
 {
     [super viewWillLayoutSubviews];
-    
-    [self.messageTable scrollToRowAtIndexPath:[NSIndexPath
-                                               indexPathForRow:([self tableView:self.messageTable numberOfRowsInSection:0] - 1) inSection:0]
-                             atScrollPosition:UITableViewScrollPositionBottom
-                                     animated:NO];
+    [self reload:NO withScroll:YES animated:NO];
 }
 
 -(void)sendUserTypingAction;
@@ -230,13 +227,15 @@ NSString *const CHOwnMesssageCellIdentifier = @"CHOwnMessageTableViewCell";
     /// Load up old messages
     ///
     [_group remoteMessagesAtPage:0].then(^{
-        [self reloadTableWithScroll:YES animated:YES];
+        [self reload:YES withScroll:YES animated:YES];
     });
 }
 
-- (void)reloadTableWithScroll:(BOOL)scroll animated:(BOOL)animated;
+- (void)reload:(BOOL)reload withScroll:(BOOL)scroll animated:(BOOL)animated;
 {
-    [self.messageTable reloadData];
+    if (reload) {
+        [self.messageTable reloadData];
+    }
     if (scroll) {
         [self.messageTable scrollToRowAtIndexPath:[NSIndexPath
                                                    indexPathForRow:([self tableView:self.messageTable numberOfRowsInSection:0] - 1) inSection:0]
@@ -247,7 +246,7 @@ NSString *const CHOwnMesssageCellIdentifier = @"CHOwnMessageTableViewCell";
 
 - (void)addRemoteMessage:(CHMessage *)message;
 {
-    [self reloadTableWithScroll:YES animated:YES];
+    [self reload:YES withScroll:YES animated:YES];
 }
 
 
@@ -353,10 +352,9 @@ NSString *const CHOwnMesssageCellIdentifier = @"CHOwnMessageTableViewCell";
     [self addNewMessage:newMessage];
     
     [user sendMessage:newMessage toGroup:self.group].then(^{
-        //update progress bar?
         [self endSendingMessage];
-    }).catch(^(NSError *error){
-        //failed tos end
+    }).catch(^(NSError *error) {
+//TODO: Have an error state for messages.
     });
     
     self.textView.text = @"";
@@ -364,7 +362,7 @@ NSString *const CHOwnMesssageCellIdentifier = @"CHOwnMessageTableViewCell";
 
 - (void)addNewMessage:(CHMessage *)message;
 {
-    [self reloadTableWithScroll:YES animated:YES];
+   // [self reload:YES withScroll:YES animated:YES];
     
     self.shouldSlide = NO;
     
@@ -418,6 +416,8 @@ NSString *const CHOwnMesssageCellIdentifier = @"CHOwnMessageTableViewCell";
             [self.messageTable deleteSections:[NSIndexSet indexSetWithIndex:sectionIndex]
                           withRowAnimation:UITableViewRowAnimationFade];
             break;
+        default:
+            break;
     }
 }
 
@@ -456,9 +456,20 @@ NSString *const CHOwnMesssageCellIdentifier = @"CHOwnMessageTableViewCell";
 }
 
 
-- (void)controllerDidChangeContent:(NSFetchedResultsController *)controller {
+- (void)controllerDidChangeContent:(NSFetchedResultsController *)controller;
+{
     [self.messageTable endUpdates];
-    [self reloadTableWithScroll:YES animated:YES];
+    CGPoint offset = self.messageTable.contentOffset;
+    CGRect bounds = self.messageTable.bounds;
+    CGSize size = self.messageTable.contentSize;
+    UIEdgeInsets inset = self.messageTable.contentInset;
+    CGFloat y = offset.y + bounds.size.height - inset.bottom;
+    CGFloat h = size.height;
+    
+    CGFloat reload_distance = 50;
+    if(y > h + reload_distance) {
+        [self reload:NO withScroll:YES animated:YES];
+    }
 }
 
 

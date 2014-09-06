@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="5056" systemVersion="13E28" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" initialViewController="Hru-pZ-kQp">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="6206.9" systemVersion="13E28" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" initialViewController="Hru-pZ-kQp">
     <dependencies>
         <deployment defaultVersion="1792" identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="3733"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="7026.1"/>
     </dependencies>
     <scenes>
-        <!--Login View Controller - Login-->
+        <!--Login-->
         <scene sceneID="ufC-wZ-h7g">
             <objects>
                 <viewController storyboardIdentifier="CHLoginViewController" title="Login" id="vXZ-lx-hvc" customClass="CHLoginViewController" sceneMemberID="viewController">
@@ -80,7 +80,7 @@
             </objects>
             <point key="canvasLocation" x="-775" y="-39"/>
         </scene>
-        <!--Group List Table View Controller - Groups-->
+        <!--Groups-->
         <scene sceneID="pPb-Ll-dyZ">
             <objects>
                 <tableViewController storyboardIdentifier="CHGroupListTableViewController" id="XBv-ZM-NJH" customClass="CHGroupListTableViewController" sceneMemberID="viewController">
@@ -309,7 +309,7 @@
                                 <constraints>
                                     <constraint firstAttribute="height" constant="2" id="5B4-PU-v3d"/>
                                 </constraints>
-                                <color key="progressTintColor" red="0.47058823529999999" green="0.20000000000000001" blue="0.64705882349999999" alpha="1" colorSpace="calibratedRGB"/>
+                                <color key="progressTintColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                             </progressView>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
@@ -339,7 +339,7 @@
             </objects>
             <point key="canvasLocation" x="1049" y="467"/>
         </scene>
-        <!--Add Group View Controller - Create Group-->
+        <!--Create Group-->
         <scene sceneID="Yyw-gc-GC0">
             <objects>
                 <viewController storyboardIdentifier="CHAddGroupViewController" id="Nfa-iP-SEa" customClass="CHAddGroupViewController" sceneMemberID="viewController">
@@ -459,7 +459,7 @@
             </objects>
             <point key="canvasLocation" x="1969" y="1140"/>
         </scene>
-        <!--Register View Controller - Register-->
+        <!--Register-->
         <scene sceneID="nPp-gB-YOs">
             <objects>
                 <viewController storyboardIdentifier="CHRegisterViewController" title="Register" id="7xF-es-miE" customClass="CHRegisterViewController" sceneMemberID="viewController">
@@ -523,7 +523,7 @@
             </objects>
             <point key="canvasLocation" x="-344" y="-39"/>
         </scene>
-        <!--Profile View Controller - Profile-->
+        <!--Profile-->
         <scene sceneID="AND-c9-1Mq">
             <objects>
                 <viewController storyboardIdentifier="CHProfileViewController" id="smW-kQ-2zj" customClass="CHProfileViewController" sceneMemberID="viewController">
@@ -568,7 +568,7 @@
             </objects>
             <point key="canvasLocation" x="600" y="1022"/>
         </scene>
-        <!--Navigation Controller - Chat-->
+        <!--Chat-->
         <scene sceneID="OfC-YW-V0P">
             <objects>
                 <navigationController automaticallyAdjustsScrollViewInsets="NO" id="IsZ-yr-CFu" sceneMemberID="viewController">
@@ -644,7 +644,7 @@
             </objects>
             <point key="canvasLocation" x="1482" y="1140"/>
         </scene>
-        <!--Navigation Controller - Profile-->
+        <!--Profile-->
         <scene sceneID="Kml-LN-k5g">
             <objects>
                 <navigationController automaticallyAdjustsScrollViewInsets="NO" id="Lee-DD-KDU" sceneMemberID="viewController">
@@ -692,6 +692,9 @@
     <simulatedMetricsContainer key="defaultSimulatedMetrics">
         <simulatedStatusBarMetrics key="statusBar"/>
         <simulatedOrientationMetrics key="orientation"/>
-        <simulatedScreenMetrics key="destination" type="retina4"/>
+        <simulatedScreenMetrics key="destination" type="retina4">
+            <size key="portraitSize" width="320" height="568"/>
+            <size key="landscapeSize" width="568" height="320"/>
+        </simulatedScreenMetrics>
     </simulatedMetricsContainer>
 </document>
