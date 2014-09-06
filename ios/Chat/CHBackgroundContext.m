@@ -37,7 +37,7 @@
 - (PMKPromise *)start;
 {
     return [PMKPromise new:^(PMKPromiseFulfiller fulfiller, PMKPromiseRejecter rejecter) {
-        _queue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0);
+        _queue = dispatch_queue_create("BackgroundQueue", 0);
         dispatch_async(_queue, ^{
             _context = [NSManagedObjectContext MR_context];
             fulfiller(self);
