@@ -81,7 +81,7 @@
 
 }
 
-// THIS NEEDS TO BE REFACTORED
+//TODO: Refactor
 - (void) socketIO:(SocketIO *)socket didReceiveEvent:(SocketIOPacket *)packet;
 {
     DLog("PACKET: %@", packet);
