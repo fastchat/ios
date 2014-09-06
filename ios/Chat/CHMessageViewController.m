@@ -19,6 +19,7 @@
 #import "CHCircleImageView.h"
 #import "URBMediaFocusViewController.h"
 #import "HPTextViewInternal.h"
+#import "CHBackgroundContext.h"
 
 #define kDefaultContentOffset self.navigationController.navigationBar.frame.size.height + 20
 
@@ -50,6 +51,7 @@ NSString *const CHOwnMesssageCellIdentifier = @"CHOwnMessageTableViewCell";
 
 - (void)viewDidLoad;
 {
+    DLog(@"Start");
     [super viewDidLoad];
     self.view.backgroundColor = kLightBackgroundColor;
     self.messageTable.backgroundColor = kLightBackgroundColor;
@@ -102,7 +104,6 @@ NSString *const CHOwnMesssageCellIdentifier = @"CHOwnMessageTableViewCell";
     [self.containerView addSubview:self.textView];
     [self.view addSubview:self.containerView];
     
-    
     self.sendButton = [UIButton buttonWithType:UIButtonTypeSystem]; //[UIButton buttonWithType:UIButtonTypeCustom];
 	_sendButton.frame = CGRectMake(self.containerView.frame.size.width - 42, 1, 42, 40);
     _sendButton.autoresizingMask = UIViewAutoresizingFlexibleTopMargin | UIViewAutoresizingFlexibleLeftMargin;
@@ -123,12 +124,20 @@ NSString *const CHOwnMesssageCellIdentifier = @"CHOwnMessageTableViewCell";
     ///
     /// Load up old messages
     ///
+//TODO: background thread?
+    DLog(@"Middle");
+    NSPredicate *theseMessages = [NSPredicate predicateWithFormat:@"SELF.group == %@ AND SELF.chID != nil", self.group];
+//    NSInteger count = [CHMessage MR_countOfEntitiesWithPredicate:theseMessages];
+    
     
     NSManagedObjectContext *context = [NSManagedObjectContext MR_defaultContext];
     NSFetchRequest *fetchRequest = [NSFetchRequest fetchRequestWithEntityName:@"CHMessage"];
+//    [fetchRequest setFetchLimit:10];
+//    [fetchRequest setFetchBatchSize:10];
+//    [fetchRequest setFetchOffset:count - 10];
     NSSortDescriptor *sortDescriptor = [[NSSortDescriptor alloc] initWithKey:@"sent" ascending:YES];
     [fetchRequest setSortDescriptors: @[sortDescriptor]];
-    [fetchRequest setPredicate:[NSPredicate predicateWithFormat:@"SELF.group == %@", self.group]];
+    [fetchRequest setPredicate:theseMessages];
     
     NSFetchedResultsController *controller = [[NSFetchedResultsController alloc] initWithFetchRequest:fetchRequest
                                                                                  managedObjectContext:context
@@ -143,22 +152,16 @@ NSString *const CHOwnMesssageCellIdentifier = @"CHOwnMessageTableViewCell";
     if (!success || error) {
         DLog(@"What: %@", error);
     }
+    DLog(@"End Middle");
     
     ///
-    /// Scroll to bottom
+    /// Load new messages, async
     ///
-    [self.messageTable scrollToRowAtIndexPath:[NSIndexPath
-                                               indexPathForRow:([self tableView:self.messageTable numberOfRowsInSection:0] - 1) inSection:0]
-                             atScrollPosition:UITableViewScrollPositionBottom
-                                     animated:NO];
-    
-    ///
-    /// Load new messages
-    ///
-    [self.group remoteMessagesAtPage:_currPage].then(^{
+    dispatch_promise_on([CHBackgroundContext backgroundContext].queue, ^{
+        return [self.group remoteMessagesAtPage:_currPage];
+    }).then(^{
         [self reloadTableWithScroll:YES animated:YES];
     });
-    
     
     self.keyboardIsVisible = NO;
     [self setSendButtonEnabled:[self canSendMessage]];
@@ -177,6 +180,8 @@ NSString *const CHOwnMesssageCellIdentifier = @"CHOwnMessageTableViewCell";
     /// Using reloadMessages instead of reloadMessagesWithScroll because I haven't figured out how to make reloadMessagesWithScroll
     /// work when being called as the selector. This should be fixed eventually.
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(reloadMessages) name:@"ReloadActiveGroupNotification" object:nil];
+    
+    DLog(@"End");
 }
 
 - (void)viewWillLayoutSubviews;
@@ -324,6 +329,7 @@ NSString *const CHOwnMesssageCellIdentifier = @"CHOwnMessageTableViewCell";
 
 - (void)sendMessage;
 {
+    [self startSendingMessage];
     NSString *msg = self.textView.text;
     
     if ( !msg.length ) {
@@ -348,9 +354,11 @@ NSString *const CHOwnMesssageCellIdentifier = @"CHOwnMessageTableViewCell";
     
     [user sendMessage:newMessage toGroup:self.group].then(^{
         //update progress bar?
+        [self endSendingMessage];
+    }).catch(^(NSError *error){
+        //failed tos end
     });
     
-    [self addNewMessage:newMessage];
     self.textView.text = @"";
 }
 
@@ -369,6 +377,23 @@ NSString *const CHOwnMesssageCellIdentifier = @"CHOwnMessageTableViewCell";
     self.media = nil;
     self.mediaWasAdded = NO;
     [self setSendButtonEnabled:[self canSendMessage]];
+}
+
+#pragma mark - Progress Bar
+
+- (void)startSendingMessage;
+{
+    self.progressBar.progress = 0;
+    self.progressBar.hidden = NO;
+    [self.progressBar setProgress:0.8 animated:YES];
+}
+
+- (void)endSendingMessage;
+{
+    [self.progressBar setProgress:1 animated:YES];
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.5 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+        self.progressBar.hidden = YES;
+    });
 }
 
 #pragma mark - TableView
@@ -545,6 +570,20 @@ NSString *const CHOwnMesssageCellIdentifier = @"CHOwnMessageTableViewCell";
             [self expandImage:image];
         });
     }
+}
+
+- (CGFloat)tableView:(UITableView *)tableView estimatedHeightForFooterInSection:(NSInteger)section;
+{
+    return 0;
+}
+
+/**
+ * Let's help the tableview out some. Most people send 1 line messages, and that makes our
+ * cells 49 pixels high.
+ */
+- (CGFloat)tableView:(UITableView *)tableView estimatedHeightForRowAtIndexPath:(NSIndexPath *)indexPath;
+{
+    return 50;
 }
 
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath;

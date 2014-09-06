@@ -45,7 +45,6 @@
 		279CF21D18DF777500C82399 /* CHMTLUser.m in Sources */ = {isa = PBXBuildFile; fileRef = 279CF21C18DF777400C82399 /* CHMTLUser.m */; };
 		279CF22118DFD74D00C82399 /* CHInviteUserViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 279CF22018DFD74D00C82399 /* CHInviteUserViewController.m */; };
 		27BAD7A9192E3B6600C8569A /* inprogress.png in Resources */ = {isa = PBXBuildFile; fileRef = 27BAD7A8192E3B6600C8569A /* inprogress.png */; };
-		27BEB10D18F85D82003BB97C /* profile-dark.png in Resources */ = {isa = PBXBuildFile; fileRef = 27BEB10C18F85D82003BB97C /* profile-dark.png */; };
 		2C7FD1E6FB44435B8A225753 /* libPods-Chat.a in Frameworks */ = {isa = PBXBuildFile; fileRef = ED86F54EC1C64B14950512A1 /* libPods-Chat.a */; };
 		AA46331B193659EB00513578 /* CHTextField.m in Sources */ = {isa = PBXBuildFile; fileRef = AA46331A193659EB00513578 /* CHTextField.m */; };
 		AA46331E19365BB700513578 /* CHColors.m in Sources */ = {isa = PBXBuildFile; fileRef = AA46331D19365BB700513578 /* CHColors.m */; };
@@ -132,7 +131,6 @@
 		279CF21F18DFD74D00C82399 /* CHInviteUserViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CHInviteUserViewController.h; sourceTree = "<group>"; };
 		279CF22018DFD74D00C82399 /* CHInviteUserViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CHInviteUserViewController.m; sourceTree = "<group>"; };
 		27BAD7A8192E3B6600C8569A /* inprogress.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = inprogress.png; sourceTree = "<group>"; };
-		27BEB10C18F85D82003BB97C /* profile-dark.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "profile-dark.png"; sourceTree = "<group>"; };
 		7EC6EF7B5FC54E4BA2B855D4 /* Pods-Chat.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Chat.xcconfig"; path = "Pods/Pods-Chat.xcconfig"; sourceTree = "<group>"; };
 		AA463319193659EB00513578 /* CHTextField.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CHTextField.h; sourceTree = "<group>"; };
 		AA46331A193659EB00513578 /* CHTextField.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CHTextField.m; sourceTree = "<group>"; };
@@ -395,7 +393,6 @@
 			isa = PBXGroup;
 			children = (
 				27BAD7A8192E3B6600C8569A /* inprogress.png */,
-				27BEB10C18F85D82003BB97C /* profile-dark.png */,
 				AA7759F418D54D3000E4E7AB /* Images.xcassets */,
 				2769B05318F1258A00CCE470 /* MessageEntryBackground@2x.png */,
 				2769B05418F1258A00CCE470 /* MessageEntryBackground.png */,
@@ -605,7 +602,6 @@
 			files = (
 				2769B05B18F1258A00CCE470 /* MessageEntryBackground@2x.png in Resources */,
 				AA7759F018D54D3000E4E7AB /* Main_iPad.storyboard in Resources */,
-				27BEB10D18F85D82003BB97C /* profile-dark.png in Resources */,
 				2769B06118F1258A00CCE470 /* MessageEntrySendButtonPressed.png in Resources */,
 				2769B05C18F1258A00CCE470 /* MessageEntryBackground.png in Resources */,
 				2769B05D18F1258A00CCE470 /* MessageEntryInputField.png in Resources */,

@@ -150,9 +150,11 @@ static CHUser *_currentUser = nil;
         return [PMKPromise new:^(PMKPromiseFulfiller fulfiller, PMKPromiseRejecter rejecter) {
             [[CHSocketManager sharedManager] sendMessageWithData:@{@"from": self.chID, @"text" : message.text, @"group": group.chID}
                                                   acknowledgement:^(id argsData) {
-                                                      NSLog(@"Acknowledgement");
+                                                      DLog(@"Args: %@", argsData);
+                                                      message.chID = argsData[@"_id"];
+                                                      [[NSManagedObjectContext MR_defaultContext] MR_saveToPersistentStoreAndWait];
+                                                      fulfiller(message);
                                                   }];
-            fulfiller(nil);
         }];
     }
 }
