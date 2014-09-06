@@ -9,6 +9,7 @@ const struct CHMessageAttributes CHMessageAttributes = {
 	.hasMedia = @"hasMedia",
 	.mediaHeight = @"mediaHeight",
 	.mediaWidth = @"mediaWidth",
+	.rowHeight = @"rowHeight",
 	.sent = @"sent",
 	.text = @"text",
 	.theMediaSent = @"theMediaSent",
@@ -61,6 +62,11 @@ const struct CHMessageFetchedProperties CHMessageFetchedProperties = {
 	}
 	if ([key isEqualToString:@"mediaWidthValue"]) {
 		NSSet *affectingKey = [NSSet setWithObject:@"mediaWidth"];
+		keyPaths = [keyPaths setByAddingObjectsFromSet:affectingKey];
+		return keyPaths;
+	}
+	if ([key isEqualToString:@"rowHeightValue"]) {
+		NSSet *affectingKey = [NSSet setWithObject:@"rowHeight"];
 		keyPaths = [keyPaths setByAddingObjectsFromSet:affectingKey];
 		return keyPaths;
 	}
@@ -157,6 +163,32 @@ const struct CHMessageFetchedProperties CHMessageFetchedProperties = {
 
 - (void)setPrimitiveMediaWidthValue:(double)value_ {
 	[self setPrimitiveMediaWidth:[NSNumber numberWithDouble:value_]];
+}
+
+
+
+
+
+@dynamic rowHeight;
+
+
+
+- (float)rowHeightValue {
+	NSNumber *result = [self rowHeight];
+	return [result floatValue];
+}
+
+- (void)setRowHeightValue:(float)value_ {
+	[self setRowHeight:[NSNumber numberWithFloat:value_]];
+}
+
+- (float)primitiveRowHeightValue {
+	NSNumber *result = [self primitiveRowHeight];
+	return [result floatValue];
+}
+
+- (void)setPrimitiveRowHeightValue:(float)value_ {
+	[self setPrimitiveRowHeight:[NSNumber numberWithFloat:value_]];
 }
 
 

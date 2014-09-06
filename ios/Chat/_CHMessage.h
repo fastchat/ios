@@ -10,6 +10,7 @@ extern const struct CHMessageAttributes {
 	__unsafe_unretained NSString *hasMedia;
 	__unsafe_unretained NSString *mediaHeight;
 	__unsafe_unretained NSString *mediaWidth;
+	__unsafe_unretained NSString *rowHeight;
 	__unsafe_unretained NSString *sent;
 	__unsafe_unretained NSString *text;
 	__unsafe_unretained NSString *theMediaSent;
@@ -27,6 +28,7 @@ extern const struct CHMessageFetchedProperties {
 @class CHUser;
 @class CHGroup;
 @class CHGroup;
+
 
 
 
@@ -107,6 +109,20 @@ extern const struct CHMessageFetchedProperties {
 - (void)setMediaWidthValue:(double)value_;
 
 //- (BOOL)validateMediaWidth:(id*)value_ error:(NSError**)error_;
+
+
+
+
+
+@property (nonatomic, strong) NSNumber* rowHeight;
+
+
+
+@property float rowHeightValue;
+- (float)rowHeightValue;
+- (void)setRowHeightValue:(float)value_;
+
+//- (BOOL)validateRowHeight:(id*)value_ error:(NSError**)error_;
 
 
 
@@ -208,6 +224,15 @@ extern const struct CHMessageFetchedProperties {
 
 - (double)primitiveMediaWidthValue;
 - (void)setPrimitiveMediaWidthValue:(double)value_;
+
+
+
+
+- (NSNumber*)primitiveRowHeight;
+- (void)setPrimitiveRowHeight:(NSNumber*)value;
+
+- (float)primitiveRowHeightValue;
+- (void)setPrimitiveRowHeightValue:(float)value_;
 
 
 
