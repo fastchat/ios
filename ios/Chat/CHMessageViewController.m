@@ -522,7 +522,6 @@ NSString *const CHOwnMesssageCellIdentifier = @"CHOwnMessageTableViewCell";
     return cell;
 }
 
-#warning FIX THIS
 ///
 /// Set the section title to the names of the members in chat
 ///
