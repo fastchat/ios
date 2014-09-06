@@ -591,25 +591,34 @@ NSString *const CHOwnMesssageCellIdentifier = @"CHOwnMessageTableViewCell";
  */
 - (CGFloat)tableView:(UITableView *)tableView estimatedHeightForRowAtIndexPath:(NSIndexPath *)indexPath;
 {
+    CHMessage *message = [self.fetchedResultsController objectAtIndexPath:indexPath];
+    if (message.rowHeightValue > 0) {
+        return message.rowHeightValue;
+    }
     return 50;
 }
 
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath;
 {
     CHMessage *message = [self.fetchedResultsController objectAtIndexPath:indexPath];
+    if (message.rowHeightValue > 0) {
+        return message.rowHeightValue;
+    }
+    
     CGRect rect = [message.text boundingRectWithSize:CGSizeMake(205 - 16, CGFLOAT_MAX)
                                              options:NSStringDrawingUsesFontLeading | NSStringDrawingUsesLineFragmentOrigin
                                           attributes:@{NSFontAttributeName: [UIFont systemFontOfSize:16]}
                                              context:nil];
 
-    
     CGFloat height = rect.size.height;
     // Adding 45.0 to fix the bug where messages of certain lengths don't size the cell properly.
     if( message.hasMedia.boolValue) {
         height += 150.0f;
     }
-    return height + 45.0f;
+    height += 45.0f;
 
+    message.rowHeightValue = height;
+    return height;
 }
 
 - (void)reloadTableViewData;

@@ -71,11 +71,12 @@ void uncaughtExceptionHandler(NSException *exception)
 							
 - (void)applicationWillResignActive:(UIApplication *)application;
 {
-    
+    [[NSManagedObjectContext MR_defaultContext] MR_saveToPersistentStoreAndWait];
 }
 
 - (void)applicationDidEnterBackground:(UIApplication *)application;
 {
+    [[NSManagedObjectContext MR_defaultContext] MR_saveToPersistentStoreAndWait];
     [[CHSocketManager sharedManager] closeSocket];
 }
 
@@ -95,6 +96,7 @@ void uncaughtExceptionHandler(NSException *exception)
 
 - (void)applicationWillTerminate:(UIApplication *)application;
 {
+    [[NSManagedObjectContext MR_defaultContext] MR_saveToPersistentStoreAndWait];
     [MagicalRecord cleanUp];
 }
 
