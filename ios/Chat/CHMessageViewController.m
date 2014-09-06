@@ -14,7 +14,6 @@
 #import "CHOwnMessageTableViewCell.h"
 #import "CHSocketManager.h"
 #import "CHGroup.h"
-#import "CHGroupsCollectionAccessor.h"
 #import "CHMessage.h"
 #import "CHCircleImageView.h"
 #import "URBMediaFocusViewController.h"
@@ -195,23 +194,6 @@ NSString *const CHOwnMesssageCellIdentifier = @"CHOwnMessageTableViewCell";
 {
     DLog(@"User changed text field");
 }
-
-#warning FIX THIS
-///
-/// Set the section title to the names of the members in chat
-///
-//-(NSString *)tableView:(UITableView *)tableView titleForHeaderInSection:(NSInteger)section;
-//{
-//    NSMutableString *sectionTitle = [@"To: " mutableCopy];
-//    DLog(@"Group id %@", self.group._id);
-//    NSArray *activeMembers = [[CHGroupsCollectionAccessor sharedAccessor] getActiveMembersForGroupWithId:self.group._id];
-//
-//    for (CHUser *member in activeMembers) {
-//        [sectionTitle appendString:[NSMutableString stringWithFormat:@"%@, ", ((CHUser *)member).username]];
-//    }
-//    
-//    return [self trimString:sectionTitle];
-//}
 
 - (NSMutableString *)trimString: (NSString *)stringToTrim;
 {
@@ -538,6 +520,22 @@ NSString *const CHOwnMesssageCellIdentifier = @"CHOwnMessageTableViewCell";
     [cell.messageTextView addGestureRecognizer:tapper];
     
     return cell;
+}
+
+#warning FIX THIS
+///
+/// Set the section title to the names of the members in chat
+///
+-(NSString *)tableView:(UITableView *)tableView titleForHeaderInSection:(NSInteger)section;
+{
+    NSMutableString *sectionTitle = @"To: ".mutableCopy;
+    NSOrderedSet *activeMembers = self.group.members;
+
+    for (CHUser *member in activeMembers) {
+        [sectionTitle appendString:[NSMutableString stringWithFormat:@"%@, ", member.username]];
+    }
+
+    return [self trimString:sectionTitle];
 }
 
 - (CGSize)boundsForImage:(UIImage *)image;
