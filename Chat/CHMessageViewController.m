@@ -490,7 +490,7 @@ NSString *const CHOwnMesssageCellIdentifier = @"CHOwnMessageTableViewCell";
     
     static UIImage *defaultImage = nil;
     if (!defaultImage) {
-        defaultImage = [UIImage imageNamed:@"profile-dark.png"];
+        defaultImage = [UIImage imageNamed:@"NoAvatar"];
     }
     
     cell.authorLabel.textColor = author.color;

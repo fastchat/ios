@@ -39,7 +39,7 @@
     currUser.avatar.then(^(CHUser *user, UIImage *avatar){
         [self.avatarImageView setImage:avatar];
     }).catch(^(NSError *error){
-        [self.avatarImageView setImage:[UIImage imageNamed:@"profile-dark.png"]];
+        [self.avatarImageView setImage:[UIImage imageNamed:@"NoAvatar"]];
     });
 }
 
