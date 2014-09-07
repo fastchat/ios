@@ -36,6 +36,11 @@
     
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(reloadTableView) name:@"ReloadGroupTablesNotification" object:nil];
     
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(contextDidChange:)
+                                                 name:NSManagedObjectContextObjectsDidChangeNotification
+                                               object:[NSManagedObjectContext MR_defaultContext]];
+    
     __block dispatch_queue_t q = [CHBackgroundContext backgroundContext].queue;
     
     [self user].thenOn(q, ^(CHUser *user) {
@@ -68,7 +73,7 @@
 {
     DLog(@"reloading table view");
     
-    void (^reload)() = ^{[self.tableView reloadData]; };
+    void (^reload)() = ^{ [self.tableView reloadData]; };
     
     if ([NSThread isMainThread]) {
         reload();
@@ -81,7 +86,33 @@
 {
     [super viewWillAppear:animated];
     [self.tableView reloadData];
-    DLog(@"View WIll Appear");
+}
+
+- (void)contextDidChange:(NSNotification *)notification;
+{
+    NSArray *updatedObjects = [[[notification userInfo] objectForKey:NSUpdatedObjectsKey] allObjects];
+    if (updatedObjects.count > 0) { //group updated
+        NSArray *groups = [updatedObjects filteredArrayUsingPredicate:[NSPredicate predicateWithBlock:^BOOL(id evaluatedObject, NSDictionary *bindings) {
+            return [evaluatedObject isKindOfClass:[CHGroup class]];
+        }]];
+        
+        NSIndexSet *indexesOfObjects = [_currentUser.groups indexesOfObjectsPassingTest:^BOOL(id obj, NSUInteger idx, BOOL *stop) {
+            return [groups containsObject:obj];
+        }];
+        
+        NSMutableArray * paths = [NSMutableArray array];
+        [indexesOfObjects enumerateIndexesUsingBlock:^(NSUInteger index, BOOL *stop) {
+            [paths addObject:[NSIndexPath indexPathForRow:index inSection:0]];
+        }];
+        
+        DLog(@"Paths: %@", paths);
+        [self.tableView reloadRowsAtIndexPaths:paths withRowAnimation:UITableViewRowAnimationAutomatic];
+    }
+    
+    NSArray *insertedObjects = [[[notification userInfo] objectForKey:NSInsertedObjectsKey] allObjects];
+    if (insertedObjects.count > 0) { //new group sent
+        DLog(@"Inserted %@", insertedObjects);
+    }
 }
 
 #pragma mark - Table view data source
