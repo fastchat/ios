@@ -56,33 +56,22 @@ static NSString *const MESSAGES_KEY = @"messages";
         return self.primitiveName;
     }
     
-    NSMutableString *nameFromMembers = [[NSMutableString alloc] init];
     if( self.members.count == 1 ) {
-        [nameFromMembers appendString:[NSString stringWithFormat:@"Empty chat!"]];
-    }
-    else if( self.members.count == 2 ) {
-        if (((CHUser *)self.members.firstObject).chID == [CHUser currentUser].chID) {
-            [nameFromMembers appendString:[NSString stringWithFormat:@"%@", ((CHUser *)self.members[1]).username]];
-        }
-        else {
-            [nameFromMembers appendString:[NSString stringWithFormat:@"%@", ((CHUser *)self.members[0]).username]];
-        }
+        return @"Empty chat!";
     } else {
-        CHUser *currLoggedInUser = [CHUser currentUser];
-        for (int i = 0; i < self.members.count; i++) {
-            CHUser *currMember = self.members[i];
-            
-            if (![currMember.chID isEqualToString:currLoggedInUser.chID]) {
-                if (i == self.members.count - 1) {
-                    [nameFromMembers appendString:[NSString stringWithFormat:@"%@",((CHUser *)self.members[i]).username]];
-                }
-                else {
-                    [nameFromMembers appendString:[NSString stringWithFormat:@"%@,",((CHUser *)self.members[i]).username]];
-                }
+         NSMutableString *nameFromMembers = [[NSMutableString alloc] init];
+        for (CHUser *user in self.members) {
+            if ([user isEqual:[CHUser currentUser]]) {
+                continue;
             }
+            [nameFromMembers appendFormat:@"%@, ", user.username];
         }
+        
+        if ([[nameFromMembers substringFromIndex:nameFromMembers.length - 2] isEqualToString:@", "]) {
+            return [nameFromMembers substringToIndex:nameFromMembers.length - 2];
+        }
+        return nameFromMembers;
     }
-    return nameFromMembers;
 }
 
 - (NSMutableDictionary *)membersDict;
