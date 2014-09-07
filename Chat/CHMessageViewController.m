@@ -19,6 +19,7 @@
 #import "URBMediaFocusViewController.h"
 #import "HPTextViewInternal.h"
 #import "CHBackgroundContext.h"
+#import "CHProgressView.h"
 
 #define kDefaultContentOffset self.navigationController.navigationBar.frame.size.height + 20
 
@@ -364,15 +365,22 @@ NSString *const CHOwnMesssageCellIdentifier = @"CHOwnMessageTableViewCell";
 
 - (void)startSendingMessage;
 {
-    self.progressBar.progress = 0;
+    if (!self.progressBar) {
+        self.progressBar = [CHProgressView viewWithFrame:CGRectMake(0, -20, [[UIScreen mainScreen] bounds].size.width, 20)];
+        self.progressBar.hidden = YES;
+        self.progressBar.backgroundColor = [UIColor clearColor];
+        [self.progressBar setProgressColor:[UIColor colorWithRed:(236.0 / 255.0) green:(213.0 / 255.0) blue:1.0 alpha:1.0]];
+        [self.navigationController.navigationBar addSubview:self.progressBar];
+    }
+    
+    self.progressBar.progress = .05;
     self.progressBar.hidden = NO;
     [self.progressBar setProgress:0.8 animated:YES];
 }
 
 - (void)endSendingMessage;
 {
-    [self.progressBar setProgress:1 animated:YES];
-    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.5 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+    [self.progressBar setProgress:1 animated:YES].then(^{
         self.progressBar.hidden = YES;
     });
 }

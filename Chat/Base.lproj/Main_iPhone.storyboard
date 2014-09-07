@@ -311,21 +311,11 @@
                                     <outlet property="delegate" destination="Ve0-ai-wJa" id="Ebe-zD-r8O"/>
                                 </connections>
                             </tableView>
-                            <progressView hidden="YES" opaque="NO" contentMode="scaleToFill" verticalHuggingPriority="750" progress="0.5" translatesAutoresizingMaskIntoConstraints="NO" id="goo-9U-IrI">
-                                <rect key="frame" x="0.0" y="64" width="320" height="2"/>
-                                <constraints>
-                                    <constraint firstAttribute="height" constant="2" id="5B4-PU-v3d"/>
-                                </constraints>
-                                <color key="progressTintColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
-                            </progressView>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
                         <constraints>
                             <constraint firstAttribute="trailing" secondItem="srm-hB-ROt" secondAttribute="trailing" id="5qF-3e-emn"/>
                             <constraint firstItem="srm-hB-ROt" firstAttribute="leading" secondItem="6fJ-u5-PgN" secondAttribute="leading" id="62K-iC-a4V"/>
-                            <constraint firstAttribute="trailing" secondItem="goo-9U-IrI" secondAttribute="trailing" id="6Dw-th-ONS"/>
-                            <constraint firstItem="goo-9U-IrI" firstAttribute="leading" secondItem="6fJ-u5-PgN" secondAttribute="leading" id="P7E-LC-p6L"/>
-                            <constraint firstItem="goo-9U-IrI" firstAttribute="top" secondItem="aa3-9b-3XX" secondAttribute="bottom" id="V8S-MI-cly"/>
                             <constraint firstAttribute="bottom" secondItem="srm-hB-ROt" secondAttribute="bottom" id="jKg-KT-ytJ"/>
                             <constraint firstItem="srm-hB-ROt" firstAttribute="top" secondItem="6fJ-u5-PgN" secondAttribute="top" id="seC-DX-lWN"/>
                         </constraints>
@@ -339,7 +329,6 @@
                     </navigationItem>
                     <connections>
                         <outlet property="messageTable" destination="srm-hB-ROt" id="8Eq-zy-qgj"/>
-                        <outlet property="progressBar" destination="goo-9U-IrI" id="bu9-vl-kSl"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="0Ui-X7-fik" userLabel="First Responder" sceneMemberID="firstResponder"/>

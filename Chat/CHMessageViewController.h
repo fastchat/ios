@@ -13,7 +13,7 @@
 #import "DBCameraViewController.h"
 #import "DBCameraContainerViewController.h"
 
-@class CHGroup;
+@class CHGroup, CHProgressView;
 
 @interface CHMessageViewController : UIViewController <UITextFieldDelegate, UITableViewDataSource, UITableViewDelegate, UITextViewDelegate, HPGrowingTextViewDelegate, DBCameraViewControllerDelegate, NSFetchedResultsControllerDelegate>
 
@@ -23,7 +23,7 @@
 @property (weak, nonatomic) IBOutlet UITableView *messageTable;
 @property (weak, nonatomic) IBOutlet NSLayoutConstraint *bottomDistance;
 @property (weak, nonatomic) IBOutlet UIView *messageBarView;
-@property (weak, nonatomic) IBOutlet UIProgressView *progressBar;
+@property (strong, nonatomic) IBOutlet CHProgressView *progressBar;
 
 @property (nonatomic, strong) UIView *containerView;
 @property (nonatomic, strong) HPGrowingTextView *textView;
