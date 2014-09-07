@@ -144,7 +144,11 @@ static CHUser *_currentUser = nil;
 - (PMKPromise *)sendMessage:(CHMessage *)message toGroup:(CHGroup *)group;
 {
     if (message.hasMediaValue) {
-        return [[CHNetworkManager sharedManager] postMediaMessageWithImage:message.theMediaSent groupId:group.chID message:message.text];
+        return [[CHNetworkManager sharedManager] postMediaMessageWithImage:message.theMediaSent groupId:group.chID message:message.text]
+            .then(^(NSDictionary *response){
+                message.chID = response[@"_id"];
+                [[NSManagedObjectContext MR_defaultContext] MR_saveToPersistentStoreAndWait];
+        });
         
     } else {
         return [PMKPromise new:^(PMKPromiseFulfiller fulfiller, PMKPromiseRejecter rejecter) {
