@@ -3,6 +3,7 @@
     <dependencies>
         <deployment defaultVersion="1792" identifier="iOS"/>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="7026.1"/>
+        <capability name="Constraints with attributes relative to the layout margin" minToolsVersion="6.0"/>
     </dependencies>
     <scenes>
         <!--Login-->
@@ -96,18 +97,22 @@
                                     <rect key="frame" x="0.0" y="0.0" width="287" height="64"/>
                                     <autoresizingMask key="autoresizingMask"/>
                                     <subviews>
-                                        <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="Label" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="yH6-FE-gmL">
-                                            <rect key="frame" x="20" y="4" width="190" height="22"/>
+                                        <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label group" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="yH6-FE-gmL">
+                                            <rect key="frame" x="20" y="4" width="190" height="24"/>
                                             <color key="backgroundColor" red="0.94901960784313721" green="0.94117647058823528" blue="0.94117647058823528" alpha="1" colorSpace="calibratedRGB"/>
+                                            <constraints>
+                                                <constraint firstAttribute="height" constant="24" id="pCC-fC-9iP"/>
+                                                <constraint firstAttribute="width" constant="190" id="sGu-5r-JBi"/>
+                                            </constraints>
                                             <fontDescription key="fontDescription" type="boldSystem" pointSize="18"/>
                                             <nil key="highlightedColor"/>
                                         </label>
                                         <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="" lineBreakMode="tailTruncation" numberOfLines="2" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" preferredMaxLayoutWidth="267" translatesAutoresizingMaskIntoConstraints="NO" id="mT8-iw-lBJ">
-                                            <rect key="frame" x="20" y="24" width="267" height="40"/>
+                                            <rect key="frame" x="20" y="26" width="267" height="38"/>
                                             <color key="backgroundColor" red="0.94901960780000005" green="0.94117647059999998" blue="0.94117647059999998" alpha="1" colorSpace="calibratedRGB"/>
                                             <constraints>
                                                 <constraint firstAttribute="width" constant="267" id="Xaj-9b-5gO"/>
-                                                <constraint firstAttribute="height" constant="40" id="dQH-u1-meh"/>
+                                                <constraint firstAttribute="height" constant="38" id="dQH-u1-meh"/>
                                             </constraints>
                                             <fontDescription key="fontDescription" type="system" pointSize="14"/>
                                             <color key="textColor" white="0.66666666666666663" alpha="1" colorSpace="calibratedWhite"/>
@@ -122,7 +127,9 @@
                                         </label>
                                     </subviews>
                                     <constraints>
-                                        <constraint firstItem="mT8-iw-lBJ" firstAttribute="top" secondItem="1Ju-Bs-r04" secondAttribute="top" constant="24" id="Gzt-hx-h0E"/>
+                                        <constraint firstItem="yH6-FE-gmL" firstAttribute="top" secondItem="1Ju-Bs-r04" secondAttribute="topMargin" constant="-4" id="Fxn-u1-9b7"/>
+                                        <constraint firstItem="mT8-iw-lBJ" firstAttribute="top" secondItem="1Ju-Bs-r04" secondAttribute="top" constant="26" id="Gzt-hx-h0E"/>
+                                        <constraint firstItem="yH6-FE-gmL" firstAttribute="leading" secondItem="1Ju-Bs-r04" secondAttribute="leadingMargin" constant="12" id="RDL-sJ-ifu"/>
                                         <constraint firstItem="mT8-iw-lBJ" firstAttribute="leading" secondItem="1Ju-Bs-r04" secondAttribute="leading" constant="20" id="x7B-59-X6Y"/>
                                     </constraints>
                                 </tableViewCellContentView>

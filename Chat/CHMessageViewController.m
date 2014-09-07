@@ -442,6 +442,10 @@ NSString *const CHOwnMesssageCellIdentifier = @"CHOwnMessageTableViewCell";
 - (void)controllerDidChangeContent:(NSFetchedResultsController *)controller;
 {
     [self.messageTable endUpdates];
+    
+    // If you're on the bottom of the scroll...
+    // offset.y - size.height
+    
     CGPoint offset = self.messageTable.contentOffset;
     CGRect bounds = self.messageTable.bounds;
     CGSize size = self.messageTable.contentSize;
