@@ -25,8 +25,8 @@
 - (instancetype)initWithFrame:(CGRect)frame;
 {
     if ((self = [super initWithFrame:frame])) {
-        self.progress = 0.01; //default
         self.progressBar = [[UIView alloc] initWithFrame:CGRectMake(0, 0, self.frame.size.width * _progress, self.frame.size.height)];
+        self.progress = 0.01; //default
         [self addSubview:_progressBar];
     }
     return self;
@@ -34,7 +34,7 @@
 
 - (void)setProgress:(CGFloat)progress;
 {
-    _progress = MIN(MAX(progress, 0.01), 1.0);
+    _progress = MIN(MAX(progress, 0.0), 1.0);
     _progressBar.frame = CGRectMake(0, 0, self.frame.size.width * _progress, self.frame.size.height);
     [self layoutSubviews];
 }
@@ -49,16 +49,17 @@
 
 - (PMKPromise *)setProgress:(CGFloat)progress animated:(BOOL)animated;
 {
-    _progress = MIN(MAX(progress, 0.01), 1.0);
     return [UIView promiseWithDuration:0.7
                                  delay:0.0
-                               options:UIViewKeyframeAnimationOptionBeginFromCurrentState
+                               options:0
                     keyframeAnimations:^{
                         self.progressBar.frame = CGRectMake(self.progressBar.frame.origin.x,
                                                             self.progressBar.frame.origin.y,
-                                                            self.frame.size.width * _progress,
+                                                            self.frame.size.width * progress,
                                                             self.progressBar.frame.size.height);
-                    }];
+                    }].then(^{
+//                        _progress = MIN(MAX(progress, 0.01), 1.0);
+                    });
 }
 
 @end

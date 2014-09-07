@@ -369,11 +369,11 @@ NSString *const CHOwnMesssageCellIdentifier = @"CHOwnMessageTableViewCell";
         self.progressBar = [CHProgressView viewWithFrame:CGRectMake(0, -20, [[UIScreen mainScreen] bounds].size.width, 20)];
         self.progressBar.hidden = YES;
         self.progressBar.backgroundColor = [UIColor clearColor];
-        [self.progressBar setProgressColor:[UIColor colorWithRed:(236.0 / 255.0) green:(213.0 / 255.0) blue:1.0 alpha:1.0]];
+        [self.progressBar setProgressColor:kProgressBarColor];
         [self.navigationController.navigationBar addSubview:self.progressBar];
     }
     
-    self.progressBar.progress = .05;
+    self.progressBar.progress = 0;
     self.progressBar.hidden = NO;
     [self.progressBar setProgress:0.8 animated:YES];
 }
