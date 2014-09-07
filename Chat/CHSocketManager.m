@@ -90,7 +90,10 @@
         NSDictionary *data = [packet.dataAsJSON[@"args"] firstObject];
         CHMessage *message = [CHMessage objectFromJSON:data];
         message.group.lastMessage = message;
-        [message.group unreadIncrement];
+        if (![[CHUser currentUser] isEqual:message.author]) {
+            [message.group unreadIncrement];
+        }
+
         [[NSManagedObjectContext MR_defaultContext] MR_saveToPersistentStoreWithCompletion:^(BOOL success, NSError *error) {
             DLog(@"Socket IO Background Save Completed. Error? %@", error);
         }];

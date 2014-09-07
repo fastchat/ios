@@ -91,27 +91,17 @@
 - (void)contextDidChange:(NSNotification *)notification;
 {
     NSArray *updatedObjects = [[[notification userInfo] objectForKey:NSUpdatedObjectsKey] allObjects];
-    if (updatedObjects.count > 0) { //group updated
+    NSArray *insertedObjects = [[[notification userInfo] objectForKey:NSInsertedObjectsKey] allObjects];
+    NSArray *updatedOrInserted = [updatedObjects arrayByAddingObjectsFromArray:insertedObjects];
+    
+    if (updatedOrInserted.count > 0) {
         NSArray *groups = [updatedObjects filteredArrayUsingPredicate:[NSPredicate predicateWithBlock:^BOOL(id evaluatedObject, NSDictionary *bindings) {
             return [evaluatedObject isKindOfClass:[CHGroup class]];
         }]];
         
-        NSIndexSet *indexesOfObjects = [_currentUser.groups indexesOfObjectsPassingTest:^BOOL(id obj, NSUInteger idx, BOOL *stop) {
-            return [groups containsObject:obj];
-        }];
-        
-        NSMutableArray * paths = [NSMutableArray array];
-        [indexesOfObjects enumerateIndexesUsingBlock:^(NSUInteger index, BOOL *stop) {
-            [paths addObject:[NSIndexPath indexPathForRow:index inSection:0]];
-        }];
-        
-        DLog(@"Paths: %@", paths);
-        [self.tableView reloadRowsAtIndexPaths:paths withRowAnimation:UITableViewRowAnimationAutomatic];
-    }
-    
-    NSArray *insertedObjects = [[[notification userInfo] objectForKey:NSInsertedObjectsKey] allObjects];
-    if (insertedObjects.count > 0) { //new group sent
-        DLog(@"Inserted %@", insertedObjects);
+        if (groups.count > 0) {
+            [self.tableView reloadData];
+        }
     }
 }
 
