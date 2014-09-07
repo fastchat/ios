@@ -13,6 +13,7 @@ target "Chat" do
   pod 'ColorArt', '~> 0.1'
   pod 'MagicalRecord', '~> 2.2'
   pod 'PromiseKit', '~> 0.9'
+  pod 'GoogleAnalytics-iOS-SDK', '3.0.9'
 end
 
 target "ChatTests" do
