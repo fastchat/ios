@@ -28,7 +28,7 @@
     return [[CHNetworkManager sharedManager] mediaForMessage:self].then(^(UIImage *image){
         self.theMediaSent = image;
         [[NSManagedObjectContext MR_defaultContext] MR_saveOnlySelfWithCompletion:^(BOOL success, NSError *error) {
-            DLog(@"Background save of image downloaded. Success?: %@", success ? @"YES" : @"NO");
+            DLog(@"Background save of image downloaded. Success?: %@ %@", success ? @"YES" : @"NO", error);
         }];
         return image;
     });

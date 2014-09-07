@@ -19,6 +19,5 @@
 @property (nonatomic, strong) NSNumber *hasMedia;
 @property (nonatomic, strong) NSNumber *mediaHeight;
 @property (nonatomic, strong) NSNumber *mediaWidth;
-@property (nonatomic, strong) UIImage *theMediaSent;
 
 @end
