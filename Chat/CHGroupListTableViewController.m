@@ -81,11 +81,7 @@
 {
     [super viewWillAppear:animated];
     [self.tableView reloadData];
-
-    ///
-    /// If we got here, it means we logged in
-    ///
-    
+    DLog(@"View WIll Appear");
 }
 
 #pragma mark - Table view data source
@@ -100,6 +96,9 @@
     CHGroupTableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"CHGroupTableViewCell" forIndexPath:indexPath];
     
     CHGroup *group = _currentUser.groups[indexPath.row];
+    DLog(@"Name: %@", group.name);
+    DLog(@"What: %@", group.lastMessage);
+    
     cell.groupTextLabel.text = group.name;
     cell.groupDetailLabel.text = group.lastMessage.text;
     cell.groupRightDetailLabel.text = [self formatTime:group.lastMessage.sent];

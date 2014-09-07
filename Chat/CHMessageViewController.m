@@ -331,6 +331,7 @@ NSString *const CHOwnMesssageCellIdentifier = @"CHOwnMessageTableViewCell";
         newMessage.theMediaSent = media;
     }
     
+    [self.group addMessagesObject:newMessage];
     [self addNewMessage:newMessage];
     
     [user sendMessage:newMessage toGroup:self.group].then(^{
@@ -746,5 +747,9 @@ NSString *const CHOwnMesssageCellIdentifier = @"CHOwnMessageTableViewCell";
     return self.textView.text.length > 0 || self.textView.internalTextView.attachedImage != nil;
 }
 
+- (void)dismissCamera:(id)cameraViewController;
+{
+    [self dismissViewControllerAnimated:YES completion:nil];
+}
 
 @end
