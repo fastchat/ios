@@ -131,6 +131,11 @@ static NSString *const MESSAGES_KEY = @"messages";
     [tmpOrderedSet addObject:value_];
     [self setPrimitiveValue:tmpOrderedSet forKey:MESSAGES_KEY];
     [self didChange:NSKeyValueChangeInsertion valuesAtIndexes:indexes forKey:MESSAGES_KEY];
+    
+    ///
+    /// After adding a message, also set it to the "last message" sent.
+    ///
+    [self setLastMessage:value_];
 }
 
 - (void)addMessages:(NSOrderedSet*)value_;
