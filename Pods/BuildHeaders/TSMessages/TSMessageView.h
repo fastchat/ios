@@ -1,1 +1,1 @@
-../../TSMessages/TSMessages/Views/TSMessageView.h
+../../TSMessages/Pod/Classes/TSMessageView.h
