@@ -18,6 +18,8 @@
     #import "CoreData+MagicalRecord.h"
     #import "Promise.h"
     #import "UIViewController+PromiseKit.h"
+    #import "GAI.h"
+    #import "GAIFields.h"
 
 
     #ifdef DEBUG

@@ -31,6 +31,7 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
+    [[[GAI sharedInstance] defaultTracker] set:kGAIScreenName value:@"Groups"];
     self.view.backgroundColor = kLightBackgroundColor;
     self.tableView.contentInset = UIEdgeInsetsMake(5, 0, 0, 0);
     

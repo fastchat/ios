@@ -23,6 +23,7 @@ PODS:
   - ColorArt (0.1.1)
   - DBCamera (2.3.3):
     - GPUImage (~> 0.1)
+  - GoogleAnalytics-iOS-SDK (3.0.9)
   - GPUImage (0.1.5)
   - HexColors (2.2.1)
   - MagicalRecord (2.2):
@@ -82,6 +83,7 @@ DEPENDENCIES:
   - AFNetworking (= 2.4.1)
   - ColorArt (~> 0.1)
   - DBCamera (~> 2.3)
+  - GoogleAnalytics-iOS-SDK (= 3.0.9)
   - MagicalRecord (~> 2.2)
   - Mantle (= 1.5)
   - MBProgressHUD (= 0.9)
@@ -94,6 +96,7 @@ SPEC CHECKSUMS:
   AFNetworking: 0aabc6fae66d6e5d039eeb21c315843c7aae51ab
   ColorArt: f734aa2f988b2be4e9a064c1818d8f8320488110
   DBCamera: d1bf4699c496e982004223a4da33941c7389f4e2
+  GoogleAnalytics-iOS-SDK: d9e198b1f955259a72886769be7377cdfcdb2250
   GPUImage: 5114a47f5fc33eb312f3731550a3cea379416d04
   HexColors: 01384d2bbe8dc4ffa43c3b4135db6e976952d153
   MagicalRecord: 2b471584fc9e3137f3d0a56967917baa4979e224

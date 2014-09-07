@@ -26,6 +26,8 @@
     
     self.title = @"Login";
     self.errorLabel.text = @"";
+    
+    [[[GAI sharedInstance] defaultTracker] set:kGAIScreenName value:@"Login"];
 }
 
 - (void)viewDidLayoutSubviews;

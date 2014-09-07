@@ -23,6 +23,7 @@
 {
     [super viewDidLoad];
     self.title = @"Register";
+    [[[GAI sharedInstance] defaultTracker] set:kGAIScreenName value:@"Register"];
 }
 
 - (void)viewDidLayoutSubviews;

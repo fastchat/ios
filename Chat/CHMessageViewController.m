@@ -51,8 +51,8 @@ NSString *const CHOwnMesssageCellIdentifier = @"CHOwnMessageTableViewCell";
 
 - (void)viewDidLoad;
 {
-    DLog(@"Start");
     [super viewDidLoad];
+    [[[GAI sharedInstance] defaultTracker] set:kGAIScreenName value:@"Messages"];
     self.view.backgroundColor = kLightBackgroundColor;
     self.messageTable.backgroundColor = kLightBackgroundColor;
     

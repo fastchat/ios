@@ -15,6 +15,12 @@
 
 @implementation CHAddGroupViewController
 
+- (void)viewDidLoad;
+{
+    [super viewDidLoad];
+    [[[GAI sharedInstance] defaultTracker] set:kGAIScreenName value:@"New Group"];
+}
+
 
 - (IBAction)saveGroup:(id)sender;
 {
