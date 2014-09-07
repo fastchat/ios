@@ -38,6 +38,7 @@ NSString *const CHOwnMesssageCellIdentifier = @"CHOwnMessageTableViewCell";
 @property (nonatomic, assign) CGFloat heightOfKeyboard;
 @property (nonatomic, strong) UIRefreshControl *refresh;
 
+@property (nonatomic, assign) BOOL shouldScroll;
 @property (nonatomic, assign) BOOL shouldSlide;
 @property (nonatomic, assign) BOOL keyboardIsVisible;
 @property (nonatomic, assign) BOOL mediaWasAdded;
@@ -63,7 +64,6 @@ NSString *const CHOwnMesssageCellIdentifier = @"CHOwnMessageTableViewCell";
     self.currPage = 0;
     
     self.refresh = [[UIRefreshControl alloc] init];
-    self.refresh.attributedTitle = [[NSAttributedString alloc] initWithString:@"Pull to load old messages"];
     [self.refresh addTarget:self
                      action:@selector(loadMoreMessages)
            forControlEvents:UIControlEventValueChanged];
@@ -417,29 +417,27 @@ NSString *const CHOwnMesssageCellIdentifier = @"CHOwnMessageTableViewCell";
      forChangeType:(NSFetchedResultsChangeType)type
       newIndexPath:(NSIndexPath *)newIndexPath {
     
+    DLog(@"Index Path: %@ %@", indexPath, newIndexPath);
+    
+    self.shouldScroll = NO;
     UITableView *tableView = self.messageTable;
     
     switch(type) {
             
         case NSFetchedResultsChangeInsert:
+        {
             [tableView insertRowsAtIndexPaths:[NSArray arrayWithObject:newIndexPath]
                              withRowAnimation:UITableViewRowAnimationFade];
+            self.shouldScroll = YES;
             break;
-            
+        }
         case NSFetchedResultsChangeDelete:
+        {
             [tableView deleteRowsAtIndexPaths:[NSArray arrayWithObject:indexPath]
                              withRowAnimation:UITableViewRowAnimationFade];
             break;
-            
-        case NSFetchedResultsChangeUpdate:
-            //probably don't need.
-            break;
-            
-        case NSFetchedResultsChangeMove:
-            [tableView deleteRowsAtIndexPaths:[NSArray arrayWithObject:indexPath]
-                             withRowAnimation:UITableViewRowAnimationFade];
-            [tableView insertRowsAtIndexPaths:[NSArray arrayWithObject:newIndexPath]
-                             withRowAnimation:UITableViewRowAnimationFade];
+        }
+        default:
             break;
     }
 }
@@ -448,7 +446,7 @@ NSString *const CHOwnMesssageCellIdentifier = @"CHOwnMessageTableViewCell";
 - (void)controllerDidChangeContent:(NSFetchedResultsController *)controller;
 {
     [self.messageTable endUpdates];
-    [self reload:NO withScroll:YES animated:YES];
+    [self reload:NO withScroll:_shouldScroll animated:YES];
 }
 
 
