@@ -1,12 +1,11 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="6206.9" systemVersion="13E28" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" initialViewController="Hru-pZ-kQp">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="5056" systemVersion="13E28" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" initialViewController="Hru-pZ-kQp">
     <dependencies>
         <deployment defaultVersion="1792" identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="7026.1"/>
-        <capability name="Constraints with attributes relative to the layout margin" minToolsVersion="6.0"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="3733"/>
     </dependencies>
     <scenes>
-        <!--Login-->
+        <!--Login View Controller - Login-->
         <scene sceneID="ufC-wZ-h7g">
             <objects>
                 <viewController storyboardIdentifier="CHLoginViewController" title="Login" id="vXZ-lx-hvc" customClass="CHLoginViewController" sceneMemberID="viewController">
@@ -81,7 +80,7 @@
             </objects>
             <point key="canvasLocation" x="-775" y="-39"/>
         </scene>
-        <!--Groups-->
+        <!--Group List Table View Controller - Groups-->
         <scene sceneID="pPb-Ll-dyZ">
             <objects>
                 <tableViewController storyboardIdentifier="CHGroupListTableViewController" id="XBv-ZM-NJH" customClass="CHGroupListTableViewController" sceneMemberID="viewController">
@@ -98,11 +97,11 @@
                                     <autoresizingMask key="autoresizingMask"/>
                                     <subviews>
                                         <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label group" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="yH6-FE-gmL">
-                                            <rect key="frame" x="20" y="4" width="190" height="24"/>
+                                            <rect key="frame" x="20" y="4" width="190" height="23"/>
                                             <color key="backgroundColor" red="0.94901960784313721" green="0.94117647058823528" blue="0.94117647058823528" alpha="1" colorSpace="calibratedRGB"/>
                                             <constraints>
-                                                <constraint firstAttribute="height" constant="24" id="pCC-fC-9iP"/>
-                                                <constraint firstAttribute="width" constant="190" id="sGu-5r-JBi"/>
+                                                <constraint firstAttribute="width" constant="190" id="Mwb-Hx-uzq"/>
+                                                <constraint firstAttribute="height" constant="23" id="xuQ-LD-NNm"/>
                                             </constraints>
                                             <fontDescription key="fontDescription" type="boldSystem" pointSize="18"/>
                                             <nil key="highlightedColor"/>
@@ -127,9 +126,9 @@
                                         </label>
                                     </subviews>
                                     <constraints>
-                                        <constraint firstItem="yH6-FE-gmL" firstAttribute="top" secondItem="1Ju-Bs-r04" secondAttribute="topMargin" constant="-4" id="Fxn-u1-9b7"/>
+                                        <constraint firstItem="yH6-FE-gmL" firstAttribute="leading" secondItem="1Ju-Bs-r04" secondAttribute="leading" constant="20" id="9OL-z2-pyF"/>
                                         <constraint firstItem="mT8-iw-lBJ" firstAttribute="top" secondItem="1Ju-Bs-r04" secondAttribute="top" constant="26" id="Gzt-hx-h0E"/>
-                                        <constraint firstItem="yH6-FE-gmL" firstAttribute="leading" secondItem="1Ju-Bs-r04" secondAttribute="leadingMargin" constant="12" id="RDL-sJ-ifu"/>
+                                        <constraint firstItem="yH6-FE-gmL" firstAttribute="top" secondItem="1Ju-Bs-r04" secondAttribute="top" constant="4" id="Y9D-9y-FLs"/>
                                         <constraint firstItem="mT8-iw-lBJ" firstAttribute="leading" secondItem="1Ju-Bs-r04" secondAttribute="leading" constant="20" id="x7B-59-X6Y"/>
                                     </constraints>
                                 </tableViewCellContentView>
@@ -335,7 +334,7 @@
             </objects>
             <point key="canvasLocation" x="1049" y="467"/>
         </scene>
-        <!--Create Group-->
+        <!--Add Group View Controller - Create Group-->
         <scene sceneID="Yyw-gc-GC0">
             <objects>
                 <viewController storyboardIdentifier="CHAddGroupViewController" id="Nfa-iP-SEa" customClass="CHAddGroupViewController" sceneMemberID="viewController">
@@ -455,7 +454,7 @@
             </objects>
             <point key="canvasLocation" x="1969" y="1140"/>
         </scene>
-        <!--Register-->
+        <!--Register View Controller - Register-->
         <scene sceneID="nPp-gB-YOs">
             <objects>
                 <viewController storyboardIdentifier="CHRegisterViewController" title="Register" id="7xF-es-miE" customClass="CHRegisterViewController" sceneMemberID="viewController">
@@ -519,7 +518,7 @@
             </objects>
             <point key="canvasLocation" x="-344" y="-39"/>
         </scene>
-        <!--Profile-->
+        <!--Profile View Controller - Profile-->
         <scene sceneID="AND-c9-1Mq">
             <objects>
                 <viewController storyboardIdentifier="CHProfileViewController" id="smW-kQ-2zj" customClass="CHProfileViewController" sceneMemberID="viewController">
@@ -564,7 +563,7 @@
             </objects>
             <point key="canvasLocation" x="600" y="1022"/>
         </scene>
-        <!--Chat-->
+        <!--Navigation Controller - Chat-->
         <scene sceneID="OfC-YW-V0P">
             <objects>
                 <navigationController automaticallyAdjustsScrollViewInsets="NO" id="IsZ-yr-CFu" sceneMemberID="viewController">
@@ -640,7 +639,7 @@
             </objects>
             <point key="canvasLocation" x="1482" y="1140"/>
         </scene>
-        <!--Profile-->
+        <!--Navigation Controller - Profile-->
         <scene sceneID="Kml-LN-k5g">
             <objects>
                 <navigationController automaticallyAdjustsScrollViewInsets="NO" id="Lee-DD-KDU" sceneMemberID="viewController">
@@ -688,9 +687,6 @@
     <simulatedMetricsContainer key="defaultSimulatedMetrics">
         <simulatedStatusBarMetrics key="statusBar"/>
         <simulatedOrientationMetrics key="orientation"/>
-        <simulatedScreenMetrics key="destination" type="retina4">
-            <size key="portraitSize" width="320" height="568"/>
-            <size key="landscapeSize" width="568" height="320"/>
-        </simulatedScreenMetrics>
+        <simulatedScreenMetrics key="destination" type="retina4"/>
     </simulatedMetricsContainer>
 </document>
