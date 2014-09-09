@@ -16,6 +16,7 @@
 #import "CHAppDelegate.h"
 #import "CHGroup.h"
 #import "CHUser.h"
+#import "CHConstants.h"
 #import <AudioToolbox/AudioToolbox.h>
 
 
@@ -55,7 +56,7 @@
     }
     
     if ([CHUser currentUser].sessionToken) {
-        [_socket connectToHost:@"powerful-cliffs-9562.herokuapp.com" onPort:80 withParams:@{@"token": [CHUser currentUser].sessionToken}];
+        [_socket connectToHost:BASE_URL onPort:BASE_PORT withParams:@{@"token": [CHUser currentUser].sessionToken}];
     }
     DLog(@"Open Socket End");
 }

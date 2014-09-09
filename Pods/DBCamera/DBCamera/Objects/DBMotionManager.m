@@ -101,7 +101,7 @@
 - (void) deviceOrientationDidChangeTo:(UIDeviceOrientation)orientation
 {
     [self setLastOrientation:orientation];
-    self.motionRotationHandler(self.lastOrientation);
+//    self.motionRotationHandler(self.lastOrientation);
 }
 
 @end

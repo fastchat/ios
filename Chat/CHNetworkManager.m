@@ -14,12 +14,11 @@
 #import "CHModel.h"
 #import "AFNetworkActivityIndicatorManager.h"
 #import "CHBackgroundContext.h"
+#import "CHConstants.h"
 
 NSString *const kAvatarKey = @"com.fastchat.avatarkey";
 NSString *const kMediaKey = @"com.fastchat.mediakey";
 NSString *const SESSION_TOKEN = @"session-token";
-//#define BASE_URL @"http://10.0.0.10:3000"
-#define BASE_URL @"http://powerful-cliffs-9562.herokuapp.com:80"
 
 @interface CHNetworkManager()
 
@@ -42,7 +41,7 @@ NSString *const SESSION_TOKEN = @"session-token";
 }
 
 - (instancetype)initWithBaseURL:(NSURL *)url {
-    if( (self = [super initWithBaseURL:[NSURL URLWithString:BASE_URL]]) ) {
+    if( (self = [super initWithBaseURL:[NSURL URLWithString:BASE_PATH]]) ) {
         [AFNetworkActivityIndicatorManager sharedManager].enabled = YES;
     }
     return self;
@@ -149,7 +148,7 @@ NSString *const SESSION_TOKEN = @"session-token";
 
 - (PMKPromise *)leaveGroup:(NSString *)groupId;
 {
-    NSString *url = [NSString stringWithFormat:@"%@/group/%@/leave", BASE_URL, groupId];
+    NSString *url = [NSString stringWithFormat:@"/group/%@/leave", groupId];
     return [PMKPromise new:^(PMKPromiseFulfiller fulfiller, PMKPromiseRejecter rejecter) {
         [self PUT:url parameters:nil success:^(NSURLSessionDataTask *task, id responseObject) {
             fulfiller(nil);
@@ -165,7 +164,7 @@ NSString *const SESSION_TOKEN = @"session-token";
     return [PMKPromise new:^(PMKPromiseFulfiller fulfiller, PMKPromiseRejecter rejecter) {
         
         NSMutableURLRequest *request = [[NSMutableURLRequest alloc] initWithURL:
-                                        [NSURL URLWithString:[NSString stringWithFormat:@"%@/user/%@/avatar", BASE_URL, user.chID]]];
+                                        [NSURL URLWithString:[NSString stringWithFormat:@"%@/user/%@/avatar", BASE_PATH, user.chID]]];
         [request setValue:[CHUser currentUser].sessionToken forHTTPHeaderField:@"session-token"];
         
         
@@ -236,7 +235,7 @@ NSString *const SESSION_TOKEN = @"session-token";
 {
     return [PMKPromise new:^(PMKPromiseFulfiller fulfiller, PMKPromiseRejecter rejecter) {
         NSData *imageData = UIImagePNGRepresentation(image);
-        NSString *url = [NSString stringWithFormat:@"%@/group/%@/message", BASE_URL, groupId];
+        NSString *url = [NSString stringWithFormat:@"%@/group/%@/message", BASE_PATH, groupId];
         NSError *error = nil;
         
         NSMutableURLRequest *request = [self.requestSerializer multipartFormRequestWithMethod:@"POST"
@@ -271,7 +270,7 @@ NSString *const SESSION_TOKEN = @"session-token";
 {
     return [PMKPromise new:^(PMKPromiseFulfiller fulfiller, PMKPromiseRejecter rejecter) {
         
-        NSString *urlString = [NSString stringWithFormat:@"%@/group/%@/message/%@/media", BASE_URL, message.group.chID, message.chID];
+        NSString *urlString = [NSString stringWithFormat:@"%@/group/%@/message/%@/media", BASE_PATH, message.group.chID, message.chID];
         
         NSMutableURLRequest *request = [[NSMutableURLRequest alloc] initWithURL:[NSURL URLWithString:urlString]];
         [request setValue:[CHUser currentUser].sessionToken forHTTPHeaderField:@"session-token"];
@@ -339,7 +338,7 @@ NSString *const SESSION_TOKEN = @"session-token";
     NSData *imageData = UIImagePNGRepresentation(image);
     NSDictionary *parameters = nil;
     
-    NSString *url = [NSString stringWithFormat:@"%@/user/%@/avatar", BASE_URL, user.chID];
+    NSString *url = [NSString stringWithFormat:@"%@/user/%@/avatar", BASE_PATH, user.chID];
     NSError *error = nil;
     
     NSMutableURLRequest *request = [self.requestSerializer multipartFormRequestWithMethod:@"POST"
