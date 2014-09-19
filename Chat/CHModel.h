@@ -28,4 +28,8 @@
  */
 + (PMKPromise *)objectsFromJSON:(NSArray *)array;
 
+- (void)createdFromMantle;
+
+- (NSManagedObjectID *)actualObjectId;
+
 @end

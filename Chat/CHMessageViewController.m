@@ -465,8 +465,8 @@ NSString *const CHOwnMesssageCellIdentifier = @"CHOwnMessageTableViewCell";
     CHMessageTableViewCell *cell;
     
     UIColor *color = [UIColor whiteColor];
+    CHUser *author = message.getAuthorNonRecursive;
     
-    CHUser *author = message.author;
     if ( [message.author isEqual:[CHUser currentUser]] ) {
         cell = [tableView dequeueReusableCellWithIdentifier:CHOwnMesssageCellIdentifier forIndexPath:indexPath];
     } else {

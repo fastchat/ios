@@ -91,7 +91,7 @@
         NSDictionary *data = [packet.dataAsJSON[@"args"] firstObject];
         CHMessage *message = [CHMessage objectFromJSON:data];
         message.group.lastMessage = message;
-        if (![[CHUser currentUser] isEqual:message.author]) {
+        if (![[CHUser currentUser] isEqual:message.getAuthorNonRecursive]) {
             [message.group unreadIncrement];
         }
 

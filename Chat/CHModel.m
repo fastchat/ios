@@ -32,16 +32,19 @@
     
     error = nil;
     if (object) {
-        NSManagedObject *finalObject = [MTLManagedObjectAdapter managedObjectFromModel:object
+        CHModel *finalObject = [MTLManagedObjectAdapter managedObjectFromModel:object
                                                                   insertingIntoContext:context
                                                                                  error:&error];
-
+        
+        
+        [finalObject createdFromMantle];
+        
         if (error) {
             DLog(@"Error Creating Managed Object: %@", error);
         }
         
         if (justID) {
-            return finalObject.objectID;
+            return [finalObject actualObjectId];
         } else {
             return finalObject;
         }
@@ -77,6 +80,16 @@
         }
         return created;
     });
+}
+
+- (void)createdFromMantle;
+{
+    
+}
+
+- (NSManagedObjectID *)actualObjectId;
+{
+    return [super objectID];
 }
 
 @end
