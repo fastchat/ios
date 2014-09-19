@@ -71,6 +71,7 @@
 		AABD8A08199EAA6B002962A4 /* CHUser.m in Sources */ = {isa = PBXBuildFile; fileRef = AABD8A00199EAA6B002962A4 /* CHUser.m */; };
 		AAC681A319B7E1EB00878CF9 /* CHBackgroundContext.m in Sources */ = {isa = PBXBuildFile; fileRef = AAC681A219B7E1EB00878CF9 /* CHBackgroundContext.m */; };
 		AACE34D119BCC11500136440 /* CHProgressView.m in Sources */ = {isa = PBXBuildFile; fileRef = AACE34D019BCC11500136440 /* CHProgressView.m */; };
+		AAD5E56119CBC5450019EF5E /* CHMessageTableDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = AAD5E56019CBC5450019EF5E /* CHMessageTableDelegate.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -172,6 +173,8 @@
 		AAC681A219B7E1EB00878CF9 /* CHBackgroundContext.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CHBackgroundContext.m; sourceTree = "<group>"; };
 		AACE34CF19BCC11500136440 /* CHProgressView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CHProgressView.h; sourceTree = "<group>"; };
 		AACE34D019BCC11500136440 /* CHProgressView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CHProgressView.m; sourceTree = "<group>"; };
+		AAD5E55F19CBC5450019EF5E /* CHMessageTableDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CHMessageTableDelegate.h; sourceTree = "<group>"; };
+		AAD5E56019CBC5450019EF5E /* CHMessageTableDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CHMessageTableDelegate.m; sourceTree = "<group>"; };
 		ED86F54EC1C64B14950512A1 /* libPods-Chat.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-Chat.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
@@ -264,6 +267,8 @@
 			children = (
 				2768EAAC18D9138D006D14BB /* CHMessageViewController.h */,
 				2768EAAD18D9138D006D14BB /* CHMessageViewController.m */,
+				AAD5E55F19CBC5450019EF5E /* CHMessageTableDelegate.h */,
+				AAD5E56019CBC5450019EF5E /* CHMessageTableDelegate.m */,
 				AA4633291936933000513578 /* Message Views */,
 				AA4633281936902600513578 /* Message Cells */,
 				AA86ED8C19A1A8AD00ABFA53 /* Invite User */,
@@ -658,6 +663,7 @@
 				AACE34D119BCC11500136440 /* CHProgressView.m in Sources */,
 				2768EAAE18D9138D006D14BB /* CHMessageViewController.m in Sources */,
 				2768EAA218D888B6006D14BB /* CHGroupListTableViewController.m in Sources */,
+				AAD5E56119CBC5450019EF5E /* CHMessageTableDelegate.m in Sources */,
 				2769B04618E7820A00CCE470 /* CHMessageTableViewCell.m in Sources */,
 				AAAF1D02193A528C00B095E1 /* CHConstants.m in Sources */,
 				AABD8A04199EAA6B002962A4 /* _CHUser.m in Sources */,
@@ -825,7 +831,7 @@
 				INFOPLIST_FILE = "Chat/Chat-Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE = "a47ec0e7-191e-4678-9273-69a81fa48788";
+				PROVISIONING_PROFILE = "BC656D80-1256-40C4-8A11-8166FBD4209F";
 				TARGETED_DEVICE_FAMILY = 1;
 				WRAPPER_EXTENSION = app;
 			};

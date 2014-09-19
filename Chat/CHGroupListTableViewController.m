@@ -45,8 +45,12 @@
     __block dispatch_queue_t q = [CHBackgroundContext backgroundContext].queue;
     
     [self user].thenOn(q, ^(CHUser *user) {
-        [[UIApplication sharedApplication] registerForRemoteNotificationTypes:
-         (UIRemoteNotificationTypeBadge | UIRemoteNotificationTypeSound | UIRemoteNotificationTypeAlert)];
+        UIUserNotificationSettings *userSettings = [UIUserNotificationSettings settingsForTypes:
+                                                    UIUserNotificationTypeBadge | UIUserNotificationTypeAlert | UIUserNotificationTypeSound
+                                                                                     categories:nil];
+        
+        [[UIApplication sharedApplication] registerUserNotificationSettings:userSettings];
+        [[UIApplication sharedApplication] registerForRemoteNotifications];
         self.currentUser = user;
         [self reloadTableView];
         return user.remoteGroups;
@@ -183,10 +187,10 @@
     }
     
     NSCalendar *cal = [NSCalendar currentCalendar];
-    NSDateComponents *components = [cal components:(NSEraCalendarUnit|NSYearCalendarUnit|NSMonthCalendarUnit|NSDayCalendarUnit)
+    NSDateComponents *components = [cal components:(NSCalendarUnitEra|NSCalendarUnitYear|NSCalendarUnitMonth|NSCalendarUnitDay)
                                           fromDate:[NSDate date]];
     NSDate *today = [cal dateFromComponents:components];
-    components = [cal components:(NSEraCalendarUnit|NSYearCalendarUnit|NSMonthCalendarUnit|NSDayCalendarUnit)
+    components = [cal components:(NSCalendarUnitEra|NSCalendarUnitYear|NSCalendarUnitMonth|NSCalendarUnitDay)
                         fromDate:date];
     NSDate *otherDate = [cal dateFromComponents:components];
     
@@ -200,7 +204,7 @@
         return [formatter stringFromDate:date];
     }
     
-    NSDateComponents *componentsYesterday = [cal components:(NSEraCalendarUnit|NSYearCalendarUnit|NSMonthCalendarUnit|NSDayCalendarUnit)
+    NSDateComponents *componentsYesterday = [cal components:(NSCalendarUnitEra|NSCalendarUnitYear|NSCalendarUnitMonth|NSCalendarUnitDay)
                                                    fromDate:[NSDate dateWithTimeIntervalSinceNow:-kSecondsInDay]];
     NSDate *yesterday = [cal dateFromComponents:componentsYesterday];
     // if yesterday

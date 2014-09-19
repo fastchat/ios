@@ -20,11 +20,12 @@
 #import "HPTextViewInternal.h"
 #import "CHBackgroundContext.h"
 #import "CHProgressView.h"
+#import "CHMessageTableDelegate.h"
 
 #define kDefaultContentOffset self.navigationController.navigationBar.frame.size.height + 20
 
-NSString *const CHMesssageCellIdentifier = @"CHMessageTableViewCell";
-NSString *const CHOwnMesssageCellIdentifier = @"CHOwnMessageTableViewCell";
+//NSString *const CHMesssageCellIdentifier = @"CHMessageTableViewCell";
+//NSString *const CHOwnMesssageCellIdentifier = @"CHOwnMessageTableViewCell";
 
 @interface CHMessageViewController ()
 
@@ -32,17 +33,17 @@ NSString *const CHOwnMesssageCellIdentifier = @"CHOwnMessageTableViewCell";
 
 @property (nonatomic, strong) URBMediaFocusViewController *mediaFocus;
 @property (nonatomic, strong) UIButton *sendButton;
-@property (nonatomic, assign) NSInteger currPage;
 @property (nonatomic, strong) UIResponder *previousResponder;
 @property (nonatomic, assign) BOOL beingDismissed;
 @property (nonatomic, assign) CGFloat heightOfKeyboard;
-@property (nonatomic, strong) UIRefreshControl *refresh;
 
 @property (nonatomic, assign) BOOL shouldScroll;
 @property (nonatomic, assign) BOOL shouldSlide;
 @property (nonatomic, assign) BOOL keyboardIsVisible;
 @property (nonatomic, assign) BOOL mediaWasAdded;
 @property (nonatomic, strong) UIImage *media;
+
+@property (nonatomic, strong) CHMessageTableDelegate *delegate;
 
 @end
 
@@ -54,21 +55,13 @@ NSString *const CHOwnMesssageCellIdentifier = @"CHOwnMessageTableViewCell";
 {
     [super viewDidLoad];
     [[[GAI sharedInstance] defaultTracker] set:kGAIScreenName value:@"Messages"];
+    
     self.view.backgroundColor = kLightBackgroundColor;
     self.messageTable.backgroundColor = kLightBackgroundColor;
     
     self.shouldSlide = YES;
     self.title = _group.name;
     _beingDismissed = NO;
-    
-    self.currPage = 0;
-    
-    self.refresh = [[UIRefreshControl alloc] init];
-    [self.refresh addTarget:self
-                     action:@selector(loadMoreMessages)
-           forControlEvents:UIControlEventValueChanged];
-
-    [self.messageTable addSubview:self.refresh];
     
     self.containerView = [[UIView alloc] initWithFrame:CGRectMake(0, self.view.frame.size.height - 40, 320, 40)];
     self.containerView.backgroundColor = [UIColor whiteColor];
@@ -120,48 +113,10 @@ NSString *const CHOwnMesssageCellIdentifier = @"CHOwnMessageTableViewCell";
     self.messageTable.scrollIndicatorInsets = insets;
     
     self.mediaWasAdded = NO;
-    
-    ///
-    /// Load up old messages
-    ///
-//TODO: background thread?
-    DLog(@"Middle");
-    NSPredicate *theseMessages = [NSPredicate predicateWithFormat:@"SELF.group == %@ AND SELF.chID != nil", self.group];
-//    NSInteger count = [CHMessage MR_countOfEntitiesWithPredicate:theseMessages];
+    self.delegate = [[CHMessageTableDelegate alloc] initWithTable:self.messageTable];
     
     
-    NSManagedObjectContext *context = [NSManagedObjectContext MR_defaultContext];
-    NSFetchRequest *fetchRequest = [NSFetchRequest fetchRequestWithEntityName:@"CHMessage"];
-//    [fetchRequest setFetchLimit:10];
-//    [fetchRequest setFetchBatchSize:10];
-//    [fetchRequest setFetchOffset:count - 10];
-    NSSortDescriptor *sortDescriptor = [[NSSortDescriptor alloc] initWithKey:@"sent" ascending:YES];
-    [fetchRequest setSortDescriptors: @[sortDescriptor]];
-    [fetchRequest setPredicate:theseMessages];
-    
-    NSFetchedResultsController *controller = [[NSFetchedResultsController alloc] initWithFetchRequest:fetchRequest
-                                                                                 managedObjectContext:context
-                                                                                   sectionNameKeyPath:nil
-                                                                                            cacheName:@"messageCache"];
-    
-    controller.delegate = self;
-    self.fetchedResultsController = controller;
-    
-    NSError *error;
-    BOOL success = [controller performFetch:&error];
-    if (!success || error) {
-        DLog(@"What: %@", error);
-    }
     DLog(@"End Middle");
-    
-    ///
-    /// Load new messages, async
-    ///
-    dispatch_promise_on([CHBackgroundContext backgroundContext].queue, ^{
-        return [self.group remoteMessagesAtPage:_currPage];
-    }).then(^{
-        [self reload:YES withScroll:YES animated:YES];
-    });
     
     self.keyboardIsVisible = NO;
     [self setSendButtonEnabled:[self canSendMessage]];
@@ -294,14 +249,14 @@ NSString *const CHOwnMesssageCellIdentifier = @"CHOwnMessageTableViewCell";
 
 #pragma mark - Message Methods
 
-- (void)loadMoreMessages;
-{
-    _currPage++;
-    
-    [_group remoteMessagesAtPage:_currPage].then(^{
-        [self.refresh endRefreshing];
-    });
-}
+//- (void)loadMoreMessages;
+//{
+//    _currPage++;
+//    
+//    [_group remoteMessagesAtPage:_currPage].then(^{
+//        [self.refresh endRefreshing];
+//    });
+//}
 
 - (void)resignTextView;
 {
@@ -468,9 +423,9 @@ NSString *const CHOwnMesssageCellIdentifier = @"CHOwnMessageTableViewCell";
     CHUser *author = message.getAuthorNonRecursive;
     
     if ( [message.author isEqual:[CHUser currentUser]] ) {
-        cell = [tableView dequeueReusableCellWithIdentifier:CHOwnMesssageCellIdentifier forIndexPath:indexPath];
+        cell = [tableView dequeueReusableCellWithIdentifier:@"" forIndexPath:indexPath];
     } else {
-        cell = [tableView dequeueReusableCellWithIdentifier:CHMesssageCellIdentifier forIndexPath:indexPath];
+        cell = [tableView dequeueReusableCellWithIdentifier:@"" forIndexPath:indexPath];
         color = [UIColor blackColor];
     }
     
@@ -621,9 +576,9 @@ NSString *const CHOwnMesssageCellIdentifier = @"CHOwnMessageTableViewCell";
     ///
     /// Load up old messages
     ///
-    [_group remoteMessagesAtPage:_currPage].then(^{
-        [self.messageTable reloadData];
-    });
+//    [_group remoteMessagesAtPage:_currPage].then(^{
+//        [self.messageTable reloadData];
+//    });
 }
 
 - (void)growingTextView:(HPGrowingTextView *)growingTextView willChangeHeight:(float)height
