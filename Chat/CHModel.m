@@ -92,7 +92,7 @@
     return [super objectID];
 }
 
-- (instancetype)objectFromObjectID:(NSManagedObjectID *)anID;
++ (instancetype)objectFromObjectID:(NSManagedObjectID *)anID;
 {
     NSError *error = nil;
     CHModel *model = (CHModel *)[[NSManagedObjectContext MR_defaultContext] existingObjectWithID:anID error:&error];

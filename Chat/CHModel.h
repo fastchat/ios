@@ -32,6 +32,6 @@
 
 - (NSManagedObjectID *)actualObjectId;
 
-- (instancetype)objectFromObjectID:(NSManagedObjectID *)anID;
++ (instancetype)objectFromObjectID:(NSManagedObjectID *)anID;
 
 @end
