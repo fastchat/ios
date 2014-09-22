@@ -23,8 +23,6 @@
  * this, we want it to work on a background thread.
  * It saves the objects on the background context as well.
  *
- * However, to be nice, it <strong>thens</strong> the promise and fetches the created objects
- * on the defaultContext and returns those objects.
  */
 + (PMKPromise *)objectsFromJSON:(NSArray *)array;
 
@@ -32,6 +30,7 @@
 
 - (NSManagedObjectID *)actualObjectId;
 
-+ (instancetype)objectFromObjectID:(NSManagedObjectID *)anID;
++ (instancetype)object:(NSManagedObject *)object toContext:(NSManagedObjectContext *)context;
++ (instancetype)objectID:(NSManagedObjectID *)anID toContext:(NSManagedObjectContext *)context;
 
 @end

@@ -65,19 +65,13 @@
         NSManagedObjectContext *context = CHBackgroundContext.backgroundContext.context;
         
         for (NSDictionary *dict in array) {
-            NSManagedObjectID *objectID = [self objectIDFromJSON:dict justID:YES context:context];
-            if (objectID) {
-                [created addObject:objectID];
+            CHModel *made = [self objectIDFromJSON:dict justID:NO context:context];
+            if (made) {
+                [created addObject:made];
             }
         }
 
-        [context MR_saveOnlySelfAndWait];
-        return created;
-    }).then(^(NSArray *ids){ //Main Thread!
-        NSMutableArray *created = [NSMutableArray array];
-        for (NSManagedObjectID *anID in ids) {
-            [created addObject:[[NSManagedObjectContext MR_defaultContext] objectWithID:anID]];
-        }
+        [context MR_saveToPersistentStoreAndWait];
         return created;
     });
 }
@@ -92,10 +86,15 @@
     return [super objectID];
 }
 
-+ (instancetype)objectFromObjectID:(NSManagedObjectID *)anID;
++ (instancetype)object:(NSManagedObject *)object toContext:(NSManagedObjectContext *)context;
+{
+    return [self objectID:object.objectID toContext:context];
+}
+
++ (instancetype)objectID:(NSManagedObjectID *)anID toContext:(NSManagedObjectContext *)context;
 {
     NSError *error = nil;
-    CHModel *model = (CHModel *)[[NSManagedObjectContext MR_defaultContext] existingObjectWithID:anID error:&error];
+    CHModel *model = (CHModel *)[context existingObjectWithID:anID error:&error];
     if (error) {
         DLog(@"Error Fetching Object: %@", error);
     }
