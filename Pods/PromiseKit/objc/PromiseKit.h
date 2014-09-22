@@ -22,20 +22,32 @@
 #ifdef PMK_CLLOCATIONMANAGER
 #import <CLLocationManager+PromiseKit.h>
 #endif
+#ifdef PMK_CKCONTAINER
+#import <CKContainer+PromiseKit.h>
+#endif
+#ifdef PMK_CKDATABASE
+#import <CKDatabase+PromiseKit.h>
+#endif
 #ifdef PMK_MKDIRECTIONS
 #import <MKDirections+PromiseKit.h>
 #endif
 #ifdef PMK_MKMAPSNAPSHOTTER
 #import <MKMapSnapshotter+PromiseKit.h>
 #endif
+#ifdef PMK_NSFILEMANAGER
+#import <NSFileManager+PromiseKit.h>
+#endif
 #ifdef PMK_NSNOTIFICATIONCENTER
 #import <NSNotificationCenter+PromiseKit.h>
+#endif
+#ifdef PMK_NSTASK
+#import <NSTask+PromiseKit.h>
 #endif
 #ifdef PMK_NSURLCONNECTION
 #import <NSURLConnection+PromiseKit.h>
 #endif
-#ifdef PMK_SKPRODUCTSREQUEST
-#import <SKProductsRequest+PromiseKit.h>
+#ifdef PMK_SKREQUEST
+#import <SKRequest+PromiseKit.h>
 #endif
 #ifdef PMK_SLREQUEST
 #import <SLRequest+PromiseKit.h>

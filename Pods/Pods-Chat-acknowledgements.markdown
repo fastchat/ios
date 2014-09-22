@@ -202,7 +202,7 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
 
 ## OMGHTTPURLRQ
 
-This text or CocoaPods throws a fit
+See README.markdown for full license text.
 
 ## PromiseKit
 

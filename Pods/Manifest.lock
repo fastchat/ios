@@ -21,7 +21,7 @@ PODS:
     - AFNetworking/NSURLConnection
     - AFNetworking/NSURLSession
   - ColorArt (0.1.1)
-  - DBCamera (2.3.3):
+  - DBCamera (2.3.5):
     - GPUImage (~> 0.1)
   - GoogleAnalytics-iOS-SDK (3.0.9)
   - GPUImage (0.1.5)
@@ -33,15 +33,15 @@ PODS:
     - Mantle/extobjc
   - Mantle/extobjc (1.5)
   - MBProgressHUD (0.9)
-  - OMGHTTPURLRQ (1.1.6):
+  - OMGHTTPURLRQ (2.0.1):
     - OMGHTTPURLRQ/RQ
     - OMGHTTPURLRQ/UserAgent
     - OMGHTTPURLRQ/UserAgent
-  - OMGHTTPURLRQ/RQ (1.1.6):
+  - OMGHTTPURLRQ/RQ (2.0.1):
     - OMGHTTPURLRQ/UserAgent
-  - OMGHTTPURLRQ/UserAgent (1.1.6):
+  - OMGHTTPURLRQ/UserAgent (2.0.1):
     - OMGHTTPURLRQ/UserAgent
-  - PromiseKit (0.9.14.3):
+  - PromiseKit (0.9.17):
     - PromiseKit/NSNotificationCenter
     - PromiseKit/NSURLConnection
     - PromiseKit/Pause
@@ -51,26 +51,26 @@ PODS:
     - PromiseKit/UIViewController
     - PromiseKit/Until
     - PromiseKit/When
-  - PromiseKit/NSNotificationCenter (0.9.14.3):
+  - PromiseKit/NSNotificationCenter (0.9.17):
     - PromiseKit/Promise
-  - PromiseKit/NSURLConnection (0.9.14.3):
+  - PromiseKit/NSURLConnection (0.9.17):
     - OMGHTTPURLRQ
     - PromiseKit/Promise
-  - PromiseKit/Pause (0.9.14.3):
+  - PromiseKit/Pause (0.9.17):
     - PromiseKit/Promise
-  - PromiseKit/Promise (0.9.14.3)
-  - PromiseKit/UIActionSheet (0.9.14.3):
+  - PromiseKit/Promise (0.9.17)
+  - PromiseKit/UIActionSheet (0.9.17):
     - PromiseKit/Promise
-  - PromiseKit/UIAlertView (0.9.14.3):
+  - PromiseKit/UIAlertView (0.9.17):
     - PromiseKit/Promise
-  - PromiseKit/UIView (0.9.14.3):
+  - PromiseKit/UIView (0.9.17):
     - PromiseKit/Promise
-  - PromiseKit/UIViewController (0.9.14.3):
+  - PromiseKit/UIViewController (0.9.17):
     - PromiseKit/Promise
-  - PromiseKit/Until (0.9.14.3):
+  - PromiseKit/Until (0.9.17):
     - PromiseKit/Promise
     - PromiseKit/When
-  - PromiseKit/When (0.9.14.3):
+  - PromiseKit/When (0.9.17):
     - PromiseKit/Promise
   - socket.IO (0.5.2):
     - SocketRocket (~> 0.2)
@@ -81,29 +81,29 @@ PODS:
 
 DEPENDENCIES:
   - AFNetworking (= 2.4.1)
-  - ColorArt (~> 0.1)
-  - DBCamera (~> 2.3)
+  - ColorArt (= 0.1.1)
+  - DBCamera (= 2.3.5)
   - GoogleAnalytics-iOS-SDK (= 3.0.9)
-  - MagicalRecord (~> 2.2)
+  - MagicalRecord (= 2.2)
   - Mantle (= 1.5)
   - MBProgressHUD (= 0.9)
-  - PromiseKit (~> 0.9)
+  - PromiseKit (= 0.9.17)
   - socket.IO (= 0.5.2)
   - TSMessages (= 0.9.10)
-  - URBMediaFocusViewController (~> 0.5)
+  - URBMediaFocusViewController (= 0.5.5)
 
 SPEC CHECKSUMS:
   AFNetworking: 0aabc6fae66d6e5d039eeb21c315843c7aae51ab
   ColorArt: f734aa2f988b2be4e9a064c1818d8f8320488110
-  DBCamera: d1bf4699c496e982004223a4da33941c7389f4e2
+  DBCamera: 0095227e0d2d0292c5a2cc400fe75687120e6f29
   GoogleAnalytics-iOS-SDK: d9e198b1f955259a72886769be7377cdfcdb2250
   GPUImage: 5114a47f5fc33eb312f3731550a3cea379416d04
   HexColors: 01384d2bbe8dc4ffa43c3b4135db6e976952d153
   MagicalRecord: 2b471584fc9e3137f3d0a56967917baa4979e224
   Mantle: c67a7e45e14196ed42b2a7cbb98ff6a9920e6b92
   MBProgressHUD: 2038dbcf3dce73215abed6001657043d53aa79a8
-  OMGHTTPURLRQ: 6fd7b1dcaed31734959699e42ea920eea380d1e7
-  PromiseKit: 2eba66fea7b3f7cdb1143f1659ee49125bbb145c
+  OMGHTTPURLRQ: 4297af2a7f7ca7adb3f8331203001e0fd2dae16f
+  PromiseKit: 7a18d7b8d41a156cda0268c3cb065d272d5aa554
   socket.IO: db3e71805c862038ab73209dda2b0ad6babc54b2
   SocketRocket: 79a68ae186063c65e1fe6f638b1ae2927aa5f304
   TSMessages: 8598a0645e9d54847f6e5f3b070bef39c493bbf8
