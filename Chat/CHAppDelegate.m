@@ -12,6 +12,7 @@
 #import "CHUser.h"
 #import "TSMessage.h"
 #import "CHBackgroundContext.h"
+#import "BugshotKit.h"
 
 @implementation CHAppDelegate
 
@@ -29,6 +30,11 @@
         DLog(@"Done Background Context.");
     });
     
+    
+    ///
+    /// Bugshot kit!
+    ///
+    [BugshotKit enableWithNumberOfTouches:1 performingGestures:BSKInvocationGestureSwipeFromRightEdge feedbackEmailAddress:@"ethanmski@gmail.com"];
     ///
     /// Setup the networking layer and get ready to connect
     ///

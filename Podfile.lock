@@ -20,6 +20,7 @@ PODS:
   - AFNetworking/UIKit (2.4.1):
     - AFNetworking/NSURLConnection
     - AFNetworking/NSURLSession
+  - BugshotKit (0.1.0)
   - ColorArt (0.1.1)
   - DBCamera (2.3.5):
     - GPUImage (~> 0.1)
@@ -81,6 +82,7 @@ PODS:
 
 DEPENDENCIES:
   - AFNetworking (= 2.4.1)
+  - BugshotKit (= 0.1)
   - ColorArt (= 0.1.1)
   - DBCamera (= 2.3.5)
   - GoogleAnalytics-iOS-SDK (= 3.0.9)
@@ -94,6 +96,7 @@ DEPENDENCIES:
 
 SPEC CHECKSUMS:
   AFNetworking: 0aabc6fae66d6e5d039eeb21c315843c7aae51ab
+  BugshotKit: 1c8bc57927dacc56e53c9ef628a4dc2df300887a
   ColorArt: f734aa2f988b2be4e9a064c1818d8f8320488110
   DBCamera: 0095227e0d2d0292c5a2cc400fe75687120e6f29
   GoogleAnalytics-iOS-SDK: d9e198b1f955259a72886769be7377cdfcdb2250
