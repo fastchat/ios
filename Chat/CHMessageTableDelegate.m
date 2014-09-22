@@ -55,7 +55,6 @@ NSString *const CHOwnMesssageCellIdentifier = @"CHOwnMessageTableViewCell";
                     }
                     this.messageIDs = nil;
                 }
-                this.page++;
                 
                 NSSortDescriptor *sortDescriptor = [[NSSortDescriptor alloc] initWithKey:@"sent" ascending:YES];
                 [this.messages sortUsingDescriptors:@[sortDescriptor]];
@@ -264,6 +263,9 @@ NSString *const CHOwnMesssageCellIdentifier = @"CHOwnMessageTableViewCell";
     .then(_loadInNewMessages)
     .catch(^(NSError *error) {
         DLog(@"Error: %@", error);
+    }).finally(^{
+        self.page++;
+        [self.refresh endRefreshing];
     });
 }
 
