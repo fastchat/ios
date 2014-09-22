@@ -23,6 +23,7 @@ NSString *const CHOwnMesssageCellIdentifier = @"CHOwnMessageTableViewCell";
 @property (atomic, assign) BOOL isFetching;
 @property (nonatomic, strong) UIRefreshControl *refresh;
 @property (nonatomic, strong) UITableView *tableView;
+@property (nonatomic, copy) void (^loadInNewMessages)(NSArray *messageIDs);
 
 @end
 
@@ -38,7 +39,29 @@ NSString *const CHOwnMesssageCellIdentifier = @"CHOwnMessageTableViewCell";
         _group = group;
         _tableView = table;
         _isFetching = NO;
-        self.messages = [NSMutableArray array];
+        self.messages = [NSMutableOrderedSet orderedSet];
+        __weak CHMessageTableDelegate *this = self;
+        self.loadInNewMessages = ^(NSArray *messageIDs) {
+            __strong CHMessageTableDelegate *strongSelf = this;
+            if(strongSelf) {
+                this.messageIDs = messageIDs;
+                @synchronized(this) {
+                    for (NSManagedObjectID *anID in this.messageIDs) {
+                        
+                        CHMessage *message = [CHMessage objectID:anID toContext:[NSManagedObjectContext MR_defaultContext]];
+                        if (message) {
+                            [this.messages addObject:message];
+                        }
+                    }
+                    this.messageIDs = nil;
+                }
+                this.page++;
+                
+                NSSortDescriptor *sortDescriptor = [[NSSortDescriptor alloc] initWithKey:@"sent" ascending:YES];
+                [this.messages sortUsingDescriptors:@[sortDescriptor]];
+                [this reload:YES withScroll:YES animated:YES];
+            }
+        };
         
         self.refresh = [[UIRefreshControl alloc] init];
         [self.refresh addTarget:self
@@ -237,27 +260,9 @@ NSString *const CHOwnMesssageCellIdentifier = @"CHOwnMessageTableViewCell";
 - (void)shouldRefresh:(UIRefreshControl *)sender;
 {
     self.isFetching = YES;
-    [self messagesAtPage:_page].then(^(NSArray *messageIDs) {
-        self.messageIDs = messageIDs;
-        @synchronized(self) {
-            for (NSManagedObjectID *anID in self.messageIDs) {
-                
-                CHMessage *message = [CHMessage objectID:anID toContext:[NSManagedObjectContext MR_defaultContext]];
-                if (message) {
-                    [self.messages addObject:message];
-                }
-            }
-            self.messageIDs = nil;
-        }
-        self.page++;
-        
-        NSSortDescriptor *sortDescriptor = [[NSSortDescriptor alloc] initWithKey:@"sent" ascending:YES];
-        [self.messages sortUsingDescriptors:@[sortDescriptor]];
-
-        [self reload:YES withScroll:YES animated:YES];
-        self.isFetching = NO;
-        [sender endRefreshing];
-    }).catch(^(NSError *error) {
+    [self messagesAtPage:_page]
+    .then(_loadInNewMessages)
+    .catch(^(NSError *error) {
         DLog(@"Error: %@", error);
     });
 }
@@ -286,6 +291,13 @@ NSString *const CHOwnMesssageCellIdentifier = @"CHOwnMessageTableViewCell";
     return dispatch_promise_on(q, ^{
         return [self localMessagesAtPage:page context:context];
     }).thenOn(q, ^(NSArray *local){
+        NSMutableArray *newMessageIDS = [NSMutableArray array];
+        for (CHMessage *message in local) {
+            [newMessageIDS addObject:message.actualObjectId];
+        }
+        return newMessageIDS;
+    }).then(_loadInNewMessages)
+    .thenOn(q, ^{
         return [self.group remoteMessagesAtPage:self.page];
     }).thenOn(q, ^{
         [context reset];

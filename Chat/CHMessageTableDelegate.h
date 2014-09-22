@@ -15,7 +15,7 @@
 
 @property (nonatomic, weak) id<CHMessageTableDelegate> delegate;
 @property (nonatomic, strong) CHGroup *group;
-@property (nonatomic, strong) NSMutableArray *messages; //no touchy.
+@property (nonatomic, strong) NSMutableOrderedSet *messages; //no touchy.
 
 - (instancetype)initWithTable:(UITableView *)table group:(CHGroup *)group;
 - (void)addMessage:(CHMessage *)foreignMessage;
