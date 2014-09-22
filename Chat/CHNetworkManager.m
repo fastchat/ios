@@ -43,6 +43,7 @@ NSString *const SESSION_TOKEN = @"session-token";
 - (instancetype)initWithBaseURL:(NSURL *)url {
     if( (self = [super initWithBaseURL:[NSURL URLWithString:BASE_PATH]]) ) {
         [AFNetworkActivityIndicatorManager sharedManager].enabled = YES;
+        self.completionQueue = [CHBackgroundContext backgroundContext].queue;
     }
     return self;
 }
@@ -93,14 +94,15 @@ NSString *const SESSION_TOKEN = @"session-token";
     return [PMKPromise new:^(PMKPromiseFulfiller fulfiller, PMKPromiseRejecter rejecter) {
         [self GET:@"/user" parameters:nil success:^(NSURLSessionDataTask *task, id responseObject) {
             DLog(@"Profile: %@", responseObject);
-            CHUser *user = [CHUser currentUser];
-            user.username = responseObject[@"profile"][@"username"];
-            user.chID = responseObject[@"profile"][@"_id"];
             
             NSManagedObjectContext *context = [CHBackgroundContext backgroundContext].context;
             id q = [CHBackgroundContext backgroundContext].queue;
+            
+            CHUser *user = [CHUser object:[CHUser currentUser] toContext:context];
+            user.username = responseObject[@"profile"][@"username"];
+            user.chID = responseObject[@"profile"][@"_id"];
             [context performBlock:^{
-                [CHGroup objectsFromJSON:responseObject[@"profile"][@"groups"]].thenOn(q, ^(NSArray *groups){
+                [CHGroup objectsFromJSON:responseObject[@"profile"][@"groups"]].thenOn(q, ^(NSArray *groups) {
                     user.groups = [NSOrderedSet orderedSetWithSet:[NSSet setWithArray:groups]];
                     [self saveWithContext:context];
                     fulfiller(user);
@@ -129,9 +131,11 @@ NSString *const SESSION_TOKEN = @"session-token";
 {
     return [PMKPromise new:^(PMKPromiseFulfiller fulfiller, PMKPromiseRejecter rejecter) {
         [self GET:@"/group" parameters:nil success:^(NSURLSessionDataTask *task, id responseObject) {
-            CHUser *user = [CHUser currentUser];
+            
             NSManagedObjectContext *context = [CHBackgroundContext backgroundContext].context;
             id q = [CHBackgroundContext backgroundContext].queue;
+            
+            CHUser *user = [CHUser object:[CHUser currentUser] toContext:context];
             [context performBlock:^{
                 [CHGroup objectsFromJSON:responseObject].thenOn(q, ^(NSArray *groups){
                     user.groups = [NSOrderedSet orderedSetWithSet:[NSSet setWithArray:groups]];
@@ -195,10 +199,8 @@ NSString *const SESSION_TOKEN = @"session-token";
         [self POST:@"/group"
         parameters:@{@"name" : name, @"members" : members, @"text" : @"Group created"}
            success:^(NSURLSessionDataTask *task, id responseObject) {
-               DLog(@"New Group Response: %@", responseObject);
                CHGroup *newGroup = [CHGroup objectFromJSON:responseObject];
                [self saveWithContext:[NSManagedObjectContext MR_defaultContext]];
-               DLog(@"Group: %@", newGroup);
                fulfiller(newGroup);
            } failure:^(NSURLSessionDataTask *task, NSError *error) {
                DLog(@"Error: %@", error);
@@ -207,18 +209,27 @@ NSString *const SESSION_TOKEN = @"session-token";
     }];
 }
 
-- (PMKPromise *)messagesForGroup:(CHGroup *)group page:(NSInteger)page;
+- (PMKPromise *)messagesForGroup:(CHGroup *)foreignGroup page:(NSInteger)page;
 {
-    NSString *url = [NSString stringWithFormat:@"/group/%@/message?page=%ld", group.chID, (long)page];
+    NSString *url = [NSString stringWithFormat:@"/group/%@/message?page=%ld", foreignGroup.chID, (long)page];
     return [PMKPromise new:^(PMKPromiseFulfiller fulfiller, PMKPromiseRejecter rejecter) {
         [self GET:url parameters:nil success:^(NSURLSessionDataTask *task, id responseObject) {
             NSManagedObjectContext *context = [CHBackgroundContext backgroundContext].context;
+            
+            CHGroup *group = [CHGroup object:foreignGroup toContext:context];
+            DLog(@"Registered 1: %@", [context registeredObjects]);
+            
             id q = [CHBackgroundContext backgroundContext].queue;
             [context performBlock:^{
-                [CHMessage objectsFromJSON:responseObject].thenOn(q, ^(NSArray *messages){
+                [CHMessage objectsFromJSON:responseObject].thenOn(q, ^(NSArray *messages) {
+                    DLog(@"Registered 2: %@", [context registeredObjects]);
+                    CHMessage *message = messages[0];
+                    DLog(@"EDM1: %@ %@ %d", message.text, message, message.actualObjectId.isTemporaryID);
+                    
                     NSOrderedSet *set = [NSOrderedSet orderedSetWithArray:messages];
                     [group addMessages:set];
                     [self saveWithContext:context];
+                    DLog(@"EDM2: %@ %@ %d", message.text, message, message.actualObjectId.isTemporaryID);
                     fulfiller(messages);
                 });
             }];
@@ -381,12 +392,9 @@ NSString *const SESSION_TOKEN = @"session-token";
 
 - (void)saveWithContext:(NSManagedObjectContext *)context;
 {
-    [context MR_saveToPersistentStoreWithCompletion:^(BOOL success, NSError *error) {
-        NSLog(@"Background Save Completed: Error? %@", error);
-    }];
+    [context MR_saveToPersistentStoreAndWait];
 }
-                                         
-                                         
+
 
 
 @end
