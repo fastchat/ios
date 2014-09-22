@@ -19,9 +19,10 @@ NSString *const CHOwnMesssageCellIdentifier = @"CHOwnMessageTableViewCell";
 @interface CHMessageTableDelegate ()
 
 @property (atomic, copy) NSArray *messageIDs;
-@property (nonatomic, strong) NSMutableArray *messages;
 @property (nonatomic, assign) NSInteger page;
+@property (atomic, assign) BOOL isFetching;
 @property (nonatomic, strong) UIRefreshControl *refresh;
+@property (nonatomic, strong) UITableView *tableView;
 
 @end
 
@@ -29,11 +30,15 @@ NSString *const CHOwnMesssageCellIdentifier = @"CHOwnMessageTableViewCell";
 
 #pragma mark - UITableView Datasource
 
-- (instancetype)initWithTable:(UITableView *)table;
+- (instancetype)initWithTable:(UITableView *)table group:(CHGroup *)group;
 {
     self = [super init];
     if (self) {
         _page = 0;
+        _group = group;
+        _tableView = table;
+        _isFetching = NO;
+        self.messages = [NSMutableArray array];
         
         self.refresh = [[UIRefreshControl alloc] init];
         [self.refresh addTarget:self
@@ -41,9 +46,9 @@ NSString *const CHOwnMesssageCellIdentifier = @"CHOwnMessageTableViewCell";
                forControlEvents:UIControlEventValueChanged];
         
         [table addSubview:self.refresh];
-        
-        table.delegate = self;
         table.dataSource = self;
+        table.delegate = self;
+        [self shouldRefresh:nil];
     }
     return self;
 }
@@ -117,8 +122,12 @@ NSString *const CHOwnMesssageCellIdentifier = @"CHOwnMessageTableViewCell";
 ///
 -(NSString *)tableView:(UITableView *)tableView titleForHeaderInSection:(NSInteger)section;
 {
+    NSMutableArray *usernames = [NSMutableArray array];
     NSArray *activeMembers = self.group.members.array;
-    return [NSString stringWithFormat:@"To: %@", [activeMembers componentsJoinedByString:@", "]];
+    for (CHUser *user in activeMembers) {
+        [usernames addObject:user.username];
+    }
+    return [NSString stringWithFormat:@"To: %@", [usernames componentsJoinedByString:@", "]];
 }
 
 /**
@@ -153,12 +162,18 @@ NSString *const CHOwnMesssageCellIdentifier = @"CHOwnMessageTableViewCell";
     }
     height += 45.0f;
     
+    DLog(@"Height: %f", height);
+    
     message.rowHeightValue = height;
     return height;
 }
 
-
-
+- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath;
+{
+    if ([self.delegate respondsToSelector:@selector(tableView:didSelectRowAtIndexPath:)]) {
+        [self.delegate tableView:tableView didSelectRowAtIndexPath:indexPath];
+    }
+}
 
 - (NSString *)formatDate:(NSDate *)date;
 {
@@ -198,14 +213,30 @@ NSString *const CHOwnMesssageCellIdentifier = @"CHOwnMessageTableViewCell";
 
 - (void)shouldRefresh:(UIRefreshControl *)sender;
 {
-    
-}
+    self.isFetching = YES;
+    [self messagesAtPage:_page].then(^(NSArray *messageIDs) {
+        self.messageIDs = messageIDs;
+        @synchronized(self) {
+            for (NSManagedObjectID *anID in self.messageIDs) {
+                
+                CHMessage *message = [CHMessage objectID:anID toContext:[NSManagedObjectContext MR_defaultContext]];
+                if (message) {
+                    [self.messages addObject:message];
+                }
+            }
+            self.messageIDs = nil;
+        }
+        self.page++;
+        
+        NSSortDescriptor *sortDescriptor = [[NSSortDescriptor alloc] initWithKey:@"sent" ascending:YES];
+        [self.messages sortUsingDescriptors:@[sortDescriptor]];
 
-- (void)scrollViewDidScroll:(UIScrollView *)scrollView;
-{
-    if (scrollView.contentOffset.y < 100) { //AND not fetching
-        NSLog(@"Fetch more!");
-    }
+        [self reload:YES withScroll:YES animated:YES];
+        self.isFetching = NO;
+        [sender endRefreshing];
+    }).catch(^(NSError *error) {
+        DLog(@"Error: %@", error);
+    });
 }
 
 #pragma mark - Core Data Fetching
@@ -224,65 +255,51 @@ NSString *const CHOwnMesssageCellIdentifier = @"CHOwnMessageTableViewCell";
  * fetch to get the next batch (local + server). This ensures we are always 1 step ahead, 
  * and things run fast.
  */
-
-- (NSArray *)messages;
-{
-    NSPredicate *messages = [NSPredicate predicateWithFormat:@"SELF.group == %@ AND SELF.chID != nil", self.group];
-    NSFetchRequest *fetchRequest = [CHMessage MR_requestAllWithPredicate:messages];
-    [fetchRequest setFetchBatchSize:30];
-    
-    NSSortDescriptor *sortDescriptor = [[NSSortDescriptor alloc] initWithKey:@"sent" ascending:YES];
-    [fetchRequest setSortDescriptors: @[sortDescriptor]];
-    
-    return [CHMessage MR_executeFetchRequest:fetchRequest inContext:[NSManagedObjectContext MR_defaultContext]];
-}
-
-- (PMKPromise *)remoteMessages;
+- (PMKPromise *)messagesAtPage:(NSUInteger)page;
 {
     id q = [CHBackgroundContext backgroundContext].queue;
+    NSManagedObjectContext *context = [CHBackgroundContext backgroundContext].context;
+    
     return dispatch_promise_on(q, ^{
+        return [self localMessagesAtPage:page context:context];
+    }).thenOn(q, ^(NSArray *local){
         return [self.group remoteMessagesAtPage:self.page];
-    }).thenOn(q, ^(NSArray *messages){
-        NSMutableArray *ids = [NSMutableArray array];
-        for (CHMessage *message in messages) {
-            [ids addObject:message.actualObjectId];
+    }).thenOn(q, ^{
+        [context reset];
+        NSMutableArray *newMessageIDS = [NSMutableArray array];
+        NSArray *final = [self localMessagesAtPage:page context:context];
+        for (CHMessage *message in final) {
+            [newMessageIDS addObject:message.actualObjectId];
         }
-        self.messageIDs = ids;
+        return newMessageIDS;
     });
 }
 
+- (NSArray *)localMessagesAtPage:(NSUInteger)page context:(NSManagedObjectContext *)context;
+{
+    NSPredicate *messages = [NSPredicate predicateWithFormat:@"SELF.group == %@ AND SELF.chID != nil", self.group];
+    NSFetchRequest *fetchRequest = [CHMessage MR_requestAllWithPredicate:messages];
+    [fetchRequest setFetchLimit:30];
+    [fetchRequest setFetchOffset:page * 30];
+    
+    NSSortDescriptor *sortDescriptor = [[NSSortDescriptor alloc] initWithKey:@"sent" ascending:NO];
+    [fetchRequest setSortDescriptors:@[sortDescriptor]];
+    
+    return [CHMessage MR_executeFetchRequest:fetchRequest inContext:context];
+}
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+- (void)reload:(BOOL)reload withScroll:(BOOL)scroll animated:(BOOL)animated;
+{
+    if (reload) {
+        [self.tableView reloadData];
+    }
+    if (scroll) {
+        [self.tableView scrollToRowAtIndexPath:[NSIndexPath
+                                                indexPathForRow:([self tableView:self.tableView numberOfRowsInSection:0] - 1) inSection:0]
+                              atScrollPosition:UITableViewScrollPositionBottom
+                                      animated:animated];
+    }
+}
 
 
 

@@ -8,12 +8,22 @@
 
 #import <Foundation/Foundation.h>
 
+@protocol CHMessageTableDelegate;
 @class CHGroup;
 
 @interface CHMessageTableDelegate : NSObject <UITableViewDataSource, UITableViewDelegate, UIScrollViewDelegate>
 
+@property (nonatomic, weak) id<CHMessageTableDelegate> delegate;
 @property (nonatomic, strong) CHGroup *group;
+@property (nonatomic, strong) NSMutableArray *messages; //no touchy.
 
-- (instancetype)initWithTable:(UITableView *)table;
+- (instancetype)initWithTable:(UITableView *)table group:(CHGroup *)group;
+
+@end
+
+@protocol CHMessageTableDelegate <NSObject>
+
+@optional
+- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath;
 
 @end
