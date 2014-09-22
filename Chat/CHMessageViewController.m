@@ -63,10 +63,11 @@
     self.title = _group.name;
     _beingDismissed = NO;
     
-    self.containerView = [[UIView alloc] initWithFrame:CGRectMake(0, self.view.frame.size.height - 40, self.view.frame.size.width, 40)];
+    CGFloat screenWidth = [[UIScreen mainScreen] bounds].size.width;
+    self.containerView = [[UIView alloc] initWithFrame:CGRectMake(0, self.view.frame.size.height - 40, screenWidth, 40)];
     self.containerView.backgroundColor = [UIColor whiteColor];
     
-    UIView *line = [[UIView alloc] initWithFrame:CGRectMake(0, 0, self.messageTable.frame.size.width, 0.5)];
+    UIView *line = [[UIView alloc] initWithFrame:CGRectMake(0, 0, screenWidth, 0.5)];
     line.backgroundColor = [UIColor lightGrayColor];
     [self.containerView addSubview:line];
     
@@ -78,9 +79,8 @@
     [cameraBtn addTarget:self action:@selector(loadCamera) forControlEvents:UIControlEventTouchUpInside];
     [self.containerView addSubview:cameraBtn];
     
-    self.textView = [[HPGrowingTextView alloc] initWithFrame:CGRectMake(45, 2, 230, 36)];
+    self.textView = [[HPGrowingTextView alloc] initWithFrame:CGRectMake(45, 2, screenWidth - (36 + 45 + 10), 36)];
     self.textView.isScrollable = NO;
-//    self.textView.contentInset = UIEdgeInsetsMake(49, 5, 0, 5);
     self.textView.layer.borderColor = [[UIColor lightGrayColor] CGColor];
     self.textView.layer.borderWidth = 0.5;
     self.textView.layer.cornerRadius = 4.0;
@@ -237,8 +237,8 @@
     [self.group addMessagesObject:newMessage];
     [self addNewMessage:newMessage];
     
-    [user sendMessage:newMessage toGroup:self.group].then(^{
-        
+    [user sendMessage:newMessage toGroup:self.group].then(^(CHMessage *mes){
+        [self.delegate addMessage:mes];
     }).catch(^(NSError *error) {
         return [[[UIAlertView alloc] initWithTitle:@"Error!"
                                     message:error.localizedDescription

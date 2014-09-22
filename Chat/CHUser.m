@@ -149,6 +149,7 @@ static CHUser *_currentUser = nil;
             .then(^(NSDictionary *response){
                 message.chID = response[@"_id"];
                 [[NSManagedObjectContext MR_defaultContext] MR_saveToPersistentStoreAndWait];
+                return message;
         });
         
     } else {

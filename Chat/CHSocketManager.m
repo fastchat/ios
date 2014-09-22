@@ -97,6 +97,9 @@
 
         [[NSManagedObjectContext MR_defaultContext] MR_saveToPersistentStoreWithCompletion:^(BOOL success, NSError *error) {
             DLog(@"Socket IO Background Save Completed. Error? %@", error);
+            [[NSNotificationCenter defaultCenter] postNotificationName:kNewMessageReceivedNotification
+                                                                object:self
+                                                              userInfo:@{CHNotificationPayloadKey: message}];
         }];
         
         /// Observers of the groups will pick up on the change

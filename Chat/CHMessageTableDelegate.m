@@ -49,8 +49,17 @@ NSString *const CHOwnMesssageCellIdentifier = @"CHOwnMessageTableViewCell";
         table.dataSource = self;
         table.delegate = self;
         [self shouldRefresh:nil];
+        [[NSNotificationCenter defaultCenter] addObserver:self
+                                                 selector:@selector(newMessageNotification:)
+                                                     name:kNewMessageReceivedNotification
+                                                   object:nil];
     }
     return self;
+}
+
+- (void)dealloc;
+{
+    [[NSNotificationCenter defaultCenter] removeObserver:self];
 }
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView;
@@ -209,7 +218,21 @@ NSString *const CHOwnMesssageCellIdentifier = @"CHOwnMessageTableViewCell";
     return CGSizeMake(width, height);
 }
 
-#pragma mark - Scrolling
+- (void)reload:(BOOL)reload withScroll:(BOOL)scroll animated:(BOOL)animated;
+{
+    if (reload) {
+        [self.tableView reloadData];
+    }
+    if (scroll) {
+        [self.tableView scrollToRowAtIndexPath:[NSIndexPath
+                                                indexPathForRow:([self tableView:self.tableView numberOfRowsInSection:0] - 1) inSection:0]
+                              atScrollPosition:UITableViewScrollPositionBottom
+                                      animated:animated];
+    }
+}
+
+
+#pragma mark - Refreshing
 
 - (void)shouldRefresh:(UIRefreshControl *)sender;
 {
@@ -288,18 +311,31 @@ NSString *const CHOwnMesssageCellIdentifier = @"CHOwnMessageTableViewCell";
     return [CHMessage MR_executeFetchRequest:fetchRequest inContext:context];
 }
 
-- (void)reload:(BOOL)reload withScroll:(BOOL)scroll animated:(BOOL)animated;
+#pragma mark Socket.io
+
+- (void)newMessageNotification:(NSNotification *)note;
 {
-    if (reload) {
-        [self.tableView reloadData];
-    }
-    if (scroll) {
-        [self.tableView scrollToRowAtIndexPath:[NSIndexPath
-                                                indexPathForRow:([self tableView:self.tableView numberOfRowsInSection:0] - 1) inSection:0]
-                              atScrollPosition:UITableViewScrollPositionBottom
-                                      animated:animated];
+    CHMessage *message = note.userInfo[CHNotificationPayloadKey];
+    if (message && [message.group isEqual:self.group]) {
+        [self addMessage:message];
     }
 }
+
+- (void)addMessage:(CHMessage *)foreignMessage;
+{
+    [self.tableView beginUpdates];
+    
+    CHMessage *message = [CHMessage object:foreignMessage toContext:[NSManagedObjectContext MR_defaultContext]];
+    if (message) {
+        [self.messages addObject:message];
+        NSIndexPath *path = [NSIndexPath indexPathForRow:self.messages.count - 1 inSection:0];
+        [self.tableView insertRowsAtIndexPaths:@[path] withRowAnimation:UITableViewRowAnimationAutomatic];
+    }
+    
+    [self.tableView endUpdates];
+    [self reload:NO withScroll:YES animated:YES];
+}
+
 
 
 

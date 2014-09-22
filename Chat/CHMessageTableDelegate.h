@@ -9,7 +9,7 @@
 #import <Foundation/Foundation.h>
 
 @protocol CHMessageTableDelegate;
-@class CHGroup;
+@class CHGroup, CHMessage;
 
 @interface CHMessageTableDelegate : NSObject <UITableViewDataSource, UITableViewDelegate, UIScrollViewDelegate>
 
@@ -18,6 +18,7 @@
 @property (nonatomic, strong) NSMutableArray *messages; //no touchy.
 
 - (instancetype)initWithTable:(UITableView *)table group:(CHGroup *)group;
+- (void)addMessage:(CHMessage *)foreignMessage;
 
 @end
 
