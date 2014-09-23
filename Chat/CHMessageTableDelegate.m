@@ -12,6 +12,8 @@
 #import "CHMessage.h"
 #import "CHGroup.h"
 #import "CHBackgroundContext.h"
+#import "CHMessageViewController.h"
+
 
 NSString *const CHMesssageCellIdentifier = @"CHMessageTableViewCell";
 NSString *const CHOwnMesssageCellIdentifier = @"CHOwnMessageTableViewCell";
@@ -74,6 +76,11 @@ NSString *const CHOwnMesssageCellIdentifier = @"CHOwnMessageTableViewCell";
         [[NSNotificationCenter defaultCenter] addObserver:self
                                                  selector:@selector(newMessageNotification:)
                                                      name:kNewMessageReceivedNotification
+                                                   object:nil];
+        
+        [[NSNotificationCenter defaultCenter] addObserver:self
+                                                 selector:@selector(getMostRecentMessages:)
+                                                     name:kReloadActiveGroupNotification
                                                    object:nil];
     }
     return self;
@@ -254,7 +261,7 @@ NSString *const CHOwnMesssageCellIdentifier = @"CHOwnMessageTableViewCell";
 }
 
 
-#pragma mark - Refreshing
+#pragma mark - Getting Messages
 
 - (void)shouldRefresh:(UIRefreshControl *)sender;
 {
@@ -267,6 +274,26 @@ NSString *const CHOwnMesssageCellIdentifier = @"CHOwnMessageTableViewCell";
         self.page++;
         [self.refresh endRefreshing];
     });
+}
+
+- (void)getMostRecentMessages:(NSNotification *)note;
+{
+    id q = [CHBackgroundContext backgroundContext].queue;
+    NSManagedObjectContext *context = [CHBackgroundContext backgroundContext].context;
+    
+    dispatch_promise_on(q, ^{
+        return [self.group remoteMessagesAtPage:0];
+    })
+    .thenOn(q, ^{
+        [context reset];
+        NSArray *final = [self localMessagesAtPage:0 context:context];
+        NSMutableArray *newMessageIDS = [NSMutableArray array];
+        for (CHMessage *message in final) {
+            [newMessageIDS addObject:message.actualObjectId];
+        }
+        return newMessageIDS;
+    })
+    .then(_loadInNewMessages);
 }
 
 #pragma mark - Core Data Fetching
@@ -332,6 +359,8 @@ NSString *const CHOwnMesssageCellIdentifier = @"CHOwnMessageTableViewCell";
     CHMessage *message = note.userInfo[CHNotificationPayloadKey];
     if (message && [message.group isEqual:self.group]) {
         [self addMessage:message];
+    } else if (message && [self.delegate respondsToSelector:@selector(otherGroupMessage:)]) {
+        [self.delegate otherGroupMessage:message];
     }
 }
 
