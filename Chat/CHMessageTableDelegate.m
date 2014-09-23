@@ -131,11 +131,21 @@ NSString *const CHOwnMesssageCellIdentifier = @"CHOwnMessageTableViewCell";
     }
     
     cell.authorLabel.textColor = author.color;
-    author.avatar.then(^(CHUser *user, UIImage *avatar){
-        cell.avatarImageView.image = avatar;
-    }).catch(^(NSError *error){
+    
+    /**
+     * The author may actually not exist if you have a message
+     * from the system.
+     */
+    if (author) {
+        author.avatar.then(^(CHUser *user, UIImage *avatar) {
+            cell.avatarImageView.image = avatar;
+        }).catch(^(NSError *error){
+            cell.avatarImageView.image = defaultImage;
+        });
+    } else {
+        cell.authorLabel.textColor = color;
         cell.avatarImageView.image = defaultImage;
-    });
+    }
     
     if (message.hasMediaValue) {
         message.media.then(^(UIImage *image){
