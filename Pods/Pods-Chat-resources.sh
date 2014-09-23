@@ -41,6 +41,7 @@ install_resource()
       ;;
   esac
 }
+install_resource "BugshotKit/Resources/Inconsolata.otf"
 install_resource "DBCamera/DBCamera/Resources/DBCameraImages.xcassets"
 install_resource "DBCamera/DBCamera/Localizations/en.lproj"
 install_resource "DBCamera/DBCamera/Localizations/es.lproj"
@@ -58,23 +59,7 @@ install_resource "GPUImage/framework/Resources/lookup_amatorka.png"
 install_resource "GPUImage/framework/Resources/lookup_miss_etikate.png"
 install_resource "GPUImage/framework/Resources/lookup_soft_elegance_1.png"
 install_resource "GPUImage/framework/Resources/lookup_soft_elegance_2.png"
-install_resource "TSMessages/Pod/Assets/NotificationBackgroundError.png"
-install_resource "TSMessages/Pod/Assets/NotificationBackgroundError@2x.png"
-install_resource "TSMessages/Pod/Assets/NotificationBackgroundErrorIcon.png"
-install_resource "TSMessages/Pod/Assets/NotificationBackgroundErrorIcon@2x.png"
-install_resource "TSMessages/Pod/Assets/NotificationBackgroundMessage.png"
-install_resource "TSMessages/Pod/Assets/NotificationBackgroundMessage@2x.png"
-install_resource "TSMessages/Pod/Assets/NotificationBackgroundSuccess.png"
-install_resource "TSMessages/Pod/Assets/NotificationBackgroundSuccess@2x.png"
-install_resource "TSMessages/Pod/Assets/NotificationBackgroundSuccessIcon.png"
-install_resource "TSMessages/Pod/Assets/NotificationBackgroundSuccessIcon@2x.png"
-install_resource "TSMessages/Pod/Assets/NotificationBackgroundWarning.png"
-install_resource "TSMessages/Pod/Assets/NotificationBackgroundWarning@2x.png"
-install_resource "TSMessages/Pod/Assets/NotificationBackgroundWarningIcon.png"
-install_resource "TSMessages/Pod/Assets/NotificationBackgroundWarningIcon@2x.png"
-install_resource "TSMessages/Pod/Assets/NotificationButtonBackground.png"
-install_resource "TSMessages/Pod/Assets/NotificationButtonBackground@2x.png"
-install_resource "TSMessages/Pod/Assets/TSMessagesDefaultDesign.json"
+install_resource "${BUILT_PRODUCTS_DIR}/TSMessages.bundle"
 
 rsync -avr --copy-links --no-relative --exclude '*/.svn/*' --files-from="$RESOURCES_TO_COPY" / "${CONFIGURATION_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}"
 if [[ "${ACTION}" == "install" ]]; then

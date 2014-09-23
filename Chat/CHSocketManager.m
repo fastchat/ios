@@ -10,14 +10,12 @@
 #import "SocketIOPacket.h"
 #import "CHNetworkManager.h"
 #import "CHMessage.h"
-#import "TSMessage.h"
 #import "CHGroupListTableViewController.h"
 #import "CHMessageViewController.h"
 #import "CHAppDelegate.h"
 #import "CHGroup.h"
 #import "CHUser.h"
 #import "CHConstants.h"
-#import <AudioToolbox/AudioToolbox.h>
 
 
 @class SocketIO;
@@ -91,12 +89,15 @@
         NSDictionary *data = [packet.dataAsJSON[@"args"] firstObject];
         CHMessage *message = [CHMessage objectFromJSON:data];
         message.group.lastMessage = message;
-        if (![[CHUser currentUser] isEqual:message.author]) {
+        if (![[CHUser currentUser] isEqual:message.getAuthorNonRecursive]) {
             [message.group unreadIncrement];
         }
 
         [[NSManagedObjectContext MR_defaultContext] MR_saveToPersistentStoreWithCompletion:^(BOOL success, NSError *error) {
             DLog(@"Socket IO Background Save Completed. Error? %@", error);
+            [[NSNotificationCenter defaultCenter] postNotificationName:kNewMessageReceivedNotification
+                                                                object:self
+                                                              userInfo:@{CHNotificationPayloadKey: message}];
         }];
         
         /// Observers of the groups will pick up on the change

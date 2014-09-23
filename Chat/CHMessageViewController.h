@@ -12,10 +12,11 @@
 #import "HPGrowingTextView.h"
 #import "DBCameraViewController.h"
 #import "DBCameraContainerViewController.h"
+#import "CHMessageTableDelegate.h"
 
 @class CHGroup, CHProgressView;
 
-@interface CHMessageViewController : UIViewController <UITextFieldDelegate, UITableViewDataSource, UITableViewDelegate, UITextViewDelegate, HPGrowingTextViewDelegate, DBCameraViewControllerDelegate, NSFetchedResultsControllerDelegate>
+@interface CHMessageViewController : UIViewController <UITextFieldDelegate,  UITextViewDelegate, UITableViewDelegate, HPGrowingTextViewDelegate, DBCameraViewControllerDelegate, CHMessageTableDelegate>
 
 @property (nonatomic, strong) CHGroup *group;
 @property (nonatomic, strong) NSString *groupId;

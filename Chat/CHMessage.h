@@ -9,5 +9,6 @@
 @interface CHMessage : _CHMessage
 
 - (PMKPromise *)media;
+- (CHUser *)getAuthorNonRecursive;
 
 @end

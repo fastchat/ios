@@ -179,8 +179,12 @@ static const CGSize kFilterCellSize = { 75, 90 };
 {
     _cropMode = cropMode;
     [self.frameView setHidden:!_cropMode];
-    [self.bottomBar setHidden:!_cropMode];
-    [self.filtersView setHidden:_cropMode];
+    
+    // Only hide filters if quad crop is not forced, otherwise filters are not accessible
+    if (!_forceQuadCrop) {
+        [self.bottomBar setHidden:!_cropMode];
+        [self.filtersView setHidden:_cropMode];
+    }
 }
 
 - (DBCameraFiltersView *) filtersView
@@ -328,9 +332,11 @@ static const CGSize kFilterCellSize = { 75, 90 };
     _selectedFilterIndex = indexPath;
     [self.filtersView reloadData];
     
-    UIImage *filteredImage = [_filterMapping[@(indexPath.row)] imageByFilteringImage:self.sourceImage];
-    [self.loadingView removeFromSuperview];
-    [self.imageView setImage:filteredImage];
+    dispatch_async(dispatch_get_main_queue(), ^{
+        UIImage *filteredImage = [_filterMapping[@(indexPath.row)] imageByFilteringImage:self.sourceImage];
+        [self.loadingView removeFromSuperview];
+        [self.imageView setImage:filteredImage];
+    });
 }
 
 #pragma mark - UIActionSheetDelegate

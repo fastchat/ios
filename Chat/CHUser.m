@@ -13,6 +13,7 @@
 #import "CHSocketManager.h"
 #import "UIImage+ColorArt.h"
 #import "CHNetworkManager.h"
+#import "CHBackgroundContext.h"
 
 #define ONE_HOUR 60*60
 
@@ -148,6 +149,7 @@ static CHUser *_currentUser = nil;
             .then(^(NSDictionary *response){
                 message.chID = response[@"_id"];
                 [[NSManagedObjectContext MR_defaultContext] MR_saveToPersistentStoreAndWait];
+                return message;
         });
         
     } else {
@@ -181,7 +183,30 @@ static CHUser *_currentUser = nil;
     }
 }
 
+- (void)createdFromMantle;
+{
+    [super createdFromMantle];
+
+    NSManagedObjectContext *context = [NSThread isMainThread] ? [NSManagedObjectContext MR_defaultContext] : CHBackgroundContext.backgroundContext.context;
+    NSPredicate *predicate = [NSPredicate predicateWithFormat:@"SELF.authorId == %@ AND SELF.author == nil", self.chID];
+    NSArray *messages = [CHMessage MR_findAllWithPredicate:predicate inContext:context];
+    for (CHMessage *message in messages) {
+        message.author = self;
+    }
+}
+
 #pragma mark - Mantle / Core Data
+
+//- (void)willSave;
+//{
+//    [super willSave];
+//    NSManagedObjectContext *context = [NSThread isMainThread] ? [NSManagedObjectContext MR_defaultContext] : CHBackgroundContext.backgroundContext.context;
+//    NSPredicate *predicate = [NSPredicate predicateWithFormat:@"SELF.authorId == %@ AND SELF.author == nil", self.chID];
+//    NSArray *messages = [CHMessage MR_findAllWithPredicate:predicate inContext:context];
+//    for (CHMessage *message in messages) {
+//        message.author = self;
+//    }
+//}
 
 - (void)removeGroupsObject:(CHGroup *)value_;
 {

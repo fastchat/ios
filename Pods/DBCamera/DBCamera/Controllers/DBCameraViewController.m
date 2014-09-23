@@ -114,11 +114,10 @@ NSLocalizedStringFromTable(key, @"DBCamera", nil)
     [self.cameraManager performSelector:@selector(startRunning) withObject:nil afterDelay:0.0];
     
     __weak typeof(self) weakSelf = self;
-    [[DBMotionManager sharedManager] startMotionHandler];
     [[DBMotionManager sharedManager] setMotionRotationHandler:^(UIDeviceOrientation orientation){
-        NSLog(@"last orientation %d", orientation);
         [weakSelf rotationChanged:orientation];
     }];
+    [[DBMotionManager sharedManager] startMotionHandler];
 }
 
 - (void) viewWillAppear:(BOOL)animated
@@ -148,7 +147,7 @@ NSLocalizedStringFromTable(key, @"DBCamera", nil)
 
 - (void) checkForLibraryImage
 {
-    if ( !self.cameraView.photoLibraryButton.isHidden && [NSStringFromClass(self.parentViewController.class) isEqualToString:@"DBCameraContainerViewController"] ) {
+    if ( !self.cameraView.photoLibraryButton.isHidden && [self.parentViewController.class isSubclassOfClass:NSClassFromString(@"DBCameraContainerViewController")] ) {
         if ( [ALAssetsLibrary authorizationStatus] !=  ALAuthorizationStatusDenied ) {
             __weak DBCameraView *weakCamera = self.cameraView;
             [[DBLibraryManager sharedInstance] loadLastItemWithBlock:^(BOOL success, UIImage *image) {
