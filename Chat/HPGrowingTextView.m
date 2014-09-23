@@ -103,6 +103,8 @@
     internalTextView.showsHorizontalScrollIndicator = NO;
     internalTextView.text = @"-";
     internalTextView.contentMode = UIViewContentModeRedraw;
+    internalTextView.selectable = YES;
+    internalTextView.layoutManager.allowsNonContiguousLayout = NO;
     [self addSubview:internalTextView];
     
     minHeight = internalTextView.frame.size.height;
@@ -339,7 +341,7 @@
     // Display (or not) the placeholder string
     
     BOOL wasDisplayingPlaceholder = internalTextView.displayPlaceHolder;
-    internalTextView.displayPlaceHolder = self.internalTextView.text.length == 0;
+    internalTextView.displayPlaceHolder = self.internalTextView.text.length == 0 && internalTextView.attachedImage == nil;
 	
     if (wasDisplayingPlaceholder != internalTextView.displayPlaceHolder) {
         [internalTextView setNeedsDisplay];
@@ -349,7 +351,7 @@
     // scroll to caret (needed on iOS7)
     if ([self respondsToSelector:@selector(snapshotViewAfterScreenUpdates:)])
     {
-        [self performSelector:@selector(resetScrollPositionForIOS7) withObject:nil afterDelay:0.1f];
+//        [self performSelector:@selector(resetScrollPositionForIOS7) withObject:nil afterDelay:0.1f];
     }
     
     // Tell the delegate that the text view changed
@@ -641,7 +643,7 @@
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 - (BOOL)textView:(UITextView *)textView shouldChangeTextInRange:(NSRange)range
- replacementText:(NSString *)atext {
+                                                replacementText:(NSString *)atext {
 	
 	//weird 1 pixel bug when clicking backspace when textView is empty
 	if(![textView hasText] && [atext isEqualToString:@""]) return NO;

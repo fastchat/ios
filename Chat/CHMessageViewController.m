@@ -177,7 +177,6 @@
 
 - (void)keyboardWillHide:(NSNotification *)notification;
 {
-    
     if (_beingDismissed) {
         return;
     }
@@ -317,6 +316,22 @@
     }
 }
 
+/**
+ * Sets the insets just how we want them, with whatever distance from the
+ * bottom of the screen (which will change, depending on the height of the textview,
+ * and if the keyboard is up.
+ */
+- (void)setTableViewInsetsFromBottom:(CGFloat)bottomDistance;
+{
+    //    UIEdgeInsetsMake(top, left, bottom, right)
+    UIEdgeInsets insets = UIEdgeInsetsMake(kDefaultContentOffset,
+                                           0,
+                                           self.containerView.frame.size.height + bottomDistance,
+                                           0);
+    self.messageTable.contentInset = insets;
+    self.messageTable.scrollIndicatorInsets = insets;
+}
+
 - (void)growingTextView:(HPGrowingTextView *)growingTextView willChangeHeight:(float)height
 {
     CGFloat diff = (growingTextView.frame.size.height - height);
@@ -348,22 +363,6 @@
         }
     }
        return YES;
-}
-
-/**
- * Sets the insets just how we want them, with whatever distance from the
- * bottom of the screen (which will change, depending on the height of the textview,
- * and if the keyboard is up.
- */
-- (void)setTableViewInsetsFromBottom:(CGFloat)bottomDistance;
-{
-//    UIEdgeInsetsMake(top, left, bottom, right)
-    UIEdgeInsets insets = UIEdgeInsetsMake(kDefaultContentOffset,
-                                           0,
-                                           self.containerView.frame.size.height + bottomDistance,
-                                           0);
-    self.messageTable.contentInset = insets;
-    self.messageTable.scrollIndicatorInsets = insets;
 }
 
 - (void)textViewTapped:(UITapGestureRecognizer *)sender;

@@ -37,7 +37,7 @@
     //setting the text programatically will cause UIKit to search upwards until it finds a scrollView with scrollEnabled==yes
     //then scroll it erratically. Setting scrollEnabled temporarily to YES prevents this.
     [self setScrollEnabled:YES];
-    [super setAttributedText:[[NSAttributedString alloc] initWithString:text]];
+    [super setAttributedText:[[NSAttributedString alloc] initWithString:text attributes:@{NSFontAttributeName: [UIFont systemFontOfSize:16]}]];
     [self setScrollEnabled:originalValue];
     
     if (!text.length) {
@@ -114,6 +114,7 @@
     {
         if ([self respondsToSelector:@selector(snapshotViewAfterScreenUpdates:)])
         {
+            DLog(@"FONT: %@", self.font);
             NSMutableParagraphStyle *paragraphStyle = [[NSMutableParagraphStyle alloc] init];
             paragraphStyle.alignment = self.textAlignment;
             [self.placeholder drawInRect:CGRectMake(5,
@@ -182,12 +183,13 @@
     NSTextAttachment *textAttachment = [[NSTextAttachment alloc] init];
     textAttachment.image = image;
     textAttachment.bounds = CGRectMake(0, 0, size.width, size.height);
+
+    self.displayPlaceHolder = NO;
     
-    NSMutableAttributedString *string = [[NSMutableAttributedString alloc] init];
-    [string appendAttributedString:[[NSAttributedString alloc] initWithString:self.text]];
-    [string appendAttributedString:[[NSAttributedString alloc] initWithString:@"\n"]];
+    NSMutableAttributedString *string = [[NSMutableAttributedString alloc] initWithAttributedString:self.attributedText];
     [string appendAttributedString:[NSAttributedString attributedStringWithAttachment:textAttachment]];
     self.attributedText = string;
+    self.font = [UIFont systemFontOfSize:16];
     
     /// again, only supporting 1 for now.
     self.attachedImage = image;
