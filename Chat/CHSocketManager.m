@@ -10,14 +10,12 @@
 #import "SocketIOPacket.h"
 #import "CHNetworkManager.h"
 #import "CHMessage.h"
-#import "TSMessage.h"
 #import "CHGroupListTableViewController.h"
 #import "CHMessageViewController.h"
 #import "CHAppDelegate.h"
 #import "CHGroup.h"
 #import "CHUser.h"
 #import "CHConstants.h"
-#import <AudioToolbox/AudioToolbox.h>
 
 
 @class SocketIO;

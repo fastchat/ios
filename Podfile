@@ -6,7 +6,7 @@ target "Chat" do
   pod 'socket.IO', '0.5.2'
   pod 'AFNetworking', '2.4.1'
   pod 'Mantle', '1.5'
-  pod 'TSMessages', '0.9.10'
+  pod 'TSMessages', :git => 'git@github.com:toursprung/TSMessages.git'
   pod 'DBCamera', '2.3.5'
   pod 'MBProgressHUD', '0.9'
   pod 'URBMediaFocusViewController', '0.5.5'

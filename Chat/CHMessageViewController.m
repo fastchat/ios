@@ -21,6 +21,8 @@
 #import "CHBackgroundContext.h"
 #import "CHProgressView.h"
 #import "UIAlertView+PromiseKit.h"
+#import "TSMessage.h"
+#import <AudioToolbox/AudioToolbox.h>
 
 #define kDefaultContentOffset self.navigationController.navigationBar.frame.size.height + 20
 
@@ -372,6 +374,30 @@
 - (void)growingTextViewDidChange:(HPGrowingTextView *)growingTextView;
 {
     [self setSendButtonEnabled:[self canSendMessage]];
+}
+
+- (void)otherGroupMessage:(CHMessage *)message;
+{
+    AudioServicesPlaySystemSound (kSystemSoundID_Vibrate);
+    [TSMessage showNotificationInViewController:self.navigationController
+                                          title:message.group.name
+                                       subtitle:message.text
+                                          image:nil
+                                           type:TSMessageNotificationTypeMessage
+                                       duration:TSMessageNotificationDurationAutomatic
+                                       callback:^{
+                                           //                                           UIStoryboard *storyboard = [UIStoryboard storyboardWithName:@"Main_iPhone" bundle:nil];
+                                           //                                           CHMessageViewController *vc = [storyboard instantiateViewControllerWithIdentifier:@"CHMessageViewController"];
+                                           //                                           vc.group = message.group;
+                                           //                                           vc.groupId = message.groupId;
+                                           //
+                                           //                                           [((UINavigationController*)root) popViewControllerAnimated:NO];
+                                           //                                           [((UINavigationController*)root) pushViewController:vc animated:YES];
+                                       }
+                                    buttonTitle:nil
+                                 buttonCallback:nil
+                                     atPosition:TSMessageNotificationPositionNavBarOverlay
+                           canBeDismissedByUser:YES];
 }
 
 #pragma mark - Camera

@@ -26,5 +26,6 @@
 
 @optional
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath;
+- (void)otherGroupMessage:(CHMessage *)message;
 
 @end
