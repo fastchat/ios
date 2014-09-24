@@ -39,7 +39,7 @@ NSString *const CHOwnMesssageCellIdentifier = @"CHOwnMessageTableViewCell";
     if (self) {
         _page = 0;
         _group = group;
-        _tableView = table;
+        self.tableView = table;
         _isFetching = NO;
         self.messages = [NSMutableOrderedSet orderedSet];
         __weak CHMessageTableDelegate *this = self;

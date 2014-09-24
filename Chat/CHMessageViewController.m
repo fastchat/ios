@@ -62,6 +62,7 @@
     self.messageTable.backgroundColor = kLightBackgroundColor;
     
     self.shouldSlide = YES;
+    self.keyboardIsVisible = NO;
     self.title = _group.name;
     _beingDismissed = NO;
     
@@ -158,6 +159,7 @@
     
     self.previousResponder = self.textView;
     self.heightOfKeyboard = keyboardHeight;
+    self.keyboardIsVisible = YES;
     [UIView animateWithDuration:animationDuration
                           delay:0.0
                         options:options
@@ -181,6 +183,7 @@
         return;
     }
     self.heightOfKeyboard = 0;
+    self.keyboardIsVisible = NO;
     NSTimeInterval animationDuration = [[notification.userInfo objectForKey:UIKeyboardAnimationDurationUserInfoKey] floatValue];
     NSInteger animationCurve = [[notification.userInfo objectForKey:UIKeyboardAnimationCurveUserInfoKey] integerValue];
     UIViewAnimationOptions options = (animationCurve << 16);
@@ -195,7 +198,6 @@
                          containerFrame.origin.y = self.view.bounds.size.height - containerFrame.size.height;
                          self.containerView.frame = containerFrame;
                      } completion:^(BOOL finished) {
-                             
                          self.previousResponder = nil;
                      }];
  /////// This may need some logic to scroll the messages with the keyboard
@@ -214,6 +216,12 @@
 
 - (void)sendMessage;
 {
+    if( self.keyboardIsVisible ) {
+        [self.textView setKeyboardType:UIKeyboardTypeDefault];
+        [self.textView resignFirstResponder];
+        [self.textView becomeFirstResponder];
+    }
+    
     [self startSendingMessage];
     NSString *msg = self.textView.text;
     
@@ -257,11 +265,7 @@
 {
     self.shouldSlide = NO;
     
-    if( self.keyboardIsVisible ) {
-        [self.textView setKeyboardType:UIKeyboardTypeDefault];
-        [self.textView resignFirstResponder];
-        [self.textView becomeFirstResponder];
-    }
+
     
     self.media = nil;
     self.mediaWasAdded = NO;
