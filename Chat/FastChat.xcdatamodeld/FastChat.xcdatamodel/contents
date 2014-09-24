@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<model userDefinedModelVersionIdentifier="" type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="6220.17" systemVersion="13E28" minimumToolsVersion="Xcode 4.3" macOSVersion="Automatic" iOSVersion="Automatic">
+<model userDefinedModelVersionIdentifier="" type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="6244" systemVersion="13F34" minimumToolsVersion="Xcode 4.3" macOSVersion="Automatic" iOSVersion="Automatic">
     <entity name="CHGroup" representedClassName="CHGroup" parentEntity="CHModel" syncable="YES">
         <attribute name="name" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="unread" optional="YES" attributeType="Integer 16" defaultValueString="0" syncable="YES"/>
+        <attribute name="unsentText" optional="YES" attributeType="String" syncable="YES"/>
         <relationship name="lastMessage" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="CHMessage" inverseName="groupLastMessage" inverseEntity="CHMessage" syncable="YES"/>
         <relationship name="members" optional="YES" toMany="YES" deletionRule="Nullify" ordered="YES" destinationEntity="CHUser" inverseName="groups" inverseEntity="CHUser" syncable="YES"/>
         <relationship name="messages" optional="YES" toMany="YES" deletionRule="Nullify" ordered="YES" destinationEntity="CHMessage" inverseName="group" inverseEntity="CHMessage" syncable="YES"/>
@@ -35,7 +36,7 @@
         <relationship name="pastGroups" optional="YES" toMany="YES" deletionRule="Nullify" ordered="YES" destinationEntity="CHGroup" inverseName="pastMembers" inverseEntity="CHGroup" syncable="YES"/>
     </entity>
     <elements>
-        <element name="CHGroup" positionX="0" positionY="0" width="128" height="135"/>
+        <element name="CHGroup" positionX="0" positionY="0" width="128" height="150"/>
         <element name="CHMessage" positionX="0" positionY="0" width="128" height="225"/>
         <element name="CHModel" positionX="18" positionY="81" width="128" height="58"/>
         <element name="CHUser" positionX="0" positionY="0" width="128" height="150"/>

@@ -7,6 +7,7 @@
 extern const struct CHGroupAttributes {
 	__unsafe_unretained NSString *name;
 	__unsafe_unretained NSString *unread;
+	__unsafe_unretained NSString *unsentText;
 } CHGroupAttributes;
 
 extern const struct CHGroupRelationships {
@@ -23,6 +24,7 @@ extern const struct CHGroupFetchedProperties {
 @class CHUser;
 @class CHMessage;
 @class CHUser;
+
 
 
 
@@ -59,6 +61,16 @@ extern const struct CHGroupFetchedProperties {
 - (void)setUnreadValue:(int16_t)value_;
 
 //- (BOOL)validateUnread:(id*)value_ error:(NSError**)error_;
+
+
+
+
+
+@property (nonatomic, strong) NSString* unsentText;
+
+
+
+//- (BOOL)validateUnsentText:(id*)value_ error:(NSError**)error_;
 
 
 
@@ -128,6 +140,12 @@ extern const struct CHGroupFetchedProperties {
 
 - (int16_t)primitiveUnreadValue;
 - (void)setPrimitiveUnreadValue:(int16_t)value_;
+
+
+
+
+- (NSString*)primitiveUnsentText;
+- (void)setPrimitiveUnsentText:(NSString*)value;
 
 
 
