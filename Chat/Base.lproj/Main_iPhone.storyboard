@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="6245" systemVersion="13E28" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" initialViewController="Hru-pZ-kQp">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="6245" systemVersion="13F34" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" initialViewController="Hru-pZ-kQp">
     <dependencies>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="6238"/>
         <capability name="Constraints to layout margins" minToolsVersion="6.0"/>
@@ -358,13 +358,7 @@
                             <constraint firstItem="srm-hB-ROt" firstAttribute="top" secondItem="6fJ-u5-PgN" secondAttribute="top" id="seC-DX-lWN"/>
                         </constraints>
                     </view>
-                    <navigationItem key="navigationItem" id="tJO-tD-WID">
-                        <barButtonItem key="rightBarButtonItem" systemItem="add" id="piK-vh-Qh6">
-                            <connections>
-                                <segue destination="8J5-GT-ziE" kind="modal" id="p2K-4A-9m1"/>
-                            </connections>
-                        </barButtonItem>
-                    </navigationItem>
+                    <navigationItem key="navigationItem" id="tJO-tD-WID"/>
                     <connections>
                         <outlet property="messageTable" destination="srm-hB-ROt" id="8Eq-zy-qgj"/>
                     </connections>
@@ -448,50 +442,6 @@
                 <placeholder placeholderIdentifier="IBFirstResponder" id="R4L-bU-Txy" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="1575" y="-235"/>
-        </scene>
-        <!--Invite User View Controller-->
-        <scene sceneID="OXX-ED-a1k">
-            <objects>
-                <viewController storyboardIdentifier="CHInviteUserViewController" id="ogu-gw-X3F" customClass="CHInviteUserViewController" sceneMemberID="viewController">
-                    <layoutGuides>
-                        <viewControllerLayoutGuide type="top" id="iup-cR-xGu"/>
-                        <viewControllerLayoutGuide type="bottom" id="XxR-v2-sxN"/>
-                    </layoutGuides>
-                    <view key="view" contentMode="scaleToFill" restorationIdentifier="CHInviteUserViewController" id="01B-xp-Esq">
-                        <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
-                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                        <subviews>
-                            <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="Add a user" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="gsP-WO-oNJ">
-                                <rect key="frame" x="100" y="89" width="120" height="21"/>
-                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
-                                <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
-                                <nil key="highlightedColor"/>
-                            </label>
-                            <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="fHE-oO-Hbx">
-                                <rect key="frame" x="20" y="118" width="275" height="30"/>
-                                <fontDescription key="fontDescription" type="system" pointSize="14"/>
-                                <textInputTraits key="textInputTraits"/>
-                            </textField>
-                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="qcU-3h-q4W">
-                                <rect key="frame" x="117" y="175" width="81" height="30"/>
-                                <state key="normal" title="Send Invite!">
-                                    <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
-                                </state>
-                                <connections>
-                                    <action selector="sendInviteTouched:" destination="ogu-gw-X3F" eventType="touchUpInside" id="4As-xR-bmF"/>
-                                </connections>
-                            </button>
-                        </subviews>
-                        <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
-                    </view>
-                    <navigationItem key="navigationItem" id="i2e-Bf-Rd1"/>
-                    <connections>
-                        <outlet property="usernameTextField" destination="fHE-oO-Hbx" id="Sfi-xg-f7b"/>
-                    </connections>
-                </viewController>
-                <placeholder placeholderIdentifier="IBFirstResponder" id="ueo-ZA-24e" userLabel="First Responder" sceneMemberID="firstResponder"/>
-            </objects>
-            <point key="canvasLocation" x="1969" y="1140"/>
         </scene>
         <!--Register-->
         <scene sceneID="nPp-gB-YOs">
@@ -663,24 +613,6 @@
                 <placeholder placeholderIdentifier="IBFirstResponder" id="EPR-TE-swK" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="-578" y="719"/>
-        </scene>
-        <!--Navigation Controller-->
-        <scene sceneID="WXs-NF-9Pa">
-            <objects>
-                <navigationController storyboardIdentifier="InviteNavigationController" automaticallyAdjustsScrollViewInsets="NO" id="8J5-GT-ziE" sceneMemberID="viewController">
-                    <toolbarItems/>
-                    <navigationBar key="navigationBar" contentMode="scaleToFill" id="WWU-mq-Q91">
-                        <rect key="frame" x="0.0" y="0.0" width="320" height="44"/>
-                        <autoresizingMask key="autoresizingMask"/>
-                    </navigationBar>
-                    <nil name="viewControllers"/>
-                    <connections>
-                        <segue destination="ogu-gw-X3F" kind="relationship" relationship="rootViewController" id="Orr-TC-FId"/>
-                    </connections>
-                </navigationController>
-                <placeholder placeholderIdentifier="IBFirstResponder" id="Bco-zr-9OA" userLabel="First Responder" sceneMemberID="firstResponder"/>
-            </objects>
-            <point key="canvasLocation" x="1482" y="1140"/>
         </scene>
         <!--Profile-->
         <scene sceneID="Kml-LN-k5g">
