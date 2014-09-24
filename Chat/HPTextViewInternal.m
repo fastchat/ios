@@ -37,7 +37,9 @@
     //setting the text programatically will cause UIKit to search upwards until it finds a scrollView with scrollEnabled==yes
     //then scroll it erratically. Setting scrollEnabled temporarily to YES prevents this.
     [self setScrollEnabled:YES];
-    [super setAttributedText:[[NSAttributedString alloc] initWithString:text attributes:@{NSFontAttributeName: [UIFont systemFontOfSize:16]}]];
+    if (text != nil) {
+        [super setAttributedText:[[NSAttributedString alloc] initWithString:text attributes:@{NSFontAttributeName: [UIFont systemFontOfSize:16]}]];
+    }
     [self setScrollEnabled:originalValue];
     
     if (!text.length) {
