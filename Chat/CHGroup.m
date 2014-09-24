@@ -50,6 +50,11 @@ static NSString *const MESSAGES_KEY = @"messages";
     return [[CHNetworkManager sharedManager] messagesForGroup:self page:page];
 }
 
+- (BOOL)isEmpty;
+{
+    return self.members.count == 1 && [((CHUser *)self.members[0]).chID isEqual:[CHUser currentUser].chID];
+}
+
 - (NSString *)name;
 {
     if( self.primitiveName.length != 0 ) {

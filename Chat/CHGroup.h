@@ -16,6 +16,9 @@
 - (PMKPromise *)addUsers:(NSArray *)users;
 
 - (BOOL)hasUnread;
+
+// Empty means only has the user currently in it.
+- (BOOL)isEmpty;
 - (void)unreadIncrement;
 
 @end

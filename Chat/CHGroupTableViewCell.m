@@ -33,4 +33,13 @@
     _unreadView.unread = unread;
 }
 
+- (void)setBackgroundColor:(UIColor *)backgroundColor;
+{
+    [super setBackgroundColor:backgroundColor];
+    self.groupDetailLabel.backgroundColor = backgroundColor;
+    self.groupTextLabel.backgroundColor = backgroundColor;
+    self.groupRightDetailLabel.backgroundColor = backgroundColor;
+    self.unreadView.backgroundColor = backgroundColor;
+}
+
 @end

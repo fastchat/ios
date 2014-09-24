@@ -30,7 +30,7 @@
 
 - (void)setSelected:(BOOL)selected animated:(BOOL)animated
 {
-    self.circleColor = selected ? [UIColor clearColor] : ( _unread ? kPurpleAppColor : kLightBackgroundColor );
+    self.circleColor = selected ? [UIColor clearColor] : ( _unread ? kPurpleAppColor : self.backgroundColor );
 }
 
 - (void)setToColor:(UIColor*)color;

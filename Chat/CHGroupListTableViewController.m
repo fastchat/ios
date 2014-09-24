@@ -127,6 +127,13 @@
     cell.groupDetailLabel.text = group.lastMessage.text;
     cell.groupRightDetailLabel.text = [self formatTime:group.lastMessage.sent];
     [cell setUnread:[group hasUnread]];
+    
+    UIColor *background = kLightBackgroundColor;
+    if ([group isEmpty]) {
+        background = kDarkerGrayBackgroundColor;
+    }
+    [cell setBackgroundColor:background];
+    
     cell.selectionStyle = UITableViewCellSelectionStyleNone;
     
     return cell;
