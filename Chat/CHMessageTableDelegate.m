@@ -263,10 +263,8 @@ NSString *const CHOwnMesssageCellIdentifier = @"CHOwnMessageTableViewCell";
         [self.tableView reloadData];
     }
     if (scroll) {
-        [self.tableView scrollToRowAtIndexPath:[NSIndexPath
-                                                indexPathForRow:([self tableView:self.tableView numberOfRowsInSection:0] - 1) inSection:0]
-                              atScrollPosition:UITableViewScrollPositionBottom
-                                      animated:animated];
+        NSIndexPath *path = [NSIndexPath indexPathForRow:([self tableView:self.tableView numberOfRowsInSection:0] - 1) inSection:0];
+        [self.tableView scrollToRowAtIndexPath:path atScrollPosition:UITableViewScrollPositionBottom animated:animated];
     }
 }
 

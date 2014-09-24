@@ -146,7 +146,7 @@
 {
     [super viewWillDisappear:animated];
     self.group.unsentText = self.textView.text;
-
+    self.beingDismissed = YES;
     [[NSManagedObjectContext MR_defaultContext] MR_saveToPersistentStoreAndWait];
 }
 
@@ -186,7 +186,7 @@
 
 - (void)keyboardWillHide:(NSNotification *)notification;
 {
-    if (_beingDismissed) {
+    if (self.beingDismissed) {
         return;
     }
     self.heightOfKeyboard = 0;
