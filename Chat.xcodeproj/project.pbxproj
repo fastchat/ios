@@ -37,6 +37,12 @@
 		279CF21D18DF777500C82399 /* CHMTLUser.m in Sources */ = {isa = PBXBuildFile; fileRef = 279CF21C18DF777400C82399 /* CHMTLUser.m */; };
 		279CF22118DFD74D00C82399 /* CHInviteUserViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 279CF22018DFD74D00C82399 /* CHInviteUserViewController.m */; };
 		2C7FD1E6FB44435B8A225753 /* libPods-Chat.a in Frameworks */ = {isa = PBXBuildFile; fileRef = ED86F54EC1C64B14950512A1 /* libPods-Chat.a */; };
+		AA13D1FA19D70F760008BADB /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = AA13D1F919D70F760008BADB /* Localizable.strings */; };
+		AA27A0B919D722DB00E35DC9 /* CHDynamicSwitchCell.m in Sources */ = {isa = PBXBuildFile; fileRef = AA27A0B819D722DB00E35DC9 /* CHDynamicSwitchCell.m */; };
+		AA27A0BC19D722F100E35DC9 /* CHDynamicCell.m in Sources */ = {isa = PBXBuildFile; fileRef = AA27A0BB19D722F100E35DC9 /* CHDynamicCell.m */; };
+		AA27A0BF19D722FE00E35DC9 /* CHDynamicSubtextCell.m in Sources */ = {isa = PBXBuildFile; fileRef = AA27A0BE19D722FE00E35DC9 /* CHDynamicSubtextCell.m */; };
+		AA27A0C219D7230900E35DC9 /* CHDynamicTextCell.m in Sources */ = {isa = PBXBuildFile; fileRef = AA27A0C119D7230900E35DC9 /* CHDynamicTextCell.m */; };
+		AA27A0C519D732B200E35DC9 /* CHPaymentViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = AA27A0C419D732B200E35DC9 /* CHPaymentViewController.m */; };
 		AA46331B193659EB00513578 /* CHTextField.m in Sources */ = {isa = PBXBuildFile; fileRef = AA46331A193659EB00513578 /* CHTextField.m */; };
 		AA46331E19365BB700513578 /* CHColors.m in Sources */ = {isa = PBXBuildFile; fileRef = AA46331D19365BB700513578 /* CHColors.m */; };
 		AA46332119365DDF00513578 /* CHAuthTextField.m in Sources */ = {isa = PBXBuildFile; fileRef = AA46332019365DDF00513578 /* CHAuthTextField.m */; };
@@ -116,6 +122,17 @@
 		279CF21F18DFD74D00C82399 /* CHInviteUserViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CHInviteUserViewController.h; sourceTree = "<group>"; };
 		279CF22018DFD74D00C82399 /* CHInviteUserViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CHInviteUserViewController.m; sourceTree = "<group>"; };
 		7EC6EF7B5FC54E4BA2B855D4 /* Pods-Chat.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Chat.xcconfig"; path = "Pods/Pods-Chat.xcconfig"; sourceTree = "<group>"; };
+		AA13D1F919D70F760008BADB /* Localizable.strings */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.strings; path = Localizable.strings; sourceTree = "<group>"; };
+		AA27A0B719D722DB00E35DC9 /* CHDynamicSwitchCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CHDynamicSwitchCell.h; sourceTree = "<group>"; };
+		AA27A0B819D722DB00E35DC9 /* CHDynamicSwitchCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CHDynamicSwitchCell.m; sourceTree = "<group>"; };
+		AA27A0BA19D722F100E35DC9 /* CHDynamicCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CHDynamicCell.h; sourceTree = "<group>"; };
+		AA27A0BB19D722F100E35DC9 /* CHDynamicCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CHDynamicCell.m; sourceTree = "<group>"; };
+		AA27A0BD19D722FE00E35DC9 /* CHDynamicSubtextCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CHDynamicSubtextCell.h; sourceTree = "<group>"; };
+		AA27A0BE19D722FE00E35DC9 /* CHDynamicSubtextCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CHDynamicSubtextCell.m; sourceTree = "<group>"; };
+		AA27A0C019D7230900E35DC9 /* CHDynamicTextCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CHDynamicTextCell.h; sourceTree = "<group>"; };
+		AA27A0C119D7230900E35DC9 /* CHDynamicTextCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CHDynamicTextCell.m; sourceTree = "<group>"; };
+		AA27A0C319D732B200E35DC9 /* CHPaymentViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CHPaymentViewController.h; sourceTree = "<group>"; };
+		AA27A0C419D732B200E35DC9 /* CHPaymentViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CHPaymentViewController.m; sourceTree = "<group>"; };
 		AA463319193659EB00513578 /* CHTextField.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CHTextField.h; sourceTree = "<group>"; };
 		AA46331A193659EB00513578 /* CHTextField.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CHTextField.m; sourceTree = "<group>"; };
 		AA46331C19365BB700513578 /* CHColors.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CHColors.h; sourceTree = "<group>"; };
@@ -210,6 +227,8 @@
 				2762621A18F706FA001F7754 /* CHProfileViewController.m */,
 				2762622018F82B08001F7754 /* CHCircleImageView.h */,
 				2762622118F82B08001F7754 /* CHCircleImageView.m */,
+				AA27A0C319D732B200E35DC9 /* CHPaymentViewController.h */,
+				AA27A0C419D732B200E35DC9 /* CHPaymentViewController.m */,
 			);
 			name = "User Info";
 			sourceTree = "<group>";
@@ -285,11 +304,27 @@
 			name = Groups;
 			sourceTree = "<group>";
 		};
+		AA13D1F819D70F640008BADB /* Strings */ = {
+			isa = PBXGroup;
+			children = (
+				AA13D1F919D70F760008BADB /* Localizable.strings */,
+			);
+			name = Strings;
+			sourceTree = "<group>";
+		};
 		AA463318193659DB00513578 /* UI Elements */ = {
 			isa = PBXGroup;
 			children = (
 				AA463319193659EB00513578 /* CHTextField.h */,
 				AA46331A193659EB00513578 /* CHTextField.m */,
+				AA27A0BA19D722F100E35DC9 /* CHDynamicCell.h */,
+				AA27A0BB19D722F100E35DC9 /* CHDynamicCell.m */,
+				AA27A0C019D7230900E35DC9 /* CHDynamicTextCell.h */,
+				AA27A0C119D7230900E35DC9 /* CHDynamicTextCell.m */,
+				AA27A0BD19D722FE00E35DC9 /* CHDynamicSubtextCell.h */,
+				AA27A0BE19D722FE00E35DC9 /* CHDynamicSubtextCell.m */,
+				AA27A0B719D722DB00E35DC9 /* CHDynamicSwitchCell.h */,
+				AA27A0B819D722DB00E35DC9 /* CHDynamicSwitchCell.m */,
 			);
 			name = "UI Elements";
 			sourceTree = "<group>";
@@ -384,6 +419,7 @@
 		AA7759E018D54D3000E4E7AB /* Supporting Files */ = {
 			isa = PBXGroup;
 			children = (
+				AA13D1F819D70F640008BADB /* Strings */,
 				AA7759F418D54D3000E4E7AB /* Images.xcassets */,
 				AA7759E118D54D3000E4E7AB /* Chat-Info.plist */,
 				AA7759E218D54D3000E4E7AB /* InfoPlist.strings */,
@@ -583,6 +619,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				AA13D1FA19D70F760008BADB /* Localizable.strings in Resources */,
 				AA7759F018D54D3000E4E7AB /* Main_iPad.storyboard in Resources */,
 				AA7759F518D54D3000E4E7AB /* Images.xcassets in Resources */,
 				AA7759ED18D54D3000E4E7AB /* Main_iPhone.storyboard in Resources */,
@@ -656,17 +693,21 @@
 				2769B04F18EDD40800CCE470 /* CHOwnMessageTableViewCell.m in Sources */,
 				2769B06818F47E5E00CCE470 /* CHFastChatObject.m in Sources */,
 				AA4633241936735F00513578 /* CHGroupTableViewCell.m in Sources */,
+				AA27A0C219D7230900E35DC9 /* CHDynamicTextCell.m in Sources */,
 				AA46332719367A5F00513578 /* CHUnreadView.m in Sources */,
 				2768EAB318DB119A006D14BB /* CHSocketManager.m in Sources */,
 				2762622218F82B08001F7754 /* CHCircleImageView.m in Sources */,
 				279CF21D18DF777500C82399 /* CHMTLUser.m in Sources */,
 				AACE34D119BCC11500136440 /* CHProgressView.m in Sources */,
+				AA27A0B919D722DB00E35DC9 /* CHDynamicSwitchCell.m in Sources */,
 				2768EAAE18D9138D006D14BB /* CHMessageViewController.m in Sources */,
 				2768EAA218D888B6006D14BB /* CHGroupListTableViewController.m in Sources */,
+				AA27A0C519D732B200E35DC9 /* CHPaymentViewController.m in Sources */,
 				AAD5E56119CBC5450019EF5E /* CHMessageTableDelegate.m in Sources */,
 				2769B04618E7820A00CCE470 /* CHMessageTableViewCell.m in Sources */,
 				AAAF1D02193A528C00B095E1 /* CHConstants.m in Sources */,
 				AABD8A04199EAA6B002962A4 /* _CHUser.m in Sources */,
+				AA27A0BF19D722FE00E35DC9 /* CHDynamicSubtextCell.m in Sources */,
 				AABD8A06199EAA6B002962A4 /* CHMessage.m in Sources */,
 				AA46331B193659EB00513578 /* CHTextField.m in Sources */,
 				AA7759E618D54D3000E4E7AB /* main.m in Sources */,
@@ -688,6 +729,7 @@
 				AA7759F318D54D3000E4E7AB /* CHLoginViewController.m in Sources */,
 				2769B06B18F495FD00CCE470 /* CHMTLMessage.m in Sources */,
 				279CF22118DFD74D00C82399 /* CHInviteUserViewController.m in Sources */,
+				AA27A0BC19D722F100E35DC9 /* CHDynamicCell.m in Sources */,
 				AA7C691E19986636005DFFF5 /* FastChat.xcdatamodeld in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
