@@ -1,0 +1,11 @@
+/* 
+  Localizable.strings
+  FastChat
+
+  Created by Ethan Mick on 9/27/14.
+ 
+ "KEY" = "CONTENT";
+*/
+
+"PAST_GROUPS_HEADER" = "Past Groups";
+"SETTINGS_HEADER" = "Settings";
