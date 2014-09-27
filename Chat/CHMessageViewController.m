@@ -120,11 +120,7 @@
     self.delegate.delegate = self;
     
     
-    DLog(@"End Middle");
-    
     self.keyboardIsVisible = NO;
-    [self setSendButtonEnabled:[self canSendMessage]];
-    
     [[NSNotificationCenter defaultCenter] addObserver:self
                                              selector:@selector(keyboardWillShow:)
                                                  name:UIKeyboardWillShowNotification
@@ -140,6 +136,7 @@
 {
     [super viewWillAppear:animated];
     self.textView.text = self.group.unsentText;
+    [self setSendButtonEnabled:[self canSendMessage]];
 }
 
 - (void)viewWillDisappear:(BOOL)animated;

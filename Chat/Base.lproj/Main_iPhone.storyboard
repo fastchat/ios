@@ -344,10 +344,6 @@
                                         </connections>
                                     </tableViewCell>
                                 </prototypes>
-                                <connections>
-                                    <outlet property="dataSource" destination="Ve0-ai-wJa" id="dUl-NB-bkh"/>
-                                    <outlet property="delegate" destination="Ve0-ai-wJa" id="Ebe-zD-r8O"/>
-                                </connections>
                             </tableView>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
@@ -507,51 +503,6 @@
             </objects>
             <point key="canvasLocation" x="-344" y="-39"/>
         </scene>
-        <!--Profile-->
-        <scene sceneID="AND-c9-1Mq">
-            <objects>
-                <viewController storyboardIdentifier="CHProfileViewController" id="smW-kQ-2zj" customClass="CHProfileViewController" sceneMemberID="viewController">
-                    <layoutGuides>
-                        <viewControllerLayoutGuide type="top" id="j31-uZ-8GE"/>
-                        <viewControllerLayoutGuide type="bottom" id="G4j-xA-Wan"/>
-                    </layoutGuides>
-                    <view key="view" contentMode="scaleToFill" id="qQX-4C-zyD">
-                        <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
-                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                        <subviews>
-                            <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="User Name" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="PSg-NP-SMl">
-                                <rect key="frame" x="103" y="72" width="197" height="21"/>
-                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
-                                <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
-                                <nil key="highlightedColor"/>
-                            </label>
-                            <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" image="profile-dark.png" translatesAutoresizingMaskIntoConstraints="NO" id="XEX-Zc-WUn" customClass="CHCircleImageView">
-                                <rect key="frame" x="20" y="72" width="70" height="70"/>
-                                <color key="backgroundColor" red="0.18823529411764706" green="0.62352941176470589" blue="1" alpha="1" colorSpace="calibratedRGB"/>
-                            </imageView>
-                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="24y-Rt-Ool">
-                                <rect key="frame" x="16" y="150" width="79" height="30"/>
-                                <state key="normal" title="New Avatar">
-                                    <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
-                                </state>
-                                <connections>
-                                    <action selector="cameraButtonTouched:" destination="smW-kQ-2zj" eventType="touchUpInside" id="JtO-DS-bMS"/>
-                                </connections>
-                            </button>
-                        </subviews>
-                        <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
-                    </view>
-                    <navigationItem key="navigationItem" title="Profile" id="Snt-uq-p8q"/>
-                    <connections>
-                        <outlet property="avatarCameraButton" destination="24y-Rt-Ool" id="TLU-OY-FWh"/>
-                        <outlet property="avatarImageView" destination="XEX-Zc-WUn" id="bPx-Hn-Cg2"/>
-                        <outlet property="userNameLabel" destination="PSg-NP-SMl" id="Yt3-a0-IoB"/>
-                    </connections>
-                </viewController>
-                <placeholder placeholderIdentifier="IBFirstResponder" id="NOq-xS-hwC" userLabel="First Responder" sceneMemberID="firstResponder"/>
-            </objects>
-            <point key="canvasLocation" x="600" y="1022"/>
-        </scene>
         <!--Chat-->
         <scene sceneID="OfC-YW-V0P">
             <objects>
@@ -627,12 +578,118 @@
                     </navigationBar>
                     <nil name="viewControllers"/>
                     <connections>
-                        <segue destination="smW-kQ-2zj" kind="relationship" relationship="rootViewController" id="dvC-Of-Ds4"/>
+                        <segue destination="MKa-Xf-fFT" kind="relationship" relationship="rootViewController" id="4Ug-nv-m23"/>
                     </connections>
                 </navigationController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="fPc-Cu-tvD" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="54" y="1022"/>
+        </scene>
+        <!--Profile-->
+        <scene sceneID="9KK-8V-rcz">
+            <objects>
+                <tableViewController storyboardIdentifier="CHProfileViewController" id="MKa-Xf-fFT" customClass="CHProfileViewController" sceneMemberID="viewController">
+                    <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="50" sectionHeaderHeight="22" sectionFooterHeight="22" id="g3i-Lv-0F0">
+                        <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                        <view key="tableHeaderView" contentMode="scaleToFill" id="QLz-bK-nsl">
+                            <rect key="frame" x="0.0" y="64" width="320" height="98"/>
+                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                            <subviews>
+                                <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="User Name" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="PSg-NP-SMl">
+                                    <rect key="frame" x="86" y="8" width="226" height="21"/>
+                                    <constraints>
+                                        <constraint firstAttribute="height" constant="21" id="5yx-S6-u9d"/>
+                                    </constraints>
+                                    <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                    <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
+                                    <nil key="highlightedColor"/>
+                                </label>
+                                <imageView contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="NoAvatar" translatesAutoresizingMaskIntoConstraints="NO" id="XEX-Zc-WUn" customClass="CHCircleImageView">
+                                    <rect key="frame" x="8" y="8" width="70" height="70"/>
+                                    <accessibility key="accessibilityConfiguration" label="Avatar"/>
+                                    <gestureRecognizers/>
+                                    <constraints>
+                                        <constraint firstAttribute="height" constant="70" id="NVm-ed-gww"/>
+                                        <constraint firstAttribute="width" constant="70" id="UXP-AX-sRT"/>
+                                    </constraints>
+                                    <connections>
+                                        <outletCollection property="gestureRecognizers" destination="deH-XG-Ad5" appends="YES" id="7WT-1H-we7"/>
+                                    </connections>
+                                </imageView>
+                            </subviews>
+                            <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                            <constraints>
+                                <constraint firstItem="PSg-NP-SMl" firstAttribute="leading" secondItem="XEX-Zc-WUn" secondAttribute="trailing" constant="8" id="LV6-Ru-ti5"/>
+                                <constraint firstItem="PSg-NP-SMl" firstAttribute="top" secondItem="QLz-bK-nsl" secondAttribute="top" constant="8" id="eh8-Na-dDq"/>
+                                <constraint firstItem="XEX-Zc-WUn" firstAttribute="leading" secondItem="QLz-bK-nsl" secondAttribute="leading" constant="8" id="hIE-IQ-4rl"/>
+                                <constraint firstAttribute="trailing" secondItem="PSg-NP-SMl" secondAttribute="trailing" constant="8" id="tYB-Yb-Oqc"/>
+                                <constraint firstItem="XEX-Zc-WUn" firstAttribute="top" secondItem="QLz-bK-nsl" secondAttribute="top" constant="8" id="uGZ-aw-QLl"/>
+                            </constraints>
+                        </view>
+                        <view key="tableFooterView" contentMode="scaleToFill" id="7Vw-Q7-yAl">
+                            <rect key="frame" x="0.0" y="234" width="320" height="85"/>
+                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                            <subviews>
+                                <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="y4e-Zf-E0y">
+                                    <rect key="frame" x="8" y="8" width="304" height="30"/>
+                                    <state key="normal" title="Logout">
+                                        <color key="titleColor" red="1" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
+                                        <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
+                                    </state>
+                                    <connections>
+                                        <action selector="logout:" destination="MKa-Xf-fFT" eventType="touchUpInside" id="Ccg-FY-m3F"/>
+                                    </connections>
+                                </button>
+                                <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="1yx-ga-U5i">
+                                    <rect key="frame" x="8" y="46" width="304" height="30"/>
+                                    <state key="normal" title="Logout of All Devices">
+                                        <color key="titleColor" red="1" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
+                                        <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
+                                    </state>
+                                    <connections>
+                                        <action selector="logoutFromAll:" destination="MKa-Xf-fFT" eventType="touchUpInside" id="b22-l7-yby"/>
+                                    </connections>
+                                </button>
+                            </subviews>
+                            <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                        </view>
+                        <prototypes>
+                            <tableViewCell contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" reuseIdentifier="CHPastGroupCell" textLabel="IRI-0f-Pew" style="IBUITableViewCellStyleDefault" id="UUR-9l-nns">
+                                <autoresizingMask key="autoresizingMask"/>
+                                <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="UUR-9l-nns" id="ens-wE-9WZ">
+                                    <autoresizingMask key="autoresizingMask"/>
+                                    <subviews>
+                                        <label opaque="NO" multipleTouchEnabled="YES" contentMode="left" text="Title" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="IRI-0f-Pew">
+                                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                            <fontDescription key="fontDescription" type="system" pointSize="16"/>
+                                            <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
+                                            <nil key="highlightedColor"/>
+                                        </label>
+                                    </subviews>
+                                </tableViewCellContentView>
+                            </tableViewCell>
+                        </prototypes>
+                        <connections>
+                            <outlet property="dataSource" destination="MKa-Xf-fFT" id="dO8-VT-5B2"/>
+                            <outlet property="delegate" destination="MKa-Xf-fFT" id="djy-pN-Aa5"/>
+                        </connections>
+                    </tableView>
+                    <navigationItem key="navigationItem" title="Profile" id="wKQ-F9-wVL"/>
+                    <connections>
+                        <outlet property="avatarImageView" destination="XEX-Zc-WUn" id="TnK-49-t3j"/>
+                        <outlet property="userNameLabel" destination="PSg-NP-SMl" id="GkJ-3I-AST"/>
+                    </connections>
+                </tableViewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="eyC-Pb-7P2" userLabel="First Responder" sceneMemberID="firstResponder"/>
+                <tapGestureRecognizer id="deH-XG-Ad5">
+                    <connections>
+                        <action selector="cameraButtonTouched:" destination="MKa-Xf-fFT" id="UxK-LW-4uh"/>
+                    </connections>
+                </tapGestureRecognizer>
+            </objects>
+            <point key="canvasLocation" x="522" y="1022"/>
         </scene>
         <!--Navigation Controller-->
         <scene sceneID="lgl-iM-H5t">
@@ -657,7 +714,6 @@
         <image name="ChatTabIcon" width="37" height="28"/>
         <image name="NoAvatar" width="34" height="34"/>
         <image name="ProfileTabIcon" width="37" height="28"/>
-        <image name="profile-dark.png" width="240" height="240"/>
     </resources>
     <simulatedMetricsContainer key="defaultSimulatedMetrics">
         <simulatedStatusBarMetrics key="statusBar"/>
