@@ -10,6 +10,8 @@
 
 @interface CHDynamicCell : UITableViewCell
 
+- (void)setCellValues:(NSDictionary *)values withOwner:(id)owner;
+
 - (NSArray *)propertyNames;
 - (void)setDelegatesWithObject:(id)object;
 
