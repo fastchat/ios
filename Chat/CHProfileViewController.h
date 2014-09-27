@@ -7,13 +7,19 @@
 //
 
 #import <UIKit/UIKit.h>
+#import "DBCameraContainerViewController.h"
 
-@interface CHProfileViewController : UIViewController <UINavigationControllerDelegate, UIImagePickerControllerDelegate>
+@interface CHProfileViewController : UITableViewController <
+    UINavigationControllerDelegate,
+    UIImagePickerControllerDelegate,
+    DBCameraViewControllerDelegate
+>
 
 @property (weak, nonatomic) IBOutlet UILabel *userNameLabel;
 @property (weak, nonatomic) IBOutlet UIImageView *avatarImageView;
-@property (weak, nonatomic) IBOutlet UIButton *avatarCameraButton;
 
 - (IBAction)cameraButtonTouched:(id)sender;
+- (IBAction)logout:(id)sender;
+- (IBAction)logoutFromAll:(id)sender;
 
 @end

@@ -361,7 +361,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="0Ui-X7-fik" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="1049" y="467"/>
+            <point key="canvasLocation" x="1049" y="344"/>
         </scene>
         <!--Create Group-->
         <scene sceneID="Yyw-gc-GC0">
@@ -437,7 +437,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="R4L-bU-Txy" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="1575" y="-235"/>
+            <point key="canvasLocation" x="1462" y="-294"/>
         </scene>
         <!--Register-->
         <scene sceneID="nPp-gB-YOs">
@@ -602,7 +602,7 @@
                                     <constraints>
                                         <constraint firstAttribute="height" constant="21" id="5yx-S6-u9d"/>
                                     </constraints>
-                                    <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                    <fontDescription key="fontDescription" type="boldSystem" pointSize="17"/>
                                     <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
                                     <nil key="highlightedColor"/>
                                 </label>
@@ -670,6 +670,76 @@
                                     </subviews>
                                 </tableViewCellContentView>
                             </tableViewCell>
+                            <tableViewCell contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" reuseIdentifier="CHSwitchCell" id="N1n-bx-2Ib" customClass="CHDynamicSwitchCell">
+                                <autoresizingMask key="autoresizingMask"/>
+                                <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="N1n-bx-2Ib" id="ovf-aE-HJs">
+                                    <autoresizingMask key="autoresizingMask"/>
+                                    <subviews>
+                                        <switch opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" contentHorizontalAlignment="center" contentVerticalAlignment="center" on="YES" translatesAutoresizingMaskIntoConstraints="NO" id="ZgC-Bf-zfs">
+                                            <rect key="frame" x="263" y="9" width="51" height="31"/>
+                                            <constraints>
+                                                <constraint firstAttribute="height" constant="31" id="SOK-dd-4Wj"/>
+                                                <constraint firstAttribute="width" constant="49" id="SdO-De-yZF"/>
+                                            </constraints>
+                                            <color key="onTintColor" red="0.3411764706" green="0.0" blue="0.56078431370000004" alpha="1" colorSpace="calibratedRGB"/>
+                                        </switch>
+                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="2SP-ag-LqF">
+                                            <rect key="frame" x="15" y="0.0" width="247" height="49"/>
+                                            <constraints>
+                                                <constraint firstAttribute="height" constant="49" id="Eoh-lE-mn6"/>
+                                            </constraints>
+                                            <fontDescription key="fontDescription" type="system" pointSize="16"/>
+                                            <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
+                                            <nil key="highlightedColor"/>
+                                        </label>
+                                    </subviews>
+                                    <constraints>
+                                        <constraint firstItem="ZgC-Bf-zfs" firstAttribute="leading" secondItem="2SP-ag-LqF" secondAttribute="trailing" constant="1" id="2RP-tJ-5iO"/>
+                                        <constraint firstItem="ZgC-Bf-zfs" firstAttribute="trailing" secondItem="ovf-aE-HJs" secondAttribute="trailingMargin" id="9eA-Cl-Mxm"/>
+                                        <constraint firstItem="ZgC-Bf-zfs" firstAttribute="top" secondItem="ovf-aE-HJs" secondAttribute="topMargin" constant="1" id="EJx-Vg-dvZ"/>
+                                        <constraint firstItem="2SP-ag-LqF" firstAttribute="top" secondItem="ovf-aE-HJs" secondAttribute="topMargin" constant="-8" id="L2j-X0-qrr"/>
+                                        <constraint firstItem="2SP-ag-LqF" firstAttribute="leading" secondItem="ovf-aE-HJs" secondAttribute="leadingMargin" constant="7" id="peG-rE-4BI"/>
+                                    </constraints>
+                                </tableViewCellContentView>
+                                <connections>
+                                    <outlet property="cellSwitch" destination="ZgC-Bf-zfs" id="VaB-wB-bik"/>
+                                    <outlet property="switchLabel" destination="2SP-ag-LqF" id="oYX-tr-Mho"/>
+                                </connections>
+                            </tableViewCell>
+                            <tableViewCell contentMode="scaleToFill" selectionStyle="default" accessoryType="disclosureIndicator" indentationWidth="10" reuseIdentifier="CHChevronCell" textLabel="8C0-JJ-YvC" style="IBUITableViewCellStyleDefault" id="fsF-Js-ypO" customClass="CHDynamicTextCell">
+                                <autoresizingMask key="autoresizingMask"/>
+                                <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="fsF-Js-ypO" id="ZDe-kb-PGG">
+                                    <autoresizingMask key="autoresizingMask"/>
+                                    <subviews>
+                                        <label opaque="NO" multipleTouchEnabled="YES" contentMode="left" text="Title" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="8C0-JJ-YvC">
+                                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                            <fontDescription key="fontDescription" type="system" pointSize="16"/>
+                                            <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
+                                            <nil key="highlightedColor"/>
+                                        </label>
+                                    </subviews>
+                                </tableViewCellContentView>
+                            </tableViewCell>
+                            <tableViewCell contentMode="scaleToFill" selectionStyle="default" accessoryType="disclosureIndicator" indentationWidth="10" reuseIdentifier="CHSubtextCell" textLabel="5dg-D0-EtI" detailTextLabel="jC1-E6-mZG" style="IBUITableViewCellStyleSubtitle" id="WT4-ZS-PqG" customClass="CHDynamicSubtextCell">
+                                <autoresizingMask key="autoresizingMask"/>
+                                <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="WT4-ZS-PqG" id="qNw-yc-LcY">
+                                    <autoresizingMask key="autoresizingMask"/>
+                                    <subviews>
+                                        <label opaque="NO" multipleTouchEnabled="YES" contentMode="left" text="Title" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="5dg-D0-EtI">
+                                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                            <fontDescription key="fontDescription" type="system" pointSize="16"/>
+                                            <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
+                                            <nil key="highlightedColor"/>
+                                        </label>
+                                        <label opaque="NO" multipleTouchEnabled="YES" contentMode="left" text="Subtitle" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="jC1-E6-mZG">
+                                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                            <fontDescription key="fontDescription" type="system" pointSize="11"/>
+                                            <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
+                                            <nil key="highlightedColor"/>
+                                        </label>
+                                    </subviews>
+                                </tableViewCellContentView>
+                            </tableViewCell>
                         </prototypes>
                         <connections>
                             <outlet property="dataSource" destination="MKa-Xf-fFT" id="dO8-VT-5B2"/>
@@ -689,7 +759,34 @@
                     </connections>
                 </tapGestureRecognizer>
             </objects>
-            <point key="canvasLocation" x="522" y="1022"/>
+            <point key="canvasLocation" x="522" y="1021"/>
+        </scene>
+        <!--Payment-->
+        <scene sceneID="9Nj-Mx-7V1">
+            <objects>
+                <viewController storyboardIdentifier="CHPaymentViewController" title="Payment" id="vh8-1B-DA9" customClass="CHPaymentViewController" sceneMemberID="viewController">
+                    <layoutGuides>
+                        <viewControllerLayoutGuide type="top" id="I1Z-R8-hMb"/>
+                        <viewControllerLayoutGuide type="bottom" id="KyY-hb-x8A"/>
+                    </layoutGuides>
+                    <view key="view" contentMode="scaleToFill" id="8Yz-GG-Kx8">
+                        <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="Coming in 0.8.0!" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="MaU-Wk-UYk">
+                                <rect key="frame" x="16" y="72" width="288" height="21"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                        </subviews>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                    </view>
+                    <simulatedNavigationBarMetrics key="simulatedTopBarMetrics" prompted="NO"/>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="Svh-fa-le3" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="929" y="1021"/>
         </scene>
         <!--Navigation Controller-->
         <scene sceneID="lgl-iM-H5t">
@@ -707,7 +804,7 @@
                 </navigationController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="Bqn-cs-TKh" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="1049" y="-235"/>
+            <point key="canvasLocation" x="1049" y="-294"/>
         </scene>
     </scenes>
     <resources>
