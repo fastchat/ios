@@ -4,9 +4,9 @@
         <attribute name="name" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="unread" optional="YES" attributeType="Integer 16" defaultValueString="0" syncable="YES"/>
         <attribute name="unsentText" optional="YES" attributeType="String" syncable="YES"/>
-        <relationship name="lastMessage" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="CHMessage" inverseName="groupLastMessage" inverseEntity="CHMessage" syncable="YES"/>
+        <relationship name="lastMessage" optional="YES" maxCount="1" deletionRule="Cascade" destinationEntity="CHMessage" inverseName="groupLastMessage" inverseEntity="CHMessage" syncable="YES"/>
         <relationship name="members" optional="YES" toMany="YES" deletionRule="Nullify" ordered="YES" destinationEntity="CHUser" inverseName="groups" inverseEntity="CHUser" syncable="YES"/>
-        <relationship name="messages" optional="YES" toMany="YES" deletionRule="Nullify" ordered="YES" destinationEntity="CHMessage" inverseName="group" inverseEntity="CHMessage" syncable="YES"/>
+        <relationship name="messages" optional="YES" toMany="YES" deletionRule="Cascade" ordered="YES" destinationEntity="CHMessage" inverseName="group" inverseEntity="CHMessage" syncable="YES"/>
         <relationship name="pastMembers" optional="YES" toMany="YES" deletionRule="Nullify" ordered="YES" destinationEntity="CHUser" inverseName="pastGroups" inverseEntity="CHUser" syncable="YES"/>
     </entity>
     <entity name="CHMessage" representedClassName="CHMessage" parentEntity="CHModel" syncable="YES">
@@ -31,9 +31,9 @@
         <attribute name="privateAvatar" optional="YES" attributeType="Transformable" syncable="YES"/>
         <attribute name="sessionToken" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="username" optional="YES" attributeType="String" syncable="YES"/>
-        <relationship name="groups" optional="YES" toMany="YES" deletionRule="Nullify" ordered="YES" destinationEntity="CHGroup" inverseName="members" inverseEntity="CHGroup" syncable="YES"/>
-        <relationship name="messages" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="CHMessage" inverseName="author" inverseEntity="CHMessage" syncable="YES"/>
-        <relationship name="pastGroups" optional="YES" toMany="YES" deletionRule="Nullify" ordered="YES" destinationEntity="CHGroup" inverseName="pastMembers" inverseEntity="CHGroup" syncable="YES"/>
+        <relationship name="groups" optional="YES" toMany="YES" deletionRule="Cascade" ordered="YES" destinationEntity="CHGroup" inverseName="members" inverseEntity="CHGroup" syncable="YES"/>
+        <relationship name="messages" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="CHMessage" inverseName="author" inverseEntity="CHMessage" syncable="YES"/>
+        <relationship name="pastGroups" optional="YES" toMany="YES" deletionRule="Cascade" ordered="YES" destinationEntity="CHGroup" inverseName="pastMembers" inverseEntity="CHGroup" syncable="YES"/>
     </entity>
     <elements>
         <element name="CHGroup" positionX="0" positionY="0" width="128" height="150"/>

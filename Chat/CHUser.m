@@ -76,14 +76,6 @@ static CHUser *_currentUser = nil;
     return self.sessionToken != nil;
 }
 
-- (PMKPromise *)logout;
-{
-    _currentUser = nil;
-    self.currentUserValue = NO;
-    [[NSManagedObjectContext MR_defaultContext] MR_saveToPersistentStoreAndWait];
-    return [[CHNetworkManager sharedManager] logout];
-}
-
 - (PMKPromise *)leaveGroupAtIndex:(NSUInteger)index;
 {
     CHGroup *group = self.groups[index];
@@ -167,7 +159,9 @@ static CHUser *_currentUser = nil;
 
 - (PMKPromise *)logout:(BOOL)all;
 {
-    return [[CHNetworkManager sharedManager] logout:all];
+    return [[CHNetworkManager sharedManager] logout:all].then(^{
+        _currentUser = nil;
+    });
 }
 
 - (void)setAvatar:(UIImage *)avatar;
