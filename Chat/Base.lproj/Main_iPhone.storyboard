@@ -422,6 +422,11 @@
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
                     </view>
                     <navigationItem key="navigationItem" title="Create Group" id="NkM-vd-q6Y">
+                        <barButtonItem key="leftBarButtonItem" systemItem="cancel" id="Acd-or-nkR">
+                            <connections>
+                                <action selector="cancelTapped:" destination="Nfa-iP-SEa" id="r9c-uk-FBL"/>
+                            </connections>
+                        </barButtonItem>
                         <barButtonItem key="rightBarButtonItem" systemItem="save" id="Vzd-nG-LRg">
                             <connections>
                                 <action selector="saveGroup:" destination="Nfa-iP-SEa" id="u1i-Xd-oZW"/>
@@ -787,6 +792,33 @@
                 <placeholder placeholderIdentifier="IBFirstResponder" id="Svh-fa-le3" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="929" y="1021"/>
+        </scene>
+        <!--Privacy Policy-->
+        <scene sceneID="uQU-XS-BwT">
+            <objects>
+                <viewController storyboardIdentifier="CHPrivacyPolicyViewController" title="Privacy Policy" id="ARW-rt-UC6" customClass="CHPrivacyPolicyViewController" sceneMemberID="viewController">
+                    <layoutGuides>
+                        <viewControllerLayoutGuide type="top" id="3cT-zC-N1v"/>
+                        <viewControllerLayoutGuide type="bottom" id="rbs-Aw-2eG"/>
+                    </layoutGuides>
+                    <view key="view" contentMode="scaleToFill" id="7tX-RG-4BK">
+                        <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="Coming in 0.8.0!" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="BIm-oj-Y5t">
+                                <rect key="frame" x="16" y="72" width="288" height="21"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                        </subviews>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                    </view>
+                    <simulatedNavigationBarMetrics key="simulatedTopBarMetrics" prompted="NO"/>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="gaI-Th-T7E" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="1304" y="1020"/>
         </scene>
         <!--Navigation Controller-->
         <scene sceneID="lgl-iM-H5t">

@@ -16,5 +16,6 @@
 @property (weak, nonatomic) IBOutlet UITextField *thirdMemberTextField;
 
 - (IBAction)saveGroup:(id)sender;
+- (IBAction)cancelTapped:(id)sender;
 
 @end
