@@ -115,6 +115,13 @@ NSString *const SESSION_TOKEN = @"session-token";
     }];
 }
 
+- (PMKPromise *)updateUserSettings:(NSDictionary *)settings;
+{
+    return [PMKPromise new:^(PMKPromiseFulfiller fulfill, PMKPromiseRejecter reject) {
+        fulfill(nil);
+    }];
+}
+
 - (PMKPromise *)logout:(BOOL)all;
 {
     NSString *url = @"/logout";

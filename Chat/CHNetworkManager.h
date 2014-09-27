@@ -22,6 +22,7 @@
 - (PMKPromise *)registerWithUser:(CHUser *)user;
 - (PMKPromise *)loginWithUser:(CHUser *)user;
 - (PMKPromise *)currentUserProfile;
+- (PMKPromise *)updateUserSettings:(NSDictionary *)settings;
 - (PMKPromise *)currentUserGroups;
 - (PMKPromise *)logout:(BOOL)all;
 - (PMKPromise *)avatarForUser:(CHUser *)user;
