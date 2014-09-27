@@ -11,8 +11,4 @@
 
 @interface CHDynamicSubtextCell : CHDynamicCell
 
-@property (weak, nonatomic) IBOutlet UILabel *subtextLabel;
-@property (weak, nonatomic) IBOutlet UILabel *titleMainLabel;
-
-@property (weak, nonatomic) IBOutlet NSLayoutConstraint *widthConstraint;
 @end

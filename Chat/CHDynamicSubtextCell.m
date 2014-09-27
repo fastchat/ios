@@ -12,7 +12,7 @@
 
 - (NSArray *)propertyNames;
 {
-    return @[@"subtextLabel.text", @"titleMainLabel.text"];
+    return @[@"textLabel.text", @"detailTextLabel.text"];
 }
 
 @end
