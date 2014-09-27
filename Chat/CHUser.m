@@ -17,6 +17,8 @@
 
 #define ONE_HOUR 60*60
 
+NSString *const kCHUserDoNotDisturbKey = @"doNotDisturb";
+
 @interface CHUser ()
 
 @property (nonatomic, retain) UIColor * avatarColor;
@@ -161,6 +163,14 @@ static CHUser *_currentUser = nil;
 {
     return [[CHNetworkManager sharedManager] logout:all].then(^{
         _currentUser = nil;
+    });
+}
+
+- (PMKPromise *)promiseDoNotDisturb:(BOOL)value;
+{
+    return [[CHNetworkManager sharedManager] updateUserSettings:@{kCHUserDoNotDisturbKey: @(value)}].then(^{
+        DLog(@"Value: %d", value);
+        [self setDoNotDisturbValue:value];
     });
 }
 

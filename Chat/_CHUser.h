@@ -6,6 +6,7 @@
 
 extern const struct CHUserAttributes {
 	__unsafe_unretained NSString *currentUser;
+	__unsafe_unretained NSString *doNotDisturb;
 	__unsafe_unretained NSString *privateAvatar;
 	__unsafe_unretained NSString *sessionToken;
 	__unsafe_unretained NSString *username;
@@ -23,6 +24,7 @@ extern const struct CHUserFetchedProperties {
 @class CHGroup;
 @class CHMessage;
 @class CHGroup;
+
 
 
 @class NSObject;
@@ -51,6 +53,20 @@ extern const struct CHUserFetchedProperties {
 - (void)setCurrentUserValue:(BOOL)value_;
 
 //- (BOOL)validateCurrentUser:(id*)value_ error:(NSError**)error_;
+
+
+
+
+
+@property (nonatomic, strong) NSNumber* doNotDisturb;
+
+
+
+@property BOOL doNotDisturbValue;
+- (BOOL)doNotDisturbValue;
+- (void)setDoNotDisturbValue:(BOOL)value_;
+
+//- (BOOL)validateDoNotDisturb:(id*)value_ error:(NSError**)error_;
 
 
 
@@ -137,6 +153,15 @@ extern const struct CHUserFetchedProperties {
 
 - (BOOL)primitiveCurrentUserValue;
 - (void)setPrimitiveCurrentUserValue:(BOOL)value_;
+
+
+
+
+- (NSNumber*)primitiveDoNotDisturb;
+- (void)setPrimitiveDoNotDisturb:(NSNumber*)value;
+
+- (BOOL)primitiveDoNotDisturbValue;
+- (void)setPrimitiveDoNotDisturbValue:(BOOL)value_;
 
 
 

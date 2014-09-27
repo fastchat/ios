@@ -5,6 +5,7 @@
 
 const struct CHUserAttributes CHUserAttributes = {
 	.currentUser = @"currentUser",
+	.doNotDisturb = @"doNotDisturb",
 	.privateAvatar = @"privateAvatar",
 	.sessionToken = @"sessionToken",
 	.username = @"username",
@@ -50,6 +51,11 @@ const struct CHUserFetchedProperties CHUserFetchedProperties = {
 		keyPaths = [keyPaths setByAddingObjectsFromSet:affectingKey];
 		return keyPaths;
 	}
+	if ([key isEqualToString:@"doNotDisturbValue"]) {
+		NSSet *affectingKey = [NSSet setWithObject:@"doNotDisturb"];
+		keyPaths = [keyPaths setByAddingObjectsFromSet:affectingKey];
+		return keyPaths;
+	}
 
 	return keyPaths;
 }
@@ -77,6 +83,32 @@ const struct CHUserFetchedProperties CHUserFetchedProperties = {
 
 - (void)setPrimitiveCurrentUserValue:(BOOL)value_ {
 	[self setPrimitiveCurrentUser:[NSNumber numberWithBool:value_]];
+}
+
+
+
+
+
+@dynamic doNotDisturb;
+
+
+
+- (BOOL)doNotDisturbValue {
+	NSNumber *result = [self doNotDisturb];
+	return [result boolValue];
+}
+
+- (void)setDoNotDisturbValue:(BOOL)value_ {
+	[self setDoNotDisturb:[NSNumber numberWithBool:value_]];
+}
+
+- (BOOL)primitiveDoNotDisturbValue {
+	NSNumber *result = [self primitiveDoNotDisturb];
+	return [result boolValue];
+}
+
+- (void)setPrimitiveDoNotDisturbValue:(BOOL)value_ {
+	[self setPrimitiveDoNotDisturb:[NSNumber numberWithBool:value_]];
 }
 
 

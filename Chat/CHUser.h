@@ -20,6 +20,7 @@
 - (BOOL)isLoggedIn;
 - (UIColor *)color;
 
+- (PMKPromise *)promiseDoNotDisturb:(BOOL)value;
 - (PMKPromise *)remoteGroups;
 - (PMKPromise *)leaveGroupAtIndex:(NSUInteger)index;
 - (PMKPromise *)avatar;
