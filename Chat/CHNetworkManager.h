@@ -23,7 +23,7 @@
 - (PMKPromise *)loginWithUser:(CHUser *)user;
 - (PMKPromise *)currentUserProfile;
 - (PMKPromise *)currentUserGroups;
-- (PMKPromise *)logout;
+- (PMKPromise *)logout:(BOOL)all;
 - (PMKPromise *)avatarForUser:(CHUser *)user;
 - (PMKPromise *)leaveGroup:(NSString *)groupId;
 - (PMKPromise *)newGroupWithName:(id)name members:(NSArray *)members;

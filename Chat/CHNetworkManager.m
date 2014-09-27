@@ -115,10 +115,14 @@ NSString *const SESSION_TOKEN = @"session-token";
     }];
 }
 
-- (PMKPromise *)logout;
+- (PMKPromise *)logout:(BOOL)all;
 {
+    NSString *url = @"/logout";
+    if (all) {
+        url = [url stringByAppendingString:@"?all=true"];
+    }
     return [PMKPromise new:^(PMKPromiseFulfiller fulfiller, PMKPromiseRejecter rejecter) {
-        [self DELETE:@"/logout" parameters:nil success:^(NSURLSessionDataTask *task, id responseObject) {
+        [self DELETE:url parameters:nil success:^(NSURLSessionDataTask *task, id responseObject) {
             fulfiller(nil);
         } failure:^(NSURLSessionDataTask *task, NSError *error) {
             DLog(@"Error: %@", error);
