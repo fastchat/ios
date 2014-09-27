@@ -43,6 +43,7 @@
 		AA27A0BF19D722FE00E35DC9 /* CHDynamicSubtextCell.m in Sources */ = {isa = PBXBuildFile; fileRef = AA27A0BE19D722FE00E35DC9 /* CHDynamicSubtextCell.m */; };
 		AA27A0C219D7230900E35DC9 /* CHDynamicTextCell.m in Sources */ = {isa = PBXBuildFile; fileRef = AA27A0C119D7230900E35DC9 /* CHDynamicTextCell.m */; };
 		AA27A0C519D732B200E35DC9 /* CHPaymentViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = AA27A0C419D732B200E35DC9 /* CHPaymentViewController.m */; };
+		AA27A0C819D7752600E35DC9 /* CHPrivacyPolicyViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = AA27A0C719D7752600E35DC9 /* CHPrivacyPolicyViewController.m */; };
 		AA46331B193659EB00513578 /* CHTextField.m in Sources */ = {isa = PBXBuildFile; fileRef = AA46331A193659EB00513578 /* CHTextField.m */; };
 		AA46331E19365BB700513578 /* CHColors.m in Sources */ = {isa = PBXBuildFile; fileRef = AA46331D19365BB700513578 /* CHColors.m */; };
 		AA46332119365DDF00513578 /* CHAuthTextField.m in Sources */ = {isa = PBXBuildFile; fileRef = AA46332019365DDF00513578 /* CHAuthTextField.m */; };
@@ -133,6 +134,8 @@
 		AA27A0C119D7230900E35DC9 /* CHDynamicTextCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CHDynamicTextCell.m; sourceTree = "<group>"; };
 		AA27A0C319D732B200E35DC9 /* CHPaymentViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CHPaymentViewController.h; sourceTree = "<group>"; };
 		AA27A0C419D732B200E35DC9 /* CHPaymentViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CHPaymentViewController.m; sourceTree = "<group>"; };
+		AA27A0C619D7752600E35DC9 /* CHPrivacyPolicyViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CHPrivacyPolicyViewController.h; sourceTree = "<group>"; };
+		AA27A0C719D7752600E35DC9 /* CHPrivacyPolicyViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CHPrivacyPolicyViewController.m; sourceTree = "<group>"; };
 		AA463319193659EB00513578 /* CHTextField.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CHTextField.h; sourceTree = "<group>"; };
 		AA46331A193659EB00513578 /* CHTextField.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CHTextField.m; sourceTree = "<group>"; };
 		AA46331C19365BB700513578 /* CHColors.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CHColors.h; sourceTree = "<group>"; };
@@ -229,6 +232,8 @@
 				2762622118F82B08001F7754 /* CHCircleImageView.m */,
 				AA27A0C319D732B200E35DC9 /* CHPaymentViewController.h */,
 				AA27A0C419D732B200E35DC9 /* CHPaymentViewController.m */,
+				AA27A0C619D7752600E35DC9 /* CHPrivacyPolicyViewController.h */,
+				AA27A0C719D7752600E35DC9 /* CHPrivacyPolicyViewController.m */,
 			);
 			name = "User Info";
 			sourceTree = "<group>";
@@ -706,6 +711,7 @@
 				AAD5E56119CBC5450019EF5E /* CHMessageTableDelegate.m in Sources */,
 				2769B04618E7820A00CCE470 /* CHMessageTableViewCell.m in Sources */,
 				AAAF1D02193A528C00B095E1 /* CHConstants.m in Sources */,
+				AA27A0C819D7752600E35DC9 /* CHPrivacyPolicyViewController.m in Sources */,
 				AABD8A04199EAA6B002962A4 /* _CHUser.m in Sources */,
 				AA27A0BF19D722FE00E35DC9 /* CHDynamicSubtextCell.m in Sources */,
 				AABD8A06199EAA6B002962A4 /* CHMessage.m in Sources */,
