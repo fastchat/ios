@@ -165,6 +165,11 @@ static CHUser *_currentUser = nil;
     }
 }
 
+- (PMKPromise *)logout:(BOOL)all;
+{
+    return [[CHNetworkManager sharedManager] logout:all];
+}
+
 - (void)setAvatar:(UIImage *)avatar;
 {
     self.privateAvatar = avatar;
