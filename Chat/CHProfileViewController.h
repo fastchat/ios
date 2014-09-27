@@ -8,11 +8,13 @@
 
 #import <UIKit/UIKit.h>
 #import "DBCameraContainerViewController.h"
+#import "CHDynamicSwitchCell.h"
 
 @interface CHProfileViewController : UITableViewController <
     UINavigationControllerDelegate,
     UIImagePickerControllerDelegate,
-    DBCameraViewControllerDelegate
+    DBCameraViewControllerDelegate,
+    CHDynamicSwitchDelegate
 >
 
 @property (weak, nonatomic) IBOutlet UILabel *userNameLabel;

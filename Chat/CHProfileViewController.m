@@ -29,6 +29,7 @@ NSString *const kStoryboardIDKey = @"kStoryboardIDKey";
 @property (weak, nonatomic) UIButton *cameraButton;
 @property (nonatomic, strong) CHUser *user;
 @property (nonatomic, copy) NSArray *settings;
+@property (nonatomic, copy) NSDictionary *privacyPolicy;
 
 @end
 
@@ -43,6 +44,11 @@ NSString *const kStoryboardIDKey = @"kStoryboardIDKey";
     self.title = @"Profile";
     self.userNameLabel.text = self.user.username;
     self.settings = [self tableRepresentation];
+    self.privacyPolicy = @{kCellIdentifier: @"",
+                           @"textLabel.text": @"Privacy Policy",
+                           kStoryboardIDKey: @"CHPrivacyPolicyViewController",
+                           @"accessoryOption": @(UITableViewCellAccessoryDisclosureIndicator)
+                           };
 }
 
 - (void)viewWillAppear:(BOOL)animated;
@@ -66,30 +72,37 @@ NSString *const kStoryboardIDKey = @"kStoryboardIDKey";
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView;
 {
-    return 2;
+    return 3;
 }
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section;
 {
     if (section == 0) {
         return self.settings.count;
-    } else {
+    } else if (section == 1){
         return self.user.pastGroups.count;
+    } else {
+        return 1;
     }
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath;
 {
     if (indexPath.section == 0) {
-        NSDictionary *info = self.settings[indexPath.row];
+        NSMutableDictionary *info = self.settings[indexPath.row];
+        info[@"indexPath"] = indexPath;
         CHDynamicCell *cell = [tableView dequeueReusableCellWithIdentifier:info[kCellIdentifier] forIndexPath:indexPath];
         [cell setCellValues:info withOwner:self];
         return cell;
-    } else {
+    } else if (indexPath.section == 1){
         CHGroup *group = self.user.pastGroups[indexPath.row];
         
         UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:CHPastGroupCellIdentifier forIndexPath:indexPath];
         cell.textLabel.text = group.name;
+        return cell;
+    } else {
+        CHDynamicCell *cell = [tableView dequeueReusableCellWithIdentifier:CHChevronCell forIndexPath:indexPath];
+        [cell setCellValues:_privacyPolicy withOwner:self];
         return cell;
     }
 }
@@ -98,18 +111,27 @@ NSString *const kStoryboardIDKey = @"kStoryboardIDKey";
 {
     if (section == 0) {
         return NSLocalizedString(@"SETTINGS_HEADER", nil);
-    } else {
+    } else if (section == 1) {
         return NSLocalizedString(@"PAST_GROUPS_HEADER", nil);
+    } else {
+        return @"Policies";
     }
 }
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath;
 {
     [tableView deselectRowAtIndexPath:indexPath animated:YES];
-    NSDictionary *info = self.settings[indexPath.row];
-    void (^action)() = info[@"action"];
+    NSDictionary *info = nil;
+    
+    if (indexPath.section == 0) {
+        info = self.settings[indexPath.row];
+    } else if (indexPath.section == 2) {
+        info = self.privacyPolicy;
+    }
+
+    void (^action)(NSIndexPath *) = info[@"action"];
     if (action) {
-        action();
+        action(indexPath);
         return;
     }
     
@@ -161,6 +183,13 @@ NSString *const kStoryboardIDKey = @"kStoryboardIDKey";
     [[UIApplication sharedApplication] openURL:[NSURL URLWithString:UIApplicationOpenSettingsURLString]];
 }
 
+- (void)cell:(CHDynamicSwitchCell *)cell tapped:(UISwitch *)tapped;
+{
+    [self.user promiseDoNotDisturb:tapped.on].then(^{
+        [[NSManagedObjectContext MR_defaultContext] MR_saveOnlySelfAndWait];
+    });
+}
+
 #pragma mark - Camera
 
 - (IBAction)cameraButtonTouched:(id)sender;
@@ -202,20 +231,25 @@ NSString *const kStoryboardIDKey = @"kStoryboardIDKey";
     payment[kCellIdentifier] = CHSubtextCell;
     [container addObject:payment];
     
-    NSMutableDictionary *doNotDisturb = [NSMutableDictionary dictionary];
-    doNotDisturb[@"switchLabel.text"] = @"Do Not Disturb";
-    doNotDisturb[kCellIdentifier] = CHSwitchCell;
-    doNotDisturb[@"cellSwitch.on"] = @NO; //TODO: Get from Profile
-    [container addObject:doNotDisturb];
-    
     NSMutableDictionary *notifications = [NSMutableDictionary dictionary];
     notifications[@"textLabel.text"] = @"Notifications";
     notifications[@"accessoryOption"] = @(UITableViewCellAccessoryDisclosureIndicator);
     notifications[kCellIdentifier] = CHChevronCell;
-    notifications[@"action"] = ^{
+    notifications[@"action"] = ^(NSIndexPath *path){
         [self openSettingNotification];
     };
     [container addObject:notifications];
+    
+    NSMutableDictionary *doNotDisturb = [NSMutableDictionary dictionary];
+    doNotDisturb[@"switchLabel.text"] = @"Do Not Disturb";
+    doNotDisturb[kCellIdentifier] = CHSwitchCell;
+    doNotDisturb[@"cellSwitch.on"] = self.user.doNotDisturb;
+    doNotDisturb[@"action"] = ^(NSIndexPath *path){
+        CHDynamicSwitchCell *cell = (CHDynamicSwitchCell *)[self.tableView cellForRowAtIndexPath:path];
+        [cell.cellSwitch setOn:!cell.cellSwitch.on animated:YES];
+        [self cell:cell tapped:cell.cellSwitch];
+    };
+    [container addObject:doNotDisturb];
     
     NSMutableDictionary *notePreviews = [NSMutableDictionary dictionary];
     notePreviews[@"switchLabel.text"] = @"Notification Previews";
