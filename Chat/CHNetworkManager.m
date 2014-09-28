@@ -228,19 +228,13 @@ NSString *const SESSION_TOKEN = @"session-token";
             NSManagedObjectContext *context = [CHBackgroundContext backgroundContext].context;
             
             CHGroup *group = [CHGroup object:foreignGroup toContext:context];
-            DLog(@"Registered 1: %@", [context registeredObjects]);
             
             id q = [CHBackgroundContext backgroundContext].queue;
             [context performBlock:^{
                 [CHMessage objectsFromJSON:responseObject].thenOn(q, ^(NSArray *messages) {
-                    DLog(@"Registered 2: %@", [context registeredObjects]);
-                    CHMessage *message = messages[0];
-                    DLog(@"EDM1: %@ %@ %d", message.text, message, message.actualObjectId.isTemporaryID);
-                    
                     NSOrderedSet *set = [NSOrderedSet orderedSetWithArray:messages];
                     [group addMessages:set];
                     [self saveWithContext:context];
-                    DLog(@"EDM2: %@ %@ %d", message.text, message, message.actualObjectId.isTemporaryID);
                     fulfiller(messages);
                 });
             }];
