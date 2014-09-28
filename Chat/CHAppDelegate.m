@@ -13,6 +13,8 @@
 #import "TSMessage.h"
 #import "CHBackgroundContext.h"
 #import "BugshotKit.h"
+#import "CHMessageViewController.h"
+#import "CHGroup.h"
 
 @implementation CHAppDelegate
 
@@ -71,6 +73,11 @@
     [[UIButton appearance] setTintColor:kPurpleAppColor];
     
     
+    NSDictionary *notification = launchOptions[UIApplicationLaunchOptionsRemoteNotificationKey];
+    if (notification) {
+        [self application:application didReceiveRemoteNotification:notification fetchCompletionHandler:nil];
+    }
+    
     return YES;
 }
 
@@ -128,6 +135,11 @@ void uncaughtExceptionHandler(NSException *exception)
     });
 }
 
+- (void)application:(UIApplication *)application didReceiveRemoteNotification:(NSDictionary *)userInfo;
+{
+    [self application:application didReceiveRemoteNotification:userInfo fetchCompletionHandler:nil];
+}
+
 /**
  * Called when we get a push notification, and also when the app opens.
  */
@@ -135,7 +147,26 @@ void uncaughtExceptionHandler(NSException *exception)
         didReceiveRemoteNotification:(NSDictionary *)userInfo
         fetchCompletionHandler:(void (^)(UIBackgroundFetchResult))completionHandler;
 {
-    
+    if ( application.applicationState == UIApplicationStateInactive || application.applicationState == UIApplicationStateBackground  )
+    {
+        NSLog(@"Openned from background! %@", userInfo);
+        NSDictionary *payload = userInfo[@"aps"];
+        NSString *groupID = payload[@"group"];
+        if (groupID && [CHUser currentUser]) {
+            
+            UITabBarController *root = (UITabBarController *)self.window.rootViewController;
+            [root setSelectedIndex:0];
+            UINavigationController *nav = root.viewControllers[0];
+            [nav popToRootViewControllerAnimated:NO];
+            
+            CHGroup *group = [CHGroup MR_findFirstByAttribute:@"chID" withValue:groupID];
+            if (group) {
+                CHMessageViewController *dest = [root.storyboard instantiateViewControllerWithIdentifier:@"CHMessageViewController"];
+                [dest setGroup:group];
+                [nav pushViewController:dest animated:YES];
+            }
+        }
+    }
     
     
     if (completionHandler) {
