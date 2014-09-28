@@ -46,21 +46,21 @@ NSString *const CHOwnMesssageCellIdentifier = @"CHOwnMessageTableViewCell";
         self.loadInNewMessages = ^(NSArray *messageIDs) {
             __strong CHMessageTableDelegate *strongSelf = this;
             if(strongSelf) {
-                this.messageIDs = messageIDs;
-                @synchronized(this) {
-                    for (NSManagedObjectID *anID in this.messageIDs) {
+                strongSelf.messageIDs = messageIDs;
+                @synchronized(strongSelf) {
+                    for (NSManagedObjectID *anID in strongSelf.messageIDs) {
                         
                         CHMessage *message = [CHMessage objectID:anID toContext:[NSManagedObjectContext MR_defaultContext]];
                         if (message) {
-                            [this.messages addObject:message];
+                            [strongSelf.messages addObject:message];
                         }
                     }
-                    this.messageIDs = nil;
+                    strongSelf.messageIDs = nil;
                 }
                 
                 NSSortDescriptor *sortDescriptor = [[NSSortDescriptor alloc] initWithKey:@"sent" ascending:YES];
-                [this.messages sortUsingDescriptors:@[sortDescriptor]];
-                [this reload:YES withScroll:YES animated:YES];
+                [strongSelf.messages sortUsingDescriptors:@[sortDescriptor]];
+                [strongSelf reload:YES withScroll:YES animated:YES];
             }
         };
         
