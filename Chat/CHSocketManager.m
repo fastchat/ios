@@ -23,6 +23,8 @@
 @interface CHSocketManager ()
 
 @property (nonatomic, strong) SocketIO *socket;
+@property (nonatomic, assign) BOOL disconnecting;
+@property (nonatomic, assign, getter=isSending) BOOL sending;
 
 @end
 
@@ -40,6 +42,16 @@
     return _sharedManager;
 }
 
+- (instancetype)init
+{
+    self = [super init];
+    if (self) {
+        self.disconnecting = NO;
+        self.sending = NO;
+    }
+    return self;
+}
+
 - (SocketIO *)getSocket;
 {
     return _socket;
@@ -47,7 +59,8 @@
 
 -(void)openSocket;
 {
-    DLog(@"Open Socket Start");
+    self.disconnecting = NO;
+    self.sending = NO;
 
     if( !_socket ) {
         _socket = [[SocketIO alloc] initWithDelegate:self];
@@ -144,13 +157,27 @@
 
 - (void)sendMessageWithData:(NSDictionary *)data acknowledgement:(void (^)(id argsData))acknowledgement;
 {
-    [_socket sendEvent:@"message" withData:data andAcknowledge:acknowledgement];
+    self.sending = YES;
+    [_socket sendEvent:@"message" withData:data andAcknowledge:^(id argsData) {
+        self.sending = NO;
+        if (acknowledgement) {
+            acknowledgement(argsData);
+        }
+        if (self.disconnecting) {
+            [self closeSocket];
+        }
+    }];
 }
 
 - (void)closeSocket;
 {
-    [_socket disconnect];
-    _socket = nil;
+    if (!self.isSending) {
+        [_socket disconnect];
+        _socket = nil;
+    } else {
+        self.disconnecting = YES;
+    }
+    
 }
 
 @end
