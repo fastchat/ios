@@ -14,6 +14,7 @@ target "Chat" do
   pod 'MagicalRecord', '2.2'
   pod 'PromiseKit', '0.9.17'
   pod 'GoogleAnalytics-iOS-SDK', '3.0.9'
+  pod 'SlackTextViewController', '1.1'
   pod 'BugshotKit', '0.1'
 end
 
