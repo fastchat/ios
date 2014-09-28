@@ -174,7 +174,7 @@
                                     <outlet property="groupDetailLabel" destination="mT8-iw-lBJ" id="Kec-dH-amY"/>
                                     <outlet property="groupRightDetailLabel" destination="6wo-cq-Xbh" id="Fjn-YJ-jdm"/>
                                     <outlet property="groupTextLabel" destination="yH6-FE-gmL" id="Tqr-He-edC"/>
-                                    <segue destination="Ve0-ai-wJa" kind="push" identifier="push CHMessageViewControllerFrom CHGroupListTableViewController" id="OxZ-ON-fzm"/>
+                                    <segue destination="Ve0-ai-wJa" kind="push" identifier="pushCHMessageViewControllerFromCHGroupListTableViewController" id="OxZ-ON-fzm"/>
                                 </connections>
                             </tableViewCell>
                         </prototypes>

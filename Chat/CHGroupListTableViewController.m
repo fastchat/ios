@@ -172,7 +172,7 @@
 
 - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender;
 {
-    if ([segue.identifier isEqualToString:@"push CHMessageViewControllerFrom CHGroupListTableViewController"]) {
+    if ([segue.identifier isEqualToString:@"pushCHMessageViewControllerFromCHGroupListTableViewController"]) {
         NSIndexPath *indexPath = [self.tableView indexPathForSelectedRow];
         
         CHMessageViewController *vc = segue.destinationViewController;
