@@ -19,6 +19,12 @@
 
 - (PMKPromise *)media;
 {
+    if (!self.hasMediaValue) {
+        return [PMKPromise new:^(PMKPromiseFulfiller fulfill, PMKPromiseRejecter reject) {
+            reject(nil);
+        }];
+    }
+    
     if (self.theMediaSent) {
         return [PMKPromise new:^(PMKPromiseFulfiller fulfiller, PMKPromiseRejecter rejecter) {
             fulfiller(self.theMediaSent);

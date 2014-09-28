@@ -145,6 +145,11 @@
     [[NSManagedObjectContext MR_defaultContext] MR_saveToPersistentStoreAndWait];
 }
 
+- (void)dealloc;
+{
+    [[NSNotificationCenter defaultCenter] removeObserver:self];
+}
+
 -(void)sendUserTypingAction;
 {
     DLog(@"User changed text field");
