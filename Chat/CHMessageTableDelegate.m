@@ -40,6 +40,8 @@ NSString *const CHOwnMesssageCellIdentifier = @"CHOwnMessageTableViewCell";
         _page = 0;
         _group = group;
         self.tableView = table;
+        table.dataSource = self;
+        table.delegate = self;
         _isFetching = NO;
         self.messages = [NSMutableOrderedSet orderedSet];
         __weak CHMessageTableDelegate *this = self;
@@ -60,7 +62,10 @@ NSString *const CHOwnMesssageCellIdentifier = @"CHOwnMessageTableViewCell";
                 
                 NSSortDescriptor *sortDescriptor = [[NSSortDescriptor alloc] initWithKey:@"sent" ascending:YES];
                 [strongSelf.messages sortUsingDescriptors:@[sortDescriptor]];
-                [strongSelf reload:YES withScroll:YES animated:YES];
+                [strongSelf.tableView reloadData];
+                
+                CGPoint offset = CGPointMake(0, strongSelf.tableView.contentSize.height - strongSelf.tableView.frame.size.height);
+                [strongSelf.tableView setContentOffset:offset animated:NO];
             }
         };
         
@@ -70,8 +75,6 @@ NSString *const CHOwnMesssageCellIdentifier = @"CHOwnMessageTableViewCell";
                forControlEvents:UIControlEventValueChanged];
         
         [table addSubview:self.refresh];
-        table.dataSource = self;
-        table.delegate = self;
         [self shouldRefresh:nil];
         [[NSNotificationCenter defaultCenter] addObserver:self
                                                  selector:@selector(newMessageNotification:)

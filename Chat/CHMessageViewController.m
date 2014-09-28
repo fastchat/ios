@@ -422,16 +422,6 @@
 
 -(void)loadCamera;
 {
-    /*
-     Fix for DBCamera crashing when you open your photo library:
-     
-     NSURL *url = [[result defaultRepresentation] url];
-     if( url ) {
-     [items addObject:url];
-     }
-     
-     Add this to their file. at the line it crashes at DBLibraryManager.
-     */
     UINavigationController *nav = [[UINavigationController alloc] initWithRootViewController:[[DBCameraContainerViewController alloc] initWithDelegate:self]];
     [nav setNavigationBarHidden:YES];
     [self presentViewController:nav animated:YES completion:nil];
