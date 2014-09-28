@@ -31,7 +31,7 @@ NSString *const CHOwnMesssageCellIdentifier = @"CHOwnMessageTableViewCell";
 
 @implementation CHMessageTableDelegate
 
-#pragma mark - UITableView Datasource
+#pragma mark - Life Cycle
 
 - (instancetype)initWithTable:(UITableView *)table group:(CHGroup *)group;
 {
@@ -90,6 +90,8 @@ NSString *const CHOwnMesssageCellIdentifier = @"CHOwnMessageTableViewCell";
 {
     [[NSNotificationCenter defaultCenter] removeObserver:self];
 }
+
+#pragma mark Table View
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView;
 {
@@ -163,19 +165,6 @@ NSString *const CHOwnMesssageCellIdentifier = @"CHOwnMessageTableViewCell";
     }
     
     return cell;
-}
-
-///
-/// Set the section title to the names of the members in chat
-///
--(NSString *)tableView:(UITableView *)tableView titleForHeaderInSection:(NSInteger)section;
-{
-    NSMutableArray *usernames = [NSMutableArray array];
-    NSArray *activeMembers = self.group.members.array;
-    for (CHUser *user in activeMembers) {
-        [usernames addObject:user.username];
-    }
-    return [NSString stringWithFormat:@"To: %@", [usernames componentsJoinedByString:@", "]];
 }
 
 /**

@@ -25,6 +25,9 @@ FOUNDATION_EXPORT NSString *const kReloadActiveGroupNotification;
 FOUNDATION_EXPORT NSString *const kNewMessageReceivedNotification;
 FOUNDATION_EXPORT NSString *const CHNotificationPayloadKey;
 
+FOUNDATION_EXPORT NSString *const kCellIdentifier;
+FOUNDATION_EXPORT NSString *const CHSwitchCell;
+
 @interface CHConstants : NSObject
 
 @end

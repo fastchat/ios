@@ -15,12 +15,10 @@
 #import "CHDynamicCell.h"
 
 NSString *const CHPastGroupCellIdentifier = @"CHPastGroupCell";
-NSString *const CHSwitchCell = @"CHSwitchCell";
 NSString *const CHChevronCell = @"CHChevronCell";
 NSString *const CHSubtextCell = @"CHSubtextCell";
 
 NSString *const kTitleKey = @"TitleKey";
-NSString *const kCellIdentifier = @"kCellIdentifier";
 NSString *const kValueKey = @"kValueKey";
 NSString *const kStoryboardIDKey = @"kStoryboardIDKey";
 

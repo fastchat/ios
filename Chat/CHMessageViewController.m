@@ -20,6 +20,7 @@
 #import "HPTextViewInternal.h"
 #import "CHBackgroundContext.h"
 #import "CHProgressView.h"
+#import "CHMessageDetailTableViewController.h"
 #import "UIAlertView+PromiseKit.h"
 #import "TSMessage.h"
 #import <AudioToolbox/AudioToolbox.h>
@@ -405,6 +406,16 @@
                                  buttonCallback:nil
                                      atPosition:TSMessageNotificationPositionNavBarOverlay
                            canBeDismissedByUser:YES];
+}
+
+#pragma mark - Navigation
+
+- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender;
+{
+    if ([segue.identifier isEqualToString:@"pushCHMessageDetailTableViewController"]) {
+        CHMessageDetailTableViewController *dest = segue.destinationViewController;
+        dest.group = self.group;
+    }
 }
 
 #pragma mark - Camera

@@ -14,6 +14,9 @@ NSString *const kReloadActiveGroupNotification = @"ReloadActiveGroupNotification
 NSString *const kNewMessageReceivedNotification = @"NewMessageReceivedNotification";
 NSString *const CHNotificationPayloadKey = @"CHNotificationPayloadKey";
 
+NSString *const kCellIdentifier = @"kCellIdentifier";
+NSString *const CHSwitchCell = @"CHSwitchCell";
+
 @implementation CHConstants
 
 @end

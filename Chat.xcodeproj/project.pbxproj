@@ -44,6 +44,8 @@
 		AA27A0C219D7230900E35DC9 /* CHDynamicTextCell.m in Sources */ = {isa = PBXBuildFile; fileRef = AA27A0C119D7230900E35DC9 /* CHDynamicTextCell.m */; };
 		AA27A0C519D732B200E35DC9 /* CHPaymentViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = AA27A0C419D732B200E35DC9 /* CHPaymentViewController.m */; };
 		AA27A0C819D7752600E35DC9 /* CHPrivacyPolicyViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = AA27A0C719D7752600E35DC9 /* CHPrivacyPolicyViewController.m */; };
+		AA27A0CC19D7798A00E35DC9 /* CHMessageDetailTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = AA27A0CB19D7798A00E35DC9 /* CHMessageDetailTableViewController.m */; };
+		AA27A0CF19D85BAD00E35DC9 /* CHUserSubtitleTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = AA27A0CE19D85BAD00E35DC9 /* CHUserSubtitleTableViewCell.m */; };
 		AA46331B193659EB00513578 /* CHTextField.m in Sources */ = {isa = PBXBuildFile; fileRef = AA46331A193659EB00513578 /* CHTextField.m */; };
 		AA46331E19365BB700513578 /* CHColors.m in Sources */ = {isa = PBXBuildFile; fileRef = AA46331D19365BB700513578 /* CHColors.m */; };
 		AA46332119365DDF00513578 /* CHAuthTextField.m in Sources */ = {isa = PBXBuildFile; fileRef = AA46332019365DDF00513578 /* CHAuthTextField.m */; };
@@ -136,6 +138,10 @@
 		AA27A0C419D732B200E35DC9 /* CHPaymentViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CHPaymentViewController.m; sourceTree = "<group>"; };
 		AA27A0C619D7752600E35DC9 /* CHPrivacyPolicyViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CHPrivacyPolicyViewController.h; sourceTree = "<group>"; };
 		AA27A0C719D7752600E35DC9 /* CHPrivacyPolicyViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CHPrivacyPolicyViewController.m; sourceTree = "<group>"; };
+		AA27A0CA19D7798A00E35DC9 /* CHMessageDetailTableViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CHMessageDetailTableViewController.h; sourceTree = "<group>"; };
+		AA27A0CB19D7798A00E35DC9 /* CHMessageDetailTableViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CHMessageDetailTableViewController.m; sourceTree = "<group>"; };
+		AA27A0CD19D85BAD00E35DC9 /* CHUserSubtitleTableViewCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CHUserSubtitleTableViewCell.h; sourceTree = "<group>"; };
+		AA27A0CE19D85BAD00E35DC9 /* CHUserSubtitleTableViewCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CHUserSubtitleTableViewCell.m; sourceTree = "<group>"; };
 		AA463319193659EB00513578 /* CHTextField.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CHTextField.h; sourceTree = "<group>"; };
 		AA46331A193659EB00513578 /* CHTextField.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CHTextField.m; sourceTree = "<group>"; };
 		AA46331C19365BB700513578 /* CHColors.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CHColors.h; sourceTree = "<group>"; };
@@ -293,6 +299,7 @@
 				2768EAAD18D9138D006D14BB /* CHMessageViewController.m */,
 				AAD5E55F19CBC5450019EF5E /* CHMessageTableDelegate.h */,
 				AAD5E56019CBC5450019EF5E /* CHMessageTableDelegate.m */,
+				AA27A0C919D7797900E35DC9 /* Details */,
 				AA4633291936933000513578 /* Message Views */,
 				AA4633281936902600513578 /* Message Cells */,
 				AA86ED8C19A1A8AD00ABFA53 /* Invite User */,
@@ -315,6 +322,17 @@
 				AA13D1F919D70F760008BADB /* Localizable.strings */,
 			);
 			name = Strings;
+			sourceTree = "<group>";
+		};
+		AA27A0C919D7797900E35DC9 /* Details */ = {
+			isa = PBXGroup;
+			children = (
+				AA27A0CA19D7798A00E35DC9 /* CHMessageDetailTableViewController.h */,
+				AA27A0CB19D7798A00E35DC9 /* CHMessageDetailTableViewController.m */,
+				AA27A0CD19D85BAD00E35DC9 /* CHUserSubtitleTableViewCell.h */,
+				AA27A0CE19D85BAD00E35DC9 /* CHUserSubtitleTableViewCell.m */,
+			);
+			name = Details;
 			sourceTree = "<group>";
 		};
 		AA463318193659DB00513578 /* UI Elements */ = {
@@ -712,6 +730,7 @@
 				2769B04618E7820A00CCE470 /* CHMessageTableViewCell.m in Sources */,
 				AAAF1D02193A528C00B095E1 /* CHConstants.m in Sources */,
 				AA27A0C819D7752600E35DC9 /* CHPrivacyPolicyViewController.m in Sources */,
+				AA27A0CF19D85BAD00E35DC9 /* CHUserSubtitleTableViewCell.m in Sources */,
 				AABD8A04199EAA6B002962A4 /* _CHUser.m in Sources */,
 				AA27A0BF19D722FE00E35DC9 /* CHDynamicSubtextCell.m in Sources */,
 				AABD8A06199EAA6B002962A4 /* CHMessage.m in Sources */,
@@ -732,6 +751,7 @@
 				AA8DDA931936DABD007F0196 /* HPGrowingTextView.m in Sources */,
 				AABD8A03199EAA6B002962A4 /* _CHModel.m in Sources */,
 				2768EAA818D8C90B006D14BB /* CHNetworkManager.m in Sources */,
+				AA27A0CC19D7798A00E35DC9 /* CHMessageDetailTableViewController.m in Sources */,
 				AA7759F318D54D3000E4E7AB /* CHLoginViewController.m in Sources */,
 				2769B06B18F495FD00CCE470 /* CHMTLMessage.m in Sources */,
 				279CF22118DFD74D00C82399 /* CHInviteUserViewController.m in Sources */,
