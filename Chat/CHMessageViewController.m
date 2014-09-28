@@ -27,9 +27,6 @@
 
 #define kDefaultContentOffset self.navigationController.navigationBar.frame.size.height + 20
 
-//NSString *const CHMesssageCellIdentifier = @"CHMessageTableViewCell";
-//NSString *const CHOwnMesssageCellIdentifier = @"CHOwnMessageTableViewCell";
-
 @interface CHMessageViewController ()
 
 @property (nonatomic, strong) NSFetchedResultsController *fetchedResultsController;
@@ -301,7 +298,7 @@
     });
 }
 
-- (void)expandImage:(UIImage *)image;
+- (void)imageTapped:(UIImage *)image;
 {
     if (!image) {
         return;
@@ -313,16 +310,7 @@
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath;
 {
-    CHMessage *message = self.delegate.messages[indexPath.row];
-    
-    self.shouldSlide = YES;
     [self resignTextView];
-    
-    if (message.hasMediaValue) {
-        message.media.then(^(UIImage *image){
-            [self expandImage:image];
-        });
-    }
 }
 
 /**

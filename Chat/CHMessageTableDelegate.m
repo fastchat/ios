@@ -152,12 +152,19 @@ NSString *const CHOwnMesssageCellIdentifier = @"CHOwnMessageTableViewCell";
         cell.avatarImageView.image = defaultImage;
     }
     
+    /// Remove all gesture recognizers on cell reuse
+    for (UIGestureRecognizer *recognizer in cell.gestureRecognizers) {
+        [cell removeGestureRecognizer:recognizer];
+    }
     if (message.hasMediaValue) {
         message.media.then(^(UIImage *image){
             CGSize size = [self boundsForImage:image];
             NSTextAttachment *textAttachment = [[NSTextAttachment alloc] init];
             textAttachment.image = image;
             textAttachment.bounds = CGRectMake(0, 0, size.width, size.height);
+            
+            UITapGestureRecognizer *tap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(imageTapped:)];
+            [cell.messageTextView addGestureRecognizer:tap];
             
             NSMutableAttributedString *string = [[NSMutableAttributedString alloc] init];
             [string appendAttributedString:[[NSAttributedString alloc] initWithString:message.text]];
@@ -257,6 +264,33 @@ NSString *const CHOwnMesssageCellIdentifier = @"CHOwnMessageTableViewCell";
     if (scroll) {
         NSIndexPath *path = [NSIndexPath indexPathForRow:([self tableView:self.tableView numberOfRowsInSection:0] - 1) inSection:0];
         [self.tableView scrollToRowAtIndexPath:path atScrollPosition:UITableViewScrollPositionBottom animated:animated];
+    }
+}
+
+- (void)imageTapped:(UITapGestureRecognizer *)sender;
+{
+    CGPoint tap = [sender locationInView:sender.view];
+    
+    UIView *aView = sender.view;
+    UITableViewCell *cell = nil;
+    while (cell == nil) {
+        if ([aView isKindOfClass:[UITableViewCell class]]) {
+            cell = (UITableViewCell *)aView;
+        }
+        aView = aView.superview;
+    }
+    
+    if (cell) {
+        NSIndexPath *path = [self.tableView indexPathForCell:cell];
+        CHMessage *message = self.messages[path.row];
+        message.media.then(^(UIImage *image) {
+            CGSize size = [self boundsForImage:image];
+            if (tap.x < size.width && tap.y < size.height) {
+                if ([self.delegate respondsToSelector:@selector(imageTapped:)]) {
+                    [self.delegate imageTapped:image];
+                }
+            }
+        });
     }
 }
 
