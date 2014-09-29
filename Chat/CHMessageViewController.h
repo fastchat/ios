@@ -15,7 +15,6 @@
 @class CHGroup, CHProgressView;
 
 @interface CHMessageViewController : SLKTextViewController <
-    UITextFieldDelegate,
     UITextViewDelegate,
     UITableViewDelegate,
     DBCameraViewControllerDelegate

@@ -200,6 +200,7 @@ NSString *const CHRefreshCellIdentifier = @"CHRefreshCellIdentifier";
     cell.messageTextView.attributedText = nil;
     cell.messageTextView.attributedText = [[NSAttributedString alloc] initWithString:message.text ? message.text : @""
                                                                           attributes:attributes];
+    cell.messageTextView.delegate = self;
     cell.authorLabel.text = author.username;
     cell.timestampLabel.text = [self formatDate:message.sent];
     
@@ -328,11 +329,9 @@ NSString *const CHRefreshCellIdentifier = @"CHRefreshCellIdentifier";
     return CGSizeMake(width, height);
 }
 
-- (void)imageTapped:(UITapGestureRecognizer *)sender;
+- (UITableViewCell *)cellForView:(UIView *)view;
 {
-    CGPoint tap = [sender locationInView:sender.view];
-    
-    UIView *aView = sender.view;
+    UIView *aView = view;
     UITableViewCell *cell = nil;
     while (cell == nil) {
         if ([aView isKindOfClass:[UITableViewCell class]]) {
@@ -340,6 +339,13 @@ NSString *const CHRefreshCellIdentifier = @"CHRefreshCellIdentifier";
         }
         aView = aView.superview;
     }
+    return cell;
+}
+
+- (void)imageTapped:(UITapGestureRecognizer *)sender;
+{
+    CGPoint tap = [sender locationInView:sender.view];
+    UITableViewCell *cell = [self cellForView:sender.view];
     
     if (cell) {
         NSIndexPath *path = [self.tableView indexPathForCell:cell];
@@ -412,7 +418,7 @@ NSString *const CHRefreshCellIdentifier = @"CHRefreshCellIdentifier";
     [self.tableView endUpdates];
 }
 
-#pragma mark Socket.io
+#pragma mark - Socket.io
 
 - (void)newMessageNotification:(NSNotification *)note;
 {
@@ -618,6 +624,29 @@ NSString *const CHRefreshCellIdentifier = @"CHRefreshCellIdentifier";
                                  buttonCallback:nil
                                      atPosition:TSMessageNotificationPositionNavBarOverlay
                            canBeDismissedByUser:YES];
+}
+
+#pragma mark - UITextView Delegate
+
+- (BOOL)textView:(UITextView *)textView shouldInteractWithURL:(NSURL *)URL inRange:(NSRange)characterRange;
+{
+    static NSArray *website = nil;
+    if (!website) {
+        website = @[@"http", @"https"];
+    }
+    
+    if ([website containsObject:URL.scheme]) {
+        DLog(@"load link");
+        return NO;
+    }
+    return YES;
+}
+
+- (BOOL)textView:(UITextView *)textView shouldInteractWithTextAttachment:(NSTextAttachment *)textAttachment inRange:(NSRange)characterRange;
+{
+    
+    
+    return YES;
 }
 
 #pragma mark - Navigation
