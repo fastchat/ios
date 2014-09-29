@@ -7,12 +7,9 @@
 //
 
 #import <UIKit/UIKit.h>
-#import "SocketIO.h"
 #import "CHSocketManager.h"
-#import "HPGrowingTextView.h"
 #import "DBCameraViewController.h"
 #import "DBCameraContainerViewController.h"
-#import "CHMessageTableDelegate.h"
 #import "SLKTextViewController.h"
 
 @class CHGroup, CHProgressView;
@@ -21,9 +18,7 @@
     UITextFieldDelegate,
     UITextViewDelegate,
     UITableViewDelegate,
-    HPGrowingTextViewDelegate,
-    DBCameraViewControllerDelegate,
-    CHMessageTableDelegate
+    DBCameraViewControllerDelegate
 >
 
 @property (nonatomic, strong) CHGroup *group;
