@@ -66,6 +66,12 @@
                     <constraint firstItem="uja-nj-T2O" firstAttribute="top" secondItem="8TM-jH-Vbe" secondAttribute="top" constant="5" id="mNv-7g-Kg7"/>
                 </constraints>
             </tableViewCellContentView>
+            <connections>
+                <outlet property="authorLabel" destination="pLl-6S-8J3" id="Had-hI-uXt"/>
+                <outlet property="avatarImageView" destination="IrL-8F-f6h" id="kFz-Op-nNC"/>
+                <outlet property="messageTextView" destination="uja-nj-T2O" id="F5C-c4-kee"/>
+                <outlet property="timestampLabel" destination="MCV-ZG-XJw" id="hcX-4Z-jed"/>
+            </connections>
         </tableViewCell>
     </objects>
     <resources>
