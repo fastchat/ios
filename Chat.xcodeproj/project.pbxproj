@@ -82,7 +82,9 @@
 		AABD8A08199EAA6B002962A4 /* CHUser.m in Sources */ = {isa = PBXBuildFile; fileRef = AABD8A00199EAA6B002962A4 /* CHUser.m */; };
 		AAC681A319B7E1EB00878CF9 /* CHBackgroundContext.m in Sources */ = {isa = PBXBuildFile; fileRef = AAC681A219B7E1EB00878CF9 /* CHBackgroundContext.m */; };
 		AACE34D119BCC11500136440 /* CHProgressView.m in Sources */ = {isa = PBXBuildFile; fileRef = AACE34D019BCC11500136440 /* CHProgressView.m */; };
-		AAD5E56119CBC5450019EF5E /* CHMessageTableDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = AAD5E56019CBC5450019EF5E /* CHMessageTableDelegate.m */; };
+		AAE5B27019D8FBA3009E9B87 /* CHRefreshTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = AAE5B26E19D8FBA3009E9B87 /* CHRefreshTableViewCell.m */; };
+		AAE5B27119D8FBA3009E9B87 /* CHRefreshTableViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = AAE5B26F19D8FBA3009E9B87 /* CHRefreshTableViewCell.xib */; };
+		AAE5B27419D8FC2F009E9B87 /* CHRefreshView.m in Sources */ = {isa = PBXBuildFile; fileRef = AAE5B27319D8FC2F009E9B87 /* CHRefreshView.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -203,8 +205,11 @@
 		AAC681A219B7E1EB00878CF9 /* CHBackgroundContext.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CHBackgroundContext.m; sourceTree = "<group>"; };
 		AACE34CF19BCC11500136440 /* CHProgressView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CHProgressView.h; sourceTree = "<group>"; };
 		AACE34D019BCC11500136440 /* CHProgressView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CHProgressView.m; sourceTree = "<group>"; };
-		AAD5E55F19CBC5450019EF5E /* CHMessageTableDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CHMessageTableDelegate.h; sourceTree = "<group>"; };
-		AAD5E56019CBC5450019EF5E /* CHMessageTableDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CHMessageTableDelegate.m; sourceTree = "<group>"; };
+		AAE5B26D19D8FBA3009E9B87 /* CHRefreshTableViewCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CHRefreshTableViewCell.h; sourceTree = "<group>"; };
+		AAE5B26E19D8FBA3009E9B87 /* CHRefreshTableViewCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CHRefreshTableViewCell.m; sourceTree = "<group>"; };
+		AAE5B26F19D8FBA3009E9B87 /* CHRefreshTableViewCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = CHRefreshTableViewCell.xib; sourceTree = "<group>"; };
+		AAE5B27219D8FC2F009E9B87 /* CHRefreshView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CHRefreshView.h; sourceTree = "<group>"; };
+		AAE5B27319D8FC2F009E9B87 /* CHRefreshView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CHRefreshView.m; sourceTree = "<group>"; };
 		ED86F54EC1C64B14950512A1 /* libPods-Chat.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-Chat.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
@@ -301,8 +306,6 @@
 			children = (
 				2768EAAC18D9138D006D14BB /* CHMessageViewController.h */,
 				2768EAAD18D9138D006D14BB /* CHMessageViewController.m */,
-				AAD5E55F19CBC5450019EF5E /* CHMessageTableDelegate.h */,
-				AAD5E56019CBC5450019EF5E /* CHMessageTableDelegate.m */,
 				AA27A0C919D7797900E35DC9 /* Details */,
 				AA4633291936933000513578 /* Message Views */,
 				AA4633281936902600513578 /* Message Cells */,
@@ -365,6 +368,11 @@
 				2769B04E18EDD40800CCE470 /* CHOwnMessageTableViewCell.m */,
 				AAA0415919D8C665000D6647 /* CHMessageTableViewCell.xib */,
 				AAA0415B19D8C9B4000D6647 /* CHOwnMessageTableViewCell.xib */,
+				AAE5B26D19D8FBA3009E9B87 /* CHRefreshTableViewCell.h */,
+				AAE5B26E19D8FBA3009E9B87 /* CHRefreshTableViewCell.m */,
+				AAE5B26F19D8FBA3009E9B87 /* CHRefreshTableViewCell.xib */,
+				AAE5B27219D8FC2F009E9B87 /* CHRefreshView.h */,
+				AAE5B27319D8FC2F009E9B87 /* CHRefreshView.m */,
 			);
 			name = "Message Cells";
 			sourceTree = "<group>";
@@ -648,6 +656,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				AAE5B27119D8FBA3009E9B87 /* CHRefreshTableViewCell.xib in Resources */,
 				AA13D1FA19D70F760008BADB /* Localizable.strings in Resources */,
 				AA7759F018D54D3000E4E7AB /* Main_iPad.storyboard in Resources */,
 				AA7759F518D54D3000E4E7AB /* Images.xcassets in Resources */,
@@ -721,10 +730,12 @@
 			files = (
 				AAC681A319B7E1EB00878CF9 /* CHBackgroundContext.m in Sources */,
 				2768EA9F18D87059006D14BB /* CHRegisterViewController.m in Sources */,
+				AAE5B27419D8FC2F009E9B87 /* CHRefreshView.m in Sources */,
 				2769B04F18EDD40800CCE470 /* CHOwnMessageTableViewCell.m in Sources */,
 				2769B06818F47E5E00CCE470 /* CHFastChatObject.m in Sources */,
 				AA4633241936735F00513578 /* CHGroupTableViewCell.m in Sources */,
 				AA27A0C219D7230900E35DC9 /* CHDynamicTextCell.m in Sources */,
+				AAE5B27019D8FBA3009E9B87 /* CHRefreshTableViewCell.m in Sources */,
 				AA46332719367A5F00513578 /* CHUnreadView.m in Sources */,
 				2768EAB318DB119A006D14BB /* CHSocketManager.m in Sources */,
 				2762622218F82B08001F7754 /* CHCircleImageView.m in Sources */,
@@ -734,7 +745,6 @@
 				2768EAAE18D9138D006D14BB /* CHMessageViewController.m in Sources */,
 				2768EAA218D888B6006D14BB /* CHGroupListTableViewController.m in Sources */,
 				AA27A0C519D732B200E35DC9 /* CHPaymentViewController.m in Sources */,
-				AAD5E56119CBC5450019EF5E /* CHMessageTableDelegate.m in Sources */,
 				2769B04618E7820A00CCE470 /* CHMessageTableViewCell.m in Sources */,
 				AAAF1D02193A528C00B095E1 /* CHConstants.m in Sources */,
 				AA27A0C819D7752600E35DC9 /* CHPrivacyPolicyViewController.m in Sources */,
