@@ -422,17 +422,19 @@ NSString *const CHRefreshCellIdentifier = @"CHRefreshCellIdentifier";
 {
     CHMessage *message = [CHMessage object:foreignMessage toContext:[NSManagedObjectContext MR_defaultContext]];
     if (message) {
-        [self addMessageToTableView:message];
+        [self addMessageToTableView:message goToBottom:NO];
     }
 }
 
-- (void)addMessageToTableView:(CHMessage *)message;
+- (void)addMessageToTableView:(CHMessage *)message goToBottom:(BOOL)go;
 {
     [self.tableView beginUpdates];
     [self.messages insertObject:message atIndex:0];
     NSIndexPath *path = [NSIndexPath indexPathForRow:0 inSection:0];
     [self.tableView insertRowsAtIndexPaths:@[path] withRowAnimation:UITableViewRowAnimationAutomatic];
-    [self.tableView scrollToRowAtIndexPath:path atScrollPosition:UITableViewScrollPositionTop animated:YES];
+    if (self.tableView.contentOffset.y < 50 || go) {
+        [self.tableView scrollToRowAtIndexPath:path atScrollPosition:UITableViewScrollPositionTop animated:YES];
+    }
     [self.tableView endUpdates];
 }
 
@@ -525,7 +527,7 @@ NSString *const CHRefreshCellIdentifier = @"CHRefreshCellIdentifier";
     [self.group addMessagesObject:newMessage];
     
     [user sendMessage:newMessage toGroup:self.group].then(^(CHMessage *mes) {
-        [self addMessageToTableView:mes];
+        [self addMessageToTableView:mes goToBottom:YES];
     }).catch(^(NSError *error) {
         return [[[UIAlertView alloc] initWithTitle:@"Error!"
                                            message:error.localizedDescription
