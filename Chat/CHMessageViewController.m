@@ -56,6 +56,7 @@ NSString *const CHRefreshCellIdentifier = @"CHRefreshCellIdentifier";
         self.title = self.group.name;
         self.view.backgroundColor = kLightBackgroundColor;
         self.tableView.backgroundColor = kLightBackgroundColor;
+        self.typingIndicatorView.backgroundColor = kLightBackgroundColor;
         self.textView.placeholder = @"Send FastChat";
         [self.leftButton setImage:[UIImage imageNamed:@"Attach"] forState:UIControlStateNormal];
         self.leftButton.imageEdgeInsets = UIEdgeInsetsMake(6, 7, 14, 7);
@@ -553,7 +554,8 @@ NSString *const CHRefreshCellIdentifier = @"CHRefreshCellIdentifier";
 - (void)textWillUpdate;
 {
     [super textWillUpdate];
-    [self.typingIndicatorView insertUsername:@"You"];
+    [self.typingIndicatorView insertUsername:[CHUser currentUser].username];
+    [self.group setTyping:YES];
 }
 
 - (void)typingNotification:(NSNotification *)note;

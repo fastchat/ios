@@ -8,6 +8,7 @@
 #import "CHUser.h"
 #import "CHMessage.h"
 #import "CHNetworkManager.h"
+#import "CHSocketManager.h"
 
 static NSString *const MESSAGES_KEY = @"messages";
 
@@ -53,6 +54,11 @@ static NSString *const MESSAGES_KEY = @"messages";
 - (BOOL)isEmpty;
 {
     return self.members.count == 1 && [((CHUser *)self.members[0]).chID isEqual:[CHUser currentUser].chID];
+}
+
+- (void)setTyping:(BOOL)typing;
+{
+    [[CHSocketManager sharedManager] sendMessageWithData:@{@"group": self.chID, @"typing": @(typing)} acknowledgement:nil];
 }
 
 - (NSString *)name;

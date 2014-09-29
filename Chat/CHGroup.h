@@ -17,10 +17,11 @@
 - (PMKPromise *)addUsers:(NSArray *)users;
 - (CHUser *)userFromID:(NSString *)anID;
 
-- (BOOL)hasUnread;
 
+- (BOOL)hasUnread;
 // Empty means only has the user currently in it.
 - (BOOL)isEmpty;
 - (void)unreadIncrement;
+- (void)setTyping:(BOOL)typing;
 
 @end
