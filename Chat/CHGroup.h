@@ -10,10 +10,12 @@
 
 @property (nonatomic, strong) NSMutableDictionary *membersDict;
 
+
 + (CHGroup *)groupForMessage:(CHMessage *)message;
 + (PMKPromise *)groupWithName:(NSString *)name members:(NSArray *)members;
 - (PMKPromise *)remoteMessagesAtPage:(NSInteger)page;
 - (PMKPromise *)addUsers:(NSArray *)users;
+- (CHUser *)userFromID:(NSString *)anID;
 
 - (BOOL)hasUnread;
 

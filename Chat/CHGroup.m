@@ -79,6 +79,11 @@ static NSString *const MESSAGES_KEY = @"messages";
     }
 }
 
+- (CHUser *)userFromID:(NSString *)anID;
+{
+    return self.membersDict[anID];
+}
+
 - (NSMutableDictionary *)membersDict;
 {
     if (!_membersDict) {

@@ -124,6 +124,11 @@ NSString *const CHRefreshCellIdentifier = @"CHRefreshCellIdentifier";
                                                      name:kReloadActiveGroupNotification
                                                    object:nil];
         
+        [[NSNotificationCenter defaultCenter] addObserver:self
+                                                 selector:@selector(typingNotification:)
+                                                     name:kTypingNotification
+                                                   object:nil];
+        
         [self loadNextMessages];
         
     }
@@ -434,6 +439,8 @@ NSString *const CHRefreshCellIdentifier = @"CHRefreshCellIdentifier";
     [self.tableView insertRowsAtIndexPaths:@[path] withRowAnimation:UITableViewRowAnimationAutomatic];
     if (self.tableView.contentOffset.y < 50 || go) {
         [self.tableView scrollToRowAtIndexPath:path atScrollPosition:UITableViewScrollPositionTop animated:YES];
+    } else {
+        AudioServicesPlaySystemSound(kSystemSoundID_Vibrate);
     }
     [self.tableView endUpdates];
 }
@@ -541,6 +548,28 @@ NSString *const CHRefreshCellIdentifier = @"CHRefreshCellIdentifier";
     self.textView.text = @"";
 }
 
+#pragma mark - Typing
+
+- (void)textWillUpdate;
+{
+    [super textWillUpdate];
+    [self.typingIndicatorView insertUsername:@"You"];
+}
+
+- (void)typingNotification:(NSNotification *)note;
+{
+    NSDictionary *info = note.userInfo[CHNotificationPayloadKey];
+    if ([info[@"group"] isEqualToString:self.group.chID]) {
+        BOOL typing = info[@"typing"];
+        CHUser *user = [self.group userFromID:info[@"from"]];
+        if (typing) {
+            [self.typingIndicatorView insertUsername:user.username];
+        } else {
+            [self.typingIndicatorView removeUsername:user.username];
+        }
+    }
+}
+
 #pragma mark - Progress Bar
 
 - (void)startSendingMessage;
@@ -567,7 +596,7 @@ NSString *const CHRefreshCellIdentifier = @"CHRefreshCellIdentifier";
 
 - (void)otherGroupMessage:(CHMessage *)message;
 {
-    AudioServicesPlaySystemSound (kSystemSoundID_Vibrate);
+    AudioServicesPlaySystemSound(kSystemSoundID_Vibrate);
     [TSMessage showNotificationInViewController:self.navigationController
                                           title:message.group.name
                                        subtitle:message.text

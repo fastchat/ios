@@ -113,45 +113,11 @@
                                                               userInfo:@{CHNotificationPayloadKey: message}];
         }];
         
-        /// Observers of the groups will pick up on the change
-        
-//        DLog(@"here");
-//        [[NSNotificationCenter defaultCenter] postNotificationName:kReloadGroupTablesNotification object:nil];
-//    
-//        if( [self.delegate respondsToSelector:@selector(manager:doesCareAboutMessage:)]) {
-//            if( ![self.delegate manager:self doesCareAboutMessage:message] ) {
-//                // add messages to list and send notification
-//                
-//                AudioServicesPlaySystemSound (kSystemSoundID_Vibrate);
-//                
-//                UIViewController *root = [[[[UIApplication sharedApplication] windows][0] rootViewController] childViewControllers][0];
-//                
-//                
-//                [TSMessage showNotificationInViewController:root
-//                                                      title:[NSString stringWithFormat:@"%@: %@", message.group.name, message.text]
-//                                                   subtitle:nil
-//                                                      image:nil
-//                                                       type:TSMessageNotificationTypeMessage
-//                                                   duration:3.0
-//                                                   callback:^{
-//                                                       UIStoryboard *storyboard = [UIStoryboard storyboardWithName:@"Main_iPhone" bundle:nil];
-//                                                       CHMessageViewController *vc = [storyboard instantiateViewControllerWithIdentifier:@"CHMessageViewController"];
-//                                                       vc.group = message.group;
-//                                                       vc.groupId = message.groupId;
-//                                                       
-//                                                       [((UINavigationController*)root) popViewControllerAnimated:NO];
-//                                                       [((UINavigationController*)root) pushViewController:vc animated:YES];
-//                                                   }
-//                                                buttonTitle:nil
-//                                             buttonCallback:nil
-//                                                 atPosition:TSMessageNotificationPositionTop
-//                                       canBeDismissedByUser:YES];
-//            }
-//        }
     } else if ([packet.dataAsJSON[@"name"] isEqualToString:@"typing"]) {
-//        NSDictionary *data = [packet.dataAsJSON[@"args"] firstObject];
-        //CHMessage *typer = [[CHMessage objectsFromJSON:@[data]] firstObject];
-//        DLog(@"Someone is typing: %@", [[CHMessage objectsFromJSON:@[data]] firstObject]);
+        NSDictionary *data = [packet.dataAsJSON[@"args"] firstObject];
+        [[NSNotificationCenter defaultCenter] postNotificationName:kTypingNotification
+                                                            object:self
+                                                          userInfo:@{CHNotificationPayloadKey: data}];
     }
 }
 
