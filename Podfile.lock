@@ -25,7 +25,7 @@ PODS:
   - DBCamera (2.3.5):
     - GPUImage (~> 0.1)
   - GoogleAnalytics-iOS-SDK (3.0.9)
-  - GPUImage (0.1.5)
+  - GPUImage (0.1.6)
   - HexColors (2.2.1)
   - MagicalRecord (2.2):
     - MagicalRecord/Core
@@ -81,6 +81,7 @@ PODS:
   - socket.IO (0.5.2):
     - SocketRocket (~> 0.2)
   - SocketRocket (0.3.1-beta2)
+  - STKWebKitViewController (0.1.6)
   - TSMessages (0.9.10):
     - HexColors
   - URBMediaFocusViewController (0.5.5)
@@ -97,6 +98,7 @@ DEPENDENCIES:
   - PromiseKit (= 0.9.17)
   - SlackTextViewController (= 1.1)
   - socket.IO (= 0.5.2)
+  - STKWebKitViewController (= 0.1.6)
   - TSMessages (from `git@github.com:toursprung/TSMessages.git`)
   - URBMediaFocusViewController (= 0.5.5)
 
@@ -110,7 +112,7 @@ SPEC CHECKSUMS:
   ColorArt: f734aa2f988b2be4e9a064c1818d8f8320488110
   DBCamera: 0095227e0d2d0292c5a2cc400fe75687120e6f29
   GoogleAnalytics-iOS-SDK: d9e198b1f955259a72886769be7377cdfcdb2250
-  GPUImage: 5114a47f5fc33eb312f3731550a3cea379416d04
+  GPUImage: cecb0830bb9428f50192042e3c7b53810f51388e
   HexColors: 01384d2bbe8dc4ffa43c3b4135db6e976952d153
   MagicalRecord: 2b471584fc9e3137f3d0a56967917baa4979e224
   Mantle: c67a7e45e14196ed42b2a7cbb98ff6a9920e6b92
@@ -120,7 +122,8 @@ SPEC CHECKSUMS:
   SlackTextViewController: 2c6d10a876a436cc75984a27be88061363d15f2b
   socket.IO: db3e71805c862038ab73209dda2b0ad6babc54b2
   SocketRocket: 79a68ae186063c65e1fe6f638b1ae2927aa5f304
+  STKWebKitViewController: ce993cf2c226654a50ba23cabdf19252a76ffa3e
   TSMessages: 0cc47af029e012ae840eba88aa7ede0e868d8773
   URBMediaFocusViewController: 4dff9de3767e60b96ba325c897d4ffa7131a122e
 
-COCOAPODS: 0.33.1
+COCOAPODS: 0.34.1

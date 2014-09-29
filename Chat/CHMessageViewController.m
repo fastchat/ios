@@ -18,6 +18,7 @@
 #import "CHMessageDetailTableViewController.h"
 #import "UIAlertView+PromiseKit.h"
 #import "TSMessage.h"
+#import "STKWebKitViewController.h"
 
 #define kDefaultContentOffset self.navigationController.navigationBar.frame.size.height + 20
 #define kCHKeyboardType UIKeyboardTypeDefault
@@ -140,6 +141,7 @@ NSString *const CHRefreshCellIdentifier = @"CHRefreshCellIdentifier";
 {
     [super viewWillAppear:animated];
     self.textView.text = self.group.unsentText;
+    self.navigationController.hidesBarsOnSwipe = NO;
 }
 
 - (void)viewWillDisappear:(BOOL)animated;
@@ -636,7 +638,9 @@ NSString *const CHRefreshCellIdentifier = @"CHRefreshCellIdentifier";
     }
     
     if ([website containsObject:URL.scheme]) {
-        DLog(@"load link");
+        STKWebKitViewController *controller = [[STKWebKitViewController alloc] initWithURL:URL];
+        [self.navigationController pushViewController:controller animated:YES];
+        self.navigationController.hidesBarsOnSwipe = YES;
         return NO;
     }
     return YES;

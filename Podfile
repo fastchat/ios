@@ -1,6 +1,7 @@
 # Uncomment this line to define a global platform for your project
 platform :ios, "7.0"
 inhibit_all_warnings!
+source 'https://github.com/CocoaPods/Specs.git'
 
 target "Chat" do
   pod 'socket.IO', '0.5.2'
@@ -15,6 +16,7 @@ target "Chat" do
   pod 'PromiseKit', '0.9.17'
   pod 'GoogleAnalytics-iOS-SDK', '3.0.9'
   pod 'SlackTextViewController', '1.1'
+  pod 'STKWebKitViewController', '0.1.6'
   pod 'BugshotKit', '0.1'
 end
 
