@@ -14,9 +14,8 @@
 #import "CHBackgroundContext.h"
 #import "CHMessageViewController.h"
 
-
-NSString *const CHMesssageCellIdentifier = @"CHMessageTableViewCell";
-NSString *const CHOwnMesssageCellIdentifier = @"CHOwnMessageTableViewCell";
+//NSString *const CHMesssageCellIdentifier = @"CHMessageTableViewCell";
+//NSString *const CHOwnMesssageCellIdentifier = @"CHOwnMessageTableViewCell";
 
 @interface CHMessageTableDelegate ()
 
@@ -115,9 +114,9 @@ NSString *const CHOwnMesssageCellIdentifier = @"CHOwnMessageTableViewCell";
     CHUser *author = message.getAuthorNonRecursive;
     
     if ( [message.author isEqual:[CHUser currentUser]] ) {
-        cell = [tableView dequeueReusableCellWithIdentifier:CHOwnMesssageCellIdentifier forIndexPath:indexPath];
+//        cell = [tableView dequeueReusableCellWithIdentifier:CHOwnMesssageCellIdentifier forIndexPath:indexPath];
     } else {
-        cell = [tableView dequeueReusableCellWithIdentifier:CHMesssageCellIdentifier forIndexPath:indexPath];
+//        cell = [tableView dequeueReusableCellWithIdentifier:CHMesssageCellIdentifier forIndexPath:indexPath];
         color = [UIColor blackColor];
     }
     

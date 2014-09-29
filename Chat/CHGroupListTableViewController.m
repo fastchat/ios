@@ -148,6 +148,12 @@
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath;
 {
     [tableView deselectRowAtIndexPath:indexPath animated:YES];
+
+    CHGroup *group = _currentUser.groups[indexPath.row];
+    CHMessageViewController *vc = [[CHMessageViewController alloc] initWithGroup:group];
+
+    [group setUnreadValue:0];
+    [self.navigationController pushViewController:vc animated:YES];
 }
 
 - (BOOL)tableView:(UITableView *)tableView canEditRowAtIndexPath:(NSIndexPath *)indexPath;
@@ -166,23 +172,6 @@
 - (NSString *)tableView:(UITableView *)tableView titleForDeleteConfirmationButtonForRowAtIndexPath:(NSIndexPath *)indexPath;
 {
     return @"Leave";
-}
-
-#pragma mark - Navigation
-
-- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender;
-{
-    if ([segue.identifier isEqualToString:@"pushCHMessageViewControllerFromCHGroupListTableViewController"]) {
-        NSIndexPath *indexPath = [self.tableView indexPathForSelectedRow];
-        
-        CHMessageViewController *vc = segue.destinationViewController;
-        
-        CHGroup *group = _currentUser.groups[indexPath.row];
-        [group setUnreadValue:0];
-        [vc setGroup:group];
-        
-        [self.tableView reloadData];
-    }
 }
 
 #pragma mark - Time Formatting

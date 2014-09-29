@@ -69,6 +69,8 @@
 		AA7C691E19986636005DFFF5 /* FastChat.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = AA7C691C19986636005DFFF5 /* FastChat.xcdatamodeld */; };
 		AA8DDA931936DABD007F0196 /* HPGrowingTextView.m in Sources */ = {isa = PBXBuildFile; fileRef = AA8DDA901936DABD007F0196 /* HPGrowingTextView.m */; };
 		AA8DDA941936DABD007F0196 /* HPTextViewInternal.m in Sources */ = {isa = PBXBuildFile; fileRef = AA8DDA921936DABD007F0196 /* HPTextViewInternal.m */; };
+		AAA0415A19D8C665000D6647 /* CHMessageTableViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = AAA0415919D8C665000D6647 /* CHMessageTableViewCell.xib */; };
+		AAA0415C19D8C9B4000D6647 /* CHOwnMessageTableViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = AAA0415B19D8C9B4000D6647 /* CHOwnMessageTableViewCell.xib */; };
 		AAAF1D02193A528C00B095E1 /* CHConstants.m in Sources */ = {isa = PBXBuildFile; fileRef = AAAF1D01193A528C00B095E1 /* CHConstants.m */; };
 		AABD8A01199EAA6B002962A4 /* _CHGroup.m in Sources */ = {isa = PBXBuildFile; fileRef = AABD89F2199EAA6B002962A4 /* _CHGroup.m */; };
 		AABD8A02199EAA6B002962A4 /* _CHMessage.m in Sources */ = {isa = PBXBuildFile; fileRef = AABD89F4199EAA6B002962A4 /* _CHMessage.m */; };
@@ -177,6 +179,8 @@
 		AA8DDA901936DABD007F0196 /* HPGrowingTextView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HPGrowingTextView.m; sourceTree = "<group>"; };
 		AA8DDA911936DABD007F0196 /* HPTextViewInternal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HPTextViewInternal.h; sourceTree = "<group>"; };
 		AA8DDA921936DABD007F0196 /* HPTextViewInternal.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HPTextViewInternal.m; sourceTree = "<group>"; };
+		AAA0415919D8C665000D6647 /* CHMessageTableViewCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = CHMessageTableViewCell.xib; sourceTree = "<group>"; };
+		AAA0415B19D8C9B4000D6647 /* CHOwnMessageTableViewCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = CHOwnMessageTableViewCell.xib; sourceTree = "<group>"; };
 		AAAF1D00193A528C00B095E1 /* CHConstants.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CHConstants.h; sourceTree = "<group>"; };
 		AAAF1D01193A528C00B095E1 /* CHConstants.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CHConstants.m; sourceTree = "<group>"; };
 		AABD89F1199EAA6B002962A4 /* _CHGroup.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = _CHGroup.h; sourceTree = "<group>"; };
@@ -359,6 +363,8 @@
 				2769B04518E7820A00CCE470 /* CHMessageTableViewCell.m */,
 				2769B04D18EDD40800CCE470 /* CHOwnMessageTableViewCell.h */,
 				2769B04E18EDD40800CCE470 /* CHOwnMessageTableViewCell.m */,
+				AAA0415919D8C665000D6647 /* CHMessageTableViewCell.xib */,
+				AAA0415B19D8C9B4000D6647 /* CHOwnMessageTableViewCell.xib */,
 			);
 			name = "Message Cells";
 			sourceTree = "<group>";
@@ -646,6 +652,8 @@
 				AA7759F018D54D3000E4E7AB /* Main_iPad.storyboard in Resources */,
 				AA7759F518D54D3000E4E7AB /* Images.xcassets in Resources */,
 				AA7759ED18D54D3000E4E7AB /* Main_iPhone.storyboard in Resources */,
+				AAA0415A19D8C665000D6647 /* CHMessageTableViewCell.xib in Resources */,
+				AAA0415C19D8C9B4000D6647 /* CHOwnMessageTableViewCell.xib in Resources */,
 				AA7759E418D54D3000E4E7AB /* InfoPlist.strings in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
