@@ -11,6 +11,7 @@
 #import "CHUser.h"
 #import "CHGroup.h"
 #import "CHMessageTableViewCell.h"
+#import "CHRefreshTableViewCell.h"
 #import "CHBackgroundContext.h"
 #import "URBMediaFocusViewController.h"
 #import "CHProgressView.h"
@@ -19,9 +20,11 @@
 #import "TSMessage.h"
 
 #define kDefaultContentOffset self.navigationController.navigationBar.frame.size.height + 20
+#define kCHKeyboardType UIKeyboardTypeDefault
 
 NSString *const CHMesssageCellIdentifier = @"CHMessageTableViewCell";
 NSString *const CHOwnMesssageCellIdentifier = @"CHOwnMessageTableViewCell";
+NSString *const CHRefreshCellIdentifier = @"CHRefreshCellIdentifier";
 
 @interface CHMessageViewController ()
 
@@ -32,7 +35,7 @@ NSString *const CHOwnMesssageCellIdentifier = @"CHOwnMessageTableViewCell";
 @property (nonatomic, strong) URBMediaFocusViewController *mediaFocus;
 @property (nonatomic, strong) UIImage *media;
 @property (nonatomic, strong) CHProgressView *progressBar;
-@property (nonatomic, strong) UIRefreshControl *refresh;
+@property (nonatomic, assign) BOOL refreshing;
 
 @end
 
@@ -46,6 +49,7 @@ NSString *const CHOwnMesssageCellIdentifier = @"CHOwnMessageTableViewCell";
     if (self) {
         self.hidesBottomBarWhenPushed = YES;
         self.page = 0;
+        self.refreshing = NO;
         self.group = group;
         self.messages = [NSMutableOrderedSet orderedSet];
         self.tableView.separatorStyle = UITableViewCellSeparatorStyleNone;
@@ -55,6 +59,7 @@ NSString *const CHOwnMesssageCellIdentifier = @"CHOwnMessageTableViewCell";
         self.textView.placeholder = @"Send FastChat";
         [self.leftButton setImage:[UIImage imageNamed:@"Attach"] forState:UIControlStateNormal];
         self.leftButton.imageEdgeInsets = UIEdgeInsetsMake(6, 7, 14, 7);
+        self.textView.keyboardType = kCHKeyboardType;
         
         UIBarButtonItem *details = [[UIBarButtonItem alloc] initWithTitle:@"Details"
                                                                     style:UIBarButtonItemStylePlain
@@ -69,26 +74,57 @@ NSString *const CHOwnMesssageCellIdentifier = @"CHOwnMessageTableViewCell";
         [self.tableView registerNib:[UINib nibWithNibName:@"CHOwnMessageTableViewCell" bundle:nil]
              forCellReuseIdentifier:CHOwnMesssageCellIdentifier];
         
+        [self.tableView registerNib:[UINib nibWithNibName:@"CHRefreshTableViewCell" bundle:nil]
+             forCellReuseIdentifier:CHRefreshCellIdentifier];
+        
         __weak CHMessageViewController *this = self;
         self.loadInNewMessages = ^(NSArray *messageIDs) {
             __strong CHMessageViewController *strongSelf = this;
             if(strongSelf) {
+                [strongSelf.tableView beginUpdates];
                 strongSelf.messageIDs = messageIDs;
+                NSMutableArray *justInserted = [NSMutableArray array];
                 @synchronized(strongSelf) {
+                    
                     for (NSManagedObjectID *anID in strongSelf.messageIDs) {
-                        
                         CHMessage *message = [CHMessage objectID:anID toContext:[NSManagedObjectContext MR_defaultContext]];
                         if (message) {
-                            [strongSelf.messages addObject:message];
+                            NSInteger index = [strongSelf.messages indexOfObject:message];
+                            if (index == NSNotFound) {
+                                [strongSelf.messages addObject:message];
+                                [justInserted addObject:message];
+                            }
                         }
                     }
                     strongSelf.messageIDs = nil;
                 }
-                [strongSelf.tableView reloadData];
+                
+                NSSortDescriptor *sortDescriptor = [[NSSortDescriptor alloc] initWithKey:@"sent" ascending:NO];
+                [strongSelf.messages sortUsingDescriptors:@[sortDescriptor]];
+                
+                NSMutableArray *indexes = [NSMutableArray array];
+                for (CHMessage *inserted in justInserted) {
+                    NSInteger index = [strongSelf.messages indexOfObject:inserted];
+                    [indexes addObject:[NSIndexPath indexPathForRow:index inSection:0]];
+                }
+                
+                [strongSelf.tableView insertRowsAtIndexPaths:indexes withRowAnimation:UITableViewRowAnimationAutomatic];
+                [strongSelf.tableView endUpdates];
+                
             }
         };
         
-        [self shouldRefresh:self.refresh];
+        [[NSNotificationCenter defaultCenter] addObserver:self
+                                                 selector:@selector(newMessageNotification:)
+                                                     name:kNewMessageReceivedNotification
+                                                   object:nil];
+        
+        [[NSNotificationCenter defaultCenter] addObserver:self
+                                                 selector:@selector(getMostRecentMessages:)
+                                                     name:kReloadActiveGroupNotification
+                                                   object:nil];
+        
+        [self loadNextMessages];
         
     }
     return self;
@@ -107,15 +143,37 @@ NSString *const CHOwnMesssageCellIdentifier = @"CHOwnMessageTableViewCell";
     [[NSManagedObjectContext MR_defaultContext] MR_saveToPersistentStoreAndWait];
 }
 
+- (void)dealloc;
+{
+    [[NSNotificationCenter defaultCenter] removeObserver:self];
+}
+
 #pragma mark - UITableViewDataSource Methods
+
+- (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView;
+{
+    return 2;
+}
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
-    return self.messages.count;
+    if (section == 0) {
+        return self.messages.count;
+    } else {
+        return self.refreshing ? 1 : 0;
+    }
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath;
 {
+    /// refreshing
+    if (indexPath.section == 1) {
+        DLog(@"Refreshing Cell!");
+        return [tableView dequeueReusableCellWithIdentifier:CHRefreshCellIdentifier forIndexPath:indexPath];
+    }
+    
+    ///Actual cells
+    
     CHMessage *message = self.messages[indexPath.row];
     CHMessageTableViewCell *cell;
     UIColor *color = [UIColor whiteColor];
@@ -192,6 +250,9 @@ NSString *const CHOwnMesssageCellIdentifier = @"CHOwnMessageTableViewCell";
  */
 - (CGFloat)tableView:(UITableView *)tableView estimatedHeightForRowAtIndexPath:(NSIndexPath *)indexPath;
 {
+    if (indexPath.section == 1) {
+        return 50;
+    }
     CHMessage *message = self.messages[indexPath.row];
     if (message.rowHeightValue > 0) {
         return message.rowHeightValue;
@@ -201,6 +262,10 @@ NSString *const CHOwnMesssageCellIdentifier = @"CHOwnMessageTableViewCell";
 
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath;
 {
+    if (indexPath.section == 1) {
+        return 50;
+    }
+    
     CHMessage *message = self.messages[indexPath.row];
     if (message.rowHeightValue > 0) {
         return message.rowHeightValue;
@@ -303,7 +368,7 @@ NSString *const CHOwnMesssageCellIdentifier = @"CHOwnMessageTableViewCell";
     .then(_loadInNewMessages);
 }
 
-- (void)shouldRefresh:(UIRefreshControl *)sender;
+- (void)loadNextMessages;
 {
     [self messagesAtPage:_page]
     .then(_loadInNewMessages)
@@ -311,16 +376,34 @@ NSString *const CHOwnMesssageCellIdentifier = @"CHOwnMessageTableViewCell";
         DLog(@"Error: %@", error);
     }).finally(^{
         self.page++;
-        [self.refresh endRefreshing];
+        [self refreshOn:NO];
     });
 }
 
 - (void)scrollViewDidScroll:(UIScrollView *)scrollView
 {
     [super scrollViewDidScroll:scrollView];
-    if ((scrollView.contentOffset.y + scrollView.frame.size.height) >= scrollView.contentSize.height + 50) {
-        DLog(@"LOAD MORE DATA");
+    if ( ((scrollView.contentOffset.y + scrollView.frame.size.height) >= scrollView.contentSize.height + 50) && !self.refreshing) {
+        [self refreshOn:YES];
+        [self loadNextMessages];
     }
+}
+
+- (void)refreshOn:(BOOL)on;
+{
+    if (self.refreshing == on) {
+        return;
+    }
+    
+    [self.tableView beginUpdates];
+    NSIndexPath *path = [NSIndexPath indexPathForRow:0 inSection:1];
+    if (on) {
+        [self.tableView insertRowsAtIndexPaths:@[path] withRowAnimation:UITableViewRowAnimationAutomatic];
+    } else {
+        [self.tableView deleteRowsAtIndexPaths:@[path] withRowAnimation:UITableViewRowAnimationAutomatic];
+    }
+    self.refreshing = on;
+    [self.tableView endUpdates];
 }
 
 #pragma mark Socket.io
@@ -413,6 +496,12 @@ NSString *const CHOwnMesssageCellIdentifier = @"CHOwnMessageTableViewCell";
 #pragma mark - Send Message
 - (void)didPressRightButton:(id)sender;
 {
+    if( self.textView.isFirstResponder ) {
+        [self.textView setKeyboardType:kCHKeyboardType];
+        [self.textView resignFirstResponder];
+        [self.textView becomeFirstResponder];
+    }
+    
     [self startSendingMessage];
     NSString *msg = self.textView.text;
     
