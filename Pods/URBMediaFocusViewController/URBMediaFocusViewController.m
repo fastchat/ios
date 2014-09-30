@@ -46,6 +46,7 @@ static const CGFloat __blurTintColorAlpha = 0.2f;				// defines how much to tint
 
 @property (nonatomic, strong) UIImageView *imageView;
 @property (nonatomic, strong) UIScrollView *scrollView;
+@property (nonatomic, strong) UIView *containerView;
 @property (nonatomic, strong) UIView *backgroundView;
 @property (nonatomic, strong) UIDynamicAnimator *animator;
 @property (nonatomic, strong) UISnapBehavior *snapBehavior;
@@ -117,7 +118,12 @@ static const CGFloat __blurTintColorAlpha = 0.2f;				// defines how much to tint
 	self.scrollView.showsHorizontalScrollIndicator = NO;
 	self.scrollView.showsVerticalScrollIndicator = NO;
 	self.scrollView.scrollEnabled = NO;
+	self.scrollView.canCancelContentTouches = NO;
 	[self.view addSubview:self.scrollView];
+	
+	self.containerView = [[UIView alloc] initWithFrame:self.view.bounds];
+	self.containerView.autoresizingMask = UIViewAutoresizingFlexibleWidth|UIViewAutoresizingFlexibleHeight;
+	[self.scrollView addSubview:self.containerView];
 	
 	self.imageView = [[UIImageView alloc] initWithFrame:CGRectMake(0, 0, 50.0, 50.0)];
 	self.imageView.contentMode = UIViewContentModeScaleAspectFit;
@@ -128,7 +134,7 @@ static const CGFloat __blurTintColorAlpha = 0.2f;				// defines how much to tint
 	if (([[[UIDevice currentDevice] systemVersion] compare:@"7.0" options:NSNumericSearch] != NSOrderedAscending)) {
 		self.imageView.layer.allowsEdgeAntialiasing = YES;
 	}
-	[self.scrollView addSubview:self.imageView];
+	[self.containerView addSubview:self.imageView];
 	
 	/* setup gesture recognizers */
 	// double tap gesture to return scaled image back to center for easier dismissal
@@ -158,7 +164,7 @@ static const CGFloat __blurTintColorAlpha = 0.2f;				// defines how much to tint
 		// pan gesture to handle the physics
 		self.panRecognizer = [[UIPanGestureRecognizer alloc] initWithTarget:self action:@selector(handlePanGesture:)];
 		self.panRecognizer.delegate = self;
-		[self.imageView addGestureRecognizer:self.panRecognizer];
+		[self.containerView addGestureRecognizer:self.panRecognizer];
 		
 		/* UIDynamics stuff */
 		self.animator = [[UIDynamicAnimator alloc] initWithReferenceView:self.view];
@@ -214,12 +220,12 @@ static const CGFloat __blurTintColorAlpha = 0.2f;				// defines how much to tint
 }
 
 - (void)showImage:(UIImage *)image fromRect:(CGRect)fromRect {
-	NSAssert(image, @"Image is required");
-
 	[self view]; // make sure view has loaded first
 	_currentOrientation = [UIApplication sharedApplication].statusBarOrientation;
-	//fromRect = CGRectApplyAffineTransform(fromRect, [self transformForOrientation:_currentOrientation]);
-	self.fromRect = fromRect;
+	
+	// since UIWindow always use portrait orientation in convertRect:inView:, we need to convert the source view's frame to
+	// this controller's view based on the current interface orientation
+	self.fromRect = [self convertRect:fromRect forOrientation:_currentOrientation];
 	
 	self.imageView.transform = CGAffineTransformIdentity;
 	self.imageView.image = image;
@@ -251,7 +257,7 @@ static const CGFloat __blurTintColorAlpha = 0.2f;				// defines how much to tint
 	CGRect targetRect = CGRectMake(midpoint.x - scaledImageSize.width / 2.0, midpoint.y - scaledImageSize.height / 2.0, scaledImageSize.width, scaledImageSize.height);
 	
 	// set initial frame of image view to match that of the presenting image
-	self.imageView.frame = [self.view convertRect:fromRect fromView:nil];
+	self.imageView.frame = self.fromRect;
 	_originalFrame = targetRect;
 	
 	// rotate imageView based on current device orientation
@@ -335,7 +341,7 @@ static const CGFloat __blurTintColorAlpha = 0.2f;				// defines how much to tint
 
 - (void)showImageFromURL:(NSURL *)url fromView:(UIView *)fromView inViewController:(UIViewController *)parentViewController {
 	self.fromView = fromView;
-	self.targetViewController = parentViewController;
+	//self.targetViewController = parentViewController;
 	
 	UIView *superview = (parentViewController) ? parentViewController.view : fromView.superview;
 	CGRect fromRect = [superview convertRect:fromView.frame toView:nil];
@@ -431,6 +437,32 @@ static const CGFloat __blurTintColorAlpha = 0.2f;				// defines how much to tint
 
 - (UIWindow *)keyWindow {
 	return [UIApplication sharedApplication].keyWindow;
+}
+
+- (CGRect)windowBounds {
+	CGRect windowBounds = [UIScreen mainScreen].bounds;
+	
+	if (UIInterfaceOrientationIsLandscape(_currentOrientation)) {
+		windowBounds.size.width = windowBounds.size.height;
+		windowBounds.size.height = CGRectGetWidth([UIScreen mainScreen].bounds);
+	}
+	
+    return windowBounds;
+}
+
+- (CGRect)convertRect:(CGRect)rect forOrientation:(UIInterfaceOrientation)orientation {
+	if (orientation == UIInterfaceOrientationPortraitUpsideDown) {
+		rect.origin.x = CGRectGetWidth(self.view.frame) - CGRectGetWidth(rect) - CGRectGetMinX(rect);
+		rect.origin.y = CGRectGetHeight(self.view.frame) - CGRectGetHeight(rect) - CGRectGetMinY(rect);
+	}
+	else if (orientation == UIInterfaceOrientationLandscapeLeft) {
+		rect.origin = CGPointMake(CGRectGetHeight(self.view.frame) - CGRectGetHeight(rect) - CGRectGetMinY(rect), CGRectGetMinX(rect));
+	}
+	else if (orientation == UIInterfaceOrientationLandscapeRight) {
+		rect.origin = CGPointMake(CGRectGetMinY(rect), CGRectGetWidth(self.view.frame) - CGRectGetWidth(rect) - CGRectGetMinX(rect));
+	}
+	
+	return rect;
 }
 
 - (void)createViewsForBackground {
@@ -757,6 +789,13 @@ static const CGFloat __blurTintColorAlpha = 0.2f;				// defines how much to tint
 		scrollView.scrollEnabled = YES;
 	}
 	[self centerScrollViewContents];
+	
+	if (scrollView.zoomScale > 1.0) {
+		self.containerView.frame = CGRectMake(0, 0, scrollView.contentSize.width, scrollView.contentSize.height);
+	}
+	else {
+		self.containerView.frame = self.scrollView.bounds;
+	}
 }
 
 #pragma mark - UIActionSheetDelegate
@@ -794,32 +833,42 @@ static const CGFloat __blurTintColorAlpha = 0.2f;				// defines how much to tint
 	
 	if (self.urlData) {
 		NSString *urlPath = connection.currentRequest.URL.absoluteString;
-		UIImage *image;
+		__block UIImage *image;
+		__block UIImage *staticImageForGif;
 		
-		// determine if the loaded url is an animated GIF, and setup accordingly if so
-		if ([[urlPath substringFromIndex:[urlPath length] - 3] isEqualToString:@"gif"]) {
-			self.imageView.image = [UIImage imageWithData:self.urlData];
-			image = [UIImage urb_animatedImageWithAnimatedGIFData:self.urlData];
-		}
-		else {
-			image = [UIImage imageWithData:self.urlData];
-		}
-		
-		// sometimes the server can return bad or corrupt image data which will result in a crash if we don't throw an error here
-		if (!image) {
-			NSString *errorDescription = [NSString stringWithFormat:@"Bad or corrupt image data for %@", urlPath];
-			NSError *error = [NSError errorWithDomain:@"com.urban10.URBMediaFocusViewController" code:100 userInfo:@{NSLocalizedDescriptionKey: errorDescription}];
-			if ([self.delegate respondsToSelector:@selector(mediaFocusViewController:didFailLoadingImageWithError:)]) {
-				[self.delegate mediaFocusViewController:self didFailLoadingImageWithError:error];
+		dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+			// determine if the loaded url is an animated GIF, and setup accordingly if so
+			if ([[urlPath substringFromIndex:[urlPath length] - 3] isEqualToString:@"gif"]) {
+				staticImageForGif = [UIImage imageWithData:self.urlData];
+				image = [UIImage urb_animatedImageWithAnimatedGIFData:self.urlData];
 			}
-			return;
-		}
-		
-		[self showImage:image fromRect:self.fromRect];
-		
-		if ([self.delegate respondsToSelector:@selector(mediaFocusViewController:didFinishLoadingImage:)]) {
-			[self.delegate mediaFocusViewController:self didFinishLoadingImage:image];
-		}
+			else {
+				image = [UIImage imageWithData:self.urlData];
+			}
+			
+			dispatch_async(dispatch_get_main_queue(), ^{
+				// sometimes the server can return bad or corrupt image data which will result in a crash if we don't throw an error here
+				if (!image) {
+					NSString *errorDescription = [NSString stringWithFormat:@"Bad or corrupt image data for %@", urlPath];
+					NSError *error = [NSError errorWithDomain:@"com.urban10.URBMediaFocusViewController" code:100 userInfo:@{NSLocalizedDescriptionKey: errorDescription}];
+					if ([self.delegate respondsToSelector:@selector(mediaFocusViewController:didFailLoadingImageWithError:)]) {
+						[self.delegate mediaFocusViewController:self didFailLoadingImageWithError:error];
+					}
+					return;
+				}
+				
+				// set the initial image to the static version of the GIF for the present animation
+				if (staticImageForGif) {
+					self.imageView.image = staticImageForGif;
+				}
+				
+				[self showImage:image fromRect:self.fromRect];
+				
+				if ([self.delegate respondsToSelector:@selector(mediaFocusViewController:didFinishLoadingImage:)]) {
+					[self.delegate mediaFocusViewController:self didFinishLoadingImage:image];
+				}
+			});
+		});
 	}
 }
 
@@ -881,11 +930,11 @@ static const CGFloat __blurTintColorAlpha = 0.2f;				// defines how much to tint
 	// if we haven't laid out the subviews yet, we don't want to animate rotation and position transforms
 	if (_hasLaidOut) {
 		[UIView animateWithDuration:duration animations:^{
-			self.imageView.transform = CGAffineTransformConcat(CGAffineTransformIdentity, baseTransform);
+			self.containerView.transform = CGAffineTransformConcat(CGAffineTransformIdentity, baseTransform);
 		}];
 	}
 	else {
-		self.imageView.transform = CGAffineTransformConcat(CGAffineTransformIdentity, baseTransform);
+		self.containerView.transform = CGAffineTransformConcat(CGAffineTransformIdentity, baseTransform);
 	}
 }
 

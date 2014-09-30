@@ -84,7 +84,7 @@ PODS:
   - STKWebKitViewController (0.1.6)
   - TSMessages (0.9.10):
     - HexColors
-  - URBMediaFocusViewController (0.5.5)
+  - URBMediaFocusViewController (HEAD based on 0.5.5)
 
 DEPENDENCIES:
   - AFNetworking (= 2.4.1)
@@ -100,7 +100,7 @@ DEPENDENCIES:
   - socket.IO (= 0.5.2)
   - STKWebKitViewController (= 0.1.6)
   - TSMessages (from `git@github.com:toursprung/TSMessages.git`)
-  - URBMediaFocusViewController (= 0.5.5)
+  - URBMediaFocusViewController (HEAD)
 
 EXTERNAL SOURCES:
   TSMessages:
