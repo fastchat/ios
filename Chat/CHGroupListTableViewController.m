@@ -35,7 +35,10 @@
     self.view.backgroundColor = kLightBackgroundColor;
     self.tableView.contentInset = UIEdgeInsetsMake(5, 0, 0, 0);
     
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(reloadTableView) name:@"ReloadGroupTablesNotification" object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(reloadTableView)
+                                                 name:@"ReloadGroupTablesNotification"
+                                               object:nil];
     
     [[NSNotificationCenter defaultCenter] addObserver:self
                                              selector:@selector(contextDidChange:)
