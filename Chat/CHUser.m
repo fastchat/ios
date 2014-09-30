@@ -206,17 +206,6 @@ static CHUser *_currentUser = nil;
 
 #pragma mark - Mantle / Core Data
 
-//- (void)willSave;
-//{
-//    [super willSave];
-//    NSManagedObjectContext *context = [NSThread isMainThread] ? [NSManagedObjectContext MR_defaultContext] : CHBackgroundContext.backgroundContext.context;
-//    NSPredicate *predicate = [NSPredicate predicateWithFormat:@"SELF.authorId == %@ AND SELF.author == nil", self.chID];
-//    NSArray *messages = [CHMessage MR_findAllWithPredicate:predicate inContext:context];
-//    for (CHMessage *message in messages) {
-//        message.author = self;
-//    }
-//}
-
 - (void)removeGroupsObject:(CHGroup *)value_;
 {
     NSMutableOrderedSet *tmpOrderedSet = [NSMutableOrderedSet orderedSetWithOrderedSet:[self mutableOrderedSetValueForKey:@"groups"]];
@@ -239,6 +228,17 @@ static CHUser *_currentUser = nil;
     [tmpOrderedSet addObject:value_];
     [self setPrimitiveValue:tmpOrderedSet forKey:@"pastGroups"];
     [self didChange:NSKeyValueChangeInsertion valuesAtIndexes:indexes forKey:@"pastGroups"];
+}
+
+- (void)addGroupsObject:(CHGroup *)value_
+{
+    NSMutableOrderedSet *tmpOrderedSet = [NSMutableOrderedSet orderedSetWithOrderedSet:[self mutableOrderedSetValueForKey:@"pastGroups"]];
+    NSUInteger idx = [tmpOrderedSet count];
+    NSIndexSet* indexes = [NSIndexSet indexSetWithIndex:idx];
+    [self willChange:NSKeyValueChangeInsertion valuesAtIndexes:indexes forKey:@"groups"];
+    [tmpOrderedSet addObject:value_];
+    [self setPrimitiveValue:tmpOrderedSet forKey:@"groups"];
+    [self didChange:NSKeyValueChangeInsertion valuesAtIndexes:indexes forKey:@"groups"];
 }
 
 
