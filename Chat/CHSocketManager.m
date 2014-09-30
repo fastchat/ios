@@ -135,6 +135,11 @@
     }];
 }
 
+- (void)sendTypingWithData:(NSDictionary *)data acknowledgement:(void (^)(id argsData))acknowledgement;
+{
+    [_socket sendEvent:@"typing" withData:data andAcknowledge:acknowledgement];
+}
+
 - (void)closeSocket;
 {
     if (!self.isSending) {

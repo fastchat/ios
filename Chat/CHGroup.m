@@ -58,7 +58,8 @@ static NSString *const MESSAGES_KEY = @"messages";
 
 - (void)setTyping:(BOOL)typing;
 {
-    [[CHSocketManager sharedManager] sendMessageWithData:@{@"group": self.chID, @"typing": @(typing)} acknowledgement:nil];
+    [[CHSocketManager sharedManager] sendTypingWithData:@{@"group": self.chID, @"typing": @(typing)}
+                                        acknowledgement:nil];
 }
 
 - (NSString *)name;

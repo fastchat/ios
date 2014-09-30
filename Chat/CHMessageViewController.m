@@ -141,6 +141,11 @@ NSString *const CHRefreshCellIdentifier = @"CHRefreshCellIdentifier";
 {
     [super viewWillAppear:animated];
     self.textView.text = self.group.unsentText;
+}
+
+- (void)viewDidAppear:(BOOL)animated;
+{
+    [super viewDidAppear:animated];
     self.navigationController.hidesBarsOnSwipe = NO;
 }
 
@@ -356,6 +361,8 @@ NSString *const CHRefreshCellIdentifier = @"CHRefreshCellIdentifier";
             CGSize size = [self boundsForImage:image];
             if (tap.x < size.width && tap.y < size.height) {
                 self.mediaFocus = [[URBMediaFocusViewController alloc] init];
+                self.mediaFocus.shouldDismissOnImageTap = YES;
+                self.mediaFocus.shouldShowPhotoActions = YES;
                 [self.mediaFocus showImage:image fromView:self.view];
             }
         });
@@ -555,16 +562,22 @@ NSString *const CHRefreshCellIdentifier = @"CHRefreshCellIdentifier";
     });
     
     self.textView.text = @"";
+    [self.typingIndicatorView removeUsername:[CHUser currentUser].username];
 }
 
 #pragma mark - Typing
 
-- (void)textWillUpdate;
+- (void)textDidUpdate:(BOOL)animated;
 {
-    [super textWillUpdate];
-    [self.typingIndicatorView insertUsername:[CHUser currentUser].username];
-    [self.group setTyping:YES];
+    [super textDidUpdate:animated];
+    if (self.textView.text.length > 0) {
+        [self.typingIndicatorView insertUsername:[CHUser currentUser].username];
+        [self.group setTyping:YES];
+    } else {
+        [self.typingIndicatorView removeUsername:[CHUser currentUser].username];
+    }
 }
+
 
 - (void)typingNotification:(NSNotification *)note;
 {
@@ -599,7 +612,7 @@ NSString *const CHRefreshCellIdentifier = @"CHRefreshCellIdentifier";
 
 - (void)endSendingMessage;
 {
-    [self.progressBar setProgress:1 animated:YES].then(^{
+    [self.progressBar setProgress:1 animated:YES].finally(^{
         self.progressBar.hidden = YES;
     });
 }
@@ -644,6 +657,12 @@ NSString *const CHRefreshCellIdentifier = @"CHRefreshCellIdentifier";
         return NO;
     }
     return YES;
+}
+
+// Make this a downloadable list or URL's to be safe.
+- (BOOL)isYouTube:(NSURL *)url;
+{
+    return [url.absoluteString containsString:@"youtube.com"];
 }
 
 - (BOOL)textView:(UITextView *)textView shouldInteractWithTextAttachment:(NSTextAttachment *)textAttachment inRange:(NSRange)characterRange;
