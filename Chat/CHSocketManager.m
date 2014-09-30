@@ -17,6 +17,11 @@
 #import "CHUser.h"
 #import "CHConstants.h"
 
+NSString *const kCHPacketName = @"name";
+NSString *const kCHPacketNameMessage = @"message";
+NSString *const kCHPacketNameTyping = @"typing";
+NSString *const kCHPacketNameNewGroup = @"new_group";
+NSString *const kCHArgs = @"args";
 
 @class SocketIO;
 
@@ -97,9 +102,9 @@
 - (void) socketIO:(SocketIO *)socket didReceiveEvent:(SocketIOPacket *)packet;
 {
     DLog("PACKET: %@", packet);
-    if ([packet.dataAsJSON[@"name"] isEqualToString:@"message"]) {
+    if ([packet.dataAsJSON[kCHPacketName] isEqualToString:kCHPacketNameMessage]) {
         
-        NSDictionary *data = [packet.dataAsJSON[@"args"] firstObject];
+        NSDictionary *data = [packet.dataAsJSON[kCHArgs] firstObject];
         CHMessage *message = [CHMessage objectFromJSON:data];
         message.group.lastMessage = message;
         if (![[CHUser currentUser] isEqual:message.getAuthorNonRecursive]) {
@@ -113,11 +118,21 @@
                                                               userInfo:@{CHNotificationPayloadKey: message}];
         }];
         
-    } else if ([packet.dataAsJSON[@"name"] isEqualToString:@"typing"]) {
-        NSDictionary *data = [packet.dataAsJSON[@"args"] firstObject];
+    } else if ([packet.dataAsJSON[kCHPacketName] isEqualToString:kCHPacketNameTyping]) {
+        NSDictionary *data = [packet.dataAsJSON[kCHArgs] firstObject];
         [[NSNotificationCenter defaultCenter] postNotificationName:kTypingNotification
                                                             object:self
                                                           userInfo:@{CHNotificationPayloadKey: data}];
+    } else if ([packet.dataAsJSON[kCHPacketName] isEqualToString:kCHPacketNameNewGroup]) {
+        NSDictionary *data = [packet.dataAsJSON[kCHArgs] firstObject];
+        CHGroup *group = [CHGroup objectFromJSON:data];
+        [[NSManagedObjectContext MR_defaultContext] MR_saveToPersistentStoreWithCompletion:^(BOOL success, NSError *error) {
+            DLog(@"Socket IO Background Save Completed. Error? %@", error);
+            [[NSNotificationCenter defaultCenter] postNotificationName:kNewGroupNotification
+                                                                object:self
+                                                              userInfo:@{CHNotificationPayloadKey: group}];
+        }];
+        
     }
 }
 
