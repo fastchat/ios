@@ -404,7 +404,7 @@ NSString *const CHRefreshCellIdentifier = @"CHRefreshCellIdentifier";
 - (void)scrollViewDidScroll:(UIScrollView *)scrollView
 {
     [super scrollViewDidScroll:scrollView];
-    if ( ((scrollView.contentOffset.y + scrollView.frame.size.height) >= scrollView.contentSize.height + 50) && !self.refreshing) {
+    if ( ((scrollView.contentOffset.y + scrollView.frame.size.height) >= scrollView.contentSize.height + 50) && !self.refreshing && self.messages.count > 10) {
         [self refreshOn:YES];
         [self loadNextMessages];
     }
