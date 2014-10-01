@@ -8,7 +8,6 @@
 
 #import "CHGroupListTableViewController.h"
 #import "CHNetworkManager.h"
-#import "CHAddGroupViewController.h"
 #import "CHAppDelegate.h"
 #import "CHMessageViewController.h"
 #import "CHLoginViewController.h"
@@ -19,6 +18,7 @@
 #import "CHMessage.h"
 #import "CHUnreadView.h"
 #import "CHBackgroundContext.h"
+#import "CHMessageNewGroupViewController.h"
 
 #define kSecondsInDay 86400
 
@@ -221,6 +221,13 @@
         [dateFormatter setDateFormat:@"d/M/yy"];
     }
     return [dateFormatter stringFromDate:date];
+}
+
+- (IBAction)newGroup:(id)sender;
+{
+    CHMessageNewGroupViewController *vc =[[CHMessageNewGroupViewController alloc] init];
+    UINavigationController *nav = [[UINavigationController alloc] initWithRootViewController:vc];
+    [self presentViewController:nav animated:YES completion:nil];
 }
 
 @end
