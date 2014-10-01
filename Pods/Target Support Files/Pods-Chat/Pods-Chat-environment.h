@@ -222,6 +222,12 @@
 #define COCOAPODS_VERSION_MINOR_SocketRocket 3
 #define COCOAPODS_VERSION_PATCH_SocketRocket 1
 
+// THContactPicker
+#define COCOAPODS_POD_AVAILABLE_THContactPicker
+#define COCOAPODS_VERSION_MAJOR_THContactPicker 0
+#define COCOAPODS_VERSION_MINOR_THContactPicker 0
+#define COCOAPODS_VERSION_PATCH_THContactPicker 3
+
 // TSMessages
 #define COCOAPODS_POD_AVAILABLE_TSMessages
 #define COCOAPODS_VERSION_MAJOR_TSMessages 0

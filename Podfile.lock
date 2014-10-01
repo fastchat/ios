@@ -82,7 +82,8 @@ PODS:
     - SocketRocket (~> 0.2)
   - SocketRocket (0.3.1-beta2)
   - STKWebKitViewController (0.1.6)
-  - TSMessages (0.9.10):
+  - THContactPicker (0.0.3)
+  - TSMessages (HEAD based on 0.9.10):
     - HexColors
   - URBMediaFocusViewController (HEAD based on 0.5.5)
 
@@ -99,12 +100,9 @@ DEPENDENCIES:
   - SlackTextViewController (= 1.1)
   - socket.IO (= 0.5.2)
   - STKWebKitViewController (= 0.1.6)
-  - TSMessages (from `git@github.com:toursprung/TSMessages.git`)
+  - THContactPicker (= 0.0.3)
+  - TSMessages (HEAD)
   - URBMediaFocusViewController (HEAD)
-
-EXTERNAL SOURCES:
-  TSMessages:
-    :git: git@github.com:toursprung/TSMessages.git
 
 SPEC CHECKSUMS:
   AFNetworking: 0aabc6fae66d6e5d039eeb21c315843c7aae51ab
@@ -123,7 +121,8 @@ SPEC CHECKSUMS:
   socket.IO: db3e71805c862038ab73209dda2b0ad6babc54b2
   SocketRocket: 79a68ae186063c65e1fe6f638b1ae2927aa5f304
   STKWebKitViewController: ce993cf2c226654a50ba23cabdf19252a76ffa3e
-  TSMessages: 0cc47af029e012ae840eba88aa7ede0e868d8773
+  THContactPicker: f0c2b061067d0f0be2760c525e73600679640e66
+  TSMessages: 8598a0645e9d54847f6e5f3b070bef39c493bbf8
   URBMediaFocusViewController: 4dff9de3767e60b96ba325c897d4ffa7131a122e
 
 COCOAPODS: 0.34.1
