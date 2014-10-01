@@ -21,8 +21,12 @@
 >
 
 @property (nonatomic, strong) CHGroup *group;
+@property (nonatomic, copy) void (^loadInNewMessages)(NSArray *messageIDs);
+@property (nonatomic, assign) NSInteger page;
 
 - (instancetype)initWithGroup:(CHGroup *)group;
+- (void)refreshOn:(BOOL)on;
+- (PMKPromise *)messagesAtPage:(NSUInteger)page;
 
 //@property (weak, nonatomic) IBOutlet UITableView *messageTable;
 //@property (weak, nonatomic) IBOutlet NSLayoutConstraint *bottomDistance;

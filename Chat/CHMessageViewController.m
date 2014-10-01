@@ -29,10 +29,8 @@ NSString *const CHRefreshCellIdentifier = @"CHRefreshCellIdentifier";
 
 @interface CHMessageViewController ()
 
-@property (nonatomic, assign) NSInteger page;
 @property (atomic, copy) NSArray *messageIDs;
 @property (nonatomic, strong) NSMutableOrderedSet *messages;
-@property (nonatomic, copy) void (^loadInNewMessages)(NSArray *messageIDs);
 @property (nonatomic, strong) URBMediaFocusViewController *mediaFocus;
 @property (nonatomic, strong) UIImage *media;
 @property (nonatomic, strong) CHProgressView *progressBar;
