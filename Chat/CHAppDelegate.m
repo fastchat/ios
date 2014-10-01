@@ -150,8 +150,7 @@ void uncaughtExceptionHandler(NSException *exception)
     if ( application.applicationState == UIApplicationStateInactive || application.applicationState == UIApplicationStateBackground  )
     {
         NSLog(@"Openned from background! %@", userInfo);
-        NSDictionary *payload = userInfo[@"aps"];
-        NSString *groupID = payload[@"group"];
+        NSString *groupID = userInfo[@"group"];
         if (groupID && [CHUser currentUser]) {
             
             UITabBarController *root = (UITabBarController *)self.window.rootViewController;
@@ -161,9 +160,9 @@ void uncaughtExceptionHandler(NSException *exception)
             
             CHGroup *group = [CHGroup MR_findFirstByAttribute:@"chID" withValue:groupID];
             if (group) {
-                CHMessageViewController *dest = [root.storyboard instantiateViewControllerWithIdentifier:@"CHMessageViewController"];
-                [dest setGroup:group];
-                [nav pushViewController:dest animated:YES];
+                CHMessageViewController *vc = [[CHMessageViewController alloc] initWithGroup:group];
+                [group setUnreadValue:0];
+                [nav pushViewController:vc animated:YES];
             }
         }
     }
