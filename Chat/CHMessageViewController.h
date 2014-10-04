@@ -27,6 +27,7 @@
 - (instancetype)initWithGroup:(CHGroup *)group;
 - (void)refreshOn:(BOOL)on;
 - (PMKPromise *)messagesAtPage:(NSUInteger)page;
+- (void)textUpdated;
 
 //@property (weak, nonatomic) IBOutlet UITableView *messageTable;
 //@property (weak, nonatomic) IBOutlet NSLayoutConstraint *bottomDistance;

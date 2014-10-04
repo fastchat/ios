@@ -149,9 +149,7 @@ NSString *const CHRefreshCellIdentifier = @"CHRefreshCellIdentifier";
                                                  selector:@selector(typingNotification:)
                                                      name:kTypingNotification
                                                    object:nil];
-        
         [self loadNextMessages];
-        
     }
     return self;
 }
@@ -160,6 +158,12 @@ NSString *const CHRefreshCellIdentifier = @"CHRefreshCellIdentifier";
 {
     [super viewWillAppear:animated];
     self.textView.text = self.group.unsentText;
+}
+
+- (void)viewWillLayoutSubviews;
+{
+    [super viewWillLayoutSubviews];
+    [self.textView becomeFirstResponder];
 }
 
 - (void)viewDidAppear:(BOOL)animated;
@@ -591,6 +595,11 @@ NSString *const CHRefreshCellIdentifier = @"CHRefreshCellIdentifier";
 - (void)textDidUpdate:(BOOL)animated;
 {
     [super textDidUpdate:animated];
+    [self textUpdated];
+}
+
+- (void)textUpdated;
+{
     if (self.textView.text.length > 0) {
         [self.typingIndicatorView insertUsername:[CHUser currentUser].username];
         [self.group setTyping:YES];
