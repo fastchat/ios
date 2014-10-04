@@ -17,7 +17,8 @@ target "Chat" do
   pod 'GoogleAnalytics-iOS-SDK', '3.0.9'
   pod 'SlackTextViewController', '1.1'
   pod 'STKWebKitViewController', '0.1.6'
-  pod 'THContactPicker', '0.0.3'
+  pod 'MBContactPicker', '0.1.4'
+  pod 'UIResponder+KeyboardCache', '0.1'
   pod 'BugshotKit', '0.1'
 end
 

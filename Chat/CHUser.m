@@ -59,6 +59,7 @@ static CHUser *_currentUser = nil;
 {
     return [[CHNetworkManager sharedManager] loginWithUser:self].then(^(CHUser *user){
         self.currentUserValue = YES;
+        _currentUser = self;
         [[NSManagedObjectContext MR_defaultContext] MR_saveToPersistentStoreAndWait];
         return [[CHNetworkManager sharedManager] currentUserProfile];
     });

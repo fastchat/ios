@@ -1,1 +1,0 @@
-../../../THContactPicker/Classes/THContactBubble.h

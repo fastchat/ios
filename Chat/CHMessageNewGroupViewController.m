@@ -29,6 +29,23 @@
     return self;
 }
 
+- (void)loadView;
+{
+    [super loadView];
+    [self.view addSubview:self.picker];
+    
+    [self.picker addContact:@"" withName:@"John"];
+}
+
+- (THContactPickerView *)picker;
+{
+    if (!_picker) {
+        _picker = [[THContactPickerView alloc] initWithFrame:CGRectMake(0, 60, self.view.frame.size.width, 100)];
+        _picker.delegate = self;
+    }
+    return _picker;
+}
+
 - (void)loadNextMessages;
 {
     if (self.group != nil) {
@@ -72,6 +89,23 @@
 - (IBAction)cancelTapped:(id)sender;
 {
     [self dismissViewControllerAnimated:YES completion:nil];
+}
+
+#pragma mark - Delegate
+
+- (void)contactPickerTextViewDidChange:(NSString *)textViewText;
+{
+    DLog(@"TExt: %@", textViewText);
+}
+
+- (void)contactPickerDidRemoveContact:(id)contact;
+{
+    
+}
+
+- (void)contactPickerDidResize:(THContactPickerView *)contactPickerView;
+{
+    
 }
 
 @end

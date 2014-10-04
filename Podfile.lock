@@ -33,6 +33,7 @@ PODS:
   - Mantle (1.5):
     - Mantle/extobjc
   - Mantle/extobjc (1.5)
+  - MBContactPicker (0.1.4)
   - MBProgressHUD (0.9)
   - OMGHTTPURLRQ (2.0.1):
     - OMGHTTPURLRQ/RQ
@@ -82,9 +83,9 @@ PODS:
     - SocketRocket (~> 0.2)
   - SocketRocket (0.3.1-beta2)
   - STKWebKitViewController (0.1.6)
-  - THContactPicker (0.0.3)
   - TSMessages (HEAD based on 0.9.10):
     - HexColors
+  - UIResponder+KeyboardCache (0.1)
   - URBMediaFocusViewController (HEAD based on 0.5.5)
 
 DEPENDENCIES:
@@ -95,13 +96,14 @@ DEPENDENCIES:
   - GoogleAnalytics-iOS-SDK (= 3.0.9)
   - MagicalRecord (= 2.2)
   - Mantle (= 1.5)
+  - MBContactPicker (= 0.1.4)
   - MBProgressHUD (= 0.9)
   - PromiseKit (= 0.9.17)
   - SlackTextViewController (= 1.1)
   - socket.IO (= 0.5.2)
   - STKWebKitViewController (= 0.1.6)
-  - THContactPicker (= 0.0.3)
   - TSMessages (HEAD)
+  - UIResponder+KeyboardCache (= 0.1)
   - URBMediaFocusViewController (HEAD)
 
 SPEC CHECKSUMS:
@@ -114,6 +116,7 @@ SPEC CHECKSUMS:
   HexColors: 01384d2bbe8dc4ffa43c3b4135db6e976952d153
   MagicalRecord: 2b471584fc9e3137f3d0a56967917baa4979e224
   Mantle: c67a7e45e14196ed42b2a7cbb98ff6a9920e6b92
+  MBContactPicker: f3ad9c973cdc8ed6caa92a104dbc314f155f3ea6
   MBProgressHUD: 2038dbcf3dce73215abed6001657043d53aa79a8
   OMGHTTPURLRQ: 4297af2a7f7ca7adb3f8331203001e0fd2dae16f
   PromiseKit: 7a18d7b8d41a156cda0268c3cb065d272d5aa554
@@ -121,8 +124,8 @@ SPEC CHECKSUMS:
   socket.IO: db3e71805c862038ab73209dda2b0ad6babc54b2
   SocketRocket: 79a68ae186063c65e1fe6f638b1ae2927aa5f304
   STKWebKitViewController: ce993cf2c226654a50ba23cabdf19252a76ffa3e
-  THContactPicker: f0c2b061067d0f0be2760c525e73600679640e66
   TSMessages: 8598a0645e9d54847f6e5f3b070bef39c493bbf8
+  UIResponder+KeyboardCache: e267fd88f3414e8e7ccf7644f25c4701812a1d2b
   URBMediaFocusViewController: 4dff9de3767e60b96ba325c897d4ffa7131a122e
 
 COCOAPODS: 0.34.1

@@ -26,7 +26,8 @@ NSString *const kCHUserSubtitleTableViewCell = @"CHUserSubtitleTableViewCell";
     [super viewDidLoad];
     self.title = self.group.name;
     self.options = [self tableRepresentation];
-    
+    [[[GAI sharedInstance] defaultTracker] set:kGAIScreenName value:@"Messages Detail"];
+    [[[GAI sharedInstance] defaultTracker] send:[[GAIDictionaryBuilder createScreenView] build]];
 }
 
 

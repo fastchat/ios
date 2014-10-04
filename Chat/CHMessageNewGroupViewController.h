@@ -7,8 +7,11 @@
 //
 
 #import "CHMessageViewController.h"
+#import "THContactPickerView.h"
 
-@interface CHMessageNewGroupViewController : CHMessageViewController
+@interface CHMessageNewGroupViewController : CHMessageViewController <THContactPickerDelegate>
+
+@property (nonatomic, strong) THContactPickerView *picker;
 
 - (IBAction)saveGroup:(id)sender;
 - (IBAction)cancelTapped:(id)sender;

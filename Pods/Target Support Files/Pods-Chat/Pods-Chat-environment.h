@@ -84,6 +84,12 @@
 #define COCOAPODS_VERSION_MINOR_HexColors 2
 #define COCOAPODS_VERSION_PATCH_HexColors 1
 
+// MBContactPicker
+#define COCOAPODS_POD_AVAILABLE_MBContactPicker
+#define COCOAPODS_VERSION_MAJOR_MBContactPicker 0
+#define COCOAPODS_VERSION_MINOR_MBContactPicker 1
+#define COCOAPODS_VERSION_PATCH_MBContactPicker 4
+
 // MBProgressHUD
 #define COCOAPODS_POD_AVAILABLE_MBProgressHUD
 #define COCOAPODS_VERSION_MAJOR_MBProgressHUD 0
@@ -222,17 +228,17 @@
 #define COCOAPODS_VERSION_MINOR_SocketRocket 3
 #define COCOAPODS_VERSION_PATCH_SocketRocket 1
 
-// THContactPicker
-#define COCOAPODS_POD_AVAILABLE_THContactPicker
-#define COCOAPODS_VERSION_MAJOR_THContactPicker 0
-#define COCOAPODS_VERSION_MINOR_THContactPicker 0
-#define COCOAPODS_VERSION_PATCH_THContactPicker 3
-
 // TSMessages
 #define COCOAPODS_POD_AVAILABLE_TSMessages
 #define COCOAPODS_VERSION_MAJOR_TSMessages 0
 #define COCOAPODS_VERSION_MINOR_TSMessages 9
 #define COCOAPODS_VERSION_PATCH_TSMessages 10
+
+// UIResponder+KeyboardCache
+#define COCOAPODS_POD_AVAILABLE_UIResponder_KeyboardCache
+#define COCOAPODS_VERSION_MAJOR_UIResponder_KeyboardCache 0
+#define COCOAPODS_VERSION_MINOR_UIResponder_KeyboardCache 1
+#define COCOAPODS_VERSION_PATCH_UIResponder_KeyboardCache 0
 
 // URBMediaFocusViewController
 #define COCOAPODS_POD_AVAILABLE_URBMediaFocusViewController

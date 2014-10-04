@@ -22,6 +22,7 @@
 
 #define kDefaultContentOffset self.navigationController.navigationBar.frame.size.height + 20
 #define kCHKeyboardType UIKeyboardTypeDefault
+#define kPageSize 30
 
 NSString *const CHMesssageCellIdentifier = @"CHMessageTableViewCell";
 NSString *const CHOwnMesssageCellIdentifier = @"CHOwnMessageTableViewCell";
@@ -35,6 +36,7 @@ NSString *const CHRefreshCellIdentifier = @"CHRefreshCellIdentifier";
 @property (nonatomic, strong) UIImage *media;
 @property (nonatomic, strong) CHProgressView *progressBar;
 @property (nonatomic, assign) BOOL refreshing;
+@property (nonatomic, assign) BOOL isHiding;
 
 @end
 
@@ -49,6 +51,7 @@ NSString *const CHRefreshCellIdentifier = @"CHRefreshCellIdentifier";
         self.hidesBottomBarWhenPushed = YES;
         self.page = 0;
         self.refreshing = NO;
+        self.isHiding = NO;
         self.group = group;
         self.messages = [NSMutableOrderedSet orderedSet];
         self.tableView.separatorStyle = UITableViewCellSeparatorStyleNone;
@@ -60,6 +63,8 @@ NSString *const CHRefreshCellIdentifier = @"CHRefreshCellIdentifier";
         [self.leftButton setImage:[UIImage imageNamed:@"Attach"] forState:UIControlStateNormal];
         self.leftButton.imageEdgeInsets = UIEdgeInsetsMake(6, 7, 14, 7);
         self.textView.keyboardType = kCHKeyboardType;
+        [[[GAI sharedInstance] defaultTracker] set:kGAIScreenName value:@"Messages"];
+        [[[GAI sharedInstance] defaultTracker] send:[[GAIDictionaryBuilder createScreenView] build]];
         
         UIBarButtonItem *details = [[UIBarButtonItem alloc] initWithTitle:@"Details"
                                                                     style:UIBarButtonItemStylePlain
@@ -98,9 +103,18 @@ NSString *const CHRefreshCellIdentifier = @"CHRefreshCellIdentifier";
                     }
                     strongSelf.messageIDs = nil;
                 }
-                
+               
                 NSSortDescriptor *sortDescriptor = [[NSSortDescriptor alloc] initWithKey:@"sent" ascending:NO];
                 [strongSelf.messages sortUsingDescriptors:@[sortDescriptor]];
+                [justInserted sortUsingDescriptors:@[sortDescriptor]];
+                
+                NSMutableArray *indexesToDelete = [NSMutableArray array];
+                if (justInserted.count == kPageSize) {
+                    for (NSInteger i = ([strongSelf.messages indexOfObject:justInserted.lastObject]) + 1; i < strongSelf.messages.count; i++) {
+                        DLog(@"i %ld", (long)i);
+                        [indexesToDelete addObject:[NSIndexPath indexPathForRow:i inSection:0]];
+                    }
+                }
                 
                 NSMutableArray *indexes = [NSMutableArray array];
                 for (CHMessage *inserted in justInserted) {
@@ -108,7 +122,14 @@ NSString *const CHRefreshCellIdentifier = @"CHRefreshCellIdentifier";
                     [indexes addObject:[NSIndexPath indexPathForRow:index inSection:0]];
                 }
                 
+                DLog(@"Deleting: %@", indexesToDelete);
+                DLog(@"Inserting: %@", indexes);
+                
                 [strongSelf.tableView insertRowsAtIndexPaths:indexes withRowAnimation:UITableViewRowAnimationAutomatic];
+                dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.0 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+//                    [strongSelf.tableView deleteRowsAtIndexPaths:indexesToDelete withRowAnimation:UITableViewRowAnimationAutomatic];
+                });
+
                 [strongSelf.tableView endUpdates];
                 
             }
@@ -145,11 +166,13 @@ NSString *const CHRefreshCellIdentifier = @"CHRefreshCellIdentifier";
 {
     [super viewDidAppear:animated];
     self.navigationController.hidesBarsOnSwipe = NO;
+    self.isHiding = NO;
 }
 
 - (void)viewWillDisappear:(BOOL)animated;
 {
     [super viewWillDisappear:animated];
+    self.isHiding = YES;
     self.group.unsentText = self.textView.text;
     [[NSManagedObjectContext MR_defaultContext] MR_saveToPersistentStoreAndWait];
 }
@@ -668,6 +691,14 @@ NSString *const CHRefreshCellIdentifier = @"CHRefreshCellIdentifier";
     
     
     return YES;
+}
+
+- (void)willShowOrHideKeyboard:(NSNotification *)notification;
+{
+    if (self.isHiding) {
+        return;
+    }
+    [super willShowOrHideKeyboard:notification];
 }
 
 #pragma mark - Navigation
