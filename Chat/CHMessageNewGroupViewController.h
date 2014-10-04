@@ -7,13 +7,14 @@
 //
 
 #import "CHMessageViewController.h"
-#import "THContactPickerView.h"
+#import "MBContactPicker.h"
 
-@interface CHMessageNewGroupViewController : CHMessageViewController <THContactPickerDelegate>
+@interface CHMessageNewGroupViewController : CHMessageViewController <MBContactPickerDataSource, MBContactPickerDelegate>
 
-@property (nonatomic, strong) THContactPickerView *picker;
+@property (nonatomic, strong) UIViewController *parent;
+@property (strong, nonatomic) IBOutlet MBContactPicker *contactPickerView;
+@property (strong, nonatomic) IBOutlet NSLayoutConstraint *pickerHeight;
 
-- (IBAction)saveGroup:(id)sender;
 - (IBAction)cancelTapped:(id)sender;
 
 @end
