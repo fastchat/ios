@@ -24,9 +24,9 @@ static NSString *const MESSAGES_KEY = @"messages";
 @synthesize allUsers = _allUsers;
 @synthesize membersDict = _membersDict;
 
-+ (PMKPromise *)groupWithName:(NSString *)name members:(NSArray *)members;
++ (PMKPromise *)groupWithName:(NSString *)name members:(NSArray *)members message:(NSString *)message;
 {
-    return [[CHNetworkManager sharedManager] newGroupWithName:name members:members];
+    return [[CHNetworkManager sharedManager] newGroupWithName:name members:members message:message];
 }
 
 - (void)awakeFromFetch;
