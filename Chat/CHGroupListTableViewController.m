@@ -32,6 +32,8 @@
 {
     [super viewDidLoad];
     [[[GAI sharedInstance] defaultTracker] set:kGAIScreenName value:@"Groups"];
+    [[[GAI sharedInstance] defaultTracker] send:[[GAIDictionaryBuilder createScreenView] build]];
+    
     self.view.backgroundColor = kLightBackgroundColor;
     self.tableView.contentInset = UIEdgeInsetsMake(5, 0, 0, 0);
     
