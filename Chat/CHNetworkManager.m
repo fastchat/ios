@@ -200,19 +200,32 @@ NSString *const SESSION_TOKEN = @"session-token";
     }];
 }
 
-- (PMKPromise *)newGroupWithName:(id)name members:(NSArray *)members;
+- (PMKPromise *)newGroupWithName:(NSString *)name members:(NSArray *)members message:(NSString *)message;
 {
-    if (!name) {
-        name = [NSNull null];
+    id finalName = name;
+    if (!finalName) {
+        finalName = [NSNull null];
+    }
+    
+    id finalMessage = message;
+    if (!finalMessage) {
+        finalMessage = [NSNull null];
     }
     
     return [PMKPromise new:^(PMKPromiseFulfiller fulfiller, PMKPromiseRejecter rejecter) {
         [self POST:@"/group"
-        parameters:@{@"name" : name, @"members" : members, @"text" : @"Group created"}
+        parameters:@{@"name" : finalName, @"members" : members, @"text" : finalMessage}
            success:^(NSURLSessionDataTask *task, id responseObject) {
-               CHGroup *newGroup = [CHGroup objectFromJSON:responseObject];
-               [self saveWithContext:[NSManagedObjectContext MR_defaultContext]];
-               fulfiller(newGroup);
+               
+               dispatch_async(dispatch_get_main_queue(), ^{
+                   CHGroup *newGroup = [CHGroup objectFromJSON:responseObject];
+                   
+                   
+                   [self saveWithContext:[NSManagedObjectContext MR_defaultContext]];
+                   fulfiller(newGroup);
+               });
+               
+               
            } failure:^(NSURLSessionDataTask *task, NSError *error) {
                DLog(@"Error: %@", error);
                rejecter(error);
