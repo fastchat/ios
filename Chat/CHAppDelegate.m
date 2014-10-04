@@ -15,6 +15,7 @@
 #import "BugshotKit.h"
 #import "CHMessageViewController.h"
 #import "CHGroup.h"
+#import "UIResponder+KeyboardCache.h"
 
 @implementation CHAppDelegate
 
@@ -32,6 +33,10 @@
         DLog(@"Done Background Context.");
     });
     
+    ///
+    /// Fucking Cache the keyboard
+    ///
+    [UIResponder cacheKeyboard];
     
     ///
     /// Bugshot kit!
@@ -46,9 +51,6 @@
     /// Setup Google Analytics
     ///
     [GAI sharedInstance].trackUncaughtExceptions = YES;
-    
-    // Optional: set Logger to VERBOSE for debug information.
-    [[[GAI sharedInstance] logger] setLogLevel:kGAILogLevelVerbose];
     
     // Initialize tracker. Replace with your tracking ID.
     [[GAI sharedInstance] trackerWithTrackingId:@"UA-54229110-2"];
