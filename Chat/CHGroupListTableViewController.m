@@ -228,6 +228,7 @@
 - (IBAction)newGroup:(id)sender;
 {
     CHMessageNewGroupViewController *vc =[[CHMessageNewGroupViewController alloc] init];
+    vc.parent = self;
     UINavigationController *nav = [[UINavigationController alloc] initWithRootViewController:vc];
     [self presentViewController:nav animated:YES completion:nil];
 }
