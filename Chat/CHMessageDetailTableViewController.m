@@ -120,7 +120,8 @@ NSString *const kCHUserSubtitleTableViewCell = @"CHUserSubtitleTableViewCell";
     [tableView deselectRowAtIndexPath:indexPath animated:YES];
     
     if (tableView == self.searchDisplayController.searchResultsTableView) {
-#warning Add a User;
+#warning Add a User
+        [self.group addUsers:@[]];
         return;
     } else {
         if (indexPath.section == 0) {
