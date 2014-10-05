@@ -19,6 +19,7 @@
 #import "CHUnreadView.h"
 #import "CHBackgroundContext.h"
 #import "CHMessageNewGroupViewController.h"
+#import "UIViewController+PromiseKit.h"
 
 #define kSecondsInDay 86400
 
@@ -168,10 +169,10 @@
 
 - (void)tableView:(UITableView *)tableView commitEditingStyle:(UITableViewCellEditingStyle)editingStyle forRowAtIndexPath:(NSIndexPath *)indexPath;
 {
-    [tableView beginUpdates];
-    [_currentUser leaveGroupAtIndex:indexPath.row];
-    [tableView deleteRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationAutomatic];
-    [tableView endUpdates];
+    [self.tableView beginUpdates];
+    [self.currentUser leaveGroupAtIndex:indexPath.row];
+    [self.tableView deleteRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationAutomatic];
+    [self.tableView endUpdates];
 }
 
 - (NSString *)tableView:(UITableView *)tableView titleForDeleteConfirmationButtonForRowAtIndexPath:(NSIndexPath *)indexPath;
@@ -228,9 +229,13 @@
 - (IBAction)newGroup:(id)sender;
 {
     CHMessageNewGroupViewController *vc =[[CHMessageNewGroupViewController alloc] init];
-    vc.parent = self;
     UINavigationController *nav = [[UINavigationController alloc] initWithRootViewController:vc];
-    [self presentViewController:nav animated:YES completion:nil];
+    [self promiseViewController:nav animated:YES completion:nil].then(^(CHMessageNewGroupViewController *finished){
+        [self.navigationController pushViewController:finished animated:NO];
+        [self dismissViewControllerAnimated:NO completion:nil];
+    }).catch(^{
+        [self dismissViewControllerAnimated:YES completion:nil];
+    });
 }
 
 @end
