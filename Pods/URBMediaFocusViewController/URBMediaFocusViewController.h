@@ -14,7 +14,7 @@
 @optional
 
 /**
- *  Tells the delegate that the controller's view is visisble. This is called after all presentation animations have completed.
+ *  Tells the delegate that the controller's view is visible. This is called after all presentation animations have completed.
  *
  *  @param mediaFocusViewController The instance that triggered the event.
  */
@@ -55,6 +55,9 @@
 
 // determines whether or not view should be dismissed when the container view is tapped within bounds of image view
 @property (nonatomic, assign) BOOL shouldDismissOnImageTap;
+
+// determines whether or not swiping to dismiss is allowed outside of the image bounds instead of just within the image frame
+@property (nonatomic, assign) BOOL allowSwipeOnBackgroundView;
 
 // determines if photo action sheet should appear with a long press on the photo (default NO)
 @property (nonatomic, assign) BOOL shouldShowPhotoActions;

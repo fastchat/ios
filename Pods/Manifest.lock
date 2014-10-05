@@ -83,7 +83,7 @@ PODS:
     - SocketRocket (~> 0.2)
   - SocketRocket (0.3.1-beta2)
   - STKWebKitViewController (0.1.6)
-  - TSMessages (HEAD based on 0.9.10):
+  - TSMessages (0.9.10):
     - HexColors
   - UIResponder+KeyboardCache (0.1)
   - URBMediaFocusViewController (HEAD based on 0.5.5)
@@ -102,7 +102,7 @@ DEPENDENCIES:
   - SlackTextViewController (= 1.1)
   - socket.IO (= 0.5.2)
   - STKWebKitViewController (= 0.1.6)
-  - TSMessages (HEAD)
+  - TSMessages (= 0.9.10)
   - UIResponder+KeyboardCache (= 0.1)
   - URBMediaFocusViewController (HEAD)
 

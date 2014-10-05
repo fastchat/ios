@@ -93,6 +93,7 @@ static const CGFloat __blurTintColorAlpha = 0.2f;				// defines how much to tint
 		self.shouldDismissOnImageTap = NO;
 		self.shouldShowPhotoActions = NO;
 		self.shouldRotateToDeviceOrientation = YES;
+		self.allowSwipeOnBackgroundView = YES;
 	}
 	return self;
 }
@@ -164,7 +165,13 @@ static const CGFloat __blurTintColorAlpha = 0.2f;				// defines how much to tint
 		// pan gesture to handle the physics
 		self.panRecognizer = [[UIPanGestureRecognizer alloc] initWithTarget:self action:@selector(handlePanGesture:)];
 		self.panRecognizer.delegate = self;
-		[self.containerView addGestureRecognizer:self.panRecognizer];
+		
+		if (self.allowSwipeOnBackgroundView) {
+			[self.containerView addGestureRecognizer:self.panRecognizer];
+		}
+		else {
+			[self.imageView addGestureRecognizer:self.panRecognizer];
+		}
 		
 		/* UIDynamics stuff */
 		self.animator = [[UIDynamicAnimator alloc] initWithReferenceView:self.view];
@@ -729,12 +736,14 @@ static const CGFloat __blurTintColorAlpha = 0.2f;				// defines how much to tint
 	else {
 		CGPoint tapPoint = [self.imageView convertPoint:[gestureRecognizer locationInView:gestureRecognizer.view] fromView:self.scrollView];
 		CGFloat newZoomScale = self.scrollView.maximumZoomScale;
-				
+		
 		CGFloat w = CGRectGetWidth(self.imageView.frame) / newZoomScale;
 		CGFloat h = CGRectGetHeight(self.imageView.frame) / newZoomScale;
-		CGRect zoomRect = CGRectMake(tapPoint.x - (w / 2.0f), tapPoint.y - (h / 2.0f), w, h);
 		
-		[self.scrollView zoomToRect:zoomRect animated:YES];
+		if (w != CGRectGetWidth(self.imageView.frame)) {
+			CGRect zoomRect = CGRectMake(tapPoint.x - (w / 2.0f), tapPoint.y - (h / 2.0f), w, h);
+			[self.scrollView zoomToRect:zoomRect animated:YES];
+		}
 	}
 }
 
@@ -784,7 +793,12 @@ static const CGFloat __blurTintColorAlpha = 0.2f;				// defines how much to tint
 	}
 	else {
 		if (self.panRecognizer) {
-			[self.imageView removeGestureRecognizer:self.panRecognizer];
+			if (self.allowSwipeOnBackgroundView) {
+				[self.containerView removeGestureRecognizer:self.panRecognizer];
+			}
+			else {
+				[self.imageView removeGestureRecognizer:self.panRecognizer];
+			}
 		}
 		scrollView.scrollEnabled = YES;
 	}
