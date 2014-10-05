@@ -10,6 +10,7 @@
 #import "MBContactModel.h"
 #import "CHGroup.h"
 #import "CHGroupListTableViewController.h"
+#import "UIViewController+PromiseKit.h"
 
 @interface CHMessageNewGroupViewController ()
 
@@ -118,11 +119,10 @@
 {
     [CHGroup groupWithName:nil members:self.addedContacts message:self.textView.text].then(^(CHGroup *group) {
         
-        CHMessageViewController *message = [[CHMessageViewController alloc] initWithGroup:group];
-        [self.parent.navigationController pushViewController:message animated:NO];
-        [self dismissViewControllerAnimated:NO completion:nil];
-        
-    }).catch(^(NSError *error){
+        self.group = group;
+        [self fulfill:self];
+    }).catch(^(NSError *error) {
+
         [[[UIAlertView alloc] initWithTitle:@"Error"
                                    message:error.localizedDescription
                                   delegate:nil
@@ -138,7 +138,7 @@
 
 - (IBAction)cancelTapped:(id)sender;
 {
-    [self dismissViewControllerAnimated:YES completion:nil];
+    [self reject:nil];
 }
 
 #pragma mark - Delegate
