@@ -22,7 +22,8 @@ NSString *const kCHUserSubtitleTableViewCell = @"CHUserSubtitleTableViewCell";
 
 @implementation CHMessageDetailTableViewController
 
-- (void)viewDidLoad {
+- (void)viewDidLoad;
+{
     [super viewDidLoad];
     self.title = self.group.name;
     self.options = [self tableRepresentation];
@@ -35,74 +36,100 @@ NSString *const kCHUserSubtitleTableViewCell = @"CHUserSubtitleTableViewCell";
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView;
 {
-    if (self.group.pastMembers.count > 0) {
-        return 3;
+    if (tableView == self.searchDisplayController.searchResultsTableView) {
+        return 1;
     } else {
-        return 2;
+        if (self.group.pastMembers.count > 0) {
+            return 3;
+        } else {
+            return 2;
+        }
     }
 }
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section;
 {
-    if (section == 0) {
+    if (tableView == self.searchDisplayController.searchResultsTableView) {
         return 1;
-    } else if (section == 1) {
-        return self.group.members.count;
     } else {
-        return self.group.pastMembers.count;
+        if (section == 0) {
+            return 1;
+        } else if (section == 1) {
+            return self.group.members.count;
+        } else {
+            return self.group.pastMembers.count;
+        }
     }
 }
 
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath;
 {
-    if (indexPath.section == 0) {
-        NSDictionary *info = self.options[indexPath.row];
-        CHDynamicCell *cell = [tableView dequeueReusableCellWithIdentifier:info[kCellIdentifier] forIndexPath:indexPath];
-        [cell setCellValues:info withOwner:self];
-        return cell;
-    } else {
-        CHUser *user = indexPath.section == 1 ? self.group.members[indexPath.row] : self.group.pastMembers[indexPath.row];
-        CHUserSubtitleTableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:kCHUserSubtitleTableViewCell forIndexPath:indexPath];
-        cell.cellLabel.text = user.username;
-        cell.cellDetailLabel.text = @"User since XXX";
-        
-        static UIImage *defaultImage = nil;
-        if (!defaultImage) {
-            defaultImage = [UIImage imageNamed:@"NoAvatar"];
+    if (tableView == self.searchDisplayController.searchResultsTableView) {
+        UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"CellIdentifier" forIndexPath:indexPath];
+        if (!cell) {
+            cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:@"CellIdentifier"];
         }
-        
-        user.avatar.then(^(CHUser *user, UIImage *avatar) {
-            cell.cellImageView.image = avatar;
-        }).catch(^(NSError *error){
-            cell.cellImageView.image = defaultImage;
-        });
-        
         return cell;
+        
+    } else {
+        if (indexPath.section == 0) {
+            NSDictionary *info = self.options[indexPath.row];
+            CHDynamicCell *cell = [tableView dequeueReusableCellWithIdentifier:info[kCellIdentifier] forIndexPath:indexPath];
+            [cell setCellValues:info withOwner:self];
+            return cell;
+        } else {
+            CHUser *user = indexPath.section == 1 ? self.group.members[indexPath.row] : self.group.pastMembers[indexPath.row];
+            CHUserSubtitleTableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:kCHUserSubtitleTableViewCell forIndexPath:indexPath];
+            cell.cellLabel.text = user.username;
+            cell.cellDetailLabel.text = @"User since XXX";
+            
+            static UIImage *defaultImage = nil;
+            if (!defaultImage) {
+                defaultImage = [UIImage imageNamed:@"NoAvatar"];
+            }
+            
+            user.avatar.then(^(CHUser *user, UIImage *avatar) {
+                cell.cellImageView.image = avatar;
+            }).catch(^(NSError *error){
+                cell.cellImageView.image = defaultImage;
+            });
+            
+            return cell;
+        }
     }
 }
 
 - (NSString *)tableView:(UITableView *)tableView titleForHeaderInSection:(NSInteger)section;
 {
-    if (section == 0) {
-        return @"Options";
-    } else if (section == 1) {
-        return @"Members";
+    if (tableView == self.searchDisplayController.searchResultsTableView) {
+        return nil;
     } else {
-        return @"Past Members";
+        if (section == 0) {
+            return @"Options";
+        } else if (section == 1) {
+            return @"Members";
+        } else {
+            return @"Past Members";
+        }
     }
 }
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath;
 {
     [tableView deselectRowAtIndexPath:indexPath animated:YES];
-
-    if (indexPath.section == 0) {
-        NSDictionary *info = self.options[indexPath.row];
-        void (^action)(NSIndexPath *) = info[@"action"];
-        if (action) {
-            action(indexPath);
-            return;
+    
+    if (tableView == self.searchDisplayController.searchResultsTableView) {
+#warning Add a User;
+        return;
+    } else {
+        if (indexPath.section == 0) {
+            NSDictionary *info = self.options[indexPath.row];
+            void (^action)(NSIndexPath *) = info[@"action"];
+            if (action) {
+                action(indexPath);
+                return;
+            }
         }
     }
 }
