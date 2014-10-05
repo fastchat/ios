@@ -650,6 +650,8 @@ NSString *const CHRefreshCellIdentifier = @"CHRefreshCellIdentifier";
 - (void)otherGroupMessage:(CHMessage *)message;
 {
     AudioServicesPlaySystemSound(kSystemSoundID_Vibrate);
+#warning Broken
+    /*
     [TSMessage showNotificationInViewController:self.navigationController
                                           title:message.group.name
                                        subtitle:message.text
@@ -669,6 +671,7 @@ NSString *const CHRefreshCellIdentifier = @"CHRefreshCellIdentifier";
                                  buttonCallback:nil
                                      atPosition:TSMessageNotificationPositionNavBarOverlay
                            canBeDismissedByUser:YES];
+     */
 }
 
 #pragma mark - UITextView Delegate
