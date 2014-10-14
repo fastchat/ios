@@ -75,6 +75,9 @@ NSString *const kStoryboardIDKey = @"kStoryboardIDKey";
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section;
 {
+    if (!self.user) {
+        return 0;
+    }
     if (section == 0) {
         return self.settings.count;
     } else if (section == 1){
@@ -241,7 +244,7 @@ NSString *const kStoryboardIDKey = @"kStoryboardIDKey";
     NSMutableDictionary *doNotDisturb = [NSMutableDictionary dictionary];
     doNotDisturb[@"switchLabel.text"] = @"Do Not Disturb";
     doNotDisturb[kCellIdentifier] = CHSwitchCell;
-    doNotDisturb[@"cellSwitch.on"] = self.user.doNotDisturb;
+    doNotDisturb[@"cellSwitch.on"] = self.user.doNotDisturb ? self.user.doNotDisturb : @NO;
     doNotDisturb[@"action"] = ^(NSIndexPath *path){
         CHDynamicSwitchCell *cell = (CHDynamicSwitchCell *)[self.tableView cellForRowAtIndexPath:path];
         [cell.cellSwitch setOn:!cell.cellSwitch.on animated:YES];
