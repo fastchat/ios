@@ -163,7 +163,7 @@ NSString *const CHRefreshCellIdentifier = @"CHRefreshCellIdentifier";
 - (void)viewWillLayoutSubviews;
 {
     [super viewWillLayoutSubviews];
-    [self.textView becomeFirstResponder];
+//    [self.textView becomeFirstResponder];
 }
 
 - (void)viewDidAppear:(BOOL)animated;

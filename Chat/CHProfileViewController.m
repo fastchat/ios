@@ -33,11 +33,10 @@ NSString *const kStoryboardIDKey = @"kStoryboardIDKey";
 
 @implementation CHProfileViewController
 
-- (void)viewDidLoad;
+- (void)viewWillAppear:(BOOL)animated;
 {
-    [super viewDidLoad];
-    // Do any additional setup after loading the view.
-
+    [super viewWillAppear:animated];
+    
     self.user = [CHUser currentUser];
     self.title = @"Profile";
     self.userNameLabel.text = self.user.username;
@@ -47,11 +46,8 @@ NSString *const kStoryboardIDKey = @"kStoryboardIDKey";
                            kStoryboardIDKey: @"CHPrivacyPolicyViewController",
                            @"accessoryOption": @(UITableViewCellAccessoryDisclosureIndicator)
                            };
-}
+    
 
-- (void)viewWillAppear:(BOOL)animated;
-{
-    [super viewWillAppear:animated];
     
     self.user.avatar.then(^(CHUser *user, UIImage *avatar){
         [self.avatarImageView setImage:avatar];
