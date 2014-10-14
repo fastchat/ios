@@ -11,7 +11,7 @@
 
 @class CHGroup;
 
-@interface CHMessageDetailTableViewController : UITableViewController <CHDynamicSwitchDelegate, UISearchDisplayDelegate>
+@interface CHMessageDetailTableViewController : UITableViewController <CHDynamicSwitchDelegate, UISearchResultsUpdating>
 
 @property (nonatomic, strong) CHGroup *group;
 

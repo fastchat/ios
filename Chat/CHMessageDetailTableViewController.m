@@ -12,10 +12,13 @@
 #import "CHUser.h"
 #import "CHUserSubtitleTableViewCell.h"
 
+#define kSearchBarHeight 44.0
+
 NSString *const kCHUserSubtitleTableViewCell = @"CHUserSubtitleTableViewCell";
 
 @interface CHMessageDetailTableViewController ()
 
+@property (nonatomic, strong) UISearchController *searchController;
 @property (nonatomic, copy) NSArray *options;
 
 @end
@@ -29,6 +32,24 @@ NSString *const kCHUserSubtitleTableViewCell = @"CHUserSubtitleTableViewCell";
     self.options = [self tableRepresentation];
     [[[GAI sharedInstance] defaultTracker] set:kGAIScreenName value:@"Messages Detail"];
     [[[GAI sharedInstance] defaultTracker] send:[[GAIDictionaryBuilder createScreenView] build]];
+    
+    // Search Results
+    
+    UITableViewController *searchResultsController = [[UITableViewController alloc] initWithStyle:UITableViewStylePlain];
+    searchResultsController.tableView.dataSource = self;
+    searchResultsController.tableView.delegate = self;
+    [searchResultsController.tableView registerClass:[UITableViewCell class] forCellReuseIdentifier:@"SearchCellIdentifier"];
+    
+    self.searchController = [[UISearchController alloc] initWithSearchResultsController:searchResultsController];
+    self.searchController.searchResultsUpdater = self;
+    self.searchController.searchBar.frame = CGRectMake(self.searchController.searchBar.frame.origin.x,
+                                                       self.searchController.searchBar.frame.origin.y,
+                                                       self.searchController.searchBar.frame.size.width,
+                                                       kSearchBarHeight);
+    self.searchController.searchBar.placeholder = @"Invite to Group";
+    
+    self.tableView.tableHeaderView = self.searchController.searchBar;
+    self.definesPresentationContext = YES;
 }
 
 
@@ -36,7 +57,7 @@ NSString *const kCHUserSubtitleTableViewCell = @"CHUserSubtitleTableViewCell";
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView;
 {
-    if (tableView == self.searchDisplayController.searchResultsTableView) {
+    if (tableView == ((UITableViewController *)self.searchController.searchResultsController).tableView) {
         return 1;
     } else {
         if (self.group.pastMembers.count > 0) {
@@ -49,7 +70,7 @@ NSString *const kCHUserSubtitleTableViewCell = @"CHUserSubtitleTableViewCell";
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section;
 {
-    if (tableView == self.searchDisplayController.searchResultsTableView) {
+    if (tableView == ((UITableViewController *)self.searchController.searchResultsController).tableView) {
         return 1;
     } else {
         if (section == 0) {
@@ -65,11 +86,9 @@ NSString *const kCHUserSubtitleTableViewCell = @"CHUserSubtitleTableViewCell";
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath;
 {
-    if (tableView == self.searchDisplayController.searchResultsTableView) {
-        UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"CellIdentifier" forIndexPath:indexPath];
-        if (!cell) {
-            cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:@"CellIdentifier"];
-        }
+    if (tableView == ((UITableViewController *)self.searchController.searchResultsController).tableView) {
+        UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"SearchCellIdentifier" forIndexPath:indexPath];
+        cell.textLabel.text = @"HELLO";
         return cell;
         
     } else {
@@ -102,7 +121,7 @@ NSString *const kCHUserSubtitleTableViewCell = @"CHUserSubtitleTableViewCell";
 
 - (NSString *)tableView:(UITableView *)tableView titleForHeaderInSection:(NSInteger)section;
 {
-    if (tableView == self.searchDisplayController.searchResultsTableView) {
+    if (tableView == ((UITableViewController *)self.searchController.searchResultsController).tableView) {
         return nil;
     } else {
         if (section == 0) {
@@ -119,7 +138,7 @@ NSString *const kCHUserSubtitleTableViewCell = @"CHUserSubtitleTableViewCell";
 {
     [tableView deselectRowAtIndexPath:indexPath animated:YES];
     
-    if (tableView == self.searchDisplayController.searchResultsTableView) {
+    if (tableView == ((UITableViewController *)self.searchController.searchResultsController).tableView) {
 #warning Add a User
         [self.group addUsers:@[]];
         return;
@@ -133,6 +152,16 @@ NSString *const kCHUserSubtitleTableViewCell = @"CHUserSubtitleTableViewCell";
             }
         }
     }
+}
+
+-(void)updateSearchResultsForSearchController:(UISearchController *)searchController;
+{
+    
+    NSString *searchString = [self.searchController.searchBar text];
+    
+
+    
+    [((UITableViewController *)self.searchController.searchResultsController).tableView reloadData];
 }
 
 - (void)cell:(CHDynamicSwitchCell *)cell tapped:(UISwitch *)tapped;
