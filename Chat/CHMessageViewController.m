@@ -160,6 +160,7 @@ NSString *const CHRefreshCellIdentifier = @"CHRefreshCellIdentifier";
     self.textView.text = self.group.unsentText;
 }
 
+// need a better way to check this, so it doesn't popup on rotate.
 - (void)viewWillLayoutSubviews;
 {
     [super viewWillLayoutSubviews];
