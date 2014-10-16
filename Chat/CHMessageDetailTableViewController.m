@@ -20,6 +20,7 @@ NSString *const kCHUserSubtitleTableViewCell = @"CHUserSubtitleTableViewCell";
 
 @property (nonatomic, strong) UISearchController *searchController;
 @property (nonatomic, copy) NSArray *options;
+@property (nonatomic, strong) NSMutableArray *searchResults;
 
 @end
 
@@ -34,7 +35,7 @@ NSString *const kCHUserSubtitleTableViewCell = @"CHUserSubtitleTableViewCell";
     [[[GAI sharedInstance] defaultTracker] send:[[GAIDictionaryBuilder createScreenView] build]];
     
     // Search Results
-    
+    self.searchResults = [NSMutableArray array];
     UITableViewController *searchResultsController = [[UITableViewController alloc] initWithStyle:UITableViewStylePlain];
     searchResultsController.tableView.dataSource = self;
     searchResultsController.tableView.delegate = self;
@@ -71,7 +72,7 @@ NSString *const kCHUserSubtitleTableViewCell = @"CHUserSubtitleTableViewCell";
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section;
 {
     if (tableView == ((UITableViewController *)self.searchController.searchResultsController).tableView) {
-        return 1;
+        return self.searchResults.count;
     } else {
         if (section == 0) {
             return 1;

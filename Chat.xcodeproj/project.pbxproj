@@ -36,6 +36,15 @@
 		279CF21D18DF777500C82399 /* CHMTLUser.m in Sources */ = {isa = PBXBuildFile; fileRef = 279CF21C18DF777400C82399 /* CHMTLUser.m */; };
 		279CF22118DFD74D00C82399 /* CHInviteUserViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 279CF22018DFD74D00C82399 /* CHInviteUserViewController.m */; };
 		2C7FD1E6FB44435B8A225753 /* libPods-Chat.a in Frameworks */ = {isa = PBXBuildFile; fileRef = ED86F54EC1C64B14950512A1 /* libPods-Chat.a */; };
+		AA04835419EF5C5C004C362D /* SVWebViewControllerActivityChrome-iPad.png in Resources */ = {isa = PBXBuildFile; fileRef = AA04834719EF5C5C004C362D /* SVWebViewControllerActivityChrome-iPad.png */; };
+		AA04835519EF5C5C004C362D /* SVWebViewControllerActivityChrome-iPad@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = AA04834819EF5C5C004C362D /* SVWebViewControllerActivityChrome-iPad@2x.png */; };
+		AA04835619EF5C5C004C362D /* SVWebViewControllerActivityChrome.m in Sources */ = {isa = PBXBuildFile; fileRef = AA04834A19EF5C5C004C362D /* SVWebViewControllerActivityChrome.m */; };
+		AA04835719EF5C5C004C362D /* SVWebViewControllerActivityChrome@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = AA04834B19EF5C5C004C362D /* SVWebViewControllerActivityChrome@2x.png */; };
+		AA04835819EF5C5C004C362D /* SVWebViewControllerActivitySafari-iPad.png in Resources */ = {isa = PBXBuildFile; fileRef = AA04834D19EF5C5C004C362D /* SVWebViewControllerActivitySafari-iPad.png */; };
+		AA04835919EF5C5C004C362D /* SVWebViewControllerActivitySafari-iPad@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = AA04834E19EF5C5C004C362D /* SVWebViewControllerActivitySafari-iPad@2x.png */; };
+		AA04835A19EF5C5C004C362D /* SVWebViewControllerActivitySafari.m in Sources */ = {isa = PBXBuildFile; fileRef = AA04835019EF5C5C004C362D /* SVWebViewControllerActivitySafari.m */; };
+		AA04835B19EF5C5C004C362D /* SVWebViewControllerActivitySafari@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = AA04835119EF5C5C004C362D /* SVWebViewControllerActivitySafari@2x.png */; };
+		AA04835C19EF5C5C004C362D /* SVWebViewControllerActivity.m in Sources */ = {isa = PBXBuildFile; fileRef = AA04835319EF5C5C004C362D /* SVWebViewControllerActivity.m */; };
 		AA13D1FA19D70F760008BADB /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = AA13D1F919D70F760008BADB /* Localizable.strings */; };
 		AA27A0B919D722DB00E35DC9 /* CHDynamicSwitchCell.m in Sources */ = {isa = PBXBuildFile; fileRef = AA27A0B819D722DB00E35DC9 /* CHDynamicSwitchCell.m */; };
 		AA27A0BC19D722F100E35DC9 /* CHDynamicCell.m in Sources */ = {isa = PBXBuildFile; fileRef = AA27A0BB19D722F100E35DC9 /* CHDynamicCell.m */; };
@@ -61,11 +70,6 @@
 		AA7759F018D54D3000E4E7AB /* Main_iPad.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = AA7759EE18D54D3000E4E7AB /* Main_iPad.storyboard */; };
 		AA7759F318D54D3000E4E7AB /* CHLoginViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = AA7759F218D54D3000E4E7AB /* CHLoginViewController.m */; };
 		AA7759F518D54D3000E4E7AB /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = AA7759F418D54D3000E4E7AB /* Images.xcassets */; };
-		AA7759FC18D54D3000E4E7AB /* XCTest.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = AA7759FB18D54D3000E4E7AB /* XCTest.framework */; };
-		AA7759FD18D54D3000E4E7AB /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = AA7759D918D54D3000E4E7AB /* Foundation.framework */; };
-		AA7759FE18D54D3000E4E7AB /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = AA7759DD18D54D3000E4E7AB /* UIKit.framework */; };
-		AA775A0618D54D3000E4E7AB /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = AA775A0418D54D3000E4E7AB /* InfoPlist.strings */; };
-		AA775A0818D54D3000E4E7AB /* ChatTests.m in Sources */ = {isa = PBXBuildFile; fileRef = AA775A0718D54D3000E4E7AB /* ChatTests.m */; };
 		AA7BDE6719DBB27D0025C15C /* CHMessageNewGroupViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = AA7BDE6619DBB27C0025C15C /* CHMessageNewGroupViewController.m */; };
 		AA7C691E19986636005DFFF5 /* FastChat.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = AA7C691C19986636005DFFF5 /* FastChat.xcdatamodeld */; };
 		AA8DDA931936DABD007F0196 /* HPGrowingTextView.m in Sources */ = {isa = PBXBuildFile; fileRef = AA8DDA901936DABD007F0196 /* HPGrowingTextView.m */; };
@@ -87,16 +91,6 @@
 		AAE5B27119D8FBA3009E9B87 /* CHRefreshTableViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = AAE5B26F19D8FBA3009E9B87 /* CHRefreshTableViewCell.xib */; };
 		AAE5B27419D8FC2F009E9B87 /* CHRefreshView.m in Sources */ = {isa = PBXBuildFile; fileRef = AAE5B27319D8FC2F009E9B87 /* CHRefreshView.m */; };
 /* End PBXBuildFile section */
-
-/* Begin PBXContainerItemProxy section */
-		AA7759FF18D54D3000E4E7AB /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = AA7759CE18D54D3000E4E7AB /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = AA7759D518D54D3000E4E7AB;
-			remoteInfo = Chat;
-		};
-/* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
 		2762621918F706FA001F7754 /* CHProfileViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CHProfileViewController.h; sourceTree = "<group>"; };
@@ -129,6 +123,18 @@
 		279CF22018DFD74D00C82399 /* CHInviteUserViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CHInviteUserViewController.m; sourceTree = "<group>"; };
 		40F95AB184E20BF4F7BE97FC /* Pods-Chat.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Chat.release.xcconfig"; path = "Pods/Target Support Files/Pods-Chat/Pods-Chat.release.xcconfig"; sourceTree = "<group>"; };
 		874F80D2703854F79FD8E87B /* Pods-Chat.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Chat.debug.xcconfig"; path = "Pods/Target Support Files/Pods-Chat/Pods-Chat.debug.xcconfig"; sourceTree = "<group>"; };
+		AA04834719EF5C5C004C362D /* SVWebViewControllerActivityChrome-iPad.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "SVWebViewControllerActivityChrome-iPad.png"; sourceTree = "<group>"; };
+		AA04834819EF5C5C004C362D /* SVWebViewControllerActivityChrome-iPad@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "SVWebViewControllerActivityChrome-iPad@2x.png"; sourceTree = "<group>"; };
+		AA04834919EF5C5C004C362D /* SVWebViewControllerActivityChrome.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SVWebViewControllerActivityChrome.h; sourceTree = "<group>"; };
+		AA04834A19EF5C5C004C362D /* SVWebViewControllerActivityChrome.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SVWebViewControllerActivityChrome.m; sourceTree = "<group>"; };
+		AA04834B19EF5C5C004C362D /* SVWebViewControllerActivityChrome@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "SVWebViewControllerActivityChrome@2x.png"; sourceTree = "<group>"; };
+		AA04834D19EF5C5C004C362D /* SVWebViewControllerActivitySafari-iPad.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "SVWebViewControllerActivitySafari-iPad.png"; sourceTree = "<group>"; };
+		AA04834E19EF5C5C004C362D /* SVWebViewControllerActivitySafari-iPad@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "SVWebViewControllerActivitySafari-iPad@2x.png"; sourceTree = "<group>"; };
+		AA04834F19EF5C5C004C362D /* SVWebViewControllerActivitySafari.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SVWebViewControllerActivitySafari.h; sourceTree = "<group>"; };
+		AA04835019EF5C5C004C362D /* SVWebViewControllerActivitySafari.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SVWebViewControllerActivitySafari.m; sourceTree = "<group>"; };
+		AA04835119EF5C5C004C362D /* SVWebViewControllerActivitySafari@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "SVWebViewControllerActivitySafari@2x.png"; sourceTree = "<group>"; };
+		AA04835219EF5C5C004C362D /* SVWebViewControllerActivity.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SVWebViewControllerActivity.h; sourceTree = "<group>"; };
+		AA04835319EF5C5C004C362D /* SVWebViewControllerActivity.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SVWebViewControllerActivity.m; sourceTree = "<group>"; };
 		AA13D1F919D70F760008BADB /* Localizable.strings */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.strings; path = Localizable.strings; sourceTree = "<group>"; };
 		AA27A0B719D722DB00E35DC9 /* CHDynamicSwitchCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CHDynamicSwitchCell.h; sourceTree = "<group>"; };
 		AA27A0B819D722DB00E35DC9 /* CHDynamicSwitchCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CHDynamicSwitchCell.m; sourceTree = "<group>"; };
@@ -172,7 +178,6 @@
 		AA7759F118D54D3000E4E7AB /* CHLoginViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CHLoginViewController.h; sourceTree = "<group>"; };
 		AA7759F218D54D3000E4E7AB /* CHLoginViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = CHLoginViewController.m; sourceTree = "<group>"; };
 		AA7759F418D54D3000E4E7AB /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
-		AA7759FA18D54D3000E4E7AB /* ChatTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ChatTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		AA7759FB18D54D3000E4E7AB /* XCTest.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = XCTest.framework; path = Library/Frameworks/XCTest.framework; sourceTree = DEVELOPER_DIR; };
 		AA775A0318D54D3000E4E7AB /* ChatTests-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "ChatTests-Info.plist"; sourceTree = "<group>"; };
 		AA775A0518D54D3000E4E7AB /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
@@ -225,16 +230,6 @@
 				AA7759DE18D54D3000E4E7AB /* UIKit.framework in Frameworks */,
 				AA7759DA18D54D3000E4E7AB /* Foundation.framework in Frameworks */,
 				2C7FD1E6FB44435B8A225753 /* libPods-Chat.a in Frameworks */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		AA7759F718D54D3000E4E7AB /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				AA7759FC18D54D3000E4E7AB /* XCTest.framework in Frameworks */,
-				AA7759FE18D54D3000E4E7AB /* UIKit.framework in Frameworks */,
-				AA7759FD18D54D3000E4E7AB /* Foundation.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -327,6 +322,41 @@
 			name = Groups;
 			sourceTree = "<group>";
 		};
+		AA04834519EF5C52004C362D /* UIActivities */ = {
+			isa = PBXGroup;
+			children = (
+				AA04834619EF5C5C004C362D /* Chrome */,
+				AA04834C19EF5C5C004C362D /* Safari */,
+				AA04835219EF5C5C004C362D /* SVWebViewControllerActivity.h */,
+				AA04835319EF5C5C004C362D /* SVWebViewControllerActivity.m */,
+			);
+			name = UIActivities;
+			sourceTree = "<group>";
+		};
+		AA04834619EF5C5C004C362D /* Chrome */ = {
+			isa = PBXGroup;
+			children = (
+				AA04834719EF5C5C004C362D /* SVWebViewControllerActivityChrome-iPad.png */,
+				AA04834819EF5C5C004C362D /* SVWebViewControllerActivityChrome-iPad@2x.png */,
+				AA04834919EF5C5C004C362D /* SVWebViewControllerActivityChrome.h */,
+				AA04834A19EF5C5C004C362D /* SVWebViewControllerActivityChrome.m */,
+				AA04834B19EF5C5C004C362D /* SVWebViewControllerActivityChrome@2x.png */,
+			);
+			path = Chrome;
+			sourceTree = "<group>";
+		};
+		AA04834C19EF5C5C004C362D /* Safari */ = {
+			isa = PBXGroup;
+			children = (
+				AA04834D19EF5C5C004C362D /* SVWebViewControllerActivitySafari-iPad.png */,
+				AA04834E19EF5C5C004C362D /* SVWebViewControllerActivitySafari-iPad@2x.png */,
+				AA04834F19EF5C5C004C362D /* SVWebViewControllerActivitySafari.h */,
+				AA04835019EF5C5C004C362D /* SVWebViewControllerActivitySafari.m */,
+				AA04835119EF5C5C004C362D /* SVWebViewControllerActivitySafari@2x.png */,
+			);
+			path = Safari;
+			sourceTree = "<group>";
+		};
 		AA13D1F819D70F640008BADB /* Strings */ = {
 			isa = PBXGroup;
 			children = (
@@ -349,6 +379,7 @@
 		AA463318193659DB00513578 /* UI Elements */ = {
 			isa = PBXGroup;
 			children = (
+				AA04834519EF5C52004C362D /* UIActivities */,
 				AA463319193659EB00513578 /* CHTextField.h */,
 				AA46331A193659EB00513578 /* CHTextField.m */,
 				AA27A0BA19D722F100E35DC9 /* CHDynamicCell.h */,
@@ -429,7 +460,6 @@
 			isa = PBXGroup;
 			children = (
 				AA7759D618D54D3000E4E7AB /* Chat.app */,
-				AA7759FA18D54D3000E4E7AB /* ChatTests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -609,24 +639,6 @@
 			productReference = AA7759D618D54D3000E4E7AB /* Chat.app */;
 			productType = "com.apple.product-type.application";
 		};
-		AA7759F918D54D3000E4E7AB /* ChatTests */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = AA775A0E18D54D3000E4E7AB /* Build configuration list for PBXNativeTarget "ChatTests" */;
-			buildPhases = (
-				AA7759F618D54D3000E4E7AB /* Sources */,
-				AA7759F718D54D3000E4E7AB /* Frameworks */,
-				AA7759F818D54D3000E4E7AB /* Resources */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-				AA775A0018D54D3000E4E7AB /* PBXTargetDependency */,
-			);
-			name = ChatTests;
-			productName = ChatTests;
-			productReference = AA7759FA18D54D3000E4E7AB /* ChatTests.xctest */;
-			productType = "com.apple.product-type.bundle.unit-test";
-		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -638,9 +650,6 @@
 				TargetAttributes = {
 					AA7759D518D54D3000E4E7AB = {
 						DevelopmentTeam = X5BAWYYBBG;
-					};
-					AA7759F918D54D3000E4E7AB = {
-						TestTargetID = AA7759D518D54D3000E4E7AB;
 					};
 				};
 			};
@@ -658,7 +667,6 @@
 			projectRoot = "";
 			targets = (
 				AA7759D518D54D3000E4E7AB /* Chat */,
-				AA7759F918D54D3000E4E7AB /* ChatTests */,
 				AAC6603F199EA878006B806B /* Mogenerator */,
 			);
 		};
@@ -671,21 +679,19 @@
 			files = (
 				AAE5B27119D8FBA3009E9B87 /* CHRefreshTableViewCell.xib in Resources */,
 				AA13D1FA19D70F760008BADB /* Localizable.strings in Resources */,
+				AA04835919EF5C5C004C362D /* SVWebViewControllerActivitySafari-iPad@2x.png in Resources */,
 				AA55576419E1A543000C3ED7 /* Launch Screen.xib in Resources */,
 				AA7759F018D54D3000E4E7AB /* Main_iPad.storyboard in Resources */,
 				AA7759F518D54D3000E4E7AB /* Images.xcassets in Resources */,
 				AA7759ED18D54D3000E4E7AB /* Main_iPhone.storyboard in Resources */,
+				AA04835519EF5C5C004C362D /* SVWebViewControllerActivityChrome-iPad@2x.png in Resources */,
 				AAA0415A19D8C665000D6647 /* CHMessageTableViewCell.xib in Resources */,
 				AAA0415C19D8C9B4000D6647 /* CHOwnMessageTableViewCell.xib in Resources */,
 				AA7759E418D54D3000E4E7AB /* InfoPlist.strings in Resources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		AA7759F818D54D3000E4E7AB /* Resources */ = {
-			isa = PBXResourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				AA775A0618D54D3000E4E7AB /* InfoPlist.strings in Resources */,
+				AA04835719EF5C5C004C362D /* SVWebViewControllerActivityChrome@2x.png in Resources */,
+				AA04835419EF5C5C004C362D /* SVWebViewControllerActivityChrome-iPad.png in Resources */,
+				AA04835819EF5C5C004C362D /* SVWebViewControllerActivitySafari-iPad.png in Resources */,
+				AA04835B19EF5C5C004C362D /* SVWebViewControllerActivitySafari@2x.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -748,6 +754,7 @@
 				2769B04F18EDD40800CCE470 /* CHOwnMessageTableViewCell.m in Sources */,
 				2769B06818F47E5E00CCE470 /* CHFastChatObject.m in Sources */,
 				AA4633241936735F00513578 /* CHGroupTableViewCell.m in Sources */,
+				AA04835A19EF5C5C004C362D /* SVWebViewControllerActivitySafari.m in Sources */,
 				AA27A0C219D7230900E35DC9 /* CHDynamicTextCell.m in Sources */,
 				AAE5B27019D8FBA3009E9B87 /* CHRefreshTableViewCell.m in Sources */,
 				AA46332719367A5F00513578 /* CHUnreadView.m in Sources */,
@@ -765,6 +772,8 @@
 				AA27A0CF19D85BAD00E35DC9 /* CHUserSubtitleTableViewCell.m in Sources */,
 				AABD8A04199EAA6B002962A4 /* _CHUser.m in Sources */,
 				AA7BDE6719DBB27D0025C15C /* CHMessageNewGroupViewController.m in Sources */,
+				AA04835619EF5C5C004C362D /* SVWebViewControllerActivityChrome.m in Sources */,
+				AA04835C19EF5C5C004C362D /* SVWebViewControllerActivity.m in Sources */,
 				AA27A0BF19D722FE00E35DC9 /* CHDynamicSubtextCell.m in Sources */,
 				AABD8A06199EAA6B002962A4 /* CHMessage.m in Sources */,
 				AA46331B193659EB00513578 /* CHTextField.m in Sources */,
@@ -792,23 +801,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		AA7759F618D54D3000E4E7AB /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				AA775A0818D54D3000E4E7AB /* ChatTests.m in Sources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 /* End PBXSourcesBuildPhase section */
-
-/* Begin PBXTargetDependency section */
-		AA775A0018D54D3000E4E7AB /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = AA7759D518D54D3000E4E7AB /* Chat */;
-			targetProxy = AA7759FF18D54D3000E4E7AB /* PBXContainerItemProxy */;
-		};
-/* End PBXTargetDependency section */
 
 /* Begin PBXVariantGroup section */
 		AA7759E218D54D3000E4E7AB /* InfoPlist.strings */ = {
@@ -956,46 +949,6 @@
 			};
 			name = Release;
 		};
-		AA775A0F18D54D3000E4E7AB /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				BUNDLE_LOADER = "$(BUILT_PRODUCTS_DIR)/Chat.app/Chat";
-				FRAMEWORK_SEARCH_PATHS = (
-					"$(SDKROOT)/Developer/Library/Frameworks",
-					"$(inherited)",
-					"$(DEVELOPER_FRAMEWORKS_DIR)",
-				);
-				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREFIX_HEADER = "Chat/Chat-Prefix.pch";
-				GCC_PREPROCESSOR_DEFINITIONS = (
-					"DEBUG=1",
-					"$(inherited)",
-				);
-				INFOPLIST_FILE = "ChatTests/ChatTests-Info.plist";
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				TEST_HOST = "$(BUNDLE_LOADER)";
-				WRAPPER_EXTENSION = xctest;
-			};
-			name = Debug;
-		};
-		AA775A1018D54D3000E4E7AB /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				BUNDLE_LOADER = "$(BUILT_PRODUCTS_DIR)/Chat.app/Chat";
-				FRAMEWORK_SEARCH_PATHS = (
-					"$(SDKROOT)/Developer/Library/Frameworks",
-					"$(inherited)",
-					"$(DEVELOPER_FRAMEWORKS_DIR)",
-				);
-				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREFIX_HEADER = "Chat/Chat-Prefix.pch";
-				INFOPLIST_FILE = "ChatTests/ChatTests-Info.plist";
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				TEST_HOST = "$(BUNDLE_LOADER)";
-				WRAPPER_EXTENSION = xctest;
-			};
-			name = Release;
-		};
 		AAC66041199EA879006B806B /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -1027,15 +980,6 @@
 			buildConfigurations = (
 				AA775A0C18D54D3000E4E7AB /* Debug */,
 				AA775A0D18D54D3000E4E7AB /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
-		AA775A0E18D54D3000E4E7AB /* Build configuration list for PBXNativeTarget "ChatTests" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				AA775A0F18D54D3000E4E7AB /* Debug */,
-				AA775A1018D54D3000E4E7AB /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

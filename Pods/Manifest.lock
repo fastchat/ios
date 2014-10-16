@@ -35,13 +35,18 @@ PODS:
   - Mantle/extobjc (1.5)
   - MBContactPicker (0.1.4)
   - MBProgressHUD (0.9)
-  - OMGHTTPURLRQ (2.0.1):
+  - OMGHTTPURLRQ (2.1):
+    - OMGHTTPURLRQ/FormURLEncode
     - OMGHTTPURLRQ/RQ
     - OMGHTTPURLRQ/UserAgent
+  - OMGHTTPURLRQ/FormURLEncode (2.1):
+    - OMGHTTPURLRQ/FormURLEncode
     - OMGHTTPURLRQ/UserAgent
-  - OMGHTTPURLRQ/RQ (2.0.1):
+  - OMGHTTPURLRQ/RQ (2.1):
+    - OMGHTTPURLRQ/FormURLEncode
     - OMGHTTPURLRQ/UserAgent
-  - OMGHTTPURLRQ/UserAgent (2.0.1):
+  - OMGHTTPURLRQ/UserAgent (2.1):
+    - OMGHTTPURLRQ/FormURLEncode
     - OMGHTTPURLRQ/UserAgent
   - PromiseKit (0.9.17):
     - PromiseKit/NSNotificationCenter
@@ -118,7 +123,7 @@ SPEC CHECKSUMS:
   Mantle: c67a7e45e14196ed42b2a7cbb98ff6a9920e6b92
   MBContactPicker: f3ad9c973cdc8ed6caa92a104dbc314f155f3ea6
   MBProgressHUD: 2038dbcf3dce73215abed6001657043d53aa79a8
-  OMGHTTPURLRQ: 4297af2a7f7ca7adb3f8331203001e0fd2dae16f
+  OMGHTTPURLRQ: 16564bcee86d8dfa298b65cdf60015c3065f67df
   PromiseKit: 7a18d7b8d41a156cda0268c3cb065d272d5aa554
   SlackTextViewController: 2c6d10a876a436cc75984a27be88061363d15f2b
   socket.IO: db3e71805c862038ab73209dda2b0ad6babc54b2
@@ -128,4 +133,4 @@ SPEC CHECKSUMS:
   UIResponder+KeyboardCache: e267fd88f3414e8e7ccf7644f25c4701812a1d2b
   URBMediaFocusViewController: 4dff9de3767e60b96ba325c897d4ffa7131a122e
 
-COCOAPODS: 0.34.1
+COCOAPODS: 0.34.2

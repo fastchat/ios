@@ -115,7 +115,7 @@ typedef NS_ENUM(NSInteger, ContactCollectionViewSection) {
     MBContactCollectionViewFlowLayout *layout = (MBContactCollectionViewFlowLayout*)self.collectionViewLayout;
     layout.minimumInteritemSpacing = 5;
     layout.minimumLineSpacing = 1;
-    layout.sectionInset = UIEdgeInsetsMake(0, 2, 0, 2);
+    layout.sectionInset = UIEdgeInsetsMake(0, 10, 0, 10);
     
     self.prototypeCell = [[MBContactCollectionViewContactCell alloc] init];
     

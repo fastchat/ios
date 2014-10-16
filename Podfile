@@ -1,7 +1,11 @@
 # Uncomment this line to define a global platform for your project
+source 'https://github.com/CocoaPods/Specs.git'
+
 platform :ios, "7.0"
 inhibit_all_warnings!
-source 'https://github.com/CocoaPods/Specs.git'
+
+xcodeproj 'Chat.xcodeproj'
+workspace 'Chat.xcworkspace'
 
 target "Chat" do
   pod 'socket.IO', '0.5.2'
@@ -21,9 +25,5 @@ target "Chat" do
   pod 'MBContactPicker', '0.1.4'
   pod 'UIResponder+KeyboardCache', '0.1'
   pod 'BugshotKit', '0.1'
-end
-
-target "ChatTests" do
-
 end
 

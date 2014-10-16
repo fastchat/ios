@@ -170,8 +170,6 @@
  */
 - (void)didPressEscapeKey:(id)sender;
 
-- (void)willShowOrHideKeyboard:(NSNotification *)notification;
-
 ///------------------------------------------------
 /// @name Text Edition
 ///------------------------------------------------

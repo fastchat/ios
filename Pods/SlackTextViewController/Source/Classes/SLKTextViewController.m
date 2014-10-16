@@ -312,7 +312,7 @@
     CGRect endFrame = [notification.userInfo[UIKeyboardFrameEndUserInfoKey] CGRectValue];
     
     CGFloat keyboardHeight = 0.0;
-    CGFloat tabBarHeight = ([self.tabBarController.tabBar isHidden] || self.hidesBottomBarWhenPushed) ? 0.0 : CGRectGetHeight(self.tabBarController.tabBar.frame);
+    CGFloat tabBarHeight = (![self.tabBarController.tabBar isHidden]) ? CGRectGetHeight(self.tabBarController.tabBar.frame) : 0.0;
     
     // The height of the keyboard if showing
     if ([notification.name isEqualToString:UIKeyboardWillShowNotification]) {
