@@ -19,6 +19,8 @@
 #import "UIAlertView+PromiseKit.h"
 #import "TSMessage.h"
 #import "STKWebKitViewController.h"
+#import "SVWebViewControllerActivitySafari.h"
+#import "SVWebViewControllerActivityChrome.h"
 
 #define kDefaultContentOffset self.navigationController.navigationBar.frame.size.height + 20
 #define kCHKeyboardType UIKeyboardTypeDefault
@@ -614,7 +616,7 @@ NSString *const CHRefreshCellIdentifier = @"CHRefreshCellIdentifier";
 {
     NSDictionary *info = note.userInfo[CHNotificationPayloadKey];
     if ([info[@"group"] isEqualToString:self.group.chID]) {
-        BOOL typing = info[@"typing"];
+        BOOL typing = [info[@"typing"] boolValue];
         CHUser *user = [self.group userFromID:info[@"from"]];
         if (typing) {
             [self.typingIndicatorView insertUsername:user.username];
@@ -686,6 +688,11 @@ NSString *const CHRefreshCellIdentifier = @"CHRefreshCellIdentifier";
     
     if ([website containsObject:URL.scheme]) {
         STKWebKitViewController *controller = [[STKWebKitViewController alloc] initWithURL:URL];
+        
+        SVWebViewControllerActivitySafari *safari = [SVWebViewControllerActivitySafari new];
+        SVWebViewControllerActivityChrome *chrome = [SVWebViewControllerActivityChrome new];
+        
+        controller.applicationActivities = @[safari, chrome];
         [self.navigationController pushViewController:controller animated:YES];
         self.navigationController.hidesBarsOnSwipe = YES;
         return NO;
@@ -711,7 +718,7 @@ NSString *const CHRefreshCellIdentifier = @"CHRefreshCellIdentifier";
     if (self.isHiding) {
         return;
     }
-    [super willShowOrHideKeyboard:notification];
+//    [super willShowOrHideKeyboard:notification];
 }
 
 #pragma mark - Navigation
