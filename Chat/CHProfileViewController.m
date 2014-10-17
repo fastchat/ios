@@ -93,7 +93,6 @@ NSString *const kStoryboardIDKey = @"kStoryboardIDKey";
         return cell;
     } else if (indexPath.section == 1){
         CHGroup *group = self.user.pastGroups[indexPath.row];
-        
         UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:CHPastGroupCellIdentifier forIndexPath:indexPath];
         cell.textLabel.text = group.name;
         return cell;
