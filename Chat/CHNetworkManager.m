@@ -319,7 +319,7 @@ NSString *const SESSION_TOKEN = @"session-token";
 
 - (PMKPromise *)newUsers:(NSArray *)invitees forGroup:(CHGroup *)group;
 {
-    if (!invitees) {
+    if (!invitees || invitees.count == 0) {
         return [PMKPromise new:^(PMKPromiseFulfiller fulfiller, PMKPromiseRejecter rejecter) {
             fulfiller(nil);
         }];

@@ -11,6 +11,7 @@
 #import "CHDynamicCell.h"
 #import "CHUser.h"
 #import "CHUserSubtitleTableViewCell.h"
+#import "MBProgressHUD.h"
 
 #define kSearchBarHeight 44.0
 
@@ -139,9 +140,18 @@ NSString *const kCHUserSubtitleTableViewCell = @"CHUserSubtitleTableViewCell";
     [tableView deselectRowAtIndexPath:indexPath animated:YES];
     
     if (tableView == ((UITableViewController *)self.searchController.searchResultsController).tableView) {
-#warning Add a User
-        [self.group addUsers:@[]];
-        return;
+        [MBProgressHUD showHUDAddedTo:self.view animated:YES];
+        [self.group addUsers:@[self.searchResults[indexPath.row]]]
+        .then(^{
+            [MBProgressHUD hideHUDForView:self.view animated:YES];
+            [self.searchController setActive:NO];
+        }).catch(^(NSError *error){
+            [[[UIAlertView alloc] initWithTitle:@"Error"
+                                       message:error.localizedDescription
+                                      delegate:nil
+                             cancelButtonTitle:@"OK"
+                              otherButtonTitles:nil] show];
+        });
     } else {
         if (indexPath.section == 0) {
             NSDictionary *info = self.options[indexPath.row];
