@@ -23,10 +23,17 @@
 #import "UITextView+SLKAdditions.h"
 #import "UIView+SLKAdditions.h"
 
-/** @name A drop-in UIViewController subclass with a growing text input view and other useful messaging features. */
-@interface SLKTextViewController : UIViewController <UITableViewDelegate, UITableViewDataSource, UICollectionViewDelegate, UICollectionViewDataSource>
+typedef NS_ENUM(NSUInteger, SLKKeyboardStatus) {
+    SLKKeyboardStatusDidHide,
+    SLKKeyboardStatusWillShow,
+    SLKKeyboardStatusDidShow,
+    SLKKeyboardStatusWillHide
+};
 
-/** The main table view managed by the controller object. Default view if initialized with -init */
+/** @name A drop-in UIViewController subclass with a growing text input view and other useful messaging features. */
+@interface SLKTextViewController : UIViewController <UITextViewDelegate, UITableViewDelegate, UITableViewDataSource, UICollectionViewDelegate, UICollectionViewDataSource>
+
+/** The main table view managed by the controller object. Created by default initializing with -init or initWithNibName:bundle: */
 @property (nonatomic, readonly) UITableView *tableView;
 
 /** The main collection view managed by the controller object. Not nil if the controller is initialised with -initWithCollectionViewLayout: */
@@ -47,7 +54,11 @@
 /** YES if keyboard can be dismissed gradually with a vertical panning gesture. Default is YES. */
 @property (nonatomic, assign) BOOL keyboardPanningEnabled;
 
-/** YES if the main table view is inverted. Default is YES.
+/** YES if an external keyboard has been detected (this value only changes when the text view becomes first responder). */
+@property (nonatomic, readonly, getter=isExternalKeyboardDetected) BOOL externalKeyboardDetected;
+
+/**
+ YES if the main table view is inverted. Default is YES.
  @discussion This allows the table view to start from the bottom like any typical messaging interface.
  If inverted, you must assign the same transform property to your cells to match the orientation (ie: cell.transform = tableView.transform;)
  Inverting the table view will enable some great features such as content offset corrections automatically when resizing the text input and/or showing autocompletion.
@@ -56,10 +67,18 @@
  */
 @property (nonatomic, assign, getter = isInverted) BOOL inverted;
 
+/** YES if the view controller is presented inside of a popover controller. If YES, the keyboard won't move the text input bar and tapping on the tableView/collectionView will not cause the keyboard to be dismissed. This doesn't do anything on iPhone. */
+@property (nonatomic, getter = isPresentedInPopover) BOOL presentedInPopover;
+
 /** Convenience accessors (accessed through the text input bar) */
 @property (nonatomic, readonly) SLKTextView *textView;
 @property (nonatomic, readonly) UIButton *leftButton;
 @property (nonatomic, readonly) UIButton *rightButton;
+
+
+///------------------------------------------------
+/// @name Initialization
+///------------------------------------------------
 
 /**
  Initializes a text view controller to manage a table view of a given style.
@@ -80,12 +99,29 @@
 - (instancetype)initWithCollectionViewLayout:(UICollectionViewLayout *)layout;
 
 /**
- Verifies if the right button can be pressed. If NO, the button is disabled.
- @discussion You can override this method to perform additional tasks.
+ Returns the tableView style to be configured when using Interface Builder. Default is UITableViewStylePlain.
+ @discussion You must override this method if you want to configure a tableView.
+ You should not override -initWithCoder:
  
- @return YES if the right button can be pressed.
+ @param decoder An unarchiver object.
+ @return The tableView style to be used in the new instantiated tableView.
  */
-- (BOOL)canPressRightButton;
++ (UITableViewStyle)tableViewStyleForCoder:(NSCoder *)decoder;
+
+/**
+ Returns the tableView style to be configured when using Interface Builder. Default is nil.
+ @discussion You must override this method if you want to configure a collectionView.
+ You should not override -initWithCoder:
+ 
+ @param decoder An unarchiver object.
+ @return The collectionView style to be used in the new instantiated collectionView.
+ */
++ (UICollectionViewLayout *)collectionViewLayoutForCoder:(NSCoder *)decoder;
+
+
+///------------------------------------------------
+/// @name Text Typing & Keyboard Handling
+///------------------------------------------------
 
 /**
  Presents the keyboard, if not already, animated.
@@ -101,6 +137,14 @@
  */
 - (void)dismissKeyboard:(BOOL)animated;
 
+/**
+ Notifies the view controller that the keyboard changed status.
+ @discussion You can override this method to perform additional tasks associated with presenting the view. You don't need call super since this method doesn't do anything.
+ 
+ @param status The new keyboard status.
+ */
+- (void)didChangeKeyboardStatus:(SLKKeyboardStatus)status;
+
 
 ///------------------------------------------------
 /// @name Text Typing Notifications
@@ -108,7 +152,7 @@
 
 /**
  Notifies the view controller that the text will update.
- @discussion You can override this method to perform additional tasks associated with presenting the view. You MUST call super at some point in your implementation.
+ @discussion You can override this method to perform additional tasks associated with presenting the view. You don't need call super since this method doesn't do anything.
  */
 - (void)textWillUpdate;
 
@@ -116,7 +160,7 @@
  Notifies the view controller that the text did update.
  @discussion You can override this method to perform additional tasks associated with presenting the view. You MUST call super at some point in your implementation.
  
- @param If YES, the text input bar was resized using an animation.
+ @param If YES, the text input bar will be resized using an animation.
  */
 - (void)textDidUpdate:(BOOL)animated;
 
@@ -137,12 +181,29 @@
 - (void)didPressRightButton:(id)sender;
 
 /**
+ Verifies if the right button can be pressed. If NO, the button is disabled.
+ @discussion You can override this method to perform additional tasks.
+ 
+ @return YES if the right button can be pressed.
+ */
+- (BOOL)canPressRightButton;
+
+/**
  Notifies the view controller when the user has pasted an image inside of the text view.
  @discussion You can override this method to perform additional tasks associated with image pasting.
  
  @param image The image that has been pasted. Only JPG or PNG are supported.
  */
-- (void)didPasteImage:(UIImage *)image;
+- (void)didPasteImage:(UIImage *)image DEPRECATED_MSG_ATTRIBUTE("Use -didPasteMediaContent: instead");
+
+/** 
+ Notifies the view controller when the user has pasted a supported media content (image or video).
+ @discussion You can override this method to perform additional tasks associated with image/video pasting. You don't need call super since this method doesn't do anything.
+ Only supported pastable medias configured in SLKTextView will be forwarded. Default is All.
+ 
+ @para userInfo The payload containing the media data, content and media types.
+ */
+- (void)didPasteMediaContent:(NSDictionary *)userInfo;
 
 /**
  Verifies that the typing indicator view should be shown. Default is YES, if meeting some requierements.
@@ -169,6 +230,7 @@
  @discussion You can override this method to perform additional tasks.
  */
 - (void)didPressEscapeKey:(id)sender;
+
 
 ///------------------------------------------------
 /// @name Text Edition
@@ -211,6 +273,9 @@
 
 /** The recently found prefix symbol used as prefix for autocompletion mode. */
 @property (nonatomic, readonly) NSString *foundPrefix;
+
+/** The range of the found prefix in the text view content. */
+@property (nonatomic, readonly) NSRange foundPrefixRange;
 
 /** The recently found word at the textView caret position. */
 @property (nonatomic, readonly) NSString *foundWord;

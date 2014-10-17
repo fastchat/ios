@@ -63,6 +63,7 @@ NSString *const CHRefreshCellIdentifier = @"CHRefreshCellIdentifier";
         self.typingIndicatorView.backgroundColor = kLightBackgroundColor;
         self.textView.placeholder = @"Send FastChat";
         [self.leftButton setImage:[UIImage imageNamed:@"Attach"] forState:UIControlStateNormal];
+//        [self.leftButton addTarget:self action:@selector(mediaButtonTapped:) forControlEvents:UIControlEventTouchUpInside];
         self.leftButton.imageEdgeInsets = UIEdgeInsetsMake(6, 7, 14, 7);
         self.textView.keyboardType = kCHKeyboardType;
         [[[GAI sharedInstance] defaultTracker] set:kGAIScreenName value:@"Messages"];
@@ -150,6 +151,11 @@ NSString *const CHRefreshCellIdentifier = @"CHRefreshCellIdentifier";
         [[NSNotificationCenter defaultCenter] addObserver:self
                                                  selector:@selector(typingNotification:)
                                                      name:kTypingNotification
+                                                   object:nil];
+        
+        [[NSNotificationCenter defaultCenter] addObserver:self
+                                                 selector:@selector(didPasteImageNotification:)
+                                                     name:SLKTextViewDidPasteImageNotification
                                                    object:nil];
         [self loadNextMessages];
     }
@@ -713,12 +719,14 @@ NSString *const CHRefreshCellIdentifier = @"CHRefreshCellIdentifier";
     return YES;
 }
 
-- (void)willShowOrHideKeyboard:(NSNotification *)notification;
+- (void)didPasteMediaContent:(NSDictionary *)userInfo;
 {
-    if (self.isHiding) {
-        return;
-    }
-//    [super willShowOrHideKeyboard:notification];
+    
+}
+
+- (void)didPressLeftButton:(id)sender;
+{
+    [self mediaButtonTapped:sender];
 }
 
 #pragma mark - Navigation
@@ -734,7 +742,7 @@ NSString *const CHRefreshCellIdentifier = @"CHRefreshCellIdentifier";
 
 #pragma mark - Camera
 
--(void)loadCamera;
+- (void)mediaButtonTapped:(id)sender;
 {
     UINavigationController *nav = [[UINavigationController alloc] initWithRootViewController:[[DBCameraContainerViewController alloc] initWithDelegate:self]];
     [nav setNavigationBarHidden:YES];
@@ -743,8 +751,73 @@ NSString *const CHRefreshCellIdentifier = @"CHRefreshCellIdentifier";
 
 - (void)camera:(id)cameraViewController didFinishWithImage:(UIImage *)image withMetadata:(NSDictionary *)metadata;
 {
-    [self didPasteImage:image];
+//    [self didPasteMediaContent:@{@"image": image}];
+    
+    CGFloat height = image.size.height;
+    CGFloat width = image.size.width;
+    CGFloat max = 150.0;
+    
+    if (height > width && height > 150) {
+        CGFloat ratio = height / max;
+        height = height / ratio;
+        width = width / ratio;
+    } else if (width >= height && width > 150) {
+        CGFloat ratio = width / max;
+        height = height / ratio;
+        width = width / ratio;
+    }
+    
+    CGSize size = CGSizeMake(width, height);
+    
+    NSTextAttachment *textAttachment = [[NSTextAttachment alloc] init];
+    textAttachment.image = image;
+    textAttachment.bounds = CGRectMake(0, 0, size.width, size.height);
+    
+    NSMutableAttributedString *string = [[NSMutableAttributedString alloc] initWithString:self.textView.text];
+    [string appendAttributedString:[NSAttributedString attributedStringWithAttachment:textAttachment]];
+    self.textView.text = nil;
+    self.textView.attributedText = string;
+//    self.textView.font = [UIFont systemFontOfSize:16];
+//    self.attachedImage = image;
+    [self.view setNeedsDisplay];
+
     [self.presentedViewController dismissViewControllerAnimated:YES completion:nil];
+}
+
+- (void)didPasteImageNotification:(NSNotification *)note;
+{
+    NSDictionary *info = note.userInfo;
+//    DLog(@"Info: %@", info);
+    UIImage *image = [UIImage imageWithData:info[SLKTextViewPastedItemData]];
+    
+    CGFloat height = image.size.height;
+    CGFloat width = image.size.width;
+    CGFloat max = 150.0;
+    
+    if (height > width && height > 150) {
+        CGFloat ratio = height / max;
+        height = height / ratio;
+        width = width / ratio;
+    } else if (width >= height && width > 150) {
+        CGFloat ratio = width / max;
+        height = height / ratio;
+        width = width / ratio;
+    }
+    
+    CGSize size = CGSizeMake(width, height);
+    
+    NSTextAttachment *textAttachment = [[NSTextAttachment alloc] init];
+    textAttachment.image = image;
+    textAttachment.bounds = CGRectMake(0, 0, size.width, size.height);
+    
+    NSMutableAttributedString *string = [[NSMutableAttributedString alloc] initWithString:self.textView.text];
+    [string appendAttributedString:[NSAttributedString attributedStringWithAttachment:textAttachment]];
+    self.textView.text = nil;
+    self.textView.attributedText = string;
+    //    self.textView.font = [UIFont systemFontOfSize:16];
+    //    self.attachedImage = image;
+    [self.view setNeedsDisplay];
+                      
 }
 
 - (void)dismissCamera:(id)cameraViewController;
@@ -756,6 +829,92 @@ NSString *const CHRefreshCellIdentifier = @"CHRefreshCellIdentifier";
 {
     return self.textView.text.length > 0 || self.media != nil;
 }
+
+
+
+
+
+////
+/*
+- (BOOL)canPerformAction:(SEL)action withSender:(id)sender;
+{
+    NSLog(@"Action? %@ Sender? %@", NSStringFromSelector(action), sender);
+    UIPasteboard *gpBoard = [UIPasteboard generalPasteboard];
+    
+    if ([NSStringFromSelector(action) isEqualToString:@"paste:"] && gpBoard.image) { //add more types later.
+        return YES;
+    }
+    return [super canPerformAction:action withSender:sender];
+}
+
+- (void)paste:(id)sender;
+{
+    UIPasteboard *gpBoard = [UIPasteboard generalPasteboard];
+    UIImage *image = [gpBoard image];
+    if (image) {
+        [self addImage:image];
+    } else {
+        [super paste:sender];
+    }
+}
+
+- (void)addImage:(UIImage *)image;
+{
+    CGFloat height = image.size.height;
+    CGFloat width = image.size.width;
+    CGFloat max = 150.0;
+    
+    if (height > width && height > 150) {
+        CGFloat ratio = height / max;
+        height = height / ratio;
+        width = width / ratio;
+    } else if (width >= height && width > 150) {
+        CGFloat ratio = width / max;
+        height = height / ratio;
+        width = width / ratio;
+    }
+    
+    CGSize size = CGSizeMake(width, height);
+    
+    NSTextAttachment *textAttachment = [[NSTextAttachment alloc] init];
+    textAttachment.image = image;
+    textAttachment.bounds = CGRectMake(0, 0, size.width, size.height);
+    
+    self.displayPlaceHolder = NO;
+    
+    NSMutableAttributedString *string = [[NSMutableAttributedString alloc] initWithAttributedString:self.attributedText];
+    [string appendAttributedString:[NSAttributedString attributedStringWithAttachment:textAttachment]];
+    self.attributedText = string;
+    self.font = [UIFont systemFontOfSize:16];
+    
+    /// again, only supporting 1 for now.
+    self.attachedImage = image;
+    [self setNeedsDisplay];
+}
+
+- (BOOL)hasAttachment;
+{
+    return [self numberOfAttachments] > 0;
+}
+
+- (NSInteger)numberOfAttachments;
+{
+    return [[self locationOfAttachments] count];
+}
+
+- (NSArray *)locationOfAttachments;
+{
+    NSMutableArray *locations = [NSMutableArray array];
+    for (NSInteger i = 0; i < self.attributedText.length; i++) {
+        NSInteger character = [self.attributedText.string characterAtIndex:i];
+        if (character == NSAttachmentCharacter) {
+            [locations addObject:[NSValue valueWithRange:NSMakeRange(i, 1)]];
+        }
+    }
+    return locations;
+}
+ */
+
 
 
 

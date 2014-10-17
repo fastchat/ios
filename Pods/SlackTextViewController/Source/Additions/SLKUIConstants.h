@@ -23,13 +23,19 @@
 #define UI_IS_IPHONE6PLUS       (UI_IS_IPHONE && [[UIScreen mainScreen] bounds].size.height == 736.0 || [[UIScreen mainScreen] bounds].size.width == 736.0) // Both orientations
 #define UI_IS_IOS8_AND_HIGHER   ([[UIDevice currentDevice].systemVersion floatValue] >= 8.0)
 
+/** UIKeyboard notification replacement, posting reliably only when showing/hiding the
+ keyboard (not when resizing keyboard, or with inputAccessoryView reloads, etc.) 
+ Use these APIs with your own risk. */
+UIKIT_EXTERN NSString *const SLKKeyboardWillShowNotification;
+UIKIT_EXTERN NSString *const SLKKeyboardDidShowNotification;
+UIKIT_EXTERN NSString *const SLKKeyboardWillHideNotification;
+UIKIT_EXTERN NSString *const SLKKeyboardDidHideNotification;
 
 typedef NS_ENUM(NSUInteger, SLKQuicktypeBarMode) {
     SLKQuicktypeBarModeHidden,
     SLKQuicktypeBarModeCollapsed,
     SLKQuicktypeBarModeExpanded ,
 };
-
 
 inline static CGFloat minimumKeyboardHeight()
 {
@@ -47,7 +53,7 @@ inline static CGFloat minimumKeyboardHeight()
     }
 }
 
-inline static CGFloat quicktypeBarHeightForMode(SLKQuicktypeBarMode mode)
+inline static CGFloat SLKQuicktypeBarHeightForMode(SLKQuicktypeBarMode mode)
 {
     if (UI_IS_IPAD) {
         switch (mode) {
@@ -100,18 +106,4 @@ inline static SLKQuicktypeBarMode SLKQuicktypeBarModeForHeight(CGFloat height)
     }
     
     return SLKQuicktypeBarModeHidden;
-}
-
-inline static NSString *NSStringFromSLKQuicktypeBarMode(SLKQuicktypeBarMode mode)
-{
-    switch (mode) {
-        case SLKQuicktypeBarModeHidden:
-            return @"Hidden";
-            
-        case SLKQuicktypeBarModeCollapsed:
-            return @"Collapsed";
-            
-        case SLKQuicktypeBarModeExpanded:
-            return @"Expanded";
-    }
 }

@@ -20,7 +20,7 @@ target "Chat" do
   pod 'MagicalRecord', '2.2'
   pod 'PromiseKit', '0.9.17'
   pod 'GoogleAnalytics-iOS-SDK', '3.0.9'
-  pod 'SlackTextViewController', '1.1'
+  pod 'SlackTextViewController', '1.2.5'
   pod 'STKWebKitViewController', '0.1.6'
   pod 'MBContactPicker', '0.1.4'
   pod 'UIResponder+KeyboardCache', '0.1'

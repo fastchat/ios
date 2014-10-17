@@ -22,24 +22,45 @@ extern NSString * const SLKTextViewContentSizeDidChangeNotification;
 extern NSString * const SLKTextViewDidPasteImageNotification;
 extern NSString * const SLKTextViewDidShakeNotification;
 
+extern NSString * const SLKTextViewPastedItemContentType;
+extern NSString * const SLKTextViewPastedItemMediaType;
+extern NSString * const SLKTextViewPastedItemData;
+
+typedef NS_OPTIONS(NSUInteger, SLKPastableMediaType) {
+    SLKPastableMediaTypeNone    = 0,
+    SLKPastableMediaTypePNG     = 1 << 0,
+    SLKPastableMediaTypeJPEG    = 1 << 1,
+    SLKPastableMediaTypeTIFF    = 1 << 2,
+    SLKPastableMediaTypeGIF     = 1 << 3,
+    SLKPastableMediaTypeMOV     = 1 << 4,
+    SLKPastableMediaTypeAll     = SLKPastableMediaTypePNG|SLKPastableMediaTypeJPEG|SLKPastableMediaTypeTIFF|SLKPastableMediaTypeGIF|SLKPastableMediaTypeMOV
+};
+
 /**  @name A custom text input view. */
 @interface SLKTextView : UITextView
 
 /** The placeholder text string. */
-@property (nonatomic, readwrite) NSString *placeholder;
+@property (nonatomic, copy) NSString *placeholder;
 
 /** The placeholder color. */
-@property (nonatomic, readwrite) UIColor *placeholderColor;
+@property (nonatomic, copy) UIColor *placeholderColor;
 
 /** The maximum number of lines before enabling scrolling. Default is 0 wich means limitless. */
 @property (nonatomic, readwrite) NSUInteger maxNumberOfLines;
+
+/** The current displayed number of lines. */
+@property (nonatomic, readonly) NSUInteger numberOfLines;
+
+/** The supported media types allowed to be pasted in the text view. Default is All. */
+@property (nonatomic) SLKPastableMediaType pastableMediaTypes;
 
 /** YES if the text view is and can still expand it self, depending if the maximum number of lines are reached. */
 @property (nonatomic, readonly) BOOL isExpanding;
 
 /** YES if quickly refreshed the textview without the intension to dismiss the keyboard. @view -disableQuicktypeBar: for more details. */
-@property (nonatomic, readonly) BOOL didNotResignFirstResponder;
+@property (nonatomic, readwrite) BOOL didNotResignFirstResponder;
 
+/** YES if the magnifying glass is visible. */
 @property (nonatomic, getter=isLoupeVisible) BOOL loupeVisible;
 
 /**
@@ -58,5 +79,6 @@ extern NSString * const SLKTextViewDidShakeNotification;
  You can also use this method to confirm an auto-correction programatically, before the text view resigns first responder.
  */
 - (void)refreshFirstResponder;
+- (void)refreshInputViews;
 
 @end

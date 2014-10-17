@@ -79,10 +79,10 @@ PODS:
     - PromiseKit/When
   - PromiseKit/When (0.9.17):
     - PromiseKit/Promise
-  - SlackTextViewController (1.1):
+  - SlackTextViewController (1.2.5):
     - SlackTextViewController/Additions
     - SlackTextViewController/Additions
-  - SlackTextViewController/Additions (1.1):
+  - SlackTextViewController/Additions (1.2.5):
     - SlackTextViewController/Additions
   - socket.IO (0.5.2):
     - SocketRocket (~> 0.2)
@@ -104,7 +104,7 @@ DEPENDENCIES:
   - MBContactPicker (= 0.1.4)
   - MBProgressHUD (= 0.9)
   - PromiseKit (= 0.9.17)
-  - SlackTextViewController (= 1.1)
+  - SlackTextViewController (= 1.2.5)
   - socket.IO (= 0.5.2)
   - STKWebKitViewController (= 0.1.6)
   - TSMessages (= 0.9.10)
@@ -125,7 +125,7 @@ SPEC CHECKSUMS:
   MBProgressHUD: 2038dbcf3dce73215abed6001657043d53aa79a8
   OMGHTTPURLRQ: 16564bcee86d8dfa298b65cdf60015c3065f67df
   PromiseKit: 7a18d7b8d41a156cda0268c3cb065d272d5aa554
-  SlackTextViewController: 2c6d10a876a436cc75984a27be88061363d15f2b
+  SlackTextViewController: 54b4ab0fd8a29c1e254d05ab7cfd1aaebea5620d
   socket.IO: db3e71805c862038ab73209dda2b0ad6babc54b2
   SocketRocket: 79a68ae186063c65e1fe6f638b1ae2927aa5f304
   STKWebKitViewController: ce993cf2c226654a50ba23cabdf19252a76ffa3e
