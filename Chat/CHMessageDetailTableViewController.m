@@ -89,9 +89,8 @@ NSString *const kCHUserSubtitleTableViewCell = @"CHUserSubtitleTableViewCell";
 {
     if (tableView == ((UITableViewController *)self.searchController.searchResultsController).tableView) {
         UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"SearchCellIdentifier" forIndexPath:indexPath];
-        cell.textLabel.text = @"HELLO";
+        cell.textLabel.text = self.searchResults[indexPath.row];
         return cell;
-        
     } else {
         if (indexPath.section == 0) {
             NSDictionary *info = self.options[indexPath.row];
@@ -157,11 +156,9 @@ NSString *const kCHUserSubtitleTableViewCell = @"CHUserSubtitleTableViewCell";
 
 -(void)updateSearchResultsForSearchController:(UISearchController *)searchController;
 {
-    
     NSString *searchString = [self.searchController.searchBar text];
-    
-
-    
+    [self.searchResults removeAllObjects];
+    [self.searchResults addObject:searchString];
     [((UITableViewController *)self.searchController.searchResultsController).tableView reloadData];
 }
 
