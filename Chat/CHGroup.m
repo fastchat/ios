@@ -68,10 +68,10 @@ static NSString *const MESSAGES_KEY = @"messages";
         return self.primitiveName;
     }
     
-    if( self.members.count == 1 ) {
+    if( self.members.count == 1 || self.members.count == 0) {
         return @"Empty chat!";
     } else {
-         NSMutableString *nameFromMembers = [[NSMutableString alloc] init];
+        NSMutableString *nameFromMembers = [[NSMutableString alloc] init];
         for (CHUser *user in self.members) {
             if ([user isEqual:[CHUser currentUser]]) {
                 continue;
@@ -104,6 +104,18 @@ static NSString *const MESSAGES_KEY = @"messages";
         }
     }
     return _membersDict;
+}
+
+- (NSArray *)allUsersnames;
+{
+    NSMutableArray *users = [NSMutableArray array];
+    [self.membersDict enumerateKeysAndObjectsUsingBlock:^(id key, id obj, BOOL *stop) {
+        CHUser *user = obj;
+        if (user.username) {
+            [users addObject:user.username];
+        }
+    }];
+    return users;
 }
 
 - (BOOL)hasUnread;

@@ -22,6 +22,7 @@
 {
     NSMutableDictionary *values = [[super managedObjectKeysByPropertyKey] mutableCopy];
     values[@"userId"] = @"chID";
+    values[@"leftGroups"] = @"pastGroups";
     values[@"avatar"] = [NSNull null];
     return values;
 }

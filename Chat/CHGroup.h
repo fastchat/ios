@@ -23,5 +23,6 @@
 - (BOOL)isEmpty;
 - (void)unreadIncrement;
 - (void)setTyping:(BOOL)typing;
+- (NSArray *)allUsersnames;
 
 @end
