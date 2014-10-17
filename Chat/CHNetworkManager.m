@@ -104,8 +104,12 @@ NSString *const SESSION_TOKEN = @"session-token";
             [context performBlock:^{
                 [CHGroup objectsFromJSON:responseObject[@"profile"][@"groups"]].thenOn(q, ^(NSArray *groups) {
                     user.groups = [NSOrderedSet orderedSetWithSet:[NSSet setWithArray:groups]];
+                }).thenOn(q, ^{
+                    return [CHGroup objectsFromJSON:responseObject[@"profile"][@"leftGroups"]];
+                }).thenOn(q, ^(NSArray *past){
+                    user.pastGroups = [NSOrderedSet orderedSetWithSet:[NSSet setWithArray:past]];
                     [self saveWithContext:context];
-                    fulfiller(user);
+                    fulfiller(nil);
                 });
             }];
         } failure:^(NSURLSessionDataTask *task, NSError *error) {
