@@ -158,6 +158,15 @@ void uncaughtExceptionHandler(NSException *exception)
             UITabBarController *root = (UITabBarController *)self.window.rootViewController;
             [root setSelectedIndex:0];
             UINavigationController *nav = root.viewControllers[0];
+            
+            UIViewController *top = nav.viewControllers.lastObject;
+            if ([top isKindOfClass:[CHMessageViewController class]]) {
+                CHMessageViewController *messageVC = (CHMessageViewController *)top;
+                if ([messageVC.group.chID isEqualToString:groupID]) {
+                    return;
+                }
+            }
+            
             [nav popToRootViewControllerAnimated:NO];
             
             CHGroup *group = [CHGroup MR_findFirstByAttribute:@"chID" withValue:groupID];
