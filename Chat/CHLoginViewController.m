@@ -36,6 +36,11 @@
 //    [self.emailTextField becomeFirstResponder];
 }
 
+- (void)viewWillAppear:(BOOL)animated;
+{
+    [self.emailTextField becomeFirstResponder];
+}
+
 - (BOOL)textFieldShouldReturn:(UITextField *)textField;
 {
     NSInteger tag = textField.tag;
