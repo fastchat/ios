@@ -1,2 +1,0 @@
-PODS_CHAT_GPUIMAGE_CLANG_MODULES_AUTOLINK = YES
-PODS_CHAT_GPUIMAGE_OTHER_LDFLAGS = -framework AVFoundation -framework CoreMedia -framework OpenGLES -framework QuartzCore

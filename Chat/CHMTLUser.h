@@ -14,6 +14,7 @@
 @property (nonatomic, strong) NSString *userId;
 @property (nonatomic, strong) NSString *username;
 @property (nonatomic, copy) NSArray *groups;
+@property (nonatomic, copy) NSArray *leftGroups;
 @property (nonatomic, strong) UIImage *avatar;
 
 @end

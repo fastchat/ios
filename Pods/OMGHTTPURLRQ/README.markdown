@@ -23,6 +23,8 @@ You can then pass these to an `NSURLConnection` or `NSURLSession`.
 
 ## `multipart/form-data`
 
+OMG! Constructing multipart/form-data for POST requests is complicated, let us do it for you:
+
 ```objc
 
 OMGMultipartFormData *multipartFormData = [OMGMultipartFormData new];
@@ -43,13 +45,15 @@ UIImage *image3 = [UIImage imageNamed:@"image3"];
 NSData *data3 = UIImageJPEGRepresentation(image3);
 [multipartFormData addFile:data3 parameterName:@"file2" filename:@"myimage3.jpeg" contentType:@"image/jpeg"];
 
-NSMutableURLRequest *rq = [OMGHTTPURLRQ POST:url:builder];
+NSMutableURLRequest *rq = [OMGHTTPURLRQ POST:url:multipartFormData];
 ```
+
+Now feed `rq` to `[NSURLConnection sendSynchronousRequest:returningResponse:error:`.
 
 
 ## Configuring an `NSURLSessionUploadTask`
 
-If you need to use `NSURLSession`’s `uploadTask:` but it won’t work because your endpoint expects a multipart-form request, use this:
+If you need to use `NSURLSession`’s `uploadTask:` but you have become frustrated  because your endpoint expects a multipart/form-data POST request and `NSURLSession` sends the data *raw*, use this:
 
 ```objc
 id config = [NSURLSessionConfiguration backgroundSessionConfigurationWithIdentifier:someID];
@@ -78,6 +82,42 @@ NSString *userAgent = OMGUserAgent();
 ```
 
 OMGHTTPURLRQ adds this User-Agent to all requests it generates automatically.
+
+So for URLRequests generated **other** than by OMGHTTPURLRQ you would do:
+
+```objc
+[someURLRequest addValue:OMGUserAgent() forHTTPHeaderField:@"User-Agent"];
+```
+
+
+# Twitter Reverse Auth
+
+You need an OAuth library, here we use the [TDOAuth](https://github.com/tweetdeck/TDOAuth) pod. You also need
+your API keys that registering at https://dev.twitter.com will provide
+you.
+
+```objc
+NSMutableURLRequest *rq = [TDOAuth URLRequestForPath:@"/oauth/request_token" POSTParameters:@{@"x_auth_mode" : @"reverse_auth"} host:@"api.twitter.com"consumerKey:APIKey consumerSecret:APISecret accessToken:nil tokenSecret:nil];
+[rq addValue:OMGUserAgent() forHTTPHeaderField:@"User-Agent"];
+
+[NSURLConnection sendAsynchronousRequest:rq queue:nil completionHandler:^(NSURLResponse *response, NSData *data, NSError *connectionError) {
+    id oauth = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
+    SLRequest *reverseAuth = [SLRequest requestForServiceType:SLServiceTypeTwitter requestMethod:SLRequestMethodPOST URL:[NSURL URLWithString:@"https://api.twitter.com/oauth/access_token"] parameters:@{
+        @"x_reverse_auth_target": APIKey,
+        @"x_reverse_auth_parameters": oauth
+    }];
+    reverseAuth.account = account;
+    [reverseAuth performRequestWithHandler:^(NSData *data, NSHTTPURLResponse *urlResponse, NSError *error) {
+        id creds = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
+        id credsDict = [NSMutableDictionary new];
+        for (__strong id pair in [creds componentsSeparatedByString:@"&"]) {
+            pair = [pair componentsSeparatedByString:@"="];
+            credsDict[pair[0]] = pair[1];
+        }
+        NSLog(@"%@", credsDict);
+    }];
+}];
+```
 
 
 # License

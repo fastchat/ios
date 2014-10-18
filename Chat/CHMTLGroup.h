@@ -18,13 +18,7 @@
 @property (nonatomic, copy) NSArray *pastMembers;
 @property (nonatomic, copy) NSArray *members;
 @property (nonatomic, strong) NSNumber *unread;
-@property (nonatomic, strong) NSMutableDictionary *memberDict;
 @property (nonatomic, strong) CHMTLMessage *lastMessage;
 @property (nonatomic, strong) NSMutableArray *messages;
-
-- (NSString *)usernameFromId: (NSString *)theId;
-- (CHUser *)memberFromId: (NSString *)theId;
-- (BOOL)hasUnread;
-
 
 @end

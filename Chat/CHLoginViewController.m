@@ -11,6 +11,7 @@
 #import "CHGroupListTableViewController.h"
 #import "CHSocketManager.h"
 #import "CHUser.h"
+#import "CHRegisterViewController.h"
 
 @interface CHLoginViewController ()
 
@@ -34,6 +35,11 @@
 {
     [super viewDidLayoutSubviews];
 //    [self.emailTextField becomeFirstResponder];
+}
+
+- (void)viewWillAppear:(BOOL)animated;
+{
+    [self.emailTextField becomeFirstResponder];
 }
 
 - (BOOL)textFieldShouldReturn:(UITextField *)textField;
@@ -84,6 +90,16 @@
 - (BOOL)canLogin;
 {
     return _emailTextField.text.length && _passwordTextField.text.length;
+}
+
+- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender;
+{
+    if ([segue.identifier isEqualToString:@"show CHRegisterViewController"]) {
+        CHRegisterViewController *dest = segue.destinationViewController;
+        dest.onRegister = ^(id object){
+            [self fulfill:object];
+        };
+    }
 }
 
 @end

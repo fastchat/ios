@@ -12,7 +12,12 @@ NSString *const CORE_DATA_ID = @"chID";
 NSString *const kReloadGroupTablesNotification = @"ReloadGroupTablesNotification";
 NSString *const kReloadActiveGroupNotification = @"ReloadActiveGroupNotification";
 NSString *const kNewMessageReceivedNotification = @"NewMessageReceivedNotification";
+NSString *const kNewGroupNotification = @"NewGroupNotification";
+NSString *const kTypingNotification = @"TypingNotification";
 NSString *const CHNotificationPayloadKey = @"CHNotificationPayloadKey";
+
+NSString *const kCellIdentifier = @"kCellIdentifier";
+NSString *const CHSwitchCell = @"CHSwitchCell";
 
 @implementation CHConstants
 

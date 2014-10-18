@@ -10,12 +10,19 @@
 
 @property (nonatomic, strong) NSMutableDictionary *membersDict;
 
+
 + (CHGroup *)groupForMessage:(CHMessage *)message;
-+ (PMKPromise *)groupWithName:(NSString *)name members:(NSArray *)members;
++ (PMKPromise *)groupWithName:(NSString *)name members:(NSArray *)members message:(NSString *)message;
 - (PMKPromise *)remoteMessagesAtPage:(NSInteger)page;
 - (PMKPromise *)addUsers:(NSArray *)users;
+- (CHUser *)userFromID:(NSString *)anID;
+
 
 - (BOOL)hasUnread;
+// Empty means only has the user currently in it.
+- (BOOL)isEmpty;
 - (void)unreadIncrement;
+- (void)setTyping:(BOOL)typing;
+- (NSArray *)allUsersnames;
 
 @end

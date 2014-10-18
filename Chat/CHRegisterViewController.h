@@ -10,6 +10,7 @@
 
 @interface CHRegisterViewController : UIViewController <UITextFieldDelegate>
 
+@property (nonatomic, copy) void (^onRegister)(id object);
 @property (weak, nonatomic) IBOutlet UITextField *usernameTextField;
 @property (weak, nonatomic) IBOutlet UITextField *passwordTextField;
 @property (weak, nonatomic) IBOutlet UITextField *repeatPasswordTextField;
@@ -17,7 +18,5 @@
 
 - (IBAction)createAccount:(id)sender;
 - (IBAction)textfieldChanged:(UITextField *)sender;
-
-
 
 @end

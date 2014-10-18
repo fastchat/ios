@@ -20,6 +20,7 @@
 - (SocketIO *)getSocket;
 - (void)openSocket;
 - (void)sendMessageWithData:(NSDictionary *)data acknowledgement:(void (^)(id argsData))acknowledgement;
+- (void)sendTypingWithData:(NSDictionary *)data acknowledgement:(void (^)(id argsData))acknowledgement;
 - (void)closeSocket;
 
 @end

@@ -101,4 +101,19 @@
     return model;
 }
 
++ (void)deleteAll;
+{
+    NSFetchRequest *all = [self MR_requestAll];
+    [all setIncludesPropertyValues:NO];
+    
+    NSArray *allObjects = [self MR_executeFetchRequest:all];
+
+    //error handling goes here
+    for (NSManagedObject *object in allObjects) {
+        [object MR_deleteEntity];
+    }
+    
+    [[NSManagedObjectContext MR_defaultContext] MR_saveToPersistentStoreAndWait];
+}
+
 @end

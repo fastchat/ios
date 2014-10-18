@@ -13,6 +13,9 @@
 #import "TSMessage.h"
 #import "CHBackgroundContext.h"
 #import "BugshotKit.h"
+#import "CHMessageViewController.h"
+#import "CHGroup.h"
+#import "UIResponder+KeyboardCache.h"
 
 @implementation CHAppDelegate
 
@@ -30,6 +33,10 @@
         DLog(@"Done Background Context.");
     });
     
+    ///
+    /// Fucking Cache the keyboard
+    ///
+    [UIResponder cacheKeyboard];
     
     ///
     /// Bugshot kit!
@@ -44,9 +51,6 @@
     /// Setup Google Analytics
     ///
     [GAI sharedInstance].trackUncaughtExceptions = YES;
-    
-    // Optional: set Logger to VERBOSE for debug information.
-    [[[GAI sharedInstance] logger] setLogLevel:kGAILogLevelVerbose];
     
     // Initialize tracker. Replace with your tracking ID.
     [[GAI sharedInstance] trackerWithTrackingId:@"UA-54229110-2"];
@@ -70,6 +74,11 @@
     [[UITabBar appearance] setTintColor:kPurpleAppColor];
     [[UIButton appearance] setTintColor:kPurpleAppColor];
     
+    
+    NSDictionary *notification = launchOptions[UIApplicationLaunchOptionsRemoteNotificationKey];
+    if (notification) {
+        [self application:application didReceiveRemoteNotification:notification fetchCompletionHandler:nil];
+    }
     
     return YES;
 }
@@ -128,6 +137,11 @@ void uncaughtExceptionHandler(NSException *exception)
     });
 }
 
+- (void)application:(UIApplication *)application didReceiveRemoteNotification:(NSDictionary *)userInfo;
+{
+    [self application:application didReceiveRemoteNotification:userInfo fetchCompletionHandler:nil];
+}
+
 /**
  * Called when we get a push notification, and also when the app opens.
  */
@@ -135,7 +149,34 @@ void uncaughtExceptionHandler(NSException *exception)
         didReceiveRemoteNotification:(NSDictionary *)userInfo
         fetchCompletionHandler:(void (^)(UIBackgroundFetchResult))completionHandler;
 {
-    
+    if ( application.applicationState == UIApplicationStateInactive || application.applicationState == UIApplicationStateBackground  )
+    {
+        NSLog(@"Openned from background! %@", userInfo);
+        NSString *groupID = userInfo[@"group"];
+        if (groupID && [CHUser currentUser]) {
+            
+            UITabBarController *root = (UITabBarController *)self.window.rootViewController;
+            [root setSelectedIndex:0];
+            UINavigationController *nav = root.viewControllers[0];
+            
+            UIViewController *top = nav.viewControllers.lastObject;
+            if ([top isKindOfClass:[CHMessageViewController class]]) {
+                CHMessageViewController *messageVC = (CHMessageViewController *)top;
+                if ([messageVC.group.chID isEqualToString:groupID]) {
+                    return;
+                }
+            }
+            
+            [nav popToRootViewControllerAnimated:NO];
+            
+            CHGroup *group = [CHGroup MR_findFirstByAttribute:@"chID" withValue:groupID];
+            if (group) {
+                CHMessageViewController *vc = [[CHMessageViewController alloc] initWithGroup:group];
+                [group setUnreadValue:0];
+                [nav pushViewController:vc animated:YES];
+            }
+        }
+    }
     
     
     if (completionHandler) {

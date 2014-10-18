@@ -6,6 +6,7 @@
 const struct CHGroupAttributes CHGroupAttributes = {
 	.name = @"name",
 	.unread = @"unread",
+	.unsentText = @"unsentText",
 };
 
 const struct CHGroupRelationships CHGroupRelationships = {
@@ -84,6 +85,13 @@ const struct CHGroupFetchedProperties CHGroupFetchedProperties = {
 - (void)setPrimitiveUnreadValue:(int16_t)value_ {
 	[self setPrimitiveUnread:[NSNumber numberWithShort:value_]];
 }
+
+
+
+
+
+@dynamic unsentText;
+
 
 
 

@@ -17,12 +17,19 @@
 #import "CHUser.h"
 #import "CHConstants.h"
 
+NSString *const kCHPacketName = @"name";
+NSString *const kCHPacketNameMessage = @"message";
+NSString *const kCHPacketNameTyping = @"typing";
+NSString *const kCHPacketNameNewGroup = @"new_group";
+NSString *const kCHArgs = @"args";
 
 @class SocketIO;
 
 @interface CHSocketManager ()
 
 @property (nonatomic, strong) SocketIO *socket;
+@property (nonatomic, assign) BOOL disconnecting;
+@property (nonatomic, assign, getter=isSending) BOOL sending;
 
 @end
 
@@ -40,6 +47,16 @@
     return _sharedManager;
 }
 
+- (instancetype)init
+{
+    self = [super init];
+    if (self) {
+        self.disconnecting = NO;
+        self.sending = NO;
+    }
+    return self;
+}
+
 - (SocketIO *)getSocket;
 {
     return _socket;
@@ -47,7 +64,8 @@
 
 -(void)openSocket;
 {
-    DLog(@"Open Socket Start");
+    self.disconnecting = NO;
+    self.sending = NO;
 
     if( !_socket ) {
         _socket = [[SocketIO alloc] initWithDelegate:self];
@@ -80,13 +98,12 @@
 
 }
 
-//TODO: Refactor
 - (void) socketIO:(SocketIO *)socket didReceiveEvent:(SocketIOPacket *)packet;
 {
     DLog("PACKET: %@", packet);
-    if ([packet.dataAsJSON[@"name"] isEqualToString:@"message"]) {
+    if ([packet.dataAsJSON[kCHPacketName] isEqualToString:kCHPacketNameMessage]) {
         
-        NSDictionary *data = [packet.dataAsJSON[@"args"] firstObject];
+        NSDictionary *data = [packet.dataAsJSON[kCHArgs] firstObject];
         CHMessage *message = [CHMessage objectFromJSON:data];
         message.group.lastMessage = message;
         if (![[CHUser currentUser] isEqual:message.getAuthorNonRecursive]) {
@@ -100,57 +117,53 @@
                                                               userInfo:@{CHNotificationPayloadKey: message}];
         }];
         
-        /// Observers of the groups will pick up on the change
+    } else if ([packet.dataAsJSON[kCHPacketName] isEqualToString:kCHPacketNameTyping]) {
+        NSDictionary *data = [packet.dataAsJSON[kCHArgs] firstObject];
+        [[NSNotificationCenter defaultCenter] postNotificationName:kTypingNotification
+                                                            object:self
+                                                          userInfo:@{CHNotificationPayloadKey: data}];
+    } else if ([packet.dataAsJSON[kCHPacketName] isEqualToString:kCHPacketNameNewGroup]) {
+        NSDictionary *data = [packet.dataAsJSON[kCHArgs] firstObject];
+        CHGroup *group = [CHGroup objectFromJSON:data];
+        DLog(@"Group: %@", group);
+        [[NSManagedObjectContext MR_defaultContext] MR_saveToPersistentStoreWithCompletion:^(BOOL success, NSError *error) {
+            DLog(@"Socket IO Background Save Completed. Error? %@", error);
+            [[NSNotificationCenter defaultCenter] postNotificationName:kNewGroupNotification
+                                                                object:self
+                                                              userInfo:@{CHNotificationPayloadKey: group}];
+        }];
         
-//        DLog(@"here");
-//        [[NSNotificationCenter defaultCenter] postNotificationName:kReloadGroupTablesNotification object:nil];
-//    
-//        if( [self.delegate respondsToSelector:@selector(manager:doesCareAboutMessage:)]) {
-//            if( ![self.delegate manager:self doesCareAboutMessage:message] ) {
-//                // add messages to list and send notification
-//                
-//                AudioServicesPlaySystemSound (kSystemSoundID_Vibrate);
-//                
-//                UIViewController *root = [[[[UIApplication sharedApplication] windows][0] rootViewController] childViewControllers][0];
-//                
-//                
-//                [TSMessage showNotificationInViewController:root
-//                                                      title:[NSString stringWithFormat:@"%@: %@", message.group.name, message.text]
-//                                                   subtitle:nil
-//                                                      image:nil
-//                                                       type:TSMessageNotificationTypeMessage
-//                                                   duration:3.0
-//                                                   callback:^{
-//                                                       UIStoryboard *storyboard = [UIStoryboard storyboardWithName:@"Main_iPhone" bundle:nil];
-//                                                       CHMessageViewController *vc = [storyboard instantiateViewControllerWithIdentifier:@"CHMessageViewController"];
-//                                                       vc.group = message.group;
-//                                                       vc.groupId = message.groupId;
-//                                                       
-//                                                       [((UINavigationController*)root) popViewControllerAnimated:NO];
-//                                                       [((UINavigationController*)root) pushViewController:vc animated:YES];
-//                                                   }
-//                                                buttonTitle:nil
-//                                             buttonCallback:nil
-//                                                 atPosition:TSMessageNotificationPositionTop
-//                                       canBeDismissedByUser:YES];
-//            }
-//        }
-    } else if ([packet.dataAsJSON[@"name"] isEqualToString:@"typing"]) {
-//        NSDictionary *data = [packet.dataAsJSON[@"args"] firstObject];
-        //CHMessage *typer = [[CHMessage objectsFromJSON:@[data]] firstObject];
-//        DLog(@"Someone is typing: %@", [[CHMessage objectsFromJSON:@[data]] firstObject]);
     }
 }
 
 - (void)sendMessageWithData:(NSDictionary *)data acknowledgement:(void (^)(id argsData))acknowledgement;
 {
-    [_socket sendEvent:@"message" withData:data andAcknowledge:acknowledgement];
+    self.sending = YES;
+    [_socket sendEvent:@"message" withData:data andAcknowledge:^(id argsData) {
+        self.sending = NO;
+        if (acknowledgement) {
+            acknowledgement(argsData);
+        }
+        if (self.disconnecting) {
+            [self closeSocket];
+        }
+    }];
+}
+
+- (void)sendTypingWithData:(NSDictionary *)data acknowledgement:(void (^)(id argsData))acknowledgement;
+{
+    [_socket sendEvent:@"typing" withData:data andAcknowledge:acknowledgement];
 }
 
 - (void)closeSocket;
 {
-    [_socket disconnect];
-    _socket = nil;
+    if (!self.isSending) {
+        [_socket disconnect];
+        _socket = nil;
+    } else {
+        self.disconnecting = YES;
+    }
+    
 }
 
 @end

@@ -8,7 +8,6 @@
 
 #import "CHGroupListTableViewController.h"
 #import "CHNetworkManager.h"
-#import "CHAddGroupViewController.h"
 #import "CHAppDelegate.h"
 #import "CHMessageViewController.h"
 #import "CHLoginViewController.h"
@@ -19,6 +18,8 @@
 #import "CHMessage.h"
 #import "CHUnreadView.h"
 #import "CHBackgroundContext.h"
+#import "CHMessageNewGroupViewController.h"
+#import "UIViewController+PromiseKit.h"
 
 #define kSecondsInDay 86400
 
@@ -32,10 +33,15 @@
 {
     [super viewDidLoad];
     [[[GAI sharedInstance] defaultTracker] set:kGAIScreenName value:@"Groups"];
+    [[[GAI sharedInstance] defaultTracker] send:[[GAIDictionaryBuilder createScreenView] build]];
+    
     self.view.backgroundColor = kLightBackgroundColor;
     self.tableView.contentInset = UIEdgeInsetsMake(5, 0, 0, 0);
     
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(reloadTableView) name:@"ReloadGroupTablesNotification" object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(reloadTableView)
+                                                 name:@"ReloadGroupTablesNotification"
+                                               object:nil];
     
     [[NSNotificationCenter defaultCenter] addObserver:self
                                              selector:@selector(contextDidChange:)
@@ -69,15 +75,13 @@
         return [self promiseViewController:loginController animated:NO completion:nil];
     } else {
         return [PMKPromise new:^(PMKPromiseFulfiller fulfiller, PMKPromiseRejecter rejecter) {
-            fulfiller([CHUser currentUser]);
+            fulfiller(CHUser.currentUser.profile);
         }];
     }
 }
 
 - (void)reloadTableView;
 {
-    DLog(@"reloading table view");
-    
     void (^reload)() = ^{ [self.tableView reloadData]; };
     
     if ([NSThread isMainThread]) {
@@ -100,7 +104,8 @@
     NSArray *updatedOrInserted = [updatedObjects arrayByAddingObjectsFromArray:insertedObjects];
     
     if (updatedOrInserted.count > 0) {
-        NSArray *groups = [updatedObjects filteredArrayUsingPredicate:[NSPredicate predicateWithBlock:^BOOL(id evaluatedObject, NSDictionary *bindings) {
+        NSArray *groups = [updatedOrInserted filteredArrayUsingPredicate:[NSPredicate predicateWithBlock:^BOOL(id evaluatedObject, NSDictionary *bindings) {
+            DLog(@"Evaluated: %@ %d", evaluatedObject, [evaluatedObject isKindOfClass:[CHGroup class]]);
             return [evaluatedObject isKindOfClass:[CHGroup class]];
         }]];
         
@@ -127,6 +132,13 @@
     cell.groupDetailLabel.text = group.lastMessage.text;
     cell.groupRightDetailLabel.text = [self formatTime:group.lastMessage.sent];
     [cell setUnread:[group hasUnread]];
+    
+    UIColor *background = kLightBackgroundColor;
+    if ([group isEmpty]) {
+        background = kDarkerGrayBackgroundColor;
+    }
+    [cell setBackgroundColor:background];
+    
     cell.selectionStyle = UITableViewCellSelectionStyleNone;
     
     return cell;
@@ -141,6 +153,12 @@
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath;
 {
     [tableView deselectRowAtIndexPath:indexPath animated:YES];
+
+    CHGroup *group = _currentUser.groups[indexPath.row];
+    CHMessageViewController *vc = [[CHMessageViewController alloc] initWithGroup:group];
+
+    [group setUnreadValue:0];
+    [self.navigationController pushViewController:vc animated:YES];
 }
 
 - (BOOL)tableView:(UITableView *)tableView canEditRowAtIndexPath:(NSIndexPath *)indexPath;
@@ -150,32 +168,15 @@
 
 - (void)tableView:(UITableView *)tableView commitEditingStyle:(UITableViewCellEditingStyle)editingStyle forRowAtIndexPath:(NSIndexPath *)indexPath;
 {
-    [tableView beginUpdates];
-    [_currentUser leaveGroupAtIndex:indexPath.row];
-    [tableView deleteRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationAutomatic];
-    [tableView endUpdates];
+    [self.tableView beginUpdates];
+    [self.currentUser leaveGroupAtIndex:indexPath.row];
+    [self.tableView deleteRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationAutomatic];
+    [self.tableView endUpdates];
 }
 
 - (NSString *)tableView:(UITableView *)tableView titleForDeleteConfirmationButtonForRowAtIndexPath:(NSIndexPath *)indexPath;
 {
     return @"Leave";
-}
-
-#pragma mark - Navigation
-
-- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender;
-{
-    if ([segue.identifier isEqualToString:@"push CHMessageViewControllerFrom CHGroupListTableViewController"]) {
-        NSIndexPath *indexPath = [self.tableView indexPathForSelectedRow];
-        
-        CHMessageViewController *vc = segue.destinationViewController;
-        
-        CHGroup *group = _currentUser.groups[indexPath.row];
-        [group setUnreadValue:0];
-        [vc setGroup:group];
-        
-        [self.tableView reloadData];
-    }
 }
 
 #pragma mark - Time Formatting
@@ -222,6 +223,18 @@
         [dateFormatter setDateFormat:@"d/M/yy"];
     }
     return [dateFormatter stringFromDate:date];
+}
+
+- (IBAction)newGroup:(id)sender;
+{
+    CHMessageNewGroupViewController *vc =[[CHMessageNewGroupViewController alloc] init];
+    UINavigationController *nav = [[UINavigationController alloc] initWithRootViewController:vc];
+    [self promiseViewController:nav animated:YES completion:nil].then(^(CHMessageNewGroupViewController *finished) {
+        [self.navigationController pushViewController:finished animated:NO];
+        [self dismissViewControllerAnimated:NO completion:nil];
+    }).catch(^{
+        [self dismissViewControllerAnimated:YES completion:nil];
+    });
 }
 
 @end

@@ -8,6 +8,7 @@
 #import "CHUser.h"
 #import "CHMessage.h"
 #import "CHNetworkManager.h"
+#import "CHSocketManager.h"
 
 static NSString *const MESSAGES_KEY = @"messages";
 
@@ -23,9 +24,9 @@ static NSString *const MESSAGES_KEY = @"messages";
 @synthesize allUsers = _allUsers;
 @synthesize membersDict = _membersDict;
 
-+ (PMKPromise *)groupWithName:(NSString *)name members:(NSArray *)members;
++ (PMKPromise *)groupWithName:(NSString *)name members:(NSArray *)members message:(NSString *)message;
 {
-    return [[CHNetworkManager sharedManager] newGroupWithName:name members:members];
+    return [[CHNetworkManager sharedManager] newGroupWithName:name members:members message:message];
 }
 
 - (void)awakeFromFetch;
@@ -50,16 +51,27 @@ static NSString *const MESSAGES_KEY = @"messages";
     return [[CHNetworkManager sharedManager] messagesForGroup:self page:page];
 }
 
+- (BOOL)isEmpty;
+{
+    return self.members.count == 1 && [((CHUser *)self.members[0]).chID isEqual:[CHUser currentUser].chID];
+}
+
+- (void)setTyping:(BOOL)typing;
+{
+    [[CHSocketManager sharedManager] sendTypingWithData:@{@"group": self.chID, @"typing": @(typing)}
+                                        acknowledgement:nil];
+}
+
 - (NSString *)name;
 {
     if( self.primitiveName.length != 0 ) {
         return self.primitiveName;
     }
     
-    if( self.members.count == 1 ) {
+    if( self.members.count == 1 || self.members.count == 0) {
         return @"Empty chat!";
     } else {
-         NSMutableString *nameFromMembers = [[NSMutableString alloc] init];
+        NSMutableString *nameFromMembers = [[NSMutableString alloc] init];
         for (CHUser *user in self.members) {
             if ([user isEqual:[CHUser currentUser]]) {
                 continue;
@@ -72,6 +84,11 @@ static NSString *const MESSAGES_KEY = @"messages";
         }
         return nameFromMembers;
     }
+}
+
+- (CHUser *)userFromID:(NSString *)anID;
+{
+    return self.membersDict[anID];
 }
 
 - (NSMutableDictionary *)membersDict;
@@ -87,6 +104,18 @@ static NSString *const MESSAGES_KEY = @"messages";
         }
     }
     return _membersDict;
+}
+
+- (NSArray *)allUsersnames;
+{
+    NSMutableArray *users = [NSMutableArray array];
+    [self.membersDict enumerateKeysAndObjectsUsingBlock:^(id key, id obj, BOOL *stop) {
+        CHUser *user = obj;
+        if (user.username) {
+            [users addObject:user.username];
+        }
+    }];
+    return users;
 }
 
 - (BOOL)hasUnread;

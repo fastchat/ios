@@ -7,45 +7,38 @@
 //
 
 #import "CHMessageViewController.h"
-#import "CHNetworkManager.h"
-#import "SocketIOPacket.h"
-#import "CHInviteUserViewController.h"
-#import "CHUser.h"
-#import "CHOwnMessageTableViewCell.h"
-#import "CHSocketManager.h"
-#import "CHGroup.h"
 #import "CHMessage.h"
-#import "CHCircleImageView.h"
-#import "URBMediaFocusViewController.h"
-#import "HPTextViewInternal.h"
+#import "CHUser.h"
+#import "CHGroup.h"
+#import "CHMessageTableViewCell.h"
+#import "CHRefreshTableViewCell.h"
 #import "CHBackgroundContext.h"
+#import "URBMediaFocusViewController.h"
 #import "CHProgressView.h"
+#import "CHMessageDetailTableViewController.h"
 #import "UIAlertView+PromiseKit.h"
 #import "TSMessage.h"
-#import <AudioToolbox/AudioToolbox.h>
+#import "STKWebKitViewController.h"
+#import "SVWebViewControllerActivitySafari.h"
+#import "SVWebViewControllerActivityChrome.h"
 
 #define kDefaultContentOffset self.navigationController.navigationBar.frame.size.height + 20
+#define kCHKeyboardType UIKeyboardTypeDefault
+#define kPageSize 30
 
-//NSString *const CHMesssageCellIdentifier = @"CHMessageTableViewCell";
-//NSString *const CHOwnMesssageCellIdentifier = @"CHOwnMessageTableViewCell";
+NSString *const CHMesssageCellIdentifier = @"CHMessageTableViewCell";
+NSString *const CHOwnMesssageCellIdentifier = @"CHOwnMessageTableViewCell";
+NSString *const CHRefreshCellIdentifier = @"CHRefreshCellIdentifier";
 
 @interface CHMessageViewController ()
 
-@property (nonatomic, strong) NSFetchedResultsController *fetchedResultsController;
-
+@property (atomic, copy) NSArray *messageIDs;
+@property (nonatomic, strong) NSMutableOrderedSet *messages;
 @property (nonatomic, strong) URBMediaFocusViewController *mediaFocus;
-@property (nonatomic, strong) UIButton *sendButton;
-@property (nonatomic, strong) UIResponder *previousResponder;
-@property (nonatomic, assign) BOOL beingDismissed;
-@property (nonatomic, assign) CGFloat heightOfKeyboard;
-
-@property (nonatomic, assign) BOOL shouldScroll;
-@property (nonatomic, assign) BOOL shouldSlide;
-@property (nonatomic, assign) BOOL keyboardIsVisible;
-@property (nonatomic, assign) BOOL mediaWasAdded;
 @property (nonatomic, strong) UIImage *media;
-
-@property (nonatomic, strong) CHMessageTableDelegate *delegate;
+@property (nonatomic, strong) CHProgressView *progressBar;
+@property (nonatomic, assign) BOOL refreshing;
+@property (nonatomic, assign) BOOL isHiding;
 
 @end
 
@@ -53,167 +46,521 @@
 
 #pragma mark - View Lifecycle
 
-- (void)viewDidLoad;
+- (instancetype)initWithGroup:(CHGroup *)group;
 {
-    [super viewDidLoad];
-    [[[GAI sharedInstance] defaultTracker] set:kGAIScreenName value:@"Messages"];
-    
-    self.view.backgroundColor = kLightBackgroundColor;
-    self.messageTable.backgroundColor = kLightBackgroundColor;
-    
-    self.shouldSlide = YES;
-    self.title = _group.name;
-    _beingDismissed = NO;
-    
-    CGFloat screenWidth = [[UIScreen mainScreen] bounds].size.width;
-    self.containerView = [[UIView alloc] initWithFrame:CGRectMake(0, self.view.frame.size.height - 40, screenWidth, 40)];
-    self.containerView.backgroundColor = [UIColor whiteColor];
-    
-    UIView *line = [[UIView alloc] initWithFrame:CGRectMake(0, 0, screenWidth, 0.5)];
-    line.backgroundColor = [UIColor lightGrayColor];
-    [self.containerView addSubview:line];
-    
-    //UIEdgeInsetsMake(<#CGFloat top#>, <#CGFloat left#>, <#CGFloat bottom#>, <#CGFloat right#>)
-    UIButton *cameraBtn = [UIButton buttonWithType:UIButtonTypeCustom];
-    [cameraBtn setImage:[UIImage imageNamed:@"Attach"] forState:UIControlStateNormal];
-	cameraBtn.frame = CGRectMake(0, 0, 40, 40);
-    cameraBtn.imageEdgeInsets = UIEdgeInsetsMake(5, 8, 5, 8);
-    [cameraBtn addTarget:self action:@selector(loadCamera) forControlEvents:UIControlEventTouchUpInside];
-    [self.containerView addSubview:cameraBtn];
-    
-    self.textView = [[HPGrowingTextView alloc] initWithFrame:CGRectMake(45, 2, screenWidth - (36 + 45 + 10), 36)];
-    self.textView.isScrollable = NO;
-    self.textView.layer.borderColor = [[UIColor lightGrayColor] CGColor];
-    self.textView.layer.borderWidth = 0.5;
-    self.textView.layer.cornerRadius = 4.0;
-    self.textView.layer.masksToBounds = YES;
-    self.textView.font = [UIFont systemFontOfSize:16];
-    self.textView.internalTextView.typingAttributes = @{NSFontAttributeName: [UIFont systemFontOfSize:16]};
-    self.textView.maxHeight = 140.0f;
-	self.textView.returnKeyType = UIReturnKeyDefault; //just as an example
-    self.textView.internalTextView.scrollIndicatorInsets = UIEdgeInsetsMake(5, 0, 5, 0);
-    self.textView.backgroundColor = [UIColor whiteColor];
-    self.textView.placeholder = @"Send FastChat";
-    self.textView.delegate = self;
-    
-    [self.containerView addSubview:self.textView];
-    [self.view addSubview:self.containerView];
-    
-    self.sendButton = [UIButton buttonWithType:UIButtonTypeSystem]; //[UIButton buttonWithType:UIButtonTypeCustom];
-	_sendButton.frame = CGRectMake(self.containerView.frame.size.width - 42, 1, 42, 40);
-    _sendButton.autoresizingMask = UIViewAutoresizingFlexibleTopMargin | UIViewAutoresizingFlexibleLeftMargin;
-	[_sendButton setTitle:@"Send" forState:UIControlStateNormal];
-    [_sendButton addTarget:self action:@selector(sendMessage) forControlEvents:UIControlEventTouchUpInside];
- 	[self.containerView addSubview:_sendButton];
-    
-    
-    UIEdgeInsets insets = UIEdgeInsetsMake(0,
-                                           0,
-                                           self.containerView.frame.size.height,
-                                           0);
-    self.messageTable.contentInset = insets;
-    self.messageTable.scrollIndicatorInsets = insets;
-    
-    self.mediaWasAdded = NO;
-    self.delegate = [[CHMessageTableDelegate alloc] initWithTable:self.messageTable group:self.group];
-    self.delegate.delegate = self;
-    
-    
-    DLog(@"End Middle");
-    
-    self.keyboardIsVisible = NO;
-    [self setSendButtonEnabled:[self canSendMessage]];
-    
-    [[NSNotificationCenter defaultCenter] addObserver:self
-                                             selector:@selector(keyboardWillShow:)
-                                                 name:UIKeyboardWillShowNotification
-                                               object:nil];
-    
-    [[NSNotificationCenter defaultCenter] addObserver:self
-                                             selector:@selector(keyboardWillHide:)
-                                                 name:UIKeyboardWillHideNotification
-                                               object:nil];
+    self = [super init];
+    if (self) {
+        self.hidesBottomBarWhenPushed = YES;
+        self.page = 0;
+        self.refreshing = NO;
+        self.isHiding = NO;
+        self.group = group;
+        self.messages = [NSMutableOrderedSet orderedSet];
+        self.tableView.separatorStyle = UITableViewCellSeparatorStyleNone;
+        self.title = self.group.name;
+        self.view.backgroundColor = kLightBackgroundColor;
+        self.tableView.backgroundColor = kLightBackgroundColor;
+        self.typingIndicatorView.backgroundColor = kLightBackgroundColor;
+        self.textView.placeholder = @"Send FastChat";
+        [self.leftButton setImage:[UIImage imageNamed:@"Attach"] forState:UIControlStateNormal];
+//        [self.leftButton addTarget:self action:@selector(mediaButtonTapped:) forControlEvents:UIControlEventTouchUpInside];
+        self.leftButton.imageEdgeInsets = UIEdgeInsetsMake(6, 7, 14, 7);
+        self.textView.keyboardType = kCHKeyboardType;
+        [[[GAI sharedInstance] defaultTracker] set:kGAIScreenName value:@"Messages"];
+        [[[GAI sharedInstance] defaultTracker] send:[[GAIDictionaryBuilder createScreenView] build]];
+        
+        UIBarButtonItem *details = [[UIBarButtonItem alloc] initWithTitle:@"Details"
+                                                                    style:UIBarButtonItemStylePlain
+                                                                   target:self
+                                                                   action:@selector(detailBarButtonTapped:)];
+        self.navigationItem.rightBarButtonItem = details;
+        
+        
+        [self.tableView registerNib:[UINib nibWithNibName:@"CHMessageTableViewCell" bundle:nil]
+             forCellReuseIdentifier:CHMesssageCellIdentifier];
+
+        [self.tableView registerNib:[UINib nibWithNibName:@"CHOwnMessageTableViewCell" bundle:nil]
+             forCellReuseIdentifier:CHOwnMesssageCellIdentifier];
+        
+        [self.tableView registerNib:[UINib nibWithNibName:@"CHRefreshTableViewCell" bundle:nil]
+             forCellReuseIdentifier:CHRefreshCellIdentifier];
+        
+        __weak CHMessageViewController *this = self;
+        self.loadInNewMessages = ^(NSArray *messageIDs) {
+            __strong CHMessageViewController *strongSelf = this;
+            if(strongSelf) {
+                [strongSelf.tableView beginUpdates];
+                strongSelf.messageIDs = messageIDs;
+                NSMutableArray *justInserted = [NSMutableArray array];
+                @synchronized(strongSelf) {
+                    
+                    for (NSManagedObjectID *anID in strongSelf.messageIDs) {
+                        CHMessage *message = [CHMessage objectID:anID toContext:[NSManagedObjectContext MR_defaultContext]];
+                        if (message) {
+                            NSInteger index = [strongSelf.messages indexOfObject:message];
+                            if (index == NSNotFound) {
+                                [strongSelf.messages addObject:message];
+                                [justInserted addObject:message];
+                            }
+                        }
+                    }
+                    strongSelf.messageIDs = nil;
+                }
+               
+                NSSortDescriptor *sortDescriptor = [[NSSortDescriptor alloc] initWithKey:@"sent" ascending:NO];
+                [strongSelf.messages sortUsingDescriptors:@[sortDescriptor]];
+                [justInserted sortUsingDescriptors:@[sortDescriptor]];
+                
+                NSMutableArray *indexesToDelete = [NSMutableArray array];
+                if (justInserted.count == kPageSize) {
+                    for (NSInteger i = ([strongSelf.messages indexOfObject:justInserted.lastObject]) + 1; i < strongSelf.messages.count; i++) {
+                        DLog(@"i %ld", (long)i);
+                        [indexesToDelete addObject:[NSIndexPath indexPathForRow:i inSection:0]];
+                    }
+                }
+                
+                NSMutableArray *indexes = [NSMutableArray array];
+                for (CHMessage *inserted in justInserted) {
+                    NSInteger index = [strongSelf.messages indexOfObject:inserted];
+                    [indexes addObject:[NSIndexPath indexPathForRow:index inSection:0]];
+                }
+                
+                DLog(@"Deleting: %@", indexesToDelete);
+                DLog(@"Inserting: %@", indexes);
+                
+                [strongSelf.tableView insertRowsAtIndexPaths:indexes withRowAnimation:UITableViewRowAnimationAutomatic];
+                dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.0 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+//                    [strongSelf.tableView deleteRowsAtIndexPaths:indexesToDelete withRowAnimation:UITableViewRowAnimationAutomatic];
+                });
+
+                [strongSelf.tableView endUpdates];
+                
+            }
+        };
+        
+        [[NSNotificationCenter defaultCenter] addObserver:self
+                                                 selector:@selector(newMessageNotification:)
+                                                     name:kNewMessageReceivedNotification
+                                                   object:nil];
+        
+        [[NSNotificationCenter defaultCenter] addObserver:self
+                                                 selector:@selector(getMostRecentMessages:)
+                                                     name:kReloadActiveGroupNotification
+                                                   object:nil];
+        
+        [[NSNotificationCenter defaultCenter] addObserver:self
+                                                 selector:@selector(typingNotification:)
+                                                     name:kTypingNotification
+                                                   object:nil];
+        
+        [[NSNotificationCenter defaultCenter] addObserver:self
+                                                 selector:@selector(didPasteImageNotification:)
+                                                     name:SLKTextViewDidPasteImageNotification
+                                                   object:nil];
+        [self loadNextMessages];
+    }
+    return self;
 }
 
+- (void)viewWillAppear:(BOOL)animated;
+{
+    [super viewWillAppear:animated];
+    self.textView.text = self.group.unsentText;
+}
+
+// need a better way to check this, so it doesn't popup on rotate.
+- (void)viewWillLayoutSubviews;
+{
+    [super viewWillLayoutSubviews];
+//    [self.textView becomeFirstResponder];
+}
+
+- (void)viewDidAppear:(BOOL)animated;
+{
+    [super viewDidAppear:animated];
+    self.navigationController.hidesBarsOnSwipe = NO;
+    self.isHiding = NO;
+}
 
 - (void)viewWillDisappear:(BOOL)animated;
 {
     [super viewWillDisappear:animated];
+    self.isHiding = YES;
+    self.group.unsentText = self.textView.text;
     [[NSManagedObjectContext MR_defaultContext] MR_saveToPersistentStoreAndWait];
 }
 
--(void)sendUserTypingAction;
+- (void)dealloc;
 {
-    DLog(@"User changed text field");
+    [[NSNotificationCenter defaultCenter] removeObserver:self];
 }
 
-#pragma mark - Keyboard Methods
+#pragma mark - UITableViewDataSource Methods
 
-- (void)keyboardWillShow:(NSNotification *)notification;
+- (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView;
 {
-    CGFloat keyboardHeight = [[notification.userInfo valueForKey:UIKeyboardFrameEndUserInfoKey] CGRectValue].size.height;
-    NSTimeInterval animationDuration = [[notification.userInfo objectForKey:UIKeyboardAnimationDurationUserInfoKey] floatValue];
-    NSInteger curve = [[notification.userInfo valueForKey:UIKeyboardAnimationCurveUserInfoKey] integerValue];
-    UIViewAnimationOptions options = (curve << 16);
+    return 2;
+}
+
+- (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
+{
+    if (section == 0) {
+        return self.messages.count;
+    } else {
+        return self.refreshing ? 1 : 0;
+    }
+}
+
+- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath;
+{
+    /// refreshing
+    if (indexPath.section == 1) {
+        DLog(@"Refreshing Cell!");
+        return [tableView dequeueReusableCellWithIdentifier:CHRefreshCellIdentifier forIndexPath:indexPath];
+    }
     
-    self.previousResponder = self.textView;
-    self.heightOfKeyboard = keyboardHeight;
-    [UIView animateWithDuration:animationDuration
-                          delay:0.0
-                        options:options
-                     animations:^{
-                         [self setTableViewInsetsFromBottom:keyboardHeight];
-                         ////// This may need some logic to scroll the text view with the keyboard
-                         [self.messageTable scrollToRowAtIndexPath:[NSIndexPath
-                                                                    indexPathForRow:([self.delegate tableView:self.messageTable numberOfRowsInSection:0] - 1) inSection:0]
-                                                  atScrollPosition:UITableViewScrollPositionBottom
-                                                          animated:YES];
-                         
-                         CGRect containerFrame = self.containerView.frame;
-                         containerFrame.origin.y = self.view.bounds.size.height - (keyboardHeight + containerFrame.size.height);
-                         self.containerView.frame = containerFrame;
-                     } completion:nil];
+    ///Actual cells
+    
+    CHMessage *message = self.messages[indexPath.row];
+    CHMessageTableViewCell *cell;
+    UIColor *color = [UIColor whiteColor];
+    CHUser *author = message.getAuthorNonRecursive;
+
+    if ( [message.author isEqual:[CHUser currentUser]] ) {
+        cell = [tableView dequeueReusableCellWithIdentifier:CHOwnMesssageCellIdentifier forIndexPath:indexPath];
+    } else {
+        cell = [tableView dequeueReusableCellWithIdentifier:CHMesssageCellIdentifier forIndexPath:indexPath];
+        color = [UIColor blackColor];
+    }
+    
+    cell.transform = self.tableView.transform;
+
+    NSDictionary *attributes = @{NSForegroundColorAttributeName: color,
+                                 NSFontAttributeName: [UIFont systemFontOfSize:16.0]};
+    cell.messageTextView.text = nil;
+    cell.messageTextView.attributedText = nil;
+    cell.messageTextView.attributedText = [[NSAttributedString alloc] initWithString:message.text ? message.text : @""
+                                                                          attributes:attributes];
+    cell.messageTextView.delegate = self;
+    cell.authorLabel.text = author.username;
+    cell.timestampLabel.text = [self formatDate:message.sent];
+    
+    static UIImage *defaultImage = nil;
+    if (!defaultImage) {
+        defaultImage = [UIImage imageNamed:@"NoAvatar"];
+    }
+    
+    cell.authorLabel.textColor = author.color;
+    
+    /**
+     * The author may actually not exist if you have a message
+     * from the system.
+     */
+    if (author) {
+        author.avatar.then(^(CHUser *user, UIImage *avatar) {
+            cell.avatarImageView.image = avatar;
+        }).catch(^(NSError *error){
+            cell.avatarImageView.image = defaultImage;
+        });
+    } else {
+        cell.authorLabel.textColor = color;
+        cell.avatarImageView.image = defaultImage;
+    }
+    
+    /// Remove all gesture recognizers on cell reuse
+    for (UIGestureRecognizer *recognizer in cell.gestureRecognizers) {
+        [cell removeGestureRecognizer:recognizer];
+    }
+    if (message.hasMediaValue) {
+        message.media.then(^(UIImage *image){
+            CGSize size = [self boundsForImage:image];
+            NSTextAttachment *textAttachment = [[NSTextAttachment alloc] init];
+            textAttachment.image = image;
+            textAttachment.bounds = CGRectMake(0, 0, size.width, size.height);
+            
+            UITapGestureRecognizer *tap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(imageTapped:)];
+            [cell.messageTextView addGestureRecognizer:tap];
+            
+            NSMutableAttributedString *string = [[NSMutableAttributedString alloc] init];
+            [string appendAttributedString:[[NSAttributedString alloc] initWithString:message.text]];
+            [string appendAttributedString:[NSAttributedString attributedStringWithAttachment:textAttachment]];
+            [string addAttributes:attributes range:NSMakeRange(0, string.length)];
+            cell.messageTextView.attributedText = string;
+        });
+    }
+    
+    return cell;
 }
 
-- (void)keyboardWillHide:(NSNotification *)notification;
+/**
+ * Let's help the tableview out some. Most people send 1 line messages, and that makes our
+ * cells 49 pixels high.
+ */
+- (CGFloat)tableView:(UITableView *)tableView estimatedHeightForRowAtIndexPath:(NSIndexPath *)indexPath;
 {
-    if (_beingDismissed) {
+    if (indexPath.section == 1) {
+        return 50;
+    }
+    CHMessage *message = self.messages[indexPath.row];
+    if (message.rowHeightValue > 0) {
+        return message.rowHeightValue;
+    }
+    return 75;
+}
+
+- (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath;
+{
+    if (indexPath.section == 1) {
+        return 50;
+    }
+    
+    CHMessage *message = self.messages[indexPath.row];
+    if (message.rowHeightValue > 0) {
+        return message.rowHeightValue;
+    }
+    
+    CGRect rect = [message.text boundingRectWithSize:CGSizeMake(205 - 16, CGFLOAT_MAX)
+                                             options:NSStringDrawingUsesFontLeading | NSStringDrawingUsesLineFragmentOrigin
+                                          attributes:@{NSFontAttributeName: [UIFont systemFontOfSize:16]}
+                                             context:nil];
+    
+    CGFloat height = rect.size.height;
+    // Adding 45.0 to fix the bug where messages of certain lengths don't size the cell properly.
+    if( message.hasMedia.boolValue) {
+        height += 150.0f;
+    }
+    height += 45.0f;
+    
+    message.rowHeightValue = height;
+    return height;
+}
+
+
+- (NSString *)formatDate:(NSDate *)date;
+{
+    if (!date) {
+        return nil;
+    }
+    
+    static NSDateFormatter *timestampFormatter = nil;
+    if (!timestampFormatter) {
+        timestampFormatter = [[NSDateFormatter alloc] init];
+        [timestampFormatter setDateStyle:NSDateFormatterLongStyle];
+        timestampFormatter.locale = [[NSLocale alloc] initWithLocaleIdentifier:@"en_US_POSIX"];
+        timestampFormatter.dateFormat = @"MMM dd, HH:mm";
+    }
+    return [timestampFormatter stringFromDate:date];
+}
+
+- (CGSize)boundsForImage:(UIImage *)image;
+{
+    CGFloat height = image.size.height;
+    CGFloat width = image.size.width;
+    CGFloat max = 150.0;
+    
+    if (height > width && height > max) {
+        CGFloat ratio = height / max;
+        height = height / ratio;
+        width = width / ratio;
+    } else if (width >= height && width > max) {
+        CGFloat ratio = width / max;
+        height = height / ratio;
+        width = width / ratio;
+    }
+    return CGSizeMake(width, height);
+}
+
+- (UITableViewCell *)cellForView:(UIView *)view;
+{
+    UIView *aView = view;
+    UITableViewCell *cell = nil;
+    while (cell == nil) {
+        if ([aView isKindOfClass:[UITableViewCell class]]) {
+            cell = (UITableViewCell *)aView;
+        }
+        aView = aView.superview;
+    }
+    return cell;
+}
+
+- (void)imageTapped:(UITapGestureRecognizer *)sender;
+{
+    CGPoint tap = [sender locationInView:sender.view];
+    UITableViewCell *cell = [self cellForView:sender.view];
+    
+    if (cell) {
+        NSIndexPath *path = [self.tableView indexPathForCell:cell];
+        CHMessage *message = self.messages[path.row];
+        message.media.then(^(UIImage *image) {
+            CGSize size = [self boundsForImage:image];
+            if (tap.x < size.width && tap.y < size.height) {
+                self.mediaFocus = [[URBMediaFocusViewController alloc] init];
+                self.mediaFocus.shouldDismissOnImageTap = YES;
+                self.mediaFocus.shouldShowPhotoActions = YES;
+                [self.mediaFocus showImage:image fromView:self.view];
+            }
+        });
+    }
+}
+
+- (void)getMostRecentMessages:(NSNotification *)note;
+{
+    id q = [CHBackgroundContext backgroundContext].queue;
+    NSManagedObjectContext *context = [CHBackgroundContext backgroundContext].context;
+    
+    dispatch_promise_on(q, ^{
+        return [self.group remoteMessagesAtPage:0];
+    })
+    .thenOn(q, ^{
+        [context reset];
+        NSArray *final = [self localMessagesAtPage:0 context:context];
+        NSMutableArray *newMessageIDS = [NSMutableArray array];
+        for (CHMessage *message in final) {
+            [newMessageIDS addObject:message.actualObjectId];
+        }
+        return newMessageIDS;
+    })
+    .then(_loadInNewMessages);
+}
+
+- (void)loadNextMessages;
+{
+    [self messagesAtPage:_page]
+    .then(_loadInNewMessages)
+    .catch(^(NSError *error) {
+        DLog(@"Error: %@", error);
+    }).finally(^{
+        self.page++;
+        [self refreshOn:NO];
+    });
+}
+
+- (void)scrollViewDidScroll:(UIScrollView *)scrollView
+{
+    [super scrollViewDidScroll:scrollView];
+    if ( ((scrollView.contentOffset.y + scrollView.frame.size.height) >= scrollView.contentSize.height + 50) && !self.refreshing && self.messages.count > 10) {
+        [self refreshOn:YES];
+        [self loadNextMessages];
+    }
+}
+
+- (void)refreshOn:(BOOL)on;
+{
+    if (self.refreshing == on) {
         return;
     }
-    self.heightOfKeyboard = 0;
-    NSTimeInterval animationDuration = [[notification.userInfo objectForKey:UIKeyboardAnimationDurationUserInfoKey] floatValue];
-    NSInteger animationCurve = [[notification.userInfo objectForKey:UIKeyboardAnimationCurveUserInfoKey] integerValue];
-    UIViewAnimationOptions options = (animationCurve << 16);
-        
-    [UIView animateWithDuration:animationDuration
-                          delay:0.0
-                        options:options
-                     animations:^{
-                        [self setTableViewInsetsFromBottom:0];
-                             
-                         CGRect containerFrame = self.containerView.frame;
-                         containerFrame.origin.y = self.view.bounds.size.height - containerFrame.size.height;
-                         self.containerView.frame = containerFrame;
-                     } completion:^(BOOL finished) {
-                             
-                         self.previousResponder = nil;
-                     }];
- /////// This may need some logic to scroll the messages with the keyboard
-    [self.messageTable scrollToRowAtIndexPath:[NSIndexPath
-                                               indexPathForRow:([self.delegate tableView:self.messageTable numberOfRowsInSection:0] - 1) inSection:0]
-                             atScrollPosition:UITableViewScrollPositionBottom
-                                     animated:YES];
+    
+    [self.tableView beginUpdates];
+    NSIndexPath *path = [NSIndexPath indexPathForRow:0 inSection:1];
+    if (on) {
+        [self.tableView insertRowsAtIndexPaths:@[path] withRowAnimation:UITableViewRowAnimationAutomatic];
+    } else {
+        [self.tableView deleteRowsAtIndexPaths:@[path] withRowAnimation:UITableViewRowAnimationAutomatic];
+    }
+    self.refreshing = on;
+    [self.tableView endUpdates];
 }
 
-#pragma mark - Message Methods
+#pragma mark - Socket.io
 
-- (void)resignTextView;
+- (void)newMessageNotification:(NSNotification *)note;
 {
-	[self.textView resignFirstResponder];
+    CHMessage *message = note.userInfo[CHNotificationPayloadKey];
+    if (message && [message.group isEqual:self.group]) {
+        [self addMessage:message];
+    } else {
+        [self otherGroupMessage:message];
+    }
 }
 
-- (void)sendMessage;
+- (void)addMessage:(CHMessage *)foreignMessage;
 {
+    CHMessage *message = [CHMessage object:foreignMessage toContext:[NSManagedObjectContext MR_defaultContext]];
+    if (message) {
+        [self addMessageToTableView:message goToBottom:NO];
+    }
+}
+
+- (void)addMessageToTableView:(CHMessage *)message goToBottom:(BOOL)go;
+{
+    [self.tableView beginUpdates];
+    [self.messages insertObject:message atIndex:0];
+    NSIndexPath *path = [NSIndexPath indexPathForRow:0 inSection:0];
+    [self.tableView insertRowsAtIndexPaths:@[path] withRowAnimation:UITableViewRowAnimationAutomatic];
+    if (self.tableView.contentOffset.y < 50 || go) {
+        [self.tableView scrollToRowAtIndexPath:path atScrollPosition:UITableViewScrollPositionTop animated:YES];
+    } else {
+        AudioServicesPlaySystemSound(kSystemSoundID_Vibrate);
+    }
+    [self.tableView endUpdates];
+}
+
+
+#pragma mark - Messages
+
+/**
+ * The idea here is simple. We start off with an immediate small batch of xx messages
+ * (it has to be enough so you can't see the top of the screen), then because most often
+ * this will probaby be the case, we immediatly fetch the next YY. This is also good if
+ * people are sending messages and you want to get the latest).
+ *
+ * When we "fetch", we always do it from the background, and then return the ObjectID's to
+ * the messageID array. The main thread will use these ID's to do the fetch, which is almost
+ * instant in Core Data (hash lookup and probably cached).
+ *
+ * When the UI gets the messageID's that are waiting, it then queues the next background
+ * fetch to get the next batch (local + server). This ensures we are always 1 step ahead,
+ * and things run fast.
+ */
+- (PMKPromise *)messagesAtPage:(NSUInteger)page;
+{
+    id q = [CHBackgroundContext backgroundContext].queue;
+    NSManagedObjectContext *context = [CHBackgroundContext backgroundContext].context;
+    
+    return dispatch_promise_on(q, ^{
+        return [self localMessagesAtPage:page context:context];
+    }).thenOn(q, ^(NSArray *local){
+        NSMutableArray *newMessageIDS = [NSMutableArray array];
+        for (CHMessage *message in local) {
+            [newMessageIDS addObject:message.actualObjectId];
+        }
+        return newMessageIDS;
+    }).then(_loadInNewMessages)
+    .thenOn(q, ^{
+        return [self.group remoteMessagesAtPage:self.page];
+    }).thenOn(q, ^{
+        [context reset];
+        NSMutableArray *newMessageIDS = [NSMutableArray array];
+        NSArray *final = [self localMessagesAtPage:page context:context];
+        for (CHMessage *message in final) {
+            [newMessageIDS addObject:message.actualObjectId];
+        }
+        return newMessageIDS;
+    });
+}
+
+- (NSArray *)localMessagesAtPage:(NSUInteger)page context:(NSManagedObjectContext *)context;
+{
+    NSPredicate *messages = [NSPredicate predicateWithFormat:@"SELF.group == %@ AND SELF.chID != nil", self.group];
+    NSFetchRequest *fetchRequest = [CHMessage MR_requestAllWithPredicate:messages];
+    [fetchRequest setFetchLimit:30];
+    [fetchRequest setFetchOffset:page * 30];
+    
+    NSSortDescriptor *sortDescriptor = [[NSSortDescriptor alloc] initWithKey:@"sent" ascending:NO];
+    [fetchRequest setSortDescriptors:@[sortDescriptor]];
+    
+    return [CHMessage MR_executeFetchRequest:fetchRequest inContext:context];
+}
+
+#pragma mark - Send Message
+- (void)didPressRightButton:(id)sender;
+{
+    if( self.textView.isFirstResponder ) {
+        [self.textView setKeyboardType:kCHKeyboardType];
+        [self.textView resignFirstResponder];
+        [self.textView becomeFirstResponder];
+    }
+    
     [self startSendingMessage];
     NSString *msg = self.textView.text;
     
@@ -229,43 +576,60 @@
     newMessage.group = self.group;
     newMessage.sent = [NSDate date];
     
-    UIImage *media = self.textView.internalTextView.attachedImage;
-    if (media) {
+    if (self.media) {
         newMessage.hasMedia = @YES;
-        newMessage.theMediaSent = media;
+        newMessage.theMediaSent = self.media;
     }
     
     [self.group addMessagesObject:newMessage];
-    [self addNewMessage:newMessage];
     
-    [user sendMessage:newMessage toGroup:self.group].then(^(CHMessage *mes){
-        [self.delegate addMessage:mes];
+    [user sendMessage:newMessage toGroup:self.group].then(^(CHMessage *mes) {
+        [self addMessageToTableView:mes goToBottom:YES];
     }).catch(^(NSError *error) {
         return [[[UIAlertView alloc] initWithTitle:@"Error!"
-                                    message:error.localizedDescription
-                                   delegate:nil
-                          cancelButtonTitle:@"Darn"
-                          otherButtonTitles:nil] promise];
+                                           message:error.localizedDescription
+                                          delegate:nil
+                                 cancelButtonTitle:@"Darn"
+                                 otherButtonTitles:nil] promise];
     }).finally(^{
         [self endSendingMessage];
     });
     
     self.textView.text = @"";
+    [self.typingIndicatorView removeUsername:[CHUser currentUser].username];
 }
 
-- (void)addNewMessage:(CHMessage *)message;
+#pragma mark - Typing
+
+- (void)textDidUpdate:(BOOL)animated;
 {
-    self.shouldSlide = NO;
-    
-    if( self.keyboardIsVisible ) {
-        [self.textView setKeyboardType:UIKeyboardTypeDefault];
-        [self.textView resignFirstResponder];
-        [self.textView becomeFirstResponder];
+    [super textDidUpdate:animated];
+    [self textUpdated];
+}
+
+- (void)textUpdated;
+{
+    if (self.textView.text.length > 0) {
+        [self.typingIndicatorView insertUsername:[CHUser currentUser].username];
+        [self.group setTyping:YES];
+    } else {
+        [self.typingIndicatorView removeUsername:[CHUser currentUser].username];
     }
-    
-    self.media = nil;
-    self.mediaWasAdded = NO;
-    [self setSendButtonEnabled:[self canSendMessage]];
+}
+
+
+- (void)typingNotification:(NSNotification *)note;
+{
+    NSDictionary *info = note.userInfo[CHNotificationPayloadKey];
+    if ([info[@"group"] isEqualToString:self.group.chID]) {
+        BOOL typing = [info[@"typing"] boolValue];
+        CHUser *user = [self.group userFromID:info[@"from"]];
+        if (typing) {
+            [self.typingIndicatorView insertUsername:user.username];
+        } else {
+            [self.typingIndicatorView removeUsername:user.username];
+        }
+    }
 }
 
 #pragma mark - Progress Bar
@@ -287,97 +651,16 @@
 
 - (void)endSendingMessage;
 {
-    [self.progressBar setProgress:1 animated:YES].then(^{
+    [self.progressBar setProgress:1 animated:YES].finally(^{
         self.progressBar.hidden = YES;
     });
 }
 
-- (void)expandImage:(UIImage *)image;
-{
-    if (!image) {
-        return;
-    }
-    
-    self.mediaFocus = [[URBMediaFocusViewController alloc] init];
-    [self.mediaFocus showImage:image fromView:self.view];
-}
-
-- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath;
-{
-    CHMessage *message = self.delegate.messages[indexPath.row];
-    
-    self.shouldSlide = YES;
-    [self resignTextView];
-    
-    if (message.hasMediaValue) {
-        message.media.then(^(UIImage *image){
-            [self expandImage:image];
-        });
-    }
-}
-
-/**
- * Sets the insets just how we want them, with whatever distance from the
- * bottom of the screen (which will change, depending on the height of the textview,
- * and if the keyboard is up.
- */
-- (void)setTableViewInsetsFromBottom:(CGFloat)bottomDistance;
-{
-    //    UIEdgeInsetsMake(top, left, bottom, right)
-    UIEdgeInsets insets = UIEdgeInsetsMake(kDefaultContentOffset,
-                                           0,
-                                           self.containerView.frame.size.height + bottomDistance,
-                                           0);
-    self.messageTable.contentInset = insets;
-    self.messageTable.scrollIndicatorInsets = insets;
-}
-
-- (void)growingTextView:(HPGrowingTextView *)growingTextView willChangeHeight:(float)height
-{
-    CGFloat diff = (growingTextView.frame.size.height - height);
-    
-	CGRect r = self.containerView.frame;
-    r.size.height -= diff;
-    r.origin.y += diff;
-	self.containerView.frame = r;
-
-    // Resize table
-    [self setTableViewInsetsFromBottom:self.heightOfKeyboard];
-
-    if (_group.messages.count > 0) {
-        [self.messageTable scrollToRowAtIndexPath:[NSIndexPath
-                                                   indexPathForRow:([self.delegate tableView:self.messageTable numberOfRowsInSection:0] - 1) inSection:0]
-                                 atScrollPosition:UITableViewScrollPositionBottom
-                                         animated:YES];
-    }
-}
-
-- (BOOL)growingTextView:(HPGrowingTextView *)growingTextView shouldChangeTextInRange:(NSRange)range replacementText:(NSString *)text;
-{
-    if (self.textView.text.length > range.location ) {
-        NSInteger character = [self.textView.text characterAtIndex:range.location];
-        if (character == NSAttachmentCharacter) {
-            
-            DLog(@"DELETED ATTACHMENT");
-            self.textView.internalTextView.attachedImage = nil;
-        }
-    }
-       return YES;
-}
-
-- (void)textViewTapped:(UITapGestureRecognizer *)sender;
-{
-    [self tableView:self.messageTable didSelectRowAtIndexPath:[NSIndexPath indexPathForRow:sender.view.tag inSection:0]];
-}
-
-- (void)growingTextViewDidChange:(HPGrowingTextView *)growingTextView;
-{
-    [self setSendButtonEnabled:[self canSendMessage]];
-}
-
 - (void)otherGroupMessage:(CHMessage *)message;
 {
-    AudioServicesPlaySystemSound (kSystemSoundID_Vibrate);
+    AudioServicesPlaySystemSound(kSystemSoundID_Vibrate);
+//TODO: Fix this when it updates.
+    /*
     [TSMessage showNotificationInViewController:self.navigationController
                                           title:message.group.name
                                        subtitle:message.text
@@ -397,22 +680,72 @@
                                  buttonCallback:nil
                                      atPosition:TSMessageNotificationPositionNavBarOverlay
                            canBeDismissedByUser:YES];
+     */
+}
+
+#pragma mark - UITextView Delegate
+
+- (BOOL)textView:(UITextView *)textView shouldInteractWithURL:(NSURL *)URL inRange:(NSRange)characterRange;
+{
+    static NSArray *website = nil;
+    if (!website) {
+        website = @[@"http", @"https"];
+    }
+    
+    if ([website containsObject:URL.scheme]) {
+        STKWebKitViewController *controller = [[STKWebKitViewController alloc] initWithURL:URL];
+        
+        SVWebViewControllerActivitySafari *safari = [SVWebViewControllerActivitySafari new];
+        SVWebViewControllerActivityChrome *chrome = [SVWebViewControllerActivityChrome new];
+        
+        controller.applicationActivities = @[safari, chrome];
+        [self.navigationController pushViewController:controller animated:YES];
+        self.navigationController.hidesBarsOnSwipe = YES;
+        return NO;
+    }
+    return YES;
+}
+
+// Make this a downloadable list or URL's to be safe.
+- (BOOL)isYouTube:(NSURL *)url;
+{
+    return [url.absoluteString containsString:@"youtube.com"];
+}
+
+- (BOOL)textView:(UITextView *)textView shouldInteractWithTextAttachment:(NSTextAttachment *)textAttachment inRange:(NSRange)characterRange;
+{
+    
+    
+    return YES;
+}
+
+- (void)didPasteMediaContent:(NSDictionary *)userInfo;
+{
+    
+}
+
+- (void)didPressLeftButton:(id)sender;
+{
+    [self mediaButtonTapped:sender];
+}
+
+#pragma mark - Navigation
+
+- (void)detailBarButtonTapped:(UIBarButtonItem *)sender;
+{
+    
+    CHMessageDetailTableViewController *dest = [self.navigationController.storyboard
+                                                instantiateViewControllerWithIdentifier:@"CHMessageDetailTableViewController"];
+    dest.group = self.group;
+    [self.navigationController pushViewController:dest animated:YES];
 }
 
 #pragma mark - Camera
 
--(void)loadCamera;
+- (void)mediaButtonTapped:(id)sender;
 {
-    /*
-     Fix for DBCamera crashing when you open your photo library:
-     
-     NSURL *url = [[result defaultRepresentation] url];
-     if( url ) {
-     [items addObject:url];
-     }
-     
-     Add this to their file. at the line it crashes at DBLibraryManager.
-     */
+    return;
+    
     UINavigationController *nav = [[UINavigationController alloc] initWithRootViewController:[[DBCameraContainerViewController alloc] initWithDelegate:self]];
     [nav setNavigationBarHidden:YES];
     [self presentViewController:nav animated:YES completion:nil];
@@ -420,28 +753,173 @@
 
 - (void)camera:(id)cameraViewController didFinishWithImage:(UIImage *)image withMetadata:(NSDictionary *)metadata;
 {
-    self.mediaWasAdded = YES;
-    self.shouldSlide = NO;
-    [self.textView.internalTextView addImage:image];
+//    [self didPasteMediaContent:@{@"image": image}];
+    
+    CGFloat height = image.size.height;
+    CGFloat width = image.size.width;
+    CGFloat max = 150.0;
+    
+    if (height > width && height > 150) {
+        CGFloat ratio = height / max;
+        height = height / ratio;
+        width = width / ratio;
+    } else if (width >= height && width > 150) {
+        CGFloat ratio = width / max;
+        height = height / ratio;
+        width = width / ratio;
+    }
+    
+    CGSize size = CGSizeMake(width, height);
+    
+    NSTextAttachment *textAttachment = [[NSTextAttachment alloc] init];
+    textAttachment.image = image;
+    textAttachment.bounds = CGRectMake(0, 0, size.width, size.height);
+    
+    NSMutableAttributedString *string = [[NSMutableAttributedString alloc] initWithString:self.textView.text];
+    [string appendAttributedString:[NSAttributedString attributedStringWithAttachment:textAttachment]];
+    self.textView.text = nil;
+    self.textView.attributedText = string;
+//    self.textView.font = [UIFont systemFontOfSize:16];
+//    self.attachedImage = image;
+    [self.view setNeedsDisplay];
 
     [self.presentedViewController dismissViewControllerAnimated:YES completion:nil];
+}
+
+- (void)didPasteImageNotification:(NSNotification *)note;
+{
+    return;
     
-    [self setSendButtonEnabled:[self canSendMessage]];
-}
-
-- (void)setSendButtonEnabled:(BOOL)enabled;
-{
-    [self.sendButton setEnabled:enabled];
-}
-
-- (BOOL)canSendMessage;
-{
-    return self.textView.text.length > 0 || self.textView.internalTextView.attachedImage != nil;
+    NSDictionary *info = note.userInfo;
+//    DLog(@"Info: %@", info);
+    UIImage *image = [UIImage imageWithData:info[SLKTextViewPastedItemData]];
+    
+    CGFloat height = image.size.height;
+    CGFloat width = image.size.width;
+    CGFloat max = 150.0;
+    
+    if (height > width && height > 150) {
+        CGFloat ratio = height / max;
+        height = height / ratio;
+        width = width / ratio;
+    } else if (width >= height && width > 150) {
+        CGFloat ratio = width / max;
+        height = height / ratio;
+        width = width / ratio;
+    }
+    
+    CGSize size = CGSizeMake(width, height);
+    
+    NSTextAttachment *textAttachment = [[NSTextAttachment alloc] init];
+    textAttachment.image = image;
+    textAttachment.bounds = CGRectMake(0, 0, size.width, size.height);
+    
+    NSMutableAttributedString *string = [[NSMutableAttributedString alloc] initWithString:self.textView.text];
+    [string appendAttributedString:[NSAttributedString attributedStringWithAttachment:textAttachment]];
+    self.textView.text = nil;
+    self.textView.attributedText = string;
+    //    self.textView.font = [UIFont systemFontOfSize:16];
+    //    self.attachedImage = image;
+    [self.view setNeedsDisplay];
+                      
 }
 
 - (void)dismissCamera:(id)cameraViewController;
 {
     [self dismissViewControllerAnimated:YES completion:nil];
 }
+
+- (BOOL)canSendMessage;
+{
+    return self.textView.text.length > 0 || self.media != nil;
+}
+
+
+
+
+
+////
+/*
+- (BOOL)canPerformAction:(SEL)action withSender:(id)sender;
+{
+    NSLog(@"Action? %@ Sender? %@", NSStringFromSelector(action), sender);
+    UIPasteboard *gpBoard = [UIPasteboard generalPasteboard];
+    
+    if ([NSStringFromSelector(action) isEqualToString:@"paste:"] && gpBoard.image) { //add more types later.
+        return YES;
+    }
+    return [super canPerformAction:action withSender:sender];
+}
+
+- (void)paste:(id)sender;
+{
+    UIPasteboard *gpBoard = [UIPasteboard generalPasteboard];
+    UIImage *image = [gpBoard image];
+    if (image) {
+        [self addImage:image];
+    } else {
+        [super paste:sender];
+    }
+}
+
+- (void)addImage:(UIImage *)image;
+{
+    CGFloat height = image.size.height;
+    CGFloat width = image.size.width;
+    CGFloat max = 150.0;
+    
+    if (height > width && height > 150) {
+        CGFloat ratio = height / max;
+        height = height / ratio;
+        width = width / ratio;
+    } else if (width >= height && width > 150) {
+        CGFloat ratio = width / max;
+        height = height / ratio;
+        width = width / ratio;
+    }
+    
+    CGSize size = CGSizeMake(width, height);
+    
+    NSTextAttachment *textAttachment = [[NSTextAttachment alloc] init];
+    textAttachment.image = image;
+    textAttachment.bounds = CGRectMake(0, 0, size.width, size.height);
+    
+    self.displayPlaceHolder = NO;
+    
+    NSMutableAttributedString *string = [[NSMutableAttributedString alloc] initWithAttributedString:self.attributedText];
+    [string appendAttributedString:[NSAttributedString attributedStringWithAttachment:textAttachment]];
+    self.attributedText = string;
+    self.font = [UIFont systemFontOfSize:16];
+    
+    /// again, only supporting 1 for now.
+    self.attachedImage = image;
+    [self setNeedsDisplay];
+}
+
+- (BOOL)hasAttachment;
+{
+    return [self numberOfAttachments] > 0;
+}
+
+- (NSInteger)numberOfAttachments;
+{
+    return [[self locationOfAttachments] count];
+}
+
+- (NSArray *)locationOfAttachments;
+{
+    NSMutableArray *locations = [NSMutableArray array];
+    for (NSInteger i = 0; i < self.attributedText.length; i++) {
+        NSInteger character = [self.attributedText.string characterAtIndex:i];
+        if (character == NSAttachmentCharacter) {
+            [locations addObject:[NSValue valueWithRange:NSMakeRange(i, 1)]];
+        }
+    }
+    return locations;
+}
+ */
+
+
+
 
 @end

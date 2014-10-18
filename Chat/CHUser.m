@@ -17,6 +17,8 @@
 
 #define ONE_HOUR 60*60
 
+NSString *const kCHUserDoNotDisturbKey = @"doNotDisturb";
+
 @interface CHUser ()
 
 @property (nonatomic, retain) UIColor * avatarColor;
@@ -35,12 +37,10 @@ static CHUser *_currentUser = nil;
 + (instancetype)currentUser;
 {
     if (!_currentUser) {
-        DLog(@"Start");
         _currentUser = [CHUser MR_findFirstWithPredicate:[NSPredicate predicateWithFormat:@"currentUser = YES"]];
         if (_currentUser.sessionToken) {
             [[CHNetworkManager sharedManager] setSessionToken:_currentUser.sessionToken];
         }
-        DLog(@"End");
     }
     return _currentUser;
 }
@@ -55,33 +55,31 @@ static CHUser *_currentUser = nil;
 
 - (PMKPromise *)login;
 {
-    return [[CHNetworkManager sharedManager] loginWithUser:self].then(^(CHUser *user){
+    return [[CHNetworkManager sharedManager] loginWithUser:self].then(^(){
         self.currentUserValue = YES;
+        _currentUser = self;
         [[NSManagedObjectContext MR_defaultContext] MR_saveToPersistentStoreAndWait];
-        return [[CHNetworkManager sharedManager] currentUserProfile];
+        return [self profile].then(^{
+            return self;
+        });
     });
+}
+
+- (PMKPromise *)profile;
+{
+    return [[CHNetworkManager sharedManager] currentUserProfile];
 }
 
 - (PMKPromise *)registr;
 {
-    return [[CHNetworkManager sharedManager] registerWithUser:self].then(^(NSDictionary *response){
-#warning Not done, set last values here
-        [[NSManagedObjectContext MR_defaultContext] MR_saveToPersistentStoreAndWait];
-        return self;
+    return [[CHNetworkManager sharedManager] registerWithUser:self].then(^{
+        return [self login];
     });
 }
 
 - (BOOL)isLoggedIn;
 {
     return self.sessionToken != nil;
-}
-
-- (PMKPromise *)logout;
-{
-    _currentUser = nil;
-    self.currentUserValue = NO;
-    [[NSManagedObjectContext MR_defaultContext] MR_saveToPersistentStoreAndWait];
-    return [[CHNetworkManager sharedManager] logout];
 }
 
 - (PMKPromise *)leaveGroupAtIndex:(NSUInteger)index;
@@ -165,6 +163,21 @@ static CHUser *_currentUser = nil;
     }
 }
 
+- (PMKPromise *)logout:(BOOL)all;
+{
+    return [[CHNetworkManager sharedManager] logout:all].then(^{
+        _currentUser = nil;
+    });
+}
+
+- (PMKPromise *)promiseDoNotDisturb:(BOOL)value;
+{
+    return [[CHNetworkManager sharedManager] updateUserSettings:@{kCHUserDoNotDisturbKey: @(value)}].then(^{
+        DLog(@"Value: %d", value);
+        [self setDoNotDisturbValue:value];
+    });
+}
+
 - (void)setAvatar:(UIImage *)avatar;
 {
     self.privateAvatar = avatar;
@@ -197,17 +210,6 @@ static CHUser *_currentUser = nil;
 
 #pragma mark - Mantle / Core Data
 
-//- (void)willSave;
-//{
-//    [super willSave];
-//    NSManagedObjectContext *context = [NSThread isMainThread] ? [NSManagedObjectContext MR_defaultContext] : CHBackgroundContext.backgroundContext.context;
-//    NSPredicate *predicate = [NSPredicate predicateWithFormat:@"SELF.authorId == %@ AND SELF.author == nil", self.chID];
-//    NSArray *messages = [CHMessage MR_findAllWithPredicate:predicate inContext:context];
-//    for (CHMessage *message in messages) {
-//        message.author = self;
-//    }
-//}
-
 - (void)removeGroupsObject:(CHGroup *)value_;
 {
     NSMutableOrderedSet *tmpOrderedSet = [NSMutableOrderedSet orderedSetWithOrderedSet:[self mutableOrderedSetValueForKey:@"groups"]];
@@ -230,6 +232,17 @@ static CHUser *_currentUser = nil;
     [tmpOrderedSet addObject:value_];
     [self setPrimitiveValue:tmpOrderedSet forKey:@"pastGroups"];
     [self didChange:NSKeyValueChangeInsertion valuesAtIndexes:indexes forKey:@"pastGroups"];
+}
+
+- (void)addGroupsObject:(CHGroup *)value_
+{
+    NSMutableOrderedSet *tmpOrderedSet = [NSMutableOrderedSet orderedSetWithOrderedSet:[self mutableOrderedSetValueForKey:@"pastGroups"]];
+    NSUInteger idx = [tmpOrderedSet count];
+    NSIndexSet* indexes = [NSIndexSet indexSetWithIndex:idx];
+    [self willChange:NSKeyValueChangeInsertion valuesAtIndexes:indexes forKey:@"groups"];
+    [tmpOrderedSet addObject:value_];
+    [self setPrimitiveValue:tmpOrderedSet forKey:@"groups"];
+    [self didChange:NSKeyValueChangeInsertion valuesAtIndexes:indexes forKey:@"groups"];
 }
 
 

@@ -29,7 +29,7 @@
 - (void)viewDidLayoutSubviews;
 {
     [super viewDidLayoutSubviews];
-    [self.usernameTextField becomeFirstResponder];
+//    [self.usernameTextField becomeFirstResponder];
 }
 
 - (BOOL)textFieldShouldReturn:(UITextField *)textField;
@@ -48,10 +48,17 @@
 - (IBAction)createAccount:(id)sender;
 {
     if ([self canRegister]) {
-#warning Not sure if this works
         CHUser *user = [CHUser userWithUsername:_usernameTextField.text password:_passwordTextField.text];
         user.registr.then(^{
-            [self fulfill:user];
+            if (self.onRegister) {
+                self.onRegister(user);
+            }
+        }).catch(^(NSError *error) {
+            [[[UIAlertView alloc] initWithTitle:@"Error"
+                                       message:error.localizedDescription
+                                      delegate:nil
+                             cancelButtonTitle:@"OK"
+                              otherButtonTitles:nil] show];
         });
     }
 }

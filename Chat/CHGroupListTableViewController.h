@@ -13,5 +13,6 @@
 @interface CHGroupListTableViewController : UITableViewController <UITableViewDataSource, UITableViewDelegate>
 
 @property (nonatomic, strong) CHUser *currentUser;
+- (IBAction)newGroup:(id)sender;
 
 @end

@@ -33,4 +33,6 @@
 + (instancetype)object:(NSManagedObject *)object toContext:(NSManagedObjectContext *)context;
 + (instancetype)objectID:(NSManagedObjectID *)anID toContext:(NSManagedObjectContext *)context;
 
++ (void)deleteAll;
+
 @end

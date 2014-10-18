@@ -22,11 +22,12 @@
 - (PMKPromise *)registerWithUser:(CHUser *)user;
 - (PMKPromise *)loginWithUser:(CHUser *)user;
 - (PMKPromise *)currentUserProfile;
+- (PMKPromise *)updateUserSettings:(NSDictionary *)settings;
 - (PMKPromise *)currentUserGroups;
-- (PMKPromise *)logout;
+- (PMKPromise *)logout:(BOOL)all;
 - (PMKPromise *)avatarForUser:(CHUser *)user;
 - (PMKPromise *)leaveGroup:(NSString *)groupId;
-- (PMKPromise *)newGroupWithName:(id)name members:(NSArray *)members;
+- (PMKPromise *)newGroupWithName:(NSString *)name members:(NSArray *)members message:(NSString *)message;
 - (PMKPromise *)messagesForGroup:(CHGroup *)group page:(NSInteger)page;
 - (PMKPromise *)postMediaMessageWithImage:(UIImage *)image
                                   groupId:(NSString *)groupId

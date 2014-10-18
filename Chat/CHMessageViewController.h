@@ -7,28 +7,37 @@
 //
 
 #import <UIKit/UIKit.h>
-#import "SocketIO.h"
 #import "CHSocketManager.h"
-#import "HPGrowingTextView.h"
 #import "DBCameraViewController.h"
 #import "DBCameraContainerViewController.h"
-#import "CHMessageTableDelegate.h"
+#import "SLKTextViewController.h"
 
 @class CHGroup, CHProgressView;
 
-@interface CHMessageViewController : UIViewController <UITextFieldDelegate,  UITextViewDelegate, UITableViewDelegate, HPGrowingTextViewDelegate, DBCameraViewControllerDelegate, CHMessageTableDelegate>
+@interface CHMessageViewController : SLKTextViewController <
+    UITextViewDelegate,
+    UITableViewDelegate,
+    DBCameraViewControllerDelegate
+>
 
 @property (nonatomic, strong) CHGroup *group;
-@property (nonatomic, strong) NSString *groupId;
+@property (nonatomic, copy) void (^loadInNewMessages)(NSArray *messageIDs);
+@property (nonatomic, assign) NSInteger page;
 
-@property (weak, nonatomic) IBOutlet UITableView *messageTable;
-@property (weak, nonatomic) IBOutlet NSLayoutConstraint *bottomDistance;
-@property (weak, nonatomic) IBOutlet UIView *messageBarView;
-@property (strong, nonatomic) IBOutlet CHProgressView *progressBar;
+- (instancetype)initWithGroup:(CHGroup *)group;
+- (void)refreshOn:(BOOL)on;
+- (PMKPromise *)messagesAtPage:(NSUInteger)page;
+- (void)textUpdated;
+- (void)loadNextMessages;
 
-@property (nonatomic, strong) UIView *containerView;
-@property (nonatomic, strong) HPGrowingTextView *textView;
-
--(void)expandImage:(UIImage *)image;
+//@property (weak, nonatomic) IBOutlet UITableView *messageTable;
+//@property (weak, nonatomic) IBOutlet NSLayoutConstraint *bottomDistance;
+//@property (weak, nonatomic) IBOutlet UIView *messageBarView;
+//@property (strong, nonatomic) IBOutlet CHProgressView *progressBar;
+//
+//@property (nonatomic, strong) UIView *containerView;
+//@property (nonatomic, strong) HPGrowingTextView *textView;
+//
+//-(void)expandImage:(UIImage *)image;
 
 @end

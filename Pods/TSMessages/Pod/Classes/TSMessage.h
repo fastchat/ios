@@ -39,7 +39,6 @@ typedef NS_ENUM(NSInteger, TSMessageNotificationType) {
 };
 typedef NS_ENUM(NSInteger, TSMessageNotificationPosition) {
     TSMessageNotificationPositionTop = 0,
-    TSMessageNotificationPositionNavBarOverlay,
     TSMessageNotificationPositionBottom
 };
 

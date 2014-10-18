@@ -259,7 +259,6 @@
 
 - (void)textViewDidChange:(UITextView *)textView
 {
-#warning Add in Typing
 //    CHUser *currUser = [[CHNetworkManager sharedManager] currentUser];
 //    NSMutableDictionary *data = [[NSMutableDictionary alloc] initWithDictionary:@{@"from": currUser.userId, @"text" : @"", @"group": @""}];
 //    
