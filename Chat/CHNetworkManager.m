@@ -67,8 +67,7 @@ NSString *const SESSION_TOKEN = @"session-token";
                NSString *token = responseObject[SESSION_TOKEN];
                user.sessionToken = token;
                [self setSessionToken:token];
-               fulfiller(user);
-               
+               fulfiller(nil);
            } failure:^(NSURLSessionDataTask *task, NSError *error) {
                DLog(@"Error: %@", error);
                rejecter(error);
@@ -84,6 +83,7 @@ NSString *const SESSION_TOKEN = @"session-token";
                NSLog(@"Register Response: %@", responseObject);
                fulfiller(responseObject);
         } failure:^(NSURLSessionDataTask *task, NSError *error) {
+            DLog(@"Erorr: %@ %@", error, task.response);
             rejecter(error);
         }];
     }];
@@ -94,24 +94,49 @@ NSString *const SESSION_TOKEN = @"session-token";
     return [PMKPromise new:^(PMKPromiseFulfiller fulfiller, PMKPromiseRejecter rejecter) {
         [self GET:@"/user" parameters:nil success:^(NSURLSessionDataTask *task, id responseObject) {
             DLog(@"Profile: %@", responseObject);
-            
-            NSManagedObjectContext *context = [CHBackgroundContext backgroundContext].context;
-            id q = [CHBackgroundContext backgroundContext].queue;
-            
-            CHUser *user = [CHUser object:[CHUser currentUser] toContext:context];
-            user.username = responseObject[@"profile"][@"username"];
-            user.chID = responseObject[@"profile"][@"_id"];
-            [context performBlock:^{
-                [CHGroup objectsFromJSON:responseObject[@"profile"][@"groups"]].thenOn(q, ^(NSArray *groups) {
-                    user.groups = [NSOrderedSet orderedSetWithSet:[NSSet setWithArray:groups]];
-                }).thenOn(q, ^{
-                    return [CHGroup objectsFromJSON:responseObject[@"profile"][@"leftGroups"]];
-                }).thenOn(q, ^(NSArray *past){
-                    user.pastGroups = [NSOrderedSet orderedSetWithSet:[NSSet setWithArray:past]];
+            // This must be on the main thread
+            id q = dispatch_get_main_queue();
+            dispatch_async(q, ^{
+                NSManagedObjectContext *context = [NSManagedObjectContext MR_defaultContext];
+                CHUser *user = [CHUser currentUser];
+                user.chID = responseObject[@"profile"][@"_id"];
+                
+                id backgroundQ = [CHBackgroundContext backgroundContext].queue;
+                [CHGroup objectsFromJSON:responseObject[@"profile"][@"groups"]].thenOn(backgroundQ, ^(NSArray *groups) {
+                    DLog(@"Made %@", groups);
+                    NSManagedObjectContext *bContext = [CHBackgroundContext backgroundContext].context;
+                    [bContext reset];
+                    return [CHGroup MR_findAllInContext:bContext];
+                }).then(^(NSArray *groups) {
+                    DLog(@"Start %@", groups);
+                    NSMutableArray *actualGroups = [NSMutableArray array];
+                    for (CHGroup *g in groups) {
+                        CHGroup *transfered = [CHGroup objectID:g.actualObjectId toContext:context];
+                        if (transfered) {
+                            [actualGroups addObject:transfered];
+                        }
+                    }
+                    
+                    DLog(@"Groups %@", actualGroups);
+                    user.groups = [NSOrderedSet orderedSetWithSet:[NSSet setWithArray:actualGroups]];
+                }).then(^{
+#warning Fix on ship
+                    return @[];//[CHGroup objectsFromJSON:responseObject[@"profile"][@"leftGroups"]];
+                }).then(^(NSArray *past) {
+                    NSMutableArray *actualGroups = [NSMutableArray array];
+                    for (CHGroup *g in past) {
+                        CHGroup *transfered = [CHGroup objectID:g.actualObjectId toContext:context];
+                        if (transfered) {
+                            [actualGroups addObject:transfered.actualObjectId];
+                        }
+                    }
+                    user.pastGroups = [NSOrderedSet orderedSetWithSet:[NSSet setWithArray:actualGroups]];
+                }).then(^{
                     [self saveWithContext:context];
-                    fulfiller(nil);
+                    DLog(@"USERNAME: %@", user.username);
+                    fulfiller(user);
                 });
-            }];
+            });
         } failure:^(NSURLSessionDataTask *task, NSError *error) {
             DLog(@"Error: %@", error);
             rejecter(error);
