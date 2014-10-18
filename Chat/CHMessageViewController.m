@@ -35,10 +35,10 @@ NSString *const CHRefreshCellIdentifier = @"CHRefreshCellIdentifier";
 @property (atomic, copy) NSArray *messageIDs;
 @property (nonatomic, strong) NSMutableOrderedSet *messages;
 @property (nonatomic, strong) URBMediaFocusViewController *mediaFocus;
-@property (nonatomic, strong) UIImage *media;
 @property (nonatomic, strong) CHProgressView *progressBar;
 @property (nonatomic, assign) BOOL refreshing;
 @property (nonatomic, assign) BOOL isHiding;
+@property (nonatomic, strong) UIImage *image;
 
 @end
 
@@ -62,9 +62,7 @@ NSString *const CHRefreshCellIdentifier = @"CHRefreshCellIdentifier";
         self.tableView.backgroundColor = kLightBackgroundColor;
         self.typingIndicatorView.backgroundColor = kLightBackgroundColor;
         self.textView.placeholder = @"Send FastChat";
-        [self.leftButton setImage:[UIImage imageNamed:@"Attach"] forState:UIControlStateNormal];
-//        [self.leftButton addTarget:self action:@selector(mediaButtonTapped:) forControlEvents:UIControlEventTouchUpInside];
-        self.leftButton.imageEdgeInsets = UIEdgeInsetsMake(6, 7, 14, 7);
+        [self setLeftButtonImage:nil];
         self.textView.keyboardType = kCHKeyboardType;
         [[[GAI sharedInstance] defaultTracker] set:kGAIScreenName value:@"Messages"];
         [[[GAI sharedInstance] defaultTracker] send:[[GAIDictionaryBuilder createScreenView] build]];
@@ -160,6 +158,18 @@ NSString *const CHRefreshCellIdentifier = @"CHRefreshCellIdentifier";
         [self loadNextMessages];
     }
     return self;
+}
+
+- (void)setLeftButtonImage:(UIImage *)image;
+{
+    UIEdgeInsets insets = UIEdgeInsetsZero;
+    if (!image) {
+        image = [UIImage imageNamed:@"Attach"];
+        insets = UIEdgeInsetsMake(6, 7, 14, 7);
+    }
+    
+    [self.leftButton setImage:image forState:UIControlStateNormal];
+    self.leftButton.imageEdgeInsets = insets;
 }
 
 - (void)viewWillAppear:(BOOL)animated;
@@ -576,9 +586,9 @@ NSString *const CHRefreshCellIdentifier = @"CHRefreshCellIdentifier";
     newMessage.group = self.group;
     newMessage.sent = [NSDate date];
     
-    if (self.media) {
+    if (self.image) {
         newMessage.hasMedia = @YES;
-        newMessage.theMediaSent = self.media;
+        newMessage.theMediaSent = self.image;
     }
     
     [self.group addMessagesObject:newMessage];
@@ -596,6 +606,8 @@ NSString *const CHRefreshCellIdentifier = @"CHRefreshCellIdentifier";
     });
     
     self.textView.text = @"";
+    [self setLeftButtonImage:nil];
+    self.image = nil;
     [self.typingIndicatorView removeUsername:[CHUser currentUser].username];
 }
 
@@ -744,8 +756,6 @@ NSString *const CHRefreshCellIdentifier = @"CHRefreshCellIdentifier";
 
 - (void)mediaButtonTapped:(id)sender;
 {
-    return;
-    
     UINavigationController *nav = [[UINavigationController alloc] initWithRootViewController:[[DBCameraContainerViewController alloc] initWithDelegate:self]];
     [nav setNavigationBarHidden:YES];
     [self presentViewController:nav animated:YES completion:nil];
@@ -753,36 +763,15 @@ NSString *const CHRefreshCellIdentifier = @"CHRefreshCellIdentifier";
 
 - (void)camera:(id)cameraViewController didFinishWithImage:(UIImage *)image withMetadata:(NSDictionary *)metadata;
 {
-//    [self didPasteMediaContent:@{@"image": image}];
+    self.image = image;
     
-    CGFloat height = image.size.height;
-    CGFloat width = image.size.width;
-    CGFloat max = 150.0;
+    CGSize size = CGSizeMake(30, 30);
+    UIGraphicsBeginImageContextWithOptions(size, NO, 0.0);
+    [image drawInRect:CGRectMake(0, 0, size.width, size.height)];
+    UIImage *newImage = UIGraphicsGetImageFromCurrentImageContext();
+    UIGraphicsEndImageContext();
+    [self setLeftButtonImage:newImage];
     
-    if (height > width && height > 150) {
-        CGFloat ratio = height / max;
-        height = height / ratio;
-        width = width / ratio;
-    } else if (width >= height && width > 150) {
-        CGFloat ratio = width / max;
-        height = height / ratio;
-        width = width / ratio;
-    }
-    
-    CGSize size = CGSizeMake(width, height);
-    
-    NSTextAttachment *textAttachment = [[NSTextAttachment alloc] init];
-    textAttachment.image = image;
-    textAttachment.bounds = CGRectMake(0, 0, size.width, size.height);
-    
-    NSMutableAttributedString *string = [[NSMutableAttributedString alloc] initWithString:self.textView.text];
-    [string appendAttributedString:[NSAttributedString attributedStringWithAttachment:textAttachment]];
-    self.textView.text = nil;
-    self.textView.attributedText = string;
-//    self.textView.font = [UIFont systemFontOfSize:16];
-//    self.attachedImage = image;
-    [self.view setNeedsDisplay];
-
     [self.presentedViewController dismissViewControllerAnimated:YES completion:nil];
 }
 
@@ -831,7 +820,7 @@ NSString *const CHRefreshCellIdentifier = @"CHRefreshCellIdentifier";
 
 - (BOOL)canSendMessage;
 {
-    return self.textView.text.length > 0 || self.media != nil;
+    return self.textView.text.length > 0 || self.image != nil;
 }
 
 

@@ -1,3 +1,8 @@
+# FastChat 0.7.0-Beta2 #
+* Fixed creating groups - you can now create lovely groups.
+* 
+
+
 # FastChat 0.7.0-Beta1 #
 
 * First Beta. This has quite a few bugs, mainly with past groups and usernames not appearing. If it’s obvious, I know about it.
