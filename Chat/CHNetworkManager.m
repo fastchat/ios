@@ -422,6 +422,27 @@ NSString *const SESSION_TOKEN = @"session-token";
     }];
 }
 
+- (PMKPromise *)imageFromURL:(NSURL *)url;
+{
+    NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:url];
+    AFHTTPRequestOperation *operation = [[AFHTTPRequestOperation alloc] initWithRequest:request];
+    operation.responseSerializer = [AFImageResponseSerializer serializer];
+    
+    return [PMKPromise new:^(PMKPromiseFulfiller fulfill, PMKPromiseRejecter reject) {
+        [operation setCompletionBlockWithSuccess:^(AFHTTPRequestOperation *operation, id responseObject) {
+            
+            
+            
+            fulfill(responseObject);
+        } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+            NSLog(@"IMAGEERROR: %@", error);
+            reject(error);
+        }];
+        [operation start];
+    }];
+
+}
+
 
 - (AFHTTPRequestOperation *)HTTPRequestOperationWithRequest:(NSURLRequest *)request
                                                     success:(void (^)(AFHTTPRequestOperation *operation, id responseObject))success

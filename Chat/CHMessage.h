@@ -9,6 +9,8 @@
 @interface CHMessage : _CHMessage
 
 - (PMKPromise *)media;
+- (PMKPromise *)addedContent;
+- (PMKPromise *)mediaForURL:(NSURL *)url;
 - (CHUser *)getAuthorNonRecursive;
 
 @end

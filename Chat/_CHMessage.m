@@ -7,6 +7,7 @@ const struct CHMessageAttributes CHMessageAttributes = {
 	.authorId = @"authorId",
 	.groupId = @"groupId",
 	.hasMedia = @"hasMedia",
+	.hasURLMedia = @"hasURLMedia",
 	.mediaHeight = @"mediaHeight",
 	.mediaWidth = @"mediaWidth",
 	.rowHeight = @"rowHeight",
@@ -52,6 +53,11 @@ const struct CHMessageFetchedProperties CHMessageFetchedProperties = {
 	
 	if ([key isEqualToString:@"hasMediaValue"]) {
 		NSSet *affectingKey = [NSSet setWithObject:@"hasMedia"];
+		keyPaths = [keyPaths setByAddingObjectsFromSet:affectingKey];
+		return keyPaths;
+	}
+	if ([key isEqualToString:@"hasURLMediaValue"]) {
+		NSSet *affectingKey = [NSSet setWithObject:@"hasURLMedia"];
 		keyPaths = [keyPaths setByAddingObjectsFromSet:affectingKey];
 		return keyPaths;
 	}
@@ -111,6 +117,32 @@ const struct CHMessageFetchedProperties CHMessageFetchedProperties = {
 
 - (void)setPrimitiveHasMediaValue:(BOOL)value_ {
 	[self setPrimitiveHasMedia:[NSNumber numberWithBool:value_]];
+}
+
+
+
+
+
+@dynamic hasURLMedia;
+
+
+
+- (BOOL)hasURLMediaValue {
+	NSNumber *result = [self hasURLMedia];
+	return [result boolValue];
+}
+
+- (void)setHasURLMediaValue:(BOOL)value_ {
+	[self setHasURLMedia:[NSNumber numberWithBool:value_]];
+}
+
+- (BOOL)primitiveHasURLMediaValue {
+	NSNumber *result = [self primitiveHasURLMedia];
+	return [result boolValue];
+}
+
+- (void)setPrimitiveHasURLMediaValue:(BOOL)value_ {
+	[self setPrimitiveHasURLMedia:[NSNumber numberWithBool:value_]];
 }
 
 

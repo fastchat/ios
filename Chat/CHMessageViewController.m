@@ -281,6 +281,29 @@ NSString *const CHRefreshCellIdentifier = @"CHRefreshCellIdentifier";
     for (UIGestureRecognizer *recognizer in cell.gestureRecognizers) {
         [cell removeGestureRecognizer:recognizer];
     }
+    
+    message.addedContent.then(^(UIImage *image){
+        DLog(@"IMAGE FOUND: %@", image);
+        if (!image) return;
+        
+        CGSize size = [self boundsForImage:image];
+        NSTextAttachment *textAttachment = [[NSTextAttachment alloc] init];
+        textAttachment.image = image;
+        textAttachment.bounds = CGRectMake(0, 0, size.width, size.height);
+        
+        UITapGestureRecognizer *tap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(imageTapped:)];
+        [cell.messageTextView addGestureRecognizer:tap];
+        
+        NSMutableAttributedString *string = [[NSMutableAttributedString alloc] init];
+        [string appendAttributedString:[[NSAttributedString alloc] initWithString:message.text]];
+        [string appendAttributedString:[NSAttributedString attributedStringWithAttachment:textAttachment]];
+        [string addAttributes:attributes range:NSMakeRange(0, string.length)];
+        cell.messageTextView.attributedText = string;
+        message.hasURLMediaValue = YES;
+        [self.tableView beginUpdates];
+        [self.tableView endUpdates];
+    });
+    
     if (message.hasMediaValue) {
         message.media.then(^(UIImage *image){
             CGSize size = [self boundsForImage:image];
@@ -325,7 +348,7 @@ NSString *const CHRefreshCellIdentifier = @"CHRefreshCellIdentifier";
     }
     
     CHMessage *message = self.messages[indexPath.row];
-    if (message.rowHeightValue > 0) {
+    if (message.rowHeightValue > 0 && !message.hasURLMediaValue) {
         return message.rowHeightValue;
     }
     
@@ -336,7 +359,7 @@ NSString *const CHRefreshCellIdentifier = @"CHRefreshCellIdentifier";
     
     CGFloat height = rect.size.height;
     // Adding 45.0 to fix the bug where messages of certain lengths don't size the cell properly.
-    if( message.hasMedia.boolValue) {
+    if( message.hasMediaValue || message.hasURLMediaValue) {
         height += 150.0f;
     }
     height += 45.0f;

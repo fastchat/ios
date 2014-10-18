@@ -12,32 +12,43 @@
 
 @interface CHMessage ()
 
+@property (nonatomic, strong) UIImage *urlImage;
+
 @end
 
 
 @implementation CHMessage
 
+@synthesize urlImage;
+
 - (PMKPromise *)media;
 {
-    if (!self.hasMediaValue) {
-        return [PMKPromise new:^(PMKPromiseFulfiller fulfill, PMKPromiseRejecter reject) {
+    return [PMKPromise new:^(PMKPromiseFulfiller fulfill, PMKPromiseRejecter reject) {
+        if (self.theMediaSent) {
+            fulfill(self.theMediaSent);
+            return;
+        }
+        if (self.urlImage) {
+            fulfill(self.urlImage);
+            return;
+        }
+        
+        if (!self.hasMediaValue) {
             reject(nil);
-        }];
-    }
+        }
+        
+        fulfill([[CHNetworkManager sharedManager] mediaForMessage:self].then(^(UIImage *image){
+            self.theMediaSent = image;
+            [[NSManagedObjectContext MR_defaultContext] MR_saveOnlySelfWithCompletion:^(BOOL success, NSError *error) {
+                DLog(@"Background save of image downloaded. Success?: %@ %@", success ? @"YES" : @"NO", error);
+            }];
+            return image;
+        }));
+        
+
+    }];
     
-    if (self.theMediaSent) {
-        return [PMKPromise new:^(PMKPromiseFulfiller fulfiller, PMKPromiseRejecter rejecter) {
-            fulfiller(self.theMediaSent);
-        }];
-    }
     
-    return [[CHNetworkManager sharedManager] mediaForMessage:self].then(^(UIImage *image){
-        self.theMediaSent = image;
-        [[NSManagedObjectContext MR_defaultContext] MR_saveOnlySelfWithCompletion:^(BOOL success, NSError *error) {
-            DLog(@"Background save of image downloaded. Success?: %@ %@", success ? @"YES" : @"NO", error);
-        }];
-        return image;
-    });
 }
 
 - (void)setAuthorId:(NSString *)authorId;
@@ -70,6 +81,30 @@
         user = self.author;
     }
     return user;
+}
+
+- (PMKPromise *)addedContent;
+{
+    return [PMKPromise new:^(PMKPromiseFulfiller fulfill, PMKPromiseRejecter reject) {
+        NSDataDetector *linkDetector = [NSDataDetector dataDetectorWithTypes:NSTextCheckingTypeLink error:nil];
+        NSArray *matches = [linkDetector matchesInString:self.text options:0 range:NSMakeRange(0, self.text.length)];
+        for (NSTextCheckingResult *match in matches) {
+            DLog(@"MATCH %@", match);
+            if ([match resultType] == NSTextCheckingTypeLink) {
+                fulfill([self mediaForURL:match.URL]);
+                return;
+            }
+        }
+        reject(nil);
+    }];
+}
+
+- (PMKPromise *)mediaForURL:(NSURL *)url;
+{
+    return [[CHNetworkManager sharedManager] imageFromURL:url].then(^(UIImage *image){
+        self.urlImage = image;
+        return image;
+    });
 }
 
 @end

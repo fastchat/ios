@@ -36,6 +36,7 @@
 - (PMKPromise *)newUsers:(NSArray *)invitees forGroup:(CHGroup *)group;
 - (PMKPromise *)newAvatar:(UIImage *)image forUser:(CHUser *)user;
 - (PMKPromise *)postDeviceToken:(NSData *)token;
+- (PMKPromise *)imageFromURL:(NSURL *)url;
 
 
 @end

@@ -367,6 +367,8 @@ SLKPastableMediaType SLKPastableMediaTypeFromNSString(NSString *string)
         // Inserting the text fixes a UITextView bug whitch automatically scrolls to the bottom
         // and beyond scroll content size sometimes when the text is too long
         [self slk_insertTextAtCaretRange:pastedItem];
+    } else {
+        [super paste:sender];
     }
 }
 

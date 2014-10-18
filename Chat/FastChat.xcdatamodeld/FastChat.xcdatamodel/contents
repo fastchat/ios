@@ -13,6 +13,7 @@
         <attribute name="authorId" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="groupId" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="hasMedia" optional="YES" attributeType="Boolean" syncable="YES"/>
+        <attribute name="hasURLMedia" optional="YES" transient="YES" attributeType="Boolean" syncable="YES"/>
         <attribute name="mediaHeight" optional="YES" attributeType="Double" defaultValueString="0.0" syncable="YES"/>
         <attribute name="mediaWidth" optional="YES" attributeType="Double" defaultValueString="0.0" syncable="YES"/>
         <attribute name="rowHeight" optional="YES" attributeType="Float" defaultValueString="-1" syncable="YES"/>
@@ -38,7 +39,7 @@
     </entity>
     <elements>
         <element name="CHGroup" positionX="0" positionY="0" width="128" height="150"/>
-        <element name="CHMessage" positionX="0" positionY="0" width="128" height="225"/>
+        <element name="CHMessage" positionX="0" positionY="0" width="128" height="240"/>
         <element name="CHModel" positionX="18" positionY="81" width="128" height="58"/>
         <element name="CHUser" positionX="0" positionY="0" width="128" height="163"/>
     </elements>
