@@ -1,6 +1,9 @@
+# FastChat 0.7.0 #
+* Fixed image sending.
+
 # FastChat 0.7.0-Beta2 #
 * Fixed creating groups - you can now create lovely groups.
-* 
+* If a new group is created while you are in the app, it now instantly appears (SOCKETS)
 
 
 # FastChat 0.7.0-Beta1 #
