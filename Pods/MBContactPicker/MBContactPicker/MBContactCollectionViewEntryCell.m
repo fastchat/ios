@@ -49,7 +49,6 @@
     UITextField *textField = [[UITextField alloc] initWithFrame:self.bounds];
     textField.delegate = self.delegate;
     textField.text = @" ";
-    textField.autocorrectionType = UITextAutocorrectionTypeNo;
 #ifdef DEBUG_BORDERS
     self.layer.borderColor = [UIColor orangeColor].CGColor;
     self.layer.borderWidth = 1.0;
