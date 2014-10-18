@@ -98,7 +98,6 @@ NSString *const kCHArgs = @"args";
 
 }
 
-//TODO: Refactor
 - (void) socketIO:(SocketIO *)socket didReceiveEvent:(SocketIOPacket *)packet;
 {
     DLog("PACKET: %@", packet);
