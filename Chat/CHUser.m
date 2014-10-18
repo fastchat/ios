@@ -37,12 +37,10 @@ static CHUser *_currentUser = nil;
 + (instancetype)currentUser;
 {
     if (!_currentUser) {
-        DLog(@"Start");
         _currentUser = [CHUser MR_findFirstWithPredicate:[NSPredicate predicateWithFormat:@"currentUser = YES"]];
         if (_currentUser.sessionToken) {
             [[CHNetworkManager sharedManager] setSessionToken:_currentUser.sessionToken];
         }
-        DLog(@"End");
     }
     return _currentUser;
 }
@@ -57,20 +55,20 @@ static CHUser *_currentUser = nil;
 
 - (PMKPromise *)login;
 {
-    return [[CHNetworkManager sharedManager] loginWithUser:self].then(^(CHUser *user){
+    return [[CHNetworkManager sharedManager] loginWithUser:self].then(^(){
         self.currentUserValue = YES;
         _currentUser = self;
         [[NSManagedObjectContext MR_defaultContext] MR_saveToPersistentStoreAndWait];
-        return [[CHNetworkManager sharedManager] currentUserProfile];
+        return [[CHNetworkManager sharedManager] currentUserProfile].then(^{
+            return self;
+        });
     });
 }
 
 - (PMKPromise *)registr;
 {
-    return [[CHNetworkManager sharedManager] registerWithUser:self].then(^(NSDictionary *response){
-#warning Not done, set last values here
-        [[NSManagedObjectContext MR_defaultContext] MR_saveToPersistentStoreAndWait];
-        return self;
+    return [[CHNetworkManager sharedManager] registerWithUser:self].then(^{
+        return [self login];
     });
 }
 
