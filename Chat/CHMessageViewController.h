@@ -28,6 +28,7 @@
 - (void)refreshOn:(BOOL)on;
 - (PMKPromise *)messagesAtPage:(NSUInteger)page;
 - (void)textUpdated;
+- (void)loadNextMessages;
 
 //@property (weak, nonatomic) IBOutlet UITableView *messageTable;
 //@property (weak, nonatomic) IBOutlet NSLayoutConstraint *bottomDistance;

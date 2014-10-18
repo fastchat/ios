@@ -229,7 +229,7 @@
 {
     CHMessageNewGroupViewController *vc =[[CHMessageNewGroupViewController alloc] init];
     UINavigationController *nav = [[UINavigationController alloc] initWithRootViewController:vc];
-    [self promiseViewController:nav animated:YES completion:nil].then(^(CHMessageNewGroupViewController *finished){
+    [self promiseViewController:nav animated:YES completion:nil].then(^(CHMessageNewGroupViewController *finished) {
         [self.navigationController pushViewController:finished animated:NO];
         [self dismissViewControllerAnimated:NO completion:nil];
     }).catch(^{

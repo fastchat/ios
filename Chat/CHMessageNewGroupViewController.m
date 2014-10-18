@@ -55,9 +55,9 @@
     return self;
 }
 
-- (void)loadView;
+- (void)viewDidLoad;
 {
-    [super loadView];
+    [super viewDidLoad];
     [self addViewConstraints];
 }
 
@@ -75,8 +75,14 @@
         NSDictionary *views = @{@"contactPickerView": self.contactPickerView,
                                 @"textInputbar": self.textInputbar};
         
-        [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|-(0)-[contactPickerView]|" options:0 metrics:nil views:views]];
-        [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|-[contactPickerView]-[textInputbar]" options:0 metrics:nil views:views]];
+        [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|-(0)-[contactPickerView]|"
+                                                                          options:0
+                                                                          metrics:nil
+                                                                            views:views]];
+        [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|-[contactPickerView]-[textInputbar]"
+                                                                          options:0
+                                                                          metrics:nil
+                                                                            views:views]];
     }
 }
 
@@ -90,17 +96,18 @@
     return _contactPickerView;
 }
 
-
 - (void)loadNextMessages;
 {
-    if (self.group != nil) {
-        [self actuallyLoad];
+    if (self.group) {
+        [super loadNextMessages];
     }
 }
 
 - (void)textUpdated;
 {
-    //override to do nothing
+    if (self.group) {
+        [super textUpdated];
+    }
 }
 
 - (void)actuallyLoad;
@@ -117,18 +124,26 @@
 
 - (void)didPressRightButton:(id)sender;
 {
-    [CHGroup groupWithName:nil members:self.addedContacts message:self.textView.text].then(^(CHGroup *group) {
-        
-        self.group = group;
-        [self fulfill:self];
-    }).catch(^(NSError *error) {
-
-        [[[UIAlertView alloc] initWithTitle:@"Error"
-                                   message:error.localizedDescription
-                                  delegate:nil
-                         cancelButtonTitle:@"OK"
-                          otherButtonTitles:nil] show];
-    });
+    if (self.group) {
+        [super didPressRightButton:sender];
+    } else {
+        [CHGroup groupWithName:nil members:self.addedContacts message:self.textView.text].then(^(CHGroup *group) {
+            self.group = group;
+            self.title = self.group.name;
+            [self.contactPickerView removeFromSuperview];
+            [self.textView becomeFirstResponder];
+            [self loadNextMessages];
+            self.textView.text = @"";
+            [self fulfill:self];
+        }).catch(^(NSError *error) {
+            
+            [[[UIAlertView alloc] initWithTitle:@"Error"
+                                        message:error.localizedDescription
+                                       delegate:nil
+                              cancelButtonTitle:@"OK"
+                              otherButtonTitles:nil] show];
+        });
+    }
 }
 
 - (void)updateRightButtonEnabledState;
