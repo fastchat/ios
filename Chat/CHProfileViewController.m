@@ -40,6 +40,7 @@ NSString *const kStoryboardIDKey = @"kStoryboardIDKey";
     self.user = [CHUser currentUser];
     self.title = @"Profile";
     self.userNameLabel.text = self.user.username;
+    DLog(@"The fuck: %@", self.user.username);
     self.settings = [self tableRepresentation];
     self.privacyPolicy = @{kCellIdentifier: @"",
                            @"textLabel.text": @"Privacy Policy",
@@ -95,6 +96,7 @@ NSString *const kStoryboardIDKey = @"kStoryboardIDKey";
         CHGroup *group = self.user.pastGroups[indexPath.row];
         UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:CHPastGroupCellIdentifier forIndexPath:indexPath];
         cell.textLabel.text = group.name;
+//        cell.detailTextLabel.text = [NSString stringWithFormat:@"Chat With: %@", [group.allUsersnames componentsJoinedByString:@", "]];
         return cell;
     } else {
         CHDynamicCell *cell = [tableView dequeueReusableCellWithIdentifier:CHChevronCell forIndexPath:indexPath];
