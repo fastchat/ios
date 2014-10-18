@@ -119,18 +119,17 @@ NSString *const SESSION_TOKEN = @"session-token";
                     
                     DLog(@"Groups %@", actualGroups);
                     user.groups = [NSOrderedSet orderedSetWithSet:[NSSet setWithArray:actualGroups]];
-                }).then(^{
-#warning Fix on ship
-                    return @[];//[CHGroup objectsFromJSON:responseObject[@"profile"][@"leftGroups"]];
-                }).then(^(NSArray *past) {
-                    NSMutableArray *actualGroups = [NSMutableArray array];
-                    for (CHGroup *g in past) {
-                        CHGroup *transfered = [CHGroup objectID:g.actualObjectId toContext:context];
-                        if (transfered) {
-                            [actualGroups addObject:transfered.actualObjectId];
-                        }
-                    }
-                    user.pastGroups = [NSOrderedSet orderedSetWithSet:[NSSet setWithArray:actualGroups]];
+//                }).thenOn(backgroundQ, ^{
+//                    return [CHGroup objectsFromJSON:responseObject[@"profile"][@"leftGroups"]];
+//                }).then(^(NSArray *past) {
+//                    NSMutableArray *actualGroups = [NSMutableArray array];
+//                    for (CHGroup *g in past) {
+//                        CHGroup *transfered = [CHGroup objectID:g.actualObjectId toContext:context];
+//                        if (transfered) {
+//                            [actualGroups addObject:transfered.actualObjectId];
+//                        }
+//                    }
+//                    user.pastGroups = [NSOrderedSet orderedSetWithSet:[NSSet setWithArray:actualGroups]];
                 }).then(^{
                     [self saveWithContext:context];
                     DLog(@"USERNAME: %@", user.username);

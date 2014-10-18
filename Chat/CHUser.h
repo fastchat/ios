@@ -16,6 +16,7 @@
 + (instancetype)userWithUsername:(NSString *)username password:(NSString *)password;
 - (PMKPromise *)login;
 - (PMKPromise *)registr; //not a spelling mistake, register is a protected word
+- (PMKPromise *)profile;
 - (PMKPromise *)logout:(BOOL)all;
 - (BOOL)isLoggedIn;
 - (UIColor *)color;

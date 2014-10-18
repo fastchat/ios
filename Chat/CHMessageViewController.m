@@ -659,7 +659,7 @@ NSString *const CHRefreshCellIdentifier = @"CHRefreshCellIdentifier";
 - (void)otherGroupMessage:(CHMessage *)message;
 {
     AudioServicesPlaySystemSound(kSystemSoundID_Vibrate);
-#warning Broken
+//TODO: Fix this when it updates.
     /*
     [TSMessage showNotificationInViewController:self.navigationController
                                           title:message.group.name
@@ -744,6 +744,8 @@ NSString *const CHRefreshCellIdentifier = @"CHRefreshCellIdentifier";
 
 - (void)mediaButtonTapped:(id)sender;
 {
+    return;
+    
     UINavigationController *nav = [[UINavigationController alloc] initWithRootViewController:[[DBCameraContainerViewController alloc] initWithDelegate:self]];
     [nav setNavigationBarHidden:YES];
     [self presentViewController:nav animated:YES completion:nil];
@@ -786,6 +788,8 @@ NSString *const CHRefreshCellIdentifier = @"CHRefreshCellIdentifier";
 
 - (void)didPasteImageNotification:(NSNotification *)note;
 {
+    return;
+    
     NSDictionary *info = note.userInfo;
 //    DLog(@"Info: %@", info);
     UIImage *image = [UIImage imageWithData:info[SLKTextViewPastedItemData]];

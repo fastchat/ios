@@ -59,10 +59,15 @@ static CHUser *_currentUser = nil;
         self.currentUserValue = YES;
         _currentUser = self;
         [[NSManagedObjectContext MR_defaultContext] MR_saveToPersistentStoreAndWait];
-        return [[CHNetworkManager sharedManager] currentUserProfile].then(^{
+        return [self profile].then(^{
             return self;
         });
     });
+}
+
+- (PMKPromise *)profile;
+{
+    return [[CHNetworkManager sharedManager] currentUserProfile];
 }
 
 - (PMKPromise *)registr;
