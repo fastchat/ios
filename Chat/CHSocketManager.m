@@ -125,6 +125,7 @@ NSString *const kCHArgs = @"args";
     } else if ([packet.dataAsJSON[kCHPacketName] isEqualToString:kCHPacketNameNewGroup]) {
         NSDictionary *data = [packet.dataAsJSON[kCHArgs] firstObject];
         CHGroup *group = [CHGroup objectFromJSON:data];
+        DLog(@"Group: %@", group);
         [[NSManagedObjectContext MR_defaultContext] MR_saveToPersistentStoreWithCompletion:^(BOOL success, NSError *error) {
             DLog(@"Socket IO Background Save Completed. Error? %@", error);
             [[NSNotificationCenter defaultCenter] postNotificationName:kNewGroupNotification

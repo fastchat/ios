@@ -82,8 +82,6 @@
 
 - (void)reloadTableView;
 {
-    DLog(@"reloading table view");
-    
     void (^reload)() = ^{ [self.tableView reloadData]; };
     
     if ([NSThread isMainThread]) {
@@ -106,7 +104,8 @@
     NSArray *updatedOrInserted = [updatedObjects arrayByAddingObjectsFromArray:insertedObjects];
     
     if (updatedOrInserted.count > 0) {
-        NSArray *groups = [updatedObjects filteredArrayUsingPredicate:[NSPredicate predicateWithBlock:^BOOL(id evaluatedObject, NSDictionary *bindings) {
+        NSArray *groups = [updatedOrInserted filteredArrayUsingPredicate:[NSPredicate predicateWithBlock:^BOOL(id evaluatedObject, NSDictionary *bindings) {
+            DLog(@"Evaluated: %@ %d", evaluatedObject, [evaluatedObject isKindOfClass:[CHGroup class]]);
             return [evaluatedObject isKindOfClass:[CHGroup class]];
         }]];
         

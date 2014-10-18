@@ -170,6 +170,7 @@ NSString *const SESSION_TOKEN = @"session-token";
 {
     return [PMKPromise new:^(PMKPromiseFulfiller fulfiller, PMKPromiseRejecter rejecter) {
         [self GET:@"/group" parameters:nil success:^(NSURLSessionDataTask *task, id responseObject) {
+            DLog(@"Groups: %@", responseObject);
             
             NSManagedObjectContext *context = [CHBackgroundContext backgroundContext].context;
             id q = [CHBackgroundContext backgroundContext].queue;
