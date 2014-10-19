@@ -13,6 +13,9 @@
 #import "CHMessage.h"
 #import "UIActionSheet+PromiseKit.h"
 #import "CHDynamicCell.h"
+#import "STKWebKitViewController.h"
+#import "SVWebViewControllerActivitySafari.h"
+#import "SVWebViewControllerActivityChrome.h"
 
 NSString *const CHPastGroupCellIdentifier = @"CHPastGroupCell";
 NSString *const CHChevronCell = @"CHChevronCell";
@@ -44,7 +47,17 @@ NSString *const kStoryboardIDKey = @"kStoryboardIDKey";
     self.settings = [self tableRepresentation];
     self.privacyPolicy = @{kCellIdentifier: @"",
                            @"textLabel.text": @"Privacy Policy",
-                           kStoryboardIDKey: @"CHPrivacyPolicyViewController",
+                           @"action" : ^(NSIndexPath *path){
+                               NSURL *url = [NSURL URLWithString:@"http://www.fastchat.io/#/privacy"];
+                               STKWebKitViewController *controller = [[STKWebKitViewController alloc] initWithURL:url];
+                               
+                               SVWebViewControllerActivitySafari *safari = [SVWebViewControllerActivitySafari new];
+                               SVWebViewControllerActivityChrome *chrome = [SVWebViewControllerActivityChrome new];
+                               
+                               controller.applicationActivities = @[safari, chrome];
+                               controller.hidesBottomBarWhenPushed = YES;
+                               [self.navigationController pushViewController:controller animated:YES];
+                           },
                            @"accessoryOption": @(UITableViewCellAccessoryDisclosureIndicator)
                            };
     
