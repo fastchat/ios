@@ -8,12 +8,14 @@
 
 #import <Foundation/Foundation.h>
 
+//f4ba5d3cda6140d68a278d77f6d90de5
+
 #define CLASS_PREFIX @"CH"
 
-//#define LOCAL 1
+#define LOCAL 1
 #ifdef LOCAL
     #define BASE_PROTOCOL @"http://"
-    #define BASE_URL @"localhost"
+    #define BASE_URL @"10.0.0.3"
     #define BASE_PORT 3000
     #define BASE_PATH [NSString stringWithFormat:@"%@%@:%lu", BASE_PROTOCOL, BASE_URL, (unsigned long)BASE_PORT]
 #else
