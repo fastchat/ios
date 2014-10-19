@@ -48,7 +48,7 @@ PODS:
   - OMGHTTPURLRQ/UserAgent (2.1):
     - OMGHTTPURLRQ/FormURLEncode
     - OMGHTTPURLRQ/UserAgent
-  - PromiseKit (0.9.17):
+  - PromiseKit (1.0):
     - PromiseKit/NSNotificationCenter
     - PromiseKit/NSURLConnection
     - PromiseKit/Pause
@@ -58,26 +58,26 @@ PODS:
     - PromiseKit/UIViewController
     - PromiseKit/Until
     - PromiseKit/When
-  - PromiseKit/NSNotificationCenter (0.9.17):
+  - PromiseKit/NSNotificationCenter (1.0):
     - PromiseKit/Promise
-  - PromiseKit/NSURLConnection (0.9.17):
+  - PromiseKit/NSURLConnection (1.0):
     - OMGHTTPURLRQ
     - PromiseKit/Promise
-  - PromiseKit/Pause (0.9.17):
+  - PromiseKit/Pause (1.0):
     - PromiseKit/Promise
-  - PromiseKit/Promise (0.9.17)
-  - PromiseKit/UIActionSheet (0.9.17):
+  - PromiseKit/Promise (1.0)
+  - PromiseKit/UIActionSheet (1.0):
     - PromiseKit/Promise
-  - PromiseKit/UIAlertView (0.9.17):
+  - PromiseKit/UIAlertView (1.0):
     - PromiseKit/Promise
-  - PromiseKit/UIView (0.9.17):
+  - PromiseKit/UIView (1.0):
     - PromiseKit/Promise
-  - PromiseKit/UIViewController (0.9.17):
+  - PromiseKit/UIViewController (1.0):
     - PromiseKit/Promise
-  - PromiseKit/Until (0.9.17):
+  - PromiseKit/Until (1.0):
     - PromiseKit/Promise
     - PromiseKit/When
-  - PromiseKit/When (0.9.17):
+  - PromiseKit/When (1.0):
     - PromiseKit/Promise
   - SlackTextViewController (1.2.5):
     - SlackTextViewController/Additions
@@ -103,7 +103,7 @@ DEPENDENCIES:
   - Mantle (= 1.5)
   - MBContactPicker (= 0.1.4)
   - MBProgressHUD (= 0.9)
-  - PromiseKit (= 0.9.17)
+  - PromiseKit (= 1.0.0)
   - SlackTextViewController (= 1.2.5)
   - socket.IO (= 0.5.2)
   - STKWebKitViewController (= 0.1.6)
@@ -124,7 +124,7 @@ SPEC CHECKSUMS:
   MBContactPicker: f3ad9c973cdc8ed6caa92a104dbc314f155f3ea6
   MBProgressHUD: 2038dbcf3dce73215abed6001657043d53aa79a8
   OMGHTTPURLRQ: 16564bcee86d8dfa298b65cdf60015c3065f67df
-  PromiseKit: 7a18d7b8d41a156cda0268c3cb065d272d5aa554
+  PromiseKit: 3a8eb40bb66c8f74ebd629f03ad8b0d5581a744c
   SlackTextViewController: 54b4ab0fd8a29c1e254d05ab7cfd1aaebea5620d
   socket.IO: db3e71805c862038ab73209dda2b0ad6babc54b2
   SocketRocket: 79a68ae186063c65e1fe6f638b1ae2927aa5f304
@@ -133,4 +133,4 @@ SPEC CHECKSUMS:
   UIResponder+KeyboardCache: e267fd88f3414e8e7ccf7644f25c4701812a1d2b
   URBMediaFocusViewController: 4dff9de3767e60b96ba325c897d4ffa7131a122e
 
-COCOAPODS: 0.34.2
+COCOAPODS: 0.34.4
