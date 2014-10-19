@@ -17,6 +17,10 @@
 #import "CHUser.h"
 #import "CHConstants.h"
 
+NSString *const kCHKeyData = @"data";
+NSString *const kCHKeyType = @"type";
+NSString *const kCHKeyAcknowledgement = @"ack";
+
 NSString *const kCHPacketName = @"name";
 NSString *const kCHPacketNameMessage = @"message";
 NSString *const kCHPacketNameTyping = @"typing";
@@ -30,6 +34,7 @@ NSString *const kCHArgs = @"args";
 @property (nonatomic, strong) SocketIO *socket;
 @property (nonatomic, assign) BOOL disconnecting;
 @property (nonatomic, assign, getter=isSending) BOOL sending;
+@property (nonatomic, strong) NSMutableArray *queue;
 
 @end
 
@@ -53,6 +58,8 @@ NSString *const kCHArgs = @"args";
     if (self) {
         self.disconnecting = NO;
         self.sending = NO;
+        self.queue = [NSMutableArray array];
+        _progress = 0.0;
     }
     return self;
 }
@@ -62,10 +69,12 @@ NSString *const kCHArgs = @"args";
     return _socket;
 }
 
--(void)openSocket;
+- (void)openSocket;
 {
     self.disconnecting = NO;
     self.sending = NO;
+    _progress = 0.0;
+    [self.queue removeAllObjects];
 
     if( !_socket ) {
         _socket = [[SocketIO alloc] initWithDelegate:self];
@@ -74,7 +83,6 @@ NSString *const kCHArgs = @"args";
     if ([CHUser currentUser].sessionToken) {
         [_socket connectToHost:BASE_URL onPort:BASE_PORT withParams:@{@"token": [CHUser currentUser].sessionToken}];
     }
-    DLog(@"Open Socket End");
 }
 
 // Socket io stuff
@@ -98,7 +106,7 @@ NSString *const kCHArgs = @"args";
 
 }
 
-- (void) socketIO:(SocketIO *)socket didReceiveEvent:(SocketIOPacket *)packet;
+- (void)socketIO:(SocketIO *)socket didReceiveEvent:(SocketIOPacket *)packet;
 {
     DLog("PACKET: %@", packet);
     if ([packet.dataAsJSON[kCHPacketName] isEqualToString:kCHPacketNameMessage]) {
@@ -138,15 +146,29 @@ NSString *const kCHArgs = @"args";
 
 - (void)sendMessageWithData:(NSDictionary *)data acknowledgement:(void (^)(id argsData))acknowledgement;
 {
-    self.sending = YES;
-    [_socket sendEvent:@"message" withData:data andAcknowledge:^(id argsData) {
-        self.sending = NO;
-        if (acknowledgement) {
-            acknowledgement(argsData);
+    [self.queue addObject:@{kCHKeyData: data,
+                            kCHKeyAcknowledgement: acknowledgement,
+                            kCHKeyType: @"message"
+                            }];
+    [self send];
+}
+
+- (void)send;
+{
+    if (self.queue.count == 0) {
+        if (self.disconnecting) [self closeSocket];
+        return;
+    }
+    
+    NSDictionary *payload = self.queue[0];
+    [self.queue removeObjectAtIndex:0];
+    
+    [_socket sendEvent:payload[kCHKeyType] withData:payload[kCHKeyData] andAcknowledge:^(id argsData) {
+        void (^ack)(id args) = payload[kCHKeyAcknowledgement];
+        if (ack) {
+            ack(argsData);
         }
-        if (self.disconnecting) {
-            [self closeSocket];
-        }
+        [self send];
     }];
 }
 
@@ -157,13 +179,13 @@ NSString *const kCHArgs = @"args";
 
 - (void)closeSocket;
 {
-    if (!self.isSending) {
+    self.disconnecting = YES;
+    if (self.queue.count == 0) {
         [_socket disconnect];
         _socket = nil;
-    } else {
-        self.disconnecting = YES;
+        self.disconnecting = NO;
+        _progress = 0.0;
     }
-    
 }
 
 @end
