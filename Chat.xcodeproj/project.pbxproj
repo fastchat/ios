@@ -59,6 +59,7 @@
 		AA46332119365DDF00513578 /* CHAuthTextField.m in Sources */ = {isa = PBXBuildFile; fileRef = AA46332019365DDF00513578 /* CHAuthTextField.m */; };
 		AA4633241936735F00513578 /* CHGroupTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = AA4633231936735F00513578 /* CHGroupTableViewCell.m */; };
 		AA46332719367A5F00513578 /* CHUnreadView.m in Sources */ = {isa = PBXBuildFile; fileRef = AA46332619367A5F00513578 /* CHUnreadView.m */; };
+		AA51E50119F43DC0009CF572 /* StoreKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = AA51E50019F43DC0009CF572 /* StoreKit.framework */; };
 		AA55576419E1A543000C3ED7 /* Launch Screen.xib in Resources */ = {isa = PBXBuildFile; fileRef = AA55576319E1A543000C3ED7 /* Launch Screen.xib */; };
 		AA7759DA18D54D3000E4E7AB /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = AA7759D918D54D3000E4E7AB /* Foundation.framework */; };
 		AA7759DC18D54D3000E4E7AB /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = AA7759DB18D54D3000E4E7AB /* CoreGraphics.framework */; };
@@ -162,6 +163,8 @@
 		AA4633231936735F00513578 /* CHGroupTableViewCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CHGroupTableViewCell.m; sourceTree = "<group>"; };
 		AA46332519367A5F00513578 /* CHUnreadView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CHUnreadView.h; sourceTree = "<group>"; };
 		AA46332619367A5F00513578 /* CHUnreadView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CHUnreadView.m; sourceTree = "<group>"; };
+		AA51E50019F43DC0009CF572 /* StoreKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = StoreKit.framework; path = System/Library/Frameworks/StoreKit.framework; sourceTree = SDKROOT; };
+		AA51E50219F43E04009CF572 /* Chat.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = Chat.entitlements; sourceTree = "<group>"; };
 		AA55576319E1A543000C3ED7 /* Launch Screen.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = "Launch Screen.xib"; sourceTree = "<group>"; };
 		AA7759D618D54D3000E4E7AB /* Chat.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Chat.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		AA7759D918D54D3000E4E7AB /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
@@ -228,6 +231,7 @@
 			files = (
 				AA7759DC18D54D3000E4E7AB /* CoreGraphics.framework in Frameworks */,
 				AA7759DE18D54D3000E4E7AB /* UIKit.framework in Frameworks */,
+				AA51E50119F43DC0009CF572 /* StoreKit.framework in Frameworks */,
 				AA7759DA18D54D3000E4E7AB /* Foundation.framework in Frameworks */,
 				2C7FD1E6FB44435B8A225753 /* libPods-Chat.a in Frameworks */,
 			);
@@ -467,6 +471,7 @@
 		AA7759D818D54D3000E4E7AB /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				AA51E50019F43DC0009CF572 /* StoreKit.framework */,
 				AA7759D918D54D3000E4E7AB /* Foundation.framework */,
 				AA7759DB18D54D3000E4E7AB /* CoreGraphics.framework */,
 				AA7759DD18D54D3000E4E7AB /* UIKit.framework */,
@@ -490,6 +495,7 @@
 		AA7759E018D54D3000E4E7AB /* Supporting Files */ = {
 			isa = PBXGroup;
 			children = (
+				AA51E50219F43E04009CF572 /* Chat.entitlements */,
 				AA13D1F819D70F640008BADB /* Strings */,
 				AA7759F418D54D3000E4E7AB /* Images.xcassets */,
 				AA7759E118D54D3000E4E7AB /* Chat-Info.plist */,
@@ -650,6 +656,17 @@
 				TargetAttributes = {
 					AA7759D518D54D3000E4E7AB = {
 						DevelopmentTeam = X5BAWYYBBG;
+						SystemCapabilities = {
+							com.apple.BackgroundModes = {
+								enabled = 1;
+							};
+							com.apple.InAppPurchase = {
+								enabled = 1;
+							};
+							com.apple.iCloud = {
+								enabled = 1;
+							};
+						};
 					};
 				};
 			};
@@ -917,14 +934,15 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
-				CODE_SIGN_IDENTITY = "iPhone Developer: Ethan Mick (EDMS7P324S)";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer: Ethan Mick (EDMS7P324S)";
+				CODE_SIGN_ENTITLEMENTS = Chat/Chat.entitlements;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "Chat/Chat-Prefix.pch";
 				INFOPLIST_FILE = "Chat/Chat-Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE = "0f7c149a-b571-4d5d-8c47-947c04da2164";
+				PROVISIONING_PROFILE = "";
 				TARGETED_DEVICE_FAMILY = "1,2";
 				WRAPPER_EXTENSION = app;
 			};
@@ -936,14 +954,15 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
-				CODE_SIGN_IDENTITY = "iPhone Distribution: Ethan Mick (X5BAWYYBBG)";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution: Ethan Mick (X5BAWYYBBG)";
+				CODE_SIGN_ENTITLEMENTS = Chat/Chat.entitlements;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "Chat/Chat-Prefix.pch";
 				INFOPLIST_FILE = "Chat/Chat-Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE = "4057bbca-0878-469e-b9b5-6e5d599d0c55";
+				PROVISIONING_PROFILE = "";
 				TARGETED_DEVICE_FAMILY = "1,2";
 				WRAPPER_EXTENSION = app;
 			};
