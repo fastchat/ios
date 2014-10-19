@@ -168,7 +168,7 @@ NSString *const CHRefreshCellIdentifier = @"CHRefreshCellIdentifier";
         insets = UIEdgeInsetsMake(6, 7, 14, 7);
     }
     
-    [self.leftButton setImage:image forState:UIControlStateNormal];
+    [self.leftButton setImage:[image imageWithRenderingMode:UIImageRenderingModeAlwaysOriginal] forState:UIControlStateNormal];
     self.leftButton.imageEdgeInsets = insets;
 }
 
