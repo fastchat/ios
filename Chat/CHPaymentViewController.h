@@ -8,6 +8,6 @@
 
 #import <UIKit/UIKit.h>
 
-@interface CHPaymentViewController : UIViewController
+@interface CHPaymentViewController : UITableViewController
 
 @end
