@@ -25,6 +25,5 @@ target "Chat" do
   pod 'MBContactPicker', '0.1.4'
   pod 'CargoBay', '2.1.0'
   pod 'UIResponder+KeyboardCache', '0.1'
-  pod 'BugshotKit', '0.1'
 end
 

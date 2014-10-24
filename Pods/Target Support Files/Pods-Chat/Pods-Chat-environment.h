@@ -48,12 +48,6 @@
 #define COCOAPODS_VERSION_MINOR_AFNetworking_UIKit 4
 #define COCOAPODS_VERSION_PATCH_AFNetworking_UIKit 1
 
-// BugshotKit
-#define COCOAPODS_POD_AVAILABLE_BugshotKit
-#define COCOAPODS_VERSION_MAJOR_BugshotKit 0
-#define COCOAPODS_VERSION_MINOR_BugshotKit 1
-#define COCOAPODS_VERSION_PATCH_BugshotKit 0
-
 // CargoBay
 #define COCOAPODS_POD_AVAILABLE_CargoBay
 #define COCOAPODS_VERSION_MAJOR_CargoBay 2

@@ -20,7 +20,6 @@ PODS:
   - AFNetworking/UIKit (2.4.1):
     - AFNetworking/NSURLConnection
     - AFNetworking/NSURLSession
-  - BugshotKit (0.1.0)
   - CargoBay (2.1.0):
     - AFNetworking (~> 2.2)
   - ColorArt (0.1.1)
@@ -97,7 +96,6 @@ PODS:
 
 DEPENDENCIES:
   - AFNetworking (= 2.4.1)
-  - BugshotKit (= 0.1)
   - CargoBay (= 2.1.0)
   - ColorArt (= 0.1.1)
   - DBCamera (= 2.3.5)
@@ -116,7 +114,6 @@ DEPENDENCIES:
 
 SPEC CHECKSUMS:
   AFNetworking: 0aabc6fae66d6e5d039eeb21c315843c7aae51ab
-  BugshotKit: 1c8bc57927dacc56e53c9ef628a4dc2df300887a
   CargoBay: b9b7c2b6a466192fb218935c0dd771d16268a035
   ColorArt: f734aa2f988b2be4e9a064c1818d8f8320488110
   DBCamera: 0095227e0d2d0292c5a2cc400fe75687120e6f29

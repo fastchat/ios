@@ -43,8 +43,7 @@ install_resource()
       ;;
   esac
 }
-          install_resource "BugshotKit/Resources/Inconsolata.otf"
-                    install_resource "DBCamera/DBCamera/Resources/DBCameraImages.xcassets"
+          install_resource "DBCamera/DBCamera/Resources/DBCameraImages.xcassets"
                     install_resource "DBCamera/DBCamera/Localizations/en.lproj"
                     install_resource "DBCamera/DBCamera/Localizations/es.lproj"
                     install_resource "DBCamera/DBCamera/Localizations/it.lproj"
