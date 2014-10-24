@@ -12,7 +12,6 @@
 #import "CHUser.h"
 #import "TSMessage.h"
 #import "CHBackgroundContext.h"
-#import "BugshotKit.h"
 #import "CHMessageViewController.h"
 #import "CHGroup.h"
 #import "UIResponder+KeyboardCache.h"
@@ -38,10 +37,6 @@
     ///
     [UIResponder cacheKeyboard];
     
-    ///
-    /// Bugshot kit!
-    ///
-    [BugshotKit enableWithNumberOfTouches:1 performingGestures:BSKInvocationGestureSwipeFromRightEdge feedbackEmailAddress:@"ethanmski@gmail.com"];
     ///
     /// Setup the networking layer and get ready to connect
     ///
