@@ -42,6 +42,7 @@ NSString *const SESSION_TOKEN = @"session-token";
 
 - (instancetype)initWithBaseURL:(NSURL *)url {
     if( (self = [super initWithBaseURL:[NSURL URLWithString:BASE_PATH]]) ) {
+        self.requestSerializer = [AFJSONRequestSerializer serializer];
         [AFNetworkActivityIndicatorManager sharedManager].enabled = YES;
         self.completionQueue = [CHBackgroundContext backgroundContext].queue;
     }
