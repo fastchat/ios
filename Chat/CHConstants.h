@@ -12,7 +12,7 @@
 
 #define CLASS_PREFIX @"CH"
 
-#define LOCAL 1
+//#define LOCAL 1
 #ifdef LOCAL
     #define BASE_PROTOCOL @"http://"
     #define BASE_URL @"10.0.0.3"

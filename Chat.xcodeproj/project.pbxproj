@@ -941,6 +941,7 @@
 				CODE_SIGN_ENTITLEMENTS = Chat/Chat.entitlements;
 				CODE_SIGN_IDENTITY = "iPhone Developer: Ethan Mick (EDMS7P324S)";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer: Ethan Mick (EDMS7P324S)";
+				CODE_SIGN_RESOURCE_RULES_PATH = "$(SDKROOT)/ResourceRules.plist";
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "Chat/Chat-Prefix.pch";
 				INFOPLIST_FILE = "Chat/Chat-Info.plist";
@@ -961,12 +962,13 @@
 				CODE_SIGN_ENTITLEMENTS = Chat/Chat.entitlements;
 				CODE_SIGN_IDENTITY = "iPhone Distribution: Ethan Mick (X5BAWYYBBG)";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution: Ethan Mick (X5BAWYYBBG)";
+				CODE_SIGN_RESOURCE_RULES_PATH = "$(SDKROOT)/ResourceRules.plist";
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "Chat/Chat-Prefix.pch";
 				INFOPLIST_FILE = "Chat/Chat-Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE = "2ddd9fbf-2e5c-4d25-848c-bc924b35af02";
+				PROVISIONING_PROFILE = "5d9c01bd-7a80-4d37-b7ac-dc9bfbe642bd";
 				TARGETED_DEVICE_FAMILY = "1,2";
 				WRAPPER_EXTENSION = app;
 			};
