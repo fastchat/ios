@@ -109,28 +109,13 @@ NSString *const CHRefreshCellIdentifier = @"CHRefreshCellIdentifier";
                 [strongSelf.messages sortUsingDescriptors:@[sortDescriptor]];
                 [justInserted sortUsingDescriptors:@[sortDescriptor]];
                 
-                NSMutableArray *indexesToDelete = [NSMutableArray array];
-                if (justInserted.count == kPageSize) {
-                    for (NSInteger i = ([strongSelf.messages indexOfObject:justInserted.lastObject]) + 1; i < strongSelf.messages.count; i++) {
-                        DLog(@"i %ld", (long)i);
-                        [indexesToDelete addObject:[NSIndexPath indexPathForRow:i inSection:0]];
-                    }
-                }
-                
                 NSMutableArray *indexes = [NSMutableArray array];
                 for (CHMessage *inserted in justInserted) {
                     NSInteger index = [strongSelf.messages indexOfObject:inserted];
                     [indexes addObject:[NSIndexPath indexPathForRow:index inSection:0]];
                 }
                 
-                DLog(@"Deleting: %@", indexesToDelete);
-                DLog(@"Inserting: %@", indexes);
-                
                 [strongSelf.tableView insertRowsAtIndexPaths:indexes withRowAnimation:UITableViewRowAnimationAutomatic];
-                dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.0 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-//                    [strongSelf.tableView deleteRowsAtIndexPaths:indexesToDelete withRowAnimation:UITableViewRowAnimationAutomatic];
-                });
-
                 [strongSelf.tableView endUpdates];
                 
             }
@@ -176,13 +161,6 @@ NSString *const CHRefreshCellIdentifier = @"CHRefreshCellIdentifier";
 {
     [super viewWillAppear:animated];
     self.textView.text = self.group.unsentText;
-}
-
-// need a better way to check this, so it doesn't popup on rotate.
-- (void)viewWillLayoutSubviews;
-{
-    [super viewWillLayoutSubviews];
-//    [self.textView becomeFirstResponder];
 }
 
 - (void)viewDidAppear:(BOOL)animated;
@@ -763,6 +741,24 @@ NSString *const CHRefreshCellIdentifier = @"CHRefreshCellIdentifier";
 
 - (void)camera:(id)cameraViewController didFinishWithImage:(UIImage *)image withMetadata:(NSDictionary *)metadata;
 {
+    [self addImageToMessage:image];
+    [self dismissCamera:cameraViewController];
+}
+
+- (void)didPasteImageNotification:(NSNotification *)note;
+{
+    NSDictionary *info = note.userInfo;
+    UIImage *image = [UIImage imageWithData:info[SLKTextViewPastedItemData]];
+    [self addImageToMessage:image];
+}
+
+- (void)dismissCamera:(id)cameraViewController;
+{
+    [self dismissViewControllerAnimated:YES completion:nil];
+}
+
+- (void)addImageToMessage:(UIImage *)image;
+{
     self.image = image;
     
     CGSize size = CGSizeMake(30, 30);
@@ -771,144 +767,12 @@ NSString *const CHRefreshCellIdentifier = @"CHRefreshCellIdentifier";
     UIImage *newImage = UIGraphicsGetImageFromCurrentImageContext();
     UIGraphicsEndImageContext();
     [self setLeftButtonImage:newImage];
-    
-    [self.presentedViewController dismissViewControllerAnimated:YES completion:nil];
-}
-
-- (void)didPasteImageNotification:(NSNotification *)note;
-{
-    return;
-    
-    NSDictionary *info = note.userInfo;
-//    DLog(@"Info: %@", info);
-    UIImage *image = [UIImage imageWithData:info[SLKTextViewPastedItemData]];
-    
-    CGFloat height = image.size.height;
-    CGFloat width = image.size.width;
-    CGFloat max = 150.0;
-    
-    if (height > width && height > 150) {
-        CGFloat ratio = height / max;
-        height = height / ratio;
-        width = width / ratio;
-    } else if (width >= height && width > 150) {
-        CGFloat ratio = width / max;
-        height = height / ratio;
-        width = width / ratio;
-    }
-    
-    CGSize size = CGSizeMake(width, height);
-    
-    NSTextAttachment *textAttachment = [[NSTextAttachment alloc] init];
-    textAttachment.image = image;
-    textAttachment.bounds = CGRectMake(0, 0, size.width, size.height);
-    
-    NSMutableAttributedString *string = [[NSMutableAttributedString alloc] initWithString:self.textView.text];
-    [string appendAttributedString:[NSAttributedString attributedStringWithAttachment:textAttachment]];
-    self.textView.text = nil;
-    self.textView.attributedText = string;
-    //    self.textView.font = [UIFont systemFontOfSize:16];
-    //    self.attachedImage = image;
-    [self.view setNeedsDisplay];
-                      
-}
-
-- (void)dismissCamera:(id)cameraViewController;
-{
-    [self dismissViewControllerAnimated:YES completion:nil];
 }
 
 - (BOOL)canSendMessage;
 {
     return self.textView.text.length > 0 || self.image != nil;
 }
-
-
-
-
-
-////
-/*
-- (BOOL)canPerformAction:(SEL)action withSender:(id)sender;
-{
-    NSLog(@"Action? %@ Sender? %@", NSStringFromSelector(action), sender);
-    UIPasteboard *gpBoard = [UIPasteboard generalPasteboard];
-    
-    if ([NSStringFromSelector(action) isEqualToString:@"paste:"] && gpBoard.image) { //add more types later.
-        return YES;
-    }
-    return [super canPerformAction:action withSender:sender];
-}
-
-- (void)paste:(id)sender;
-{
-    UIPasteboard *gpBoard = [UIPasteboard generalPasteboard];
-    UIImage *image = [gpBoard image];
-    if (image) {
-        [self addImage:image];
-    } else {
-        [super paste:sender];
-    }
-}
-
-- (void)addImage:(UIImage *)image;
-{
-    CGFloat height = image.size.height;
-    CGFloat width = image.size.width;
-    CGFloat max = 150.0;
-    
-    if (height > width && height > 150) {
-        CGFloat ratio = height / max;
-        height = height / ratio;
-        width = width / ratio;
-    } else if (width >= height && width > 150) {
-        CGFloat ratio = width / max;
-        height = height / ratio;
-        width = width / ratio;
-    }
-    
-    CGSize size = CGSizeMake(width, height);
-    
-    NSTextAttachment *textAttachment = [[NSTextAttachment alloc] init];
-    textAttachment.image = image;
-    textAttachment.bounds = CGRectMake(0, 0, size.width, size.height);
-    
-    self.displayPlaceHolder = NO;
-    
-    NSMutableAttributedString *string = [[NSMutableAttributedString alloc] initWithAttributedString:self.attributedText];
-    [string appendAttributedString:[NSAttributedString attributedStringWithAttachment:textAttachment]];
-    self.attributedText = string;
-    self.font = [UIFont systemFontOfSize:16];
-    
-    /// again, only supporting 1 for now.
-    self.attachedImage = image;
-    [self setNeedsDisplay];
-}
-
-- (BOOL)hasAttachment;
-{
-    return [self numberOfAttachments] > 0;
-}
-
-- (NSInteger)numberOfAttachments;
-{
-    return [[self locationOfAttachments] count];
-}
-
-- (NSArray *)locationOfAttachments;
-{
-    NSMutableArray *locations = [NSMutableArray array];
-    for (NSInteger i = 0; i < self.attributedText.length; i++) {
-        NSInteger character = [self.attributedText.string characterAtIndex:i];
-        if (character == NSAttachmentCharacter) {
-            [locations addObject:[NSValue valueWithRange:NSMakeRange(i, 1)]];
-        }
-    }
-    return locations;
-}
- */
-
-
 
 
 @end
