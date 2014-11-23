@@ -29,7 +29,7 @@
     /// Race Conditions, go!
     ///
     [CHBackgroundContext backgroundContext].start.then(^{
-        DLog(@"Done Background Context.");
+        
     });
     
     ///
@@ -126,9 +126,9 @@ void uncaughtExceptionHandler(NSException *exception)
 - (void)application:(UIApplication*)application didRegisterForRemoteNotificationsWithDeviceToken:(NSData*)deviceToken
 {
     [[CHNetworkManager sharedManager] postDeviceToken:deviceToken].then(^{
-        DLog(@"Posted Device Token");
+        
     }).catch(^(NSError *error){
-        DLog(@"Error Posting Token: %@", error);
+        
     });
 }
 
@@ -146,7 +146,6 @@ void uncaughtExceptionHandler(NSException *exception)
 {
     if ( application.applicationState == UIApplicationStateInactive || application.applicationState == UIApplicationStateBackground  )
     {
-        NSLog(@"Openned from background! %@", userInfo);
         NSString *groupID = userInfo[@"group"];
         if (groupID && [CHUser currentUser]) {
             
