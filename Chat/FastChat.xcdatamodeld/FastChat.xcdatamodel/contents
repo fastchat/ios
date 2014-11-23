@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<model userDefinedModelVersionIdentifier="" type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="6244" systemVersion="13F34" minimumToolsVersion="Xcode 4.3" macOSVersion="Automatic" iOSVersion="Automatic">
+<model userDefinedModelVersionIdentifier="" type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="6252" systemVersion="13F34" minimumToolsVersion="Xcode 4.3" macOSVersion="Automatic" iOSVersion="Automatic">
     <entity name="CHGroup" representedClassName="CHGroup" parentEntity="CHModel" syncable="YES">
         <attribute name="name" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="unread" optional="YES" attributeType="Integer 16" defaultValueString="0" syncable="YES"/>
@@ -9,7 +9,7 @@
         <relationship name="messages" optional="YES" toMany="YES" deletionRule="Cascade" ordered="YES" destinationEntity="CHMessage" inverseName="group" inverseEntity="CHMessage" syncable="YES"/>
         <relationship name="pastMembers" optional="YES" toMany="YES" deletionRule="Nullify" ordered="YES" destinationEntity="CHUser" inverseName="pastGroups" inverseEntity="CHUser" syncable="YES"/>
     </entity>
-    <entity name="CHMessage" representedClassName="CHMessage" parentEntity="CHModel" syncable="YES">
+    <entity name="CHMessage" representedClassName="CHMessage" parentEntity="CHModel" versionHashModifier="1" syncable="YES">
         <attribute name="authorId" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="groupId" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="hasMedia" optional="YES" attributeType="Boolean" syncable="YES"/>
@@ -23,7 +23,15 @@
         <relationship name="author" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="CHUser" inverseName="messages" inverseEntity="CHUser" syncable="YES"/>
         <relationship name="group" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="CHGroup" inverseName="messages" inverseEntity="CHGroup" syncable="YES"/>
         <relationship name="groupLastMessage" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="CHGroup" inverseName="lastMessage" inverseEntity="CHGroup" syncable="YES"/>
+        <compoundIndexes>
+            <compoundIndex>
+                <index value="groupId"/>
+                <index value="authorId"/>
+                <index value="sent"/>
+            </compoundIndex>
+        </compoundIndexes>
     </entity>
+    <entity name="CHMessageTemp" parentEntity="CHMessage" syncable="YES"/>
     <entity name="CHModel" representedClassName="CHModel" syncable="YES">
         <attribute name="chID" optional="YES" attributeType="String" syncable="YES"/>
     </entity>
@@ -39,8 +47,9 @@
     </entity>
     <elements>
         <element name="CHGroup" positionX="0" positionY="0" width="128" height="150"/>
-        <element name="CHMessage" positionX="0" positionY="0" width="128" height="240"/>
+        <element name="CHMessage" positionX="0" positionY="0" width="128" height="238"/>
         <element name="CHModel" positionX="18" positionY="81" width="128" height="58"/>
         <element name="CHUser" positionX="0" positionY="0" width="128" height="163"/>
+        <element name="CHMessageTemp" positionX="9" positionY="108" width="128" height="45"/>
     </elements>
 </model>

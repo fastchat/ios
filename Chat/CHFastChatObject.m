@@ -21,7 +21,7 @@ NSString *const CLASS_PREFIX_MANTLE = @"CHMTL";
         NSError *error = nil;
         id object = [MTLJSONAdapter modelOfClass:[self class] fromJSONDictionary:dict error:&error];
         if (error) {
-            DLog(@"Error Creating Object: %@", error);
+            
         }
         
         if (object) {
