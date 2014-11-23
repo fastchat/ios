@@ -854,7 +854,6 @@ NSString *const CHRefreshCellIdentifier = @"CHRefreshCellIdentifier";
 /*
 - (BOOL)canPerformAction:(SEL)action withSender:(id)sender;
 {
-    NSLog(@"Action? %@ Sender? %@", NSStringFromSelector(action), sender);
     UIPasteboard *gpBoard = [UIPasteboard generalPasteboard];
     
     if ([NSStringFromSelector(action) isEqualToString:@"paste:"] && gpBoard.image) { //add more types later.
