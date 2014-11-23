@@ -81,7 +81,7 @@ NSString *const SESSION_TOKEN = @"session-token";
     return [PMKPromise new:^(PMKPromiseFulfiller fulfiller, PMKPromiseRejecter rejecter) {
         [self POST:@"/user" parameters:@{@"username" : user.username, @"password" : user.password}
            success:^(NSURLSessionDataTask *task, id responseObject) {
-               NSLog(@"Register Response: %@", responseObject);
+               DLog(@"Register Response: %@", responseObject);
                fulfiller(responseObject);
         } failure:^(NSURLSessionDataTask *task, NSError *error) {
             DLog(@"Erorr: %@ %@", error, task.response);
@@ -317,7 +317,7 @@ NSString *const SESSION_TOKEN = @"session-token";
                                                                           success:^(AFHTTPRequestOperation *operation, id responseObject) {
                                                                               fulfiller(responseObject);
                                                                           } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
-                                                                              NSLog(@"Error: %@", error);
+                                                                              DLog(@"Error: %@", error);
                                                                               rejecter(error);
                                                                           }];
         [self.operationQueue addOperation:operation];
@@ -339,7 +339,7 @@ NSString *const SESSION_TOKEN = @"session-token";
         [requestOperation setCompletionBlockWithSuccess:^(AFHTTPRequestOperation *operation, id responseObject) {
             fulfiller(responseObject);
         } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
-            NSLog(@"Image error: %@", error);
+            DLog(@"Image error: %@", error);
             rejecter(error);
         }];
         
@@ -436,7 +436,7 @@ NSString *const SESSION_TOKEN = @"session-token";
             
             fulfill(responseObject);
         } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
-            NSLog(@"IMAGEERROR: %@", error);
+            DLog(@"IMAGEERROR: %@", error);
             reject(error);
         }];
         [operation start];
