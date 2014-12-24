@@ -17,9 +17,9 @@
 #import <UIKit/UIKit.h>
 
 extern NSString * const SLKTextViewTextWillChangeNotification;
-extern NSString * const SLKTextViewSelectionDidChangeNotification;
 extern NSString * const SLKTextViewContentSizeDidChangeNotification;
-extern NSString * const SLKTextViewDidPasteImageNotification;
+extern NSString * const SLKTextViewDidPasteImageNotification DEPRECATED_ATTRIBUTE;
+extern NSString * const SLKTextViewDidPasteItemNotification;
 extern NSString * const SLKTextViewDidShakeNotification;
 
 extern NSString * const SLKTextViewPastedItemContentType;
@@ -27,16 +27,19 @@ extern NSString * const SLKTextViewPastedItemMediaType;
 extern NSString * const SLKTextViewPastedItemData;
 
 typedef NS_OPTIONS(NSUInteger, SLKPastableMediaType) {
-    SLKPastableMediaTypeNone    = 0,
-    SLKPastableMediaTypePNG     = 1 << 0,
-    SLKPastableMediaTypeJPEG    = 1 << 1,
-    SLKPastableMediaTypeTIFF    = 1 << 2,
-    SLKPastableMediaTypeGIF     = 1 << 3,
-    SLKPastableMediaTypeMOV     = 1 << 4,
-    SLKPastableMediaTypeAll     = SLKPastableMediaTypePNG|SLKPastableMediaTypeJPEG|SLKPastableMediaTypeTIFF|SLKPastableMediaTypeGIF|SLKPastableMediaTypeMOV
+    SLKPastableMediaTypeNone        = 0,
+    SLKPastableMediaTypePNG         = 1 << 0,
+    SLKPastableMediaTypeJPEG        = 1 << 1,
+    SLKPastableMediaTypeTIFF        = 1 << 2,
+    SLKPastableMediaTypeGIF         = 1 << 3,
+    SLKPastableMediaTypeMOV         = 1 << 4,
+    SLKPastableMediaTypePassbook    = 1 << 5,
+    SLKPastableMediaTypeImages      = SLKPastableMediaTypePNG|SLKPastableMediaTypeJPEG|SLKPastableMediaTypeTIFF|SLKPastableMediaTypeGIF,
+    SLKPastableMediaTypeVideos      = SLKPastableMediaTypeMOV,
+    SLKPastableMediaTypeAll         = SLKPastableMediaTypeImages|SLKPastableMediaTypeMOV
 };
 
-/**  @name A custom text input view. */
+/** @name A custom text input view. */
 @interface SLKTextView : UITextView
 
 /** The placeholder text string. */
@@ -51,7 +54,7 @@ typedef NS_OPTIONS(NSUInteger, SLKPastableMediaType) {
 /** The current displayed number of lines. */
 @property (nonatomic, readonly) NSUInteger numberOfLines;
 
-/** The supported media types allowed to be pasted in the text view. Default is All. */
+/** The supported media types allowed to be pasted in the text view, such as images or videos. Default is None. */
 @property (nonatomic) SLKPastableMediaType pastableMediaTypes;
 
 /** YES if the text view is and can still expand it self, depending if the maximum number of lines are reached. */
@@ -63,13 +66,11 @@ typedef NS_OPTIONS(NSUInteger, SLKPastableMediaType) {
 /** YES if the magnifying glass is visible. */
 @property (nonatomic, getter=isLoupeVisible) BOOL loupeVisible;
 
-/**
- Disables iOS8's Quick Type bar.
- The cleanest hack so far is to disable auto-correction and spellingCheck momentarily, while calling -refreshFirstResponder if -isFirstResponder to be able to reflect the property changes in the text view.
- 
- @param disable YES if the bar should be disabled.
- */
-- (void)disableQuicktypeBar:(BOOL)disable;
+/** YES if autocorrection and spell checking are enabled. On iOS8, this property also controls the predictive QuickType bar from being visible. Default is YES. */
+@property (nonatomic, getter=isTypingSuggestionEnabled) BOOL typingSuggestionEnabled;
+
+/** YES if the text view supports undoing, either using UIMenuController, or with ctrl+z when using an external keyboard. Default is YES. */
+@property (nonatomic, readwrite) BOOL undoManagerEnabled;
 
 /**
  Some text view properties don't update when it's already firstResponder (auto-correction, spelling-check, etc.)
@@ -80,5 +81,10 @@ typedef NS_OPTIONS(NSUInteger, SLKPastableMediaType) {
  */
 - (void)refreshFirstResponder;
 - (void)refreshInputViews;
+
+/**
+ Notifies the text view that the user pressed any arrow key. This is used to move the cursor up and down while having multiple lines.
+ */
+- (void)didPressAnyArrowKey:(id)sender;
 
 @end

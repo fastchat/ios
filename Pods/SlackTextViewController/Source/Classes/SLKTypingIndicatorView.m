@@ -15,10 +15,12 @@
 //
 
 #import "SLKTypingIndicatorView.h"
+#import "SLKUIConstants.h"
 
-NSString * const SLKTypingIndicatorViewWillShowNotification = @"com.slack.TextViewController.TypingIndicatorView.WillShow";
-NSString * const SLKTypingIndicatorViewWillHideNotification = @"com.slack.TextViewController.TypingIndicatorView.WillHide";
-NSString * const SLKTypingIndicatorViewIdentifier = @"com.slack.TextViewController.TypingIndicatorView.Identifier";
+NSString * const SLKTypingIndicatorViewWillShowNotification =   @"SLKTypingIndicatorViewWillShowNotification";
+NSString * const SLKTypingIndicatorViewWillHideNotification =   @"SLKTypingIndicatorViewWillHideNotification";
+
+#define SLKTypingIndicatorViewIdentifier    [NSString stringWithFormat:@"%@.%@", SLKTextViewControllerDomain, NSStringFromClass([self class])]
 
 @interface SLKTypingIndicatorView ()
 
@@ -108,7 +110,7 @@ NSString * const SLKTypingIndicatorViewIdentifier = @"com.slack.TextViewControll
         text = [NSString stringWithFormat:NSLocalizedString(@"%@ & %@ are typing", nil), [_usernames firstObject], [_usernames lastObject]];
     }
     else if (_usernames.count > 2) {
-        text = NSLocalizedString(@"several people are typing", nil);
+        text = NSLocalizedString(@"Several people are typing", nil);
     }
     
     NSMutableAttributedString *attributedString = [[NSMutableAttributedString alloc] initWithString:text];
@@ -116,7 +118,6 @@ NSString * const SLKTypingIndicatorViewIdentifier = @"com.slack.TextViewControll
     NSMutableParagraphStyle *style  = [[NSMutableParagraphStyle alloc] init];
     style.alignment = NSTextAlignmentLeft;
     style.lineBreakMode = NSLineBreakByTruncatingTail;
-    style.lineBreakMode = NSLineBreakByWordWrapping;
     style.minimumLineHeight = 10.0;
     
     [attributedString addAttribute:NSParagraphStyleAttributeName value:style range:NSMakeRange(0.0, text.length)];
@@ -271,8 +272,8 @@ NSString * const SLKTypingIndicatorViewIdentifier = @"com.slack.TextViewControll
     NSDictionary *views = @{@"label": self.indicatorLabel};
     NSDictionary *metrics = @{@"lineHeight": lineHeight, @"padding": padding};
     
-    [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|-(>=padding)-[label(==lineHeight)]-(<=padding)-|" options:0 metrics:metrics views:views]];
-    [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|-(==40)-[label]-(<=20)-|" options:0 metrics:metrics views:views]];
+    [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|-(>=padding)-[label(lineHeight)]-(<=padding)-|" options:0 metrics:metrics views:views]];
+    [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|-(40)-[label]-(<=20)-|" options:0 metrics:metrics views:views]];
     
     [self layoutIfNeeded];
 }

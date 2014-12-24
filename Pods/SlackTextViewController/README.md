@@ -17,24 +17,28 @@ This library is used in Slack's iOS app. It was built to fit our needs, but is f
 - Customizable: provides left and right button, and toolbar outlets
 - Tap gesture for dismissing the keyboard
 - Pan gesture for sliding down the keyboard
-- Flexible UI Built with Auto Layout
-- Text append APIs
+- Flexible UI built with Auto Layout
+- Undo/Redo (with keyboard commands and UIMenuController)
+- Text appending APIs
 
 ### Optional
 - Autocomplete mode by registering any prefix key (`@`, `#`, `/`)
 - Edit mode
 - Typing indicator display
 - Shake gesture for undo
-- Image pasting support
+- Multimedia pasting (png, gif, mov, etc.)
 - Inverted mode for displaying cells upside-down (using CATransform) -- a necessary hack for some messaging apps (including ours)
 - Bouncy animations
 
 ### Compatibility
-- iOS 7 & iOS 8
+- iOS 7 & 8
 - iPhone & iPad
-- UIPopOverController & UITabBarController support
-- Auto-Rotation & Localization support
-- External keyboard support for basic commands
+- Storyboard
+- UIPopOverController & UITabBarController
+- Container view controller
+- External keyboard commands
+- Auto-Rotation
+- Localization
 
 ## Installation
 
@@ -63,7 +67,7 @@ or the `UICollectionView` version:
 
 Protocols like `UITableViewDelegate` and `UITableViewDataSource` are already setup for you. You will be able to call whatever delegate and data source methods you need for customising your control.
 
-Calling `[super init]` will call by default `[super initWithStyle:UITableViewStylePlain]`.
+Calling `[super init]` will call `[super initWithStyle:UITableViewStylePlain]` by default.
 
 
 ###Growing Text View
@@ -77,7 +81,7 @@ By default, the number of lines is set to best fit each device dimensions:
 - iPhone 5/6    (>=568pts): 6 lines
 - iPad          (>=768pts): 8 lines
 
-On iPhone devices, in landscape orientation, the maximum number of lines is changed to 2 to best fit the limited height.
+On iPhone devices, in landscape orientation, the maximum number of lines is changed to fit the available space.
 
 ###Autocompletion
 
@@ -121,25 +125,25 @@ Once the prefix has been detected, `-canShowAutoCompletion` will be called. This
 }
 ````
 
-The auto-completion view is a UITableView instance, so you will need to use `UITableViewDataSource` to populate its cells. You also have total freedom for customizing the UITableViewCells displayed here.
+The autocompletion view is a `UITableView` instance, so you will need to use `UITableViewDataSource` to populate its cells. You have complete freedom for customizing the cells.
 
-You don't need to call `-reloadData`, since it will be called automatically if you return `YES` in `-canShowAutoCompletion`.
+You don't need to call `-reloadData` yourself, since it will be called automatically if you return `YES` in `-canShowAutoCompletion` method.
 
 #### 3. Layout
 
-The maximum height of the autocompletion view is set to 140 pts, but you may change the minimum height depending of the amount of cells you are going to display in this tableview.
+The maximum height of the autocompletion view is set to 140 pts by default. You can update this value anytime, so the view automatically adjusts based on the amount of displayed cells.
 
 ````
 - (CGFloat)heightForAutoCompletionView
 {
-    CGFloat cellHeight = [self.autoCompletionView.delegate tableView:self.autoCompletionView heightForRowAtIndexPath:[NSIndexPath indexPathForRow:0 inSection:0]];
+    CGFloat cellHeight = 34.0;
     return cellHeight*self.searchResult.count;
 }
 ````
 
 #### 4. Confirmation
 
-If the user selects any cells presented in the auto-completion view, calling `-tableView:didSelectRowAtIndexPath:`, you must call `-acceptAutoCompletionWithString:` passing the corresponding string matching that item, that you would be insert in the text view.
+If the user selects any autocompletion view cell on `-tableView:didSelectRowAtIndexPath:`, you must call `-acceptAutoCompletionWithString:` to commit autocompletion. That method expects a string matching the selected item, that you would like to be inserted in the text view.
 
 `````
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
@@ -153,16 +157,16 @@ If the user selects any cells presented in the auto-completion view, calling `-t
 }
 ````
 
-The autocompletion view will automatically be dismissed, and the chosen string will be inserted in the view right after the prefix string.
+The autocompletion view will automatically be dismissed and the chosen string will be inserted in the text view, replacing the detected prefix and word.
 
-You can always call `-cancelAutoCompletion` to exit the autocompletion mode.
+You can always call `-cancelAutoCompletion` to exit the autocompletion mode and refresh the UI.
 
 
 ###Edit Mode
 
 ![Edit Mode](Screenshots/screenshot_edit-mode.png)
 
-To enable edit mode, you simply need to call `[self editText:@"hello"];`, and the text input will automatically adjust to the edit mode, removing both left and right buttons, extending the view a bit higher with "Accept" and "Cancel" buttons. Both of this buttons are accessible under `SLKTextInputbar` for customisation.
+To enable edit mode, you simply need to call `[self editText:@"hello"];`, and the text input will switch to edit mode, removing both left and right buttons, extending the input bar a bit higher with "Accept" and "Cancel" buttons. Both of this buttons are accessible in the `SLKTextInputbar` instance for customisation.
 
 To capture the "Accept" or "Cancel" events, you must override the following methods.
 
@@ -232,9 +236,12 @@ Some UITableView layouts may require that new messages enter from bottom to top.
 ###External Keyboard
 
 There a few basic key commands enabled by default:
-- return key -> calls `-didPressRightButton:` or `-didCommitTextEditing:` if in edit mode
-- shift/control + return key -> line break
+- cmd + z -> undo
+- shift + cmd + z -> redo
+- return key -> calls `-didPressRightButton:`, or `-didCommitTextEditing:` if in edit mode
+- shift/cmd + return key -> line break
 - escape key -> exits edit mode, or auto-completion mode, or dismisses the keyboard
+- up & down arrows -> vertical cursor movement
 
 To add additional key commands, simply override `-keyCommands` and append `super`'s array.
 
@@ -252,10 +259,34 @@ To add additional key commands, simply override `-keyCommands` and append `super
 }
 ````
 
+##Storyboard
+
+When using SlackTextViewController with storyboards, instead of overriding the traditional `initWithCoder:` you will need to override any of the two custom methods below. This approach helps preserving the exact same features from the programatic approach, but also limits the edition of the nib of your `SLKTextViewController` subclass since it doesn't layout subviews from the nib (subviews are still initialized and layed out programatically).
+
+if you wish to use the `UITableView` version, call:
+```
++ (UITableViewStyle)tableViewStyleForCoder:(NSCoder *)decoder
+{
+    return UITableViewStylePlain;
+}
+```
+
+or the `UICollectionView` version:
+```
++ (UICollectionViewLayout *)collectionViewLayoutForCoder:(NSCoder *)decoder
+{
+    return [UICollectionViewFlowLayout new];
+}
+```
+
 
 ##Sample Project
 
-Check out the sample project, everything is demo'd there.
+Check out the sample project,  everything is demo'd there.
+There are 2 main examples (different targets) for testing the programatic and storyboard approaches.
+
+A CollectionView example, using Swift, is in progress on the `swift-example` branch. The idea with this project is to build a custom collection view layout allowing to display cells from the bottom (currently working but needs serious tweaks to make it perfect).
+Feel free to contribute!
 
 
 ##XCode Templates
@@ -265,6 +296,6 @@ Check out the sample project, everything is demo'd there.
 We have prepared a set of useful XCode templates so you can quickly start using SlackTextViewController.
 
 To install them, open up your terminal and type:
-```sh ./SlackTextViewController/Template/install.sh```
+```sh ./SlackTextViewController/File\ Templates/install.sh```
 
 These templates are also available in [Alcatraz](https://github.com/supermarin/Alcatraz).

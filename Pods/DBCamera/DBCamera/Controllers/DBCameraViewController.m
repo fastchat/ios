@@ -35,7 +35,6 @@ NSLocalizedStringFromTable(key, @"DBCamera", nil)
 }
 
 @property (nonatomic, strong) id customCamera;
-@property (nonatomic, strong) DBCameraManager *cameraManager;
 @end
 
 @implementation DBCameraViewController
@@ -44,6 +43,7 @@ NSLocalizedStringFromTable(key, @"DBCamera", nil)
 @synthesize tintColor = _tintColor;
 @synthesize selectedTintColor = _selectedTintColor;
 @synthesize cameraSegueConfigureBlock = _cameraSegueConfigureBlock;
+@synthesize cameraManager = _cameraManager;
 
 #pragma mark - Life cycle
 
@@ -142,7 +142,7 @@ NSLocalizedStringFromTable(key, @"DBCamera", nil)
 - (void)dealloc
 {
     [[NSNotificationCenter defaultCenter] removeObserver:self];
-    [self setCameraManager:nil];
+    _cameraManager = nil;
 }
 
 - (void) checkForLibraryImage

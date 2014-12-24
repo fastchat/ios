@@ -31,6 +31,10 @@ install_resource()
       echo "xcrun momc \"${PODS_ROOT}/$1\" \"${CONFIGURATION_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/`basename "$1" .xcdatamodeld`.momd\""
       xcrun momc "${PODS_ROOT}/$1" "${CONFIGURATION_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/`basename "$1" .xcdatamodeld`.momd"
       ;;
+    *.xcmappingmodel)
+      echo "xcrun mapc \"${PODS_ROOT}/$1\" \"${CONFIGURATION_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/`basename "$1" .xcmappingmodel`.cdm\""
+      xcrun mapc "${PODS_ROOT}/$1" "${CONFIGURATION_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/`basename "$1" .xcmappingmodel`.cdm"
+      ;;
     *.xcassets)
       ;;
     /*)
@@ -48,6 +52,7 @@ install_resource()
                     install_resource "DBCamera/DBCamera/Localizations/es.lproj"
                     install_resource "DBCamera/DBCamera/Localizations/it.lproj"
                     install_resource "DBCamera/DBCamera/Localizations/pt.lproj"
+                    install_resource "DBCamera/DBCamera/Localizations/sv-SE.lproj"
                     install_resource "DBCamera/DBCamera/Localizations/tr.lproj"
                     install_resource "DBCamera/DBCamera/Filters/1977.acv"
                     install_resource "DBCamera/DBCamera/Filters/amaro.acv"

@@ -1,137 +1,134 @@
 PODS:
-  - AFNetworking (2.4.1):
-    - AFNetworking/NSURLConnection
-    - AFNetworking/NSURLSession
+  - AFNetworking (2.5.0):
+    - AFNetworking/NSURLConnection (= 2.5.0)
+    - AFNetworking/NSURLSession (= 2.5.0)
+    - AFNetworking/Reachability (= 2.5.0)
+    - AFNetworking/Security (= 2.5.0)
+    - AFNetworking/Serialization (= 2.5.0)
+    - AFNetworking/UIKit (= 2.5.0)
+  - AFNetworking/NSURLConnection (2.5.0):
     - AFNetworking/Reachability
     - AFNetworking/Security
     - AFNetworking/Serialization
-    - AFNetworking/UIKit
-  - AFNetworking/NSURLConnection (2.4.1):
+  - AFNetworking/NSURLSession (2.5.0):
     - AFNetworking/Reachability
     - AFNetworking/Security
     - AFNetworking/Serialization
-  - AFNetworking/NSURLSession (2.4.1):
-    - AFNetworking/Reachability
-    - AFNetworking/Security
-    - AFNetworking/Serialization
-  - AFNetworking/Reachability (2.4.1)
-  - AFNetworking/Security (2.4.1)
-  - AFNetworking/Serialization (2.4.1)
-  - AFNetworking/UIKit (2.4.1):
+  - AFNetworking/Reachability (2.5.0)
+  - AFNetworking/Security (2.5.0)
+  - AFNetworking/Serialization (2.5.0)
+  - AFNetworking/UIKit (2.5.0):
     - AFNetworking/NSURLConnection
     - AFNetworking/NSURLSession
   - CargoBay (2.1.0):
     - AFNetworking (~> 2.2)
   - ColorArt (0.1.1)
-  - DBCamera (2.3.5):
+  - DBCamera (2.3.7):
     - GPUImage (~> 0.1)
-  - GoogleAnalytics-iOS-SDK (3.0.9)
+  - GoogleAnalytics-iOS-SDK (3.10):
+    - GoogleAnalytics-iOS-SDK/Core (= 3.10)
+  - GoogleAnalytics-iOS-SDK/Core (3.10)
   - GPUImage (0.1.6)
   - HexColors (2.2.1)
   - MagicalRecord (2.2):
-    - MagicalRecord/Core
+    - MagicalRecord/Core (= 2.2)
   - MagicalRecord/Core (2.2)
-  - Mantle (1.5):
-    - Mantle/extobjc
-  - Mantle/extobjc (1.5)
+  - Mantle (1.5.1):
+    - Mantle/extobjc (= 1.5.1)
+  - Mantle/extobjc (1.5.1)
   - MBContactPicker (0.1.4)
   - MBProgressHUD (0.9)
   - OMGHTTPURLRQ (2.1):
-    - OMGHTTPURLRQ/FormURLEncode
-    - OMGHTTPURLRQ/RQ
-    - OMGHTTPURLRQ/UserAgent
-  - OMGHTTPURLRQ/FormURLEncode (2.1):
-    - OMGHTTPURLRQ/FormURLEncode
-    - OMGHTTPURLRQ/UserAgent
+    - OMGHTTPURLRQ/RQ (= 2.1)
+  - OMGHTTPURLRQ/FormURLEncode (2.1)
   - OMGHTTPURLRQ/RQ (2.1):
     - OMGHTTPURLRQ/FormURLEncode
     - OMGHTTPURLRQ/UserAgent
-  - OMGHTTPURLRQ/UserAgent (2.1):
-    - OMGHTTPURLRQ/FormURLEncode
-    - OMGHTTPURLRQ/UserAgent
-  - PromiseKit (1.0):
-    - PromiseKit/NSNotificationCenter
-    - PromiseKit/NSURLConnection
-    - PromiseKit/Pause
-    - PromiseKit/UIActionSheet
-    - PromiseKit/UIAlertView
-    - PromiseKit/UIView
-    - PromiseKit/UIViewController
-    - PromiseKit/Until
-    - PromiseKit/When
-  - PromiseKit/NSNotificationCenter (1.0):
+  - OMGHTTPURLRQ/UserAgent (2.1)
+  - PromiseKit (1.2):
+    - PromiseKit/CALayer (= 1.2)
+    - PromiseKit/NSNotificationCenter (= 1.2)
+    - PromiseKit/NSURLConnection (= 1.2)
+    - PromiseKit/Pause (= 1.2)
+    - PromiseKit/UIActionSheet (= 1.2)
+    - PromiseKit/UIAlertView (= 1.2)
+    - PromiseKit/UIView (= 1.2)
+    - PromiseKit/UIViewController (= 1.2)
+    - PromiseKit/Until (= 1.2)
+    - PromiseKit/When (= 1.2)
+  - PromiseKit/CALayer (1.2):
     - PromiseKit/Promise
-  - PromiseKit/NSURLConnection (1.0):
+  - PromiseKit/NSNotificationCenter (1.2):
+    - PromiseKit/Promise
+  - PromiseKit/NSURLConnection (1.2):
     - OMGHTTPURLRQ
     - PromiseKit/Promise
-  - PromiseKit/Pause (1.0):
+  - PromiseKit/Pause (1.2):
     - PromiseKit/Promise
-  - PromiseKit/Promise (1.0)
-  - PromiseKit/UIActionSheet (1.0):
+  - PromiseKit/Promise (1.2)
+  - PromiseKit/UIActionSheet (1.2):
     - PromiseKit/Promise
-  - PromiseKit/UIAlertView (1.0):
+  - PromiseKit/UIAlertView (1.2):
     - PromiseKit/Promise
-  - PromiseKit/UIView (1.0):
+  - PromiseKit/UIView (1.2):
     - PromiseKit/Promise
-  - PromiseKit/UIViewController (1.0):
+  - PromiseKit/UIViewController (1.2):
     - PromiseKit/Promise
-  - PromiseKit/Until (1.0):
+  - PromiseKit/Until (1.2):
     - PromiseKit/Promise
     - PromiseKit/When
-  - PromiseKit/When (1.0):
+  - PromiseKit/When (1.2):
     - PromiseKit/Promise
-  - SlackTextViewController (1.2.5):
-    - SlackTextViewController/Additions
-    - SlackTextViewController/Additions
-  - SlackTextViewController/Additions (1.2.5):
-    - SlackTextViewController/Additions
+  - SlackTextViewController (1.4):
+    - SlackTextViewController/Additions (= 1.4)
+  - SlackTextViewController/Additions (1.4)
   - socket.IO (0.5.2):
     - SocketRocket (~> 0.2)
-  - SocketRocket (0.3.1-beta2)
-  - STKWebKitViewController (0.1.6)
-  - TSMessages (0.9.10):
+  - SocketRocket (0.2.0)
+  - STKWebKitViewController (0.1.9)
+  - TSMessages (0.9.11):
     - HexColors
   - UIResponder+KeyboardCache (0.1)
   - URBMediaFocusViewController (HEAD based on 0.5.5)
 
 DEPENDENCIES:
-  - AFNetworking (= 2.4.1)
+  - AFNetworking (= 2.5.0)
   - CargoBay (= 2.1.0)
   - ColorArt (= 0.1.1)
-  - DBCamera (= 2.3.5)
-  - GoogleAnalytics-iOS-SDK (= 3.0.9)
+  - DBCamera (= 2.3.7)
+  - GoogleAnalytics-iOS-SDK (= 3.10.0)
   - MagicalRecord (= 2.2)
-  - Mantle (= 1.5)
+  - Mantle (= 1.5.1)
   - MBContactPicker (= 0.1.4)
   - MBProgressHUD (= 0.9)
-  - PromiseKit (= 1.0.0)
-  - SlackTextViewController (= 1.2.5)
+  - PromiseKit (= 1.2.0)
+  - SlackTextViewController (= 1.4.0)
   - socket.IO (= 0.5.2)
-  - STKWebKitViewController (= 0.1.6)
-  - TSMessages (= 0.9.10)
+  - STKWebKitViewController (= 0.1.9)
+  - TSMessages (= 0.9.11)
   - UIResponder+KeyboardCache (= 0.1)
   - URBMediaFocusViewController (HEAD)
 
 SPEC CHECKSUMS:
-  AFNetworking: 0aabc6fae66d6e5d039eeb21c315843c7aae51ab
+  AFNetworking: 0f54cb5d16ce38c1b76948faffb8d5fb705021c7
   CargoBay: b9b7c2b6a466192fb218935c0dd771d16268a035
   ColorArt: f734aa2f988b2be4e9a064c1818d8f8320488110
-  DBCamera: 0095227e0d2d0292c5a2cc400fe75687120e6f29
-  GoogleAnalytics-iOS-SDK: d9e198b1f955259a72886769be7377cdfcdb2250
+  DBCamera: b20778a524d727845981754fb4e93ac505ca94aa
+  GoogleAnalytics-iOS-SDK: f422062075d9ccb1ea8d783fc5ba3829461e9502
   GPUImage: cecb0830bb9428f50192042e3c7b53810f51388e
   HexColors: 01384d2bbe8dc4ffa43c3b4135db6e976952d153
   MagicalRecord: 2b471584fc9e3137f3d0a56967917baa4979e224
-  Mantle: c67a7e45e14196ed42b2a7cbb98ff6a9920e6b92
+  Mantle: d7c5ac734579ec751c58fecbf56189853056c58c
   MBContactPicker: f3ad9c973cdc8ed6caa92a104dbc314f155f3ea6
   MBProgressHUD: 2038dbcf3dce73215abed6001657043d53aa79a8
-  OMGHTTPURLRQ: 16564bcee86d8dfa298b65cdf60015c3065f67df
-  PromiseKit: 3a8eb40bb66c8f74ebd629f03ad8b0d5581a744c
-  SlackTextViewController: 54b4ab0fd8a29c1e254d05ab7cfd1aaebea5620d
+  OMGHTTPURLRQ: f8c515dfd2f57a5d74c710978f600231f52afec5
+  PromiseKit: 89cb68ff4093e71221a63ca7272d427bf34c4560
+  SlackTextViewController: e3f5998407ef7442aa9d311c65e3430146f1779a
   socket.IO: db3e71805c862038ab73209dda2b0ad6babc54b2
-  SocketRocket: 79a68ae186063c65e1fe6f638b1ae2927aa5f304
-  STKWebKitViewController: ce993cf2c226654a50ba23cabdf19252a76ffa3e
-  TSMessages: 8598a0645e9d54847f6e5f3b070bef39c493bbf8
+  SocketRocket: 6c9cfd1592bea82262b4283dcda3a7de166af3b6
+  STKWebKitViewController: 30f6640db11822af3365c2875c9988c4bda43ddc
+  TSMessages: e21ef5b1c7518cc590a4826c8b05b16b79b10c2c
   UIResponder+KeyboardCache: e267fd88f3414e8e7ccf7644f25c4701812a1d2b
   URBMediaFocusViewController: 4dff9de3767e60b96ba325c897d4ffa7131a122e
 
-COCOAPODS: 0.34.4
+COCOAPODS: 0.35.0

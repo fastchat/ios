@@ -150,11 +150,6 @@ NSString *const CHRefreshCellIdentifier = @"CHRefreshCellIdentifier";
                                                  selector:@selector(typingNotification:)
                                                      name:kTypingNotification
                                                    object:nil];
-        
-        [[NSNotificationCenter defaultCenter] addObserver:self
-                                                 selector:@selector(didPasteImageNotification:)
-                                                     name:SLKTextViewDidPasteImageNotification
-                                                   object:nil];
         [self loadNextMessages];
     }
     return self;
@@ -628,13 +623,24 @@ NSString *const CHRefreshCellIdentifier = @"CHRefreshCellIdentifier";
         [self endSendingMessage];
     });
     
-    self.textView.text = @"";
     [self setLeftButtonImage:nil];
     self.image = nil;
     [self.typingIndicatorView removeUsername:[CHUser currentUser].username];
+    [super didPressRightButton:sender];
 }
 
 #pragma mark - Typing
+
+- (void)textViewDidChangeSelection:(SLKTextView *)textView;
+{
+    if (self.textView == textView) {
+        [super textViewDidChangeSelection:textView];
+        return;
+    }
+
+    
+}
+
 
 - (void)textDidUpdate:(BOOL)animated;
 {

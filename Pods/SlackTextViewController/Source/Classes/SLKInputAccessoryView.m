@@ -17,7 +17,7 @@
 #import "SLKInputAccessoryView.h"
 #import "SLKUIConstants.h"
 
-NSString * const SLKInputAccessoryViewKeyboardFrameDidChangeNotification = @"com.slack.TextViewController.TextInputbar.FrameDidChange";
+NSString * const SLKInputAccessoryViewKeyboardFrameDidChangeNotification = @"SLKInputAccessoryViewKeyboardFrameDidChangeNotification";
 
 @interface SLKInputAccessoryView ()
 @property (nonatomic, weak) UIView *observedSuperview;
@@ -30,7 +30,7 @@ NSString * const SLKInputAccessoryViewKeyboardFrameDidChangeNotification = @"com
 NSString *SLKKeyboardHandlingKeyPath()
 {
     // Listening for the superview's frame doesn't work on iOS8 and above, so we use its center
-    if (UI_IS_IOS8_AND_HIGHER) {
+    if (SLK_IS_IOS8_AND_HIGHER) {
         return NSStringFromSelector(@selector(center));
     }
     else {

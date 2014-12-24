@@ -15,46 +15,45 @@
 //
 
 #import "UIScrollView+SLKAdditions.h"
-#import <objc/runtime.h>
-
-static NSString * const kKeyScrollViewVerticalIndicator = @"_verticalScrollIndicator";
-static NSString * const kKeyScrollViewHorizontalIndicator = @"_horizontalScrollIndicator";
 
 @implementation UIScrollView (SLKAdditions)
 
 - (void)slk_scrollToTopAnimated:(BOOL)animated
 {
-    if (![self slk_isAtTop]) {
-        CGPoint bottomOffset = CGPointZero;
-        [self setContentOffset:bottomOffset animated:animated];
-    }
+    [self scrollRectToVisible:[self slk_topRect] animated:animated];
 }
 
 - (void)slk_scrollToBottomAnimated:(BOOL)animated
 {
-    if ([self slk_canScrollToBottom] && ![self slk_isAtBottom]) {
-        CGPoint bottomOffset = CGPointMake(0.0, self.contentSize.height - self.bounds.size.height);
-        [self setContentOffset:bottomOffset animated:animated];
-    }
+    [self scrollRectToVisible:[self slk_bottomRect] animated:animated];
 }
 
 - (BOOL)slk_isAtTop
 {
-    return (self.contentOffset.y == 0.0) ? YES : NO;
+    return CGRectGetMinY([self slk_visibleRect]) == CGRectGetMinY([self slk_topRect]);
 }
 
 - (BOOL)slk_isAtBottom
 {
-    CGFloat bottomOffset = self.contentSize.height-self.bounds.size.height;
-    return (self.contentOffset.y == bottomOffset) ? YES : NO;
+    return CGRectGetMaxY([self slk_visibleRect]) == CGRectGetMaxY([self slk_bottomRect]);
 }
 
-- (BOOL)slk_canScrollToBottom
+- (CGRect)slk_visibleRect
 {
-    if (self.contentSize.height > self.bounds.size.height) {
-        return YES;
-    }
-    return NO;
+    CGRect visibleRect;
+    visibleRect.origin = self.contentOffset;
+    visibleRect.size = self.frame.size;
+    return visibleRect;
+}
+
+- (CGRect)slk_topRect
+{
+    return CGRectMake(0, 0, CGRectGetWidth(self.bounds), CGRectGetHeight(self.bounds));
+}
+
+- (CGRect)slk_bottomRect
+{
+    return CGRectMake(0, self.contentSize.height - CGRectGetHeight(self.bounds), CGRectGetWidth(self.bounds), CGRectGetHeight(self.bounds));
 }
 
 - (void)slk_stopScrolling
@@ -65,34 +64,10 @@ static NSString * const kKeyScrollViewHorizontalIndicator = @"_horizontalScrollI
     
     CGPoint offset = self.contentOffset;
     offset.y -= 1.0;
-    [self setContentOffset:offset animated:NO];
+    [self setContentOffset:offset];
     
     offset.y += 1.0;
-    [self setContentOffset:offset animated:NO];
-}
-
-- (UIView *)slk_verticalScroller
-{
-    if (objc_getAssociatedObject(self, _cmd) == nil) {
-        objc_setAssociatedObject(self, _cmd, [self slk_safeValueForKey:kKeyScrollViewVerticalIndicator], OBJC_ASSOCIATION_ASSIGN);
-    }
-    
-    return objc_getAssociatedObject(self, _cmd);
-}
-
-- (UIView *)slk_horizontalScroller
-{
-    if (objc_getAssociatedObject(self, _cmd) == nil) {
-        objc_setAssociatedObject(self, _cmd, [self slk_safeValueForKey:kKeyScrollViewHorizontalIndicator], OBJC_ASSOCIATION_ASSIGN);
-    }
-    
-    return objc_getAssociatedObject(self, _cmd);
-}
-
-- (id)slk_safeValueForKey:(NSString *)key
-{
-    Ivar instanceVariable = class_getInstanceVariable([self class], [key cStringUsingEncoding:NSUTF8StringEncoding]);
-    return object_getIvar(self, instanceVariable);
+    [self setContentOffset:offset];
 }
 
 @end

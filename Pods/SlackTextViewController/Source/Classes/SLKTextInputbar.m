@@ -17,11 +17,9 @@
 #import "SLKTextInputbar.h"
 #import "SLKTextViewController.h"
 #import "SLKTextView.h"
-
-#import "UITextView+SLKAdditions.h"
-#import "UIView+SLKAdditions.h"
-
+#import "SLKTextView+SLKAdditions.h"
 #import "SLKUIConstants.h"
+#import "UIView+SLKAdditions.h"
 
 @interface SLKTextInputbar ()
 
@@ -113,14 +111,13 @@
         _textView.font = [UIFont systemFontOfSize:15.0];
         _textView.maxNumberOfLines = [self defaultNumberOfLines];
         
-        _textView.autocorrectionType = UITextAutocorrectionTypeDefault;
-        _textView.spellCheckingType = UITextSpellCheckingTypeDefault;
+        _textView.typingSuggestionEnabled = YES;
         _textView.autocapitalizationType = UITextAutocapitalizationTypeSentences;
         _textView.keyboardType = UIKeyboardTypeTwitter;
         _textView.returnKeyType = UIReturnKeyDefault;
         _textView.enablesReturnKeyAutomatically = YES;
         _textView.scrollIndicatorInsets = UIEdgeInsetsMake(0, -1, 0, 1);
-        _textView.textContainerInset = UIEdgeInsetsMake(8.0, 3.5, 8.0, 0.0);
+        _textView.textContainerInset = UIEdgeInsetsMake(8.0, 4.0, 8.0, 0.0);
         _textView.layer.cornerRadius = 5.0;
         _textView.layer.borderWidth = 0.5;
         _textView.layer.borderColor =  [UIColor colorWithRed:200.0/255.0 green:200.0/255.0 blue:205.0/255.0 alpha:1.0].CGColor;
@@ -131,11 +128,6 @@
                 [gesture addTarget:self action:@selector(willShowLoupe:)];
             }
         }
-        
-        // Registers the Menu Controller for undo/redo actions
-        UIMenuItem *undo = [[UIMenuItem alloc] initWithTitle:@"Undo" action:NSSelectorFromString(@"undo:")];
-        UIMenuItem *redo = [[UIMenuItem alloc] initWithTitle:@"Redo" action:NSSelectorFromString(@"redo:")];
-        [[UIMenuController sharedMenuController] setMenuItems:@[undo,redo]];
     }
     return _textView;
 }
@@ -207,7 +199,7 @@
                                   @"right" : @(self.contentInset.right)
                                   };
         
-        [_accessoryView addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|-(==left)-[leftButton(60)]-(==left)-[label(>=0)]-(==right)-[rightButton(60)]-(<=right)-|" options:0 metrics:metrics views:views]];
+        [_accessoryView addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|-(left)-[leftButton(60)]-(left)-[label(>=0)]-(right)-[rightButton(60)]-(<=right)-|" options:0 metrics:metrics views:views]];
         [_accessoryView addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|[leftButton]|" options:0 metrics:metrics views:views]];
         [_accessoryView addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|[rightButton]|" options:0 metrics:metrics views:views]];
         [_accessoryView addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|[label]|" options:0 metrics:metrics views:views]];
@@ -232,10 +224,10 @@
 
 - (NSUInteger)defaultNumberOfLines
 {
-    if (UI_IS_IPAD) {
+    if (SLK_IS_IPAD) {
         return 8;
     }
-    if (UI_IS_IPHONE4) {
+    if (SLK_IS_IPHONE4) {
         return 4;
     }
     else {
@@ -400,7 +392,6 @@
     }
     
     self.charCountLabel.text = counter;
-    
     self.charCountLabel.textColor = [self limitExceeded] ?  [UIColor redColor] : [UIColor lightGrayColor];
 }
 
@@ -418,18 +409,10 @@
     
     // We still need to notify a selection change in the textview after the magnifying class is dismissed
     if (gesture.state == UIGestureRecognizerStateEnded) {
-        [self textViewDidChangeSelection:self.textView];
+        if (self.textView.delegate && [self.textView.delegate respondsToSelector:@selector(textViewDidChangeSelection:)]) {
+            [self.textView.delegate textViewDidChangeSelection:self.textView];
+        }
     }
-}
-
-- (void)textViewDidChangeSelection:(UITextView *)textView
-{
-    if (self.textView.isLoupeVisible) {
-        return;
-    }
-    
-    NSDictionary *userInfo = @{@"range": [NSValue valueWithRange:textView.selectedRange]};
-    [[NSNotificationCenter defaultCenter] postNotificationName:SLKTextViewSelectionDidChangeNotification object:self.textView userInfo:userInfo];
 }
 
 
@@ -513,27 +496,24 @@
                               @"minTextViewHeight" : @(self.textView.intrinsicContentSize.height),
                               };
 
-    [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|-(==left)-[leftButton(0)]-(<=left)-[textView]-(==right)-[rightButton(0)]-(==right)-|" options:0 metrics:metrics views:views]];
+    [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|-(left)-[leftButton(0)]-(<=left)-[textView]-(right)-[rightButton(0)]-(right)-|" options:0 metrics:metrics views:views]];
     [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|-(>=0)-[leftButton(0)]-(0@750)-|" options:0 metrics:metrics views:views]];
     [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|-(>=rightVerMargin)-[rightButton]-(<=rightVerMargin)-|" options:0 metrics:metrics views:views]];
     [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|-(<=top)-[charCountLabel]-(>=0)-|" options:0 metrics:metrics views:views]];
-    [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|-(==left@250)-[charCountLabel(<=50@1000)]-(==right@750)-|" options:0 metrics:metrics views:views]];
+    [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|-(left@250)-[charCountLabel(<=50@1000)]-(right@750)-|" options:0 metrics:metrics views:views]];
 
-    [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|-0-[accessoryView(0)]-(<=top)-[textView(==minTextViewHeight@250)]-(==bottom)-|" options:0 metrics:metrics views:views]];
+    [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|-0-[accessoryView(0)]-(<=top)-[textView(minTextViewHeight@250)]-(bottom)-|" options:0 metrics:metrics views:views]];
     [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|[accessoryView]|" options:0 metrics:metrics views:views]];
     
-    NSArray *heightConstraints = [self slk_constraintsForAttribute:NSLayoutAttributeHeight];
-    NSArray *widthConstraints = [self slk_constraintsForAttribute:NSLayoutAttributeWidth];
-    NSArray *bottomConstraints = [self slk_constraintsForAttribute:NSLayoutAttributeBottom];
-
-    self.accessoryViewHC = heightConstraints[1];
-
-    self.leftButtonWC = widthConstraints[0];
-    self.leftButtonHC = heightConstraints[0];
+    self.accessoryViewHC = [self slk_constraintForAttribute:NSLayoutAttributeHeight firstItem:self.accessoryView secondItem:nil];
+    
+    self.leftButtonWC = [self slk_constraintForAttribute:NSLayoutAttributeWidth firstItem:self.leftButton secondItem:nil];
+    self.leftButtonHC = [self slk_constraintForAttribute:NSLayoutAttributeHeight firstItem:self.leftButton secondItem:nil];
+    
     self.leftMarginWC = [self slk_constraintsForAttribute:NSLayoutAttributeLeading][0];
-    self.bottomMarginWC = bottomConstraints[0];
+    self.bottomMarginWC = [self slk_constraintForAttribute:NSLayoutAttributeBottom firstItem:self secondItem:self.leftButton];
 
-    self.rightButtonWC = widthConstraints[1];
+    self.rightButtonWC = [self slk_constraintForAttribute:NSLayoutAttributeWidth firstItem:self.rightButton secondItem:nil];
     self.rightMarginWC = [self slk_constraintsForAttribute:NSLayoutAttributeTrailing][0];
 }
 

@@ -14,96 +14,44 @@
 //   limitations under the License.
 //
 
-#define UI_IS_LANDSCAPE         ([UIDevice currentDevice].orientation == UIDeviceOrientationLandscapeLeft || [UIDevice currentDevice].orientation == UIDeviceOrientationLandscapeRight)
-#define UI_IS_IPAD              ([[UIDevice currentDevice] userInterfaceIdiom] == UIUserInterfaceIdiomPad)
-#define UI_IS_IPHONE            ([[UIDevice currentDevice] userInterfaceIdiom] == UIUserInterfaceIdiomPhone)
-#define UI_IS_IPHONE4           (UI_IS_IPHONE && [[UIScreen mainScreen] bounds].size.height < 568.0)
-#define UI_IS_IPHONE5           (UI_IS_IPHONE && [[UIScreen mainScreen] bounds].size.height == 568.0)
-#define UI_IS_IPHONE6           (UI_IS_IPHONE && [[UIScreen mainScreen] bounds].size.height == 667.0)
-#define UI_IS_IPHONE6PLUS       (UI_IS_IPHONE && [[UIScreen mainScreen] bounds].size.height == 736.0 || [[UIScreen mainScreen] bounds].size.width == 736.0) // Both orientations
-#define UI_IS_IOS8_AND_HIGHER   ([[UIDevice currentDevice].systemVersion floatValue] >= 8.0)
+#define SLK_IS_LANDSCAPE         ([UIDevice currentDevice].orientation == UIDeviceOrientationLandscapeLeft || [UIDevice currentDevice].orientation == UIDeviceOrientationLandscapeRight)
+#define SLK_IS_IPAD              ([[UIDevice currentDevice] userInterfaceIdiom] == UIUserInterfaceIdiomPad)
+#define SLK_IS_IPHONE            ([[UIDevice currentDevice] userInterfaceIdiom] == UIUserInterfaceIdiomPhone)
+#define SLK_IS_IPHONE4           (SLK_IS_IPHONE && [[UIScreen mainScreen] bounds].size.height < 568.0)
+#define SLK_IS_IPHONE5           (SLK_IS_IPHONE && [[UIScreen mainScreen] bounds].size.height == 568.0)
+#define SLK_IS_IPHONE6           (SLK_IS_IPHONE && [[UIScreen mainScreen] bounds].size.height == 667.0)
+#define SLK_IS_IPHONE6PLUS       (SLK_IS_IPHONE && [[UIScreen mainScreen] bounds].size.height == 736.0 || [[UIScreen mainScreen] bounds].size.width == 736.0) // Both orientations
+#define SLK_IS_IOS8_AND_HIGHER   ([[UIDevice currentDevice].systemVersion floatValue] >= 8.0)
 
-/** UIKeyboard notification replacement, posting reliably only when showing/hiding the
- keyboard (not when resizing keyboard, or with inputAccessoryView reloads, etc.) 
- Use these APIs with your own risk. */
-UIKIT_EXTERN NSString *const SLKKeyboardWillShowNotification;
-UIKIT_EXTERN NSString *const SLKKeyboardDidShowNotification;
-UIKIT_EXTERN NSString *const SLKKeyboardWillHideNotification;
-UIKIT_EXTERN NSString *const SLKKeyboardDidHideNotification;
+#define SLK_INPUT_ACCESSORY_DEBUG           DEBUG && 0  // Renders a translucent red area representing the keyboard accessory view
+#define SLK_KEYBOARD_NOTIFICATION_DEBUG     DEBUG && 0  // Logs every keyboard notification being sent
 
-typedef NS_ENUM(NSUInteger, SLKQuicktypeBarMode) {
-    SLKQuicktypeBarModeHidden,
-    SLKQuicktypeBarModeCollapsed,
-    SLKQuicktypeBarModeExpanded ,
-};
+static NSString *SLKTextViewControllerDomain = @"com.slack.TextViewController";
 
 inline static CGFloat minimumKeyboardHeight()
 {
-    if (UI_IS_IPAD) {
-        if (UI_IS_LANDSCAPE) return 352.f;
+    if (SLK_IS_IPAD) {
+        if (SLK_IS_LANDSCAPE) return 352.f;
         else return 264.f;
     }
-    if (UI_IS_IPHONE6PLUS) {
-        if (UI_IS_LANDSCAPE) return 162.f;
+    if (SLK_IS_IPHONE6PLUS) {
+        if (SLK_IS_LANDSCAPE) return 162.f;
         else return 226.f;
     }
     else {
-        if (UI_IS_LANDSCAPE) return 162.f;
+        if (SLK_IS_LANDSCAPE) return 162.f;
         else return 216.f;
     }
 }
 
-inline static CGFloat SLKQuicktypeBarHeightForMode(SLKQuicktypeBarMode mode)
+inline static CGRect SLKRectInvert(CGRect rect)
 {
-    if (UI_IS_IPAD) {
-        switch (mode) {
-            case SLKQuicktypeBarModeHidden:
-                return 0.f;
-                
-            case SLKQuicktypeBarModeCollapsed:
-                return 10.f;
-                
-            case SLKQuicktypeBarModeExpanded :
-                return 39.f;
-        }
-    }
-    if (UI_IS_IPHONE6PLUS) {
-        switch (mode) {
-            case SLKQuicktypeBarModeHidden:
-                return 0.f;
-                
-            case SLKQuicktypeBarModeCollapsed:
-                return 9.f;
-                
-            case SLKQuicktypeBarModeExpanded :
-                if (UI_IS_LANDSCAPE) return 32.f;
-                else return 45.f;
-        }
-    }
-    else {
-        switch (mode) {
-            case SLKQuicktypeBarModeHidden:
-                return 0.f;
-                
-            case SLKQuicktypeBarModeCollapsed:
-                return 8.f;
-                
-            case SLKQuicktypeBarModeExpanded :
-                if (UI_IS_LANDSCAPE) return 31.f;
-                else return 37.f;
-        }
-    }
-}
-
-inline static SLKQuicktypeBarMode SLKQuicktypeBarModeForHeight(CGFloat height)
-{
-    if (height > 0.f && height <= 10.f) {
-        return SLKQuicktypeBarModeCollapsed;
-    }
+    CGRect invert = CGRectZero;
     
-    if (height > 10.f && height <= 45.f) {
-        return SLKQuicktypeBarModeExpanded ;
-    }
+    invert.origin.x = rect.origin.y;
+    invert.origin.y = rect.origin.x;
+    invert.size.width = rect.size.height;
+    invert.size.height = rect.size.width;
     
-    return SLKQuicktypeBarModeHidden;
+    return invert;
 }
