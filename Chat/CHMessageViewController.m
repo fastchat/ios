@@ -109,15 +109,15 @@ NSString *const CHRefreshCellIdentifier = @"CHRefreshCellIdentifier";
                 [strongSelf.messages sortUsingDescriptors:@[sortDescriptor]];
                 [justInserted sortUsingDescriptors:@[sortDescriptor]];
                 
-                NSMutableArray *indexesToDelete = [NSMutableArray array];
-                NSInteger start = ([strongSelf.messages indexOfObject:justInserted.lastObject]) + 1;
-                if (justInserted.count == kPageSize) {
-                    for (NSInteger i = start; i < strongSelf.messages.count; i++) {
-                        DLog(@"i %ld", (long)i);
-                        [indexesToDelete addObject:[NSIndexPath indexPathForRow:i inSection:0]];
-                    }
-                    [strongSelf.messages removeObjectsInRange:NSMakeRange(start, strongSelf.messages.count - start)];
-                }
+//                NSMutableArray *indexesToDelete = [NSMutableArray array];
+//                NSInteger start = ([strongSelf.messages indexOfObject:justInserted.lastObject]) + 1;
+//                if (justInserted.count == kPageSize) {
+//                    for (NSInteger i = start; i < strongSelf.messages.count; i++) {
+//                        DLog(@"i %ld", (long)i);
+//                        [indexesToDelete addObject:[NSIndexPath indexPathForRow:i inSection:0]];
+//                    }
+//                    [strongSelf.messages removeObjectsInRange:NSMakeRange(start, strongSelf.messages.count - start)];
+//                }
                 
                 NSMutableArray *indexes = [NSMutableArray array];
                 for (CHMessage *inserted in justInserted) {
@@ -125,11 +125,11 @@ NSString *const CHRefreshCellIdentifier = @"CHRefreshCellIdentifier";
                     [indexes addObject:[NSIndexPath indexPathForRow:index inSection:0]];
                 }
                 
-                DLog(@"Deleting: %@", indexesToDelete);
+//                DLog(@"Deleting: %@", indexesToDelete);
                 DLog(@"Inserting: %@", indexes);
                 
                 [strongSelf.tableView insertRowsAtIndexPaths:indexes withRowAnimation:UITableViewRowAnimationAutomatic];
-                [strongSelf.tableView deleteRowsAtIndexPaths:indexesToDelete withRowAnimation:UITableViewRowAnimationAutomatic];
+//                [strongSelf.tableView deleteRowsAtIndexPaths:indexesToDelete withRowAnimation:UITableViewRowAnimationAutomatic];
 
                 [strongSelf.tableView endUpdates];
                 
