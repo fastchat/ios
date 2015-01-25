@@ -5,10 +5,9 @@
 //
 //
 
-#import "_CHModel.h"
 #import "Mantle.h"
 
-@interface CHModel : _CHModel
+@interface CHModel : NSManagedObject
 
 /**
  * Returns an instance of the class from a JSON dictionary.

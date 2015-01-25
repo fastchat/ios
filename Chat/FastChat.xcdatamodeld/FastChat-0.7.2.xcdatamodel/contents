@@ -10,7 +10,7 @@
         <relationship name="messages" optional="YES" toMany="YES" deletionRule="Cascade" ordered="YES" destinationEntity="CHMessage" inverseName="group" inverseEntity="CHMessage" syncable="YES"/>
         <relationship name="pastMembers" optional="YES" toMany="YES" deletionRule="Nullify" ordered="YES" destinationEntity="CHUser" inverseName="pastGroups" inverseEntity="CHUser" syncable="YES"/>
     </entity>
-    <entity name="CHMessage" representedClassName="CHMessage" versionHashModifier="1" syncable="YES">
+    <entity name="CHMessage" representedClassName="CHMessage" versionHashModifier="3" syncable="YES">
         <attribute name="authorId" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="chID" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="groupId" optional="YES" attributeType="String" syncable="YES"/>
@@ -27,8 +27,11 @@
         <relationship name="groupLastMessage" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="CHGroup" inverseName="lastMessage" inverseEntity="CHGroup" syncable="YES"/>
         <compoundIndexes>
             <compoundIndex>
-                <index value="groupId"/>
-                <index value="authorId"/>
+                <index value="group"/>
+                <index value="chID"/>
+                <index value="sent"/>
+            </compoundIndex>
+            <compoundIndex>
                 <index value="sent"/>
             </compoundIndex>
         </compoundIndexes>
