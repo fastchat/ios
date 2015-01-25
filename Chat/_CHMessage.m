@@ -5,6 +5,7 @@
 
 const struct CHMessageAttributes CHMessageAttributes = {
 	.authorId = @"authorId",
+	.chID = @"chID",
 	.groupId = @"groupId",
 	.hasMedia = @"hasMedia",
 	.hasURLMedia = @"hasURLMedia",
@@ -20,9 +21,6 @@ const struct CHMessageRelationships CHMessageRelationships = {
 	.author = @"author",
 	.group = @"group",
 	.groupLastMessage = @"groupLastMessage",
-};
-
-const struct CHMessageFetchedProperties CHMessageFetchedProperties = {
 };
 
 @implementation CHMessageID
@@ -50,7 +48,7 @@ const struct CHMessageFetchedProperties CHMessageFetchedProperties = {
 
 + (NSSet*)keyPathsForValuesAffectingValueForKey:(NSString*)key {
 	NSSet *keyPaths = [super keyPathsForValuesAffectingValueForKey:key];
-	
+
 	if ([key isEqualToString:@"hasMediaValue"]) {
 		NSSet *affectingKey = [NSSet setWithObject:@"hasMedia"];
 		keyPaths = [keyPaths setByAddingObjectsFromSet:affectingKey];
@@ -80,26 +78,13 @@ const struct CHMessageFetchedProperties CHMessageFetchedProperties = {
 	return keyPaths;
 }
 
-
-
-
 @dynamic authorId;
 
-
-
-
-
+@dynamic chID;
 
 @dynamic groupId;
 
-
-
-
-
-
 @dynamic hasMedia;
-
-
 
 - (BOOL)hasMediaValue {
 	NSNumber *result = [self hasMedia];
@@ -119,13 +104,7 @@ const struct CHMessageFetchedProperties CHMessageFetchedProperties = {
 	[self setPrimitiveHasMedia:[NSNumber numberWithBool:value_]];
 }
 
-
-
-
-
 @dynamic hasURLMedia;
-
-
 
 - (BOOL)hasURLMediaValue {
 	NSNumber *result = [self hasURLMedia];
@@ -145,13 +124,7 @@ const struct CHMessageFetchedProperties CHMessageFetchedProperties = {
 	[self setPrimitiveHasURLMedia:[NSNumber numberWithBool:value_]];
 }
 
-
-
-
-
 @dynamic mediaHeight;
-
-
 
 - (double)mediaHeightValue {
 	NSNumber *result = [self mediaHeight];
@@ -171,13 +144,7 @@ const struct CHMessageFetchedProperties CHMessageFetchedProperties = {
 	[self setPrimitiveMediaHeight:[NSNumber numberWithDouble:value_]];
 }
 
-
-
-
-
 @dynamic mediaWidth;
-
-
 
 - (double)mediaWidthValue {
 	NSNumber *result = [self mediaWidth];
@@ -197,13 +164,7 @@ const struct CHMessageFetchedProperties CHMessageFetchedProperties = {
 	[self setPrimitiveMediaWidth:[NSNumber numberWithDouble:value_]];
 }
 
-
-
-
-
 @dynamic rowHeight;
-
-
 
 - (float)rowHeightValue {
 	NSNumber *result = [self rowHeight];
@@ -223,46 +184,17 @@ const struct CHMessageFetchedProperties CHMessageFetchedProperties = {
 	[self setPrimitiveRowHeight:[NSNumber numberWithFloat:value_]];
 }
 
-
-
-
-
 @dynamic sent;
-
-
-
-
-
 
 @dynamic text;
 
-
-
-
-
-
 @dynamic theMediaSent;
-
-
-
-
-
 
 @dynamic author;
 
-	
-
 @dynamic group;
-
-	
 
 @dynamic groupLastMessage;
 
-	
-
-
-
-
-
-
 @end
+

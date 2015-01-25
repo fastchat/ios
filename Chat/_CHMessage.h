@@ -6,6 +6,7 @@
 
 extern const struct CHMessageAttributes {
 	__unsafe_unretained NSString *authorId;
+	__unsafe_unretained NSString *chID;
 	__unsafe_unretained NSString *groupId;
 	__unsafe_unretained NSString *hasMedia;
 	__unsafe_unretained NSString *hasURLMedia;
@@ -23,21 +24,9 @@ extern const struct CHMessageRelationships {
 	__unsafe_unretained NSString *groupLastMessage;
 } CHMessageRelationships;
 
-extern const struct CHMessageFetchedProperties {
-} CHMessageFetchedProperties;
-
 @class CHUser;
 @class CHGroup;
 @class CHGroup;
-
-
-
-
-
-
-
-
-
 
 @class NSObject;
 
@@ -48,174 +37,96 @@ extern const struct CHMessageFetchedProperties {
 + (id)insertInManagedObjectContext:(NSManagedObjectContext*)moc_;
 + (NSString*)entityName;
 + (NSEntityDescription*)entityInManagedObjectContext:(NSManagedObjectContext*)moc_;
-- (CHMessageID*)objectID;
-
-
-
-
+@property (nonatomic, readonly, strong) CHMessageID* objectID;
 
 @property (nonatomic, strong) NSString* authorId;
 
-
-
 //- (BOOL)validateAuthorId:(id*)value_ error:(NSError**)error_;
 
+@property (nonatomic, strong) NSString* chID;
 
-
-
+//- (BOOL)validateChID:(id*)value_ error:(NSError**)error_;
 
 @property (nonatomic, strong) NSString* groupId;
 
-
-
 //- (BOOL)validateGroupId:(id*)value_ error:(NSError**)error_;
-
-
-
-
 
 @property (nonatomic, strong) NSNumber* hasMedia;
 
-
-
-@property BOOL hasMediaValue;
+@property (atomic) BOOL hasMediaValue;
 - (BOOL)hasMediaValue;
 - (void)setHasMediaValue:(BOOL)value_;
 
 //- (BOOL)validateHasMedia:(id*)value_ error:(NSError**)error_;
 
-
-
-
-
 @property (nonatomic, strong) NSNumber* hasURLMedia;
 
-
-
-@property BOOL hasURLMediaValue;
+@property (atomic) BOOL hasURLMediaValue;
 - (BOOL)hasURLMediaValue;
 - (void)setHasURLMediaValue:(BOOL)value_;
 
 //- (BOOL)validateHasURLMedia:(id*)value_ error:(NSError**)error_;
 
-
-
-
-
 @property (nonatomic, strong) NSNumber* mediaHeight;
 
-
-
-@property double mediaHeightValue;
+@property (atomic) double mediaHeightValue;
 - (double)mediaHeightValue;
 - (void)setMediaHeightValue:(double)value_;
 
 //- (BOOL)validateMediaHeight:(id*)value_ error:(NSError**)error_;
 
-
-
-
-
 @property (nonatomic, strong) NSNumber* mediaWidth;
 
-
-
-@property double mediaWidthValue;
+@property (atomic) double mediaWidthValue;
 - (double)mediaWidthValue;
 - (void)setMediaWidthValue:(double)value_;
 
 //- (BOOL)validateMediaWidth:(id*)value_ error:(NSError**)error_;
 
-
-
-
-
 @property (nonatomic, strong) NSNumber* rowHeight;
 
-
-
-@property float rowHeightValue;
+@property (atomic) float rowHeightValue;
 - (float)rowHeightValue;
 - (void)setRowHeightValue:(float)value_;
 
 //- (BOOL)validateRowHeight:(id*)value_ error:(NSError**)error_;
 
-
-
-
-
 @property (nonatomic, strong) NSDate* sent;
-
-
 
 //- (BOOL)validateSent:(id*)value_ error:(NSError**)error_;
 
-
-
-
-
 @property (nonatomic, strong) NSString* text;
-
-
 
 //- (BOOL)validateText:(id*)value_ error:(NSError**)error_;
 
-
-
-
-
 @property (nonatomic, strong) id theMediaSent;
 
-
-
 //- (BOOL)validateTheMediaSent:(id*)value_ error:(NSError**)error_;
-
-
-
-
 
 @property (nonatomic, strong) CHUser *author;
 
 //- (BOOL)validateAuthor:(id*)value_ error:(NSError**)error_;
 
-
-
-
 @property (nonatomic, strong) CHGroup *group;
 
 //- (BOOL)validateGroup:(id*)value_ error:(NSError**)error_;
-
-
-
 
 @property (nonatomic, strong) CHGroup *groupLastMessage;
 
 //- (BOOL)validateGroupLastMessage:(id*)value_ error:(NSError**)error_;
 
-
-
-
-
-@end
-
-@interface _CHMessage (CoreDataGeneratedAccessors)
-
 @end
 
 @interface _CHMessage (CoreDataGeneratedPrimitiveAccessors)
 
-
 - (NSString*)primitiveAuthorId;
 - (void)setPrimitiveAuthorId:(NSString*)value;
 
-
-
+- (NSString*)primitiveChID;
+- (void)setPrimitiveChID:(NSString*)value;
 
 - (NSString*)primitiveGroupId;
 - (void)setPrimitiveGroupId:(NSString*)value;
-
-
-
 
 - (NSNumber*)primitiveHasMedia;
 - (void)setPrimitiveHasMedia:(NSNumber*)value;
@@ -223,17 +134,11 @@ extern const struct CHMessageFetchedProperties {
 - (BOOL)primitiveHasMediaValue;
 - (void)setPrimitiveHasMediaValue:(BOOL)value_;
 
-
-
-
 - (NSNumber*)primitiveHasURLMedia;
 - (void)setPrimitiveHasURLMedia:(NSNumber*)value;
 
 - (BOOL)primitiveHasURLMediaValue;
 - (void)setPrimitiveHasURLMediaValue:(BOOL)value_;
-
-
-
 
 - (NSNumber*)primitiveMediaHeight;
 - (void)setPrimitiveMediaHeight:(NSNumber*)value;
@@ -241,17 +146,11 @@ extern const struct CHMessageFetchedProperties {
 - (double)primitiveMediaHeightValue;
 - (void)setPrimitiveMediaHeightValue:(double)value_;
 
-
-
-
 - (NSNumber*)primitiveMediaWidth;
 - (void)setPrimitiveMediaWidth:(NSNumber*)value;
 
 - (double)primitiveMediaWidthValue;
 - (void)setPrimitiveMediaWidthValue:(double)value_;
-
-
-
 
 - (NSNumber*)primitiveRowHeight;
 - (void)setPrimitiveRowHeight:(NSNumber*)value;
@@ -259,40 +158,22 @@ extern const struct CHMessageFetchedProperties {
 - (float)primitiveRowHeightValue;
 - (void)setPrimitiveRowHeightValue:(float)value_;
 
-
-
-
 - (NSDate*)primitiveSent;
 - (void)setPrimitiveSent:(NSDate*)value;
-
-
-
 
 - (NSString*)primitiveText;
 - (void)setPrimitiveText:(NSString*)value;
 
-
-
-
 - (id)primitiveTheMediaSent;
 - (void)setPrimitiveTheMediaSent:(id)value;
-
-
-
-
 
 - (CHUser*)primitiveAuthor;
 - (void)setPrimitiveAuthor:(CHUser*)value;
 
-
-
 - (CHGroup*)primitiveGroup;
 - (void)setPrimitiveGroup:(CHGroup*)value;
 
-
-
 - (CHGroup*)primitiveGroupLastMessage;
 - (void)setPrimitiveGroupLastMessage:(CHGroup*)value;
-
 
 @end
