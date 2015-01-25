@@ -81,7 +81,6 @@
 		AAAF1D02193A528C00B095E1 /* CHConstants.m in Sources */ = {isa = PBXBuildFile; fileRef = AAAF1D01193A528C00B095E1 /* CHConstants.m */; };
 		AABD8A01199EAA6B002962A4 /* _CHGroup.m in Sources */ = {isa = PBXBuildFile; fileRef = AABD89F2199EAA6B002962A4 /* _CHGroup.m */; };
 		AABD8A02199EAA6B002962A4 /* _CHMessage.m in Sources */ = {isa = PBXBuildFile; fileRef = AABD89F4199EAA6B002962A4 /* _CHMessage.m */; };
-		AABD8A03199EAA6B002962A4 /* _CHModel.m in Sources */ = {isa = PBXBuildFile; fileRef = AABD89F6199EAA6B002962A4 /* _CHModel.m */; };
 		AABD8A04199EAA6B002962A4 /* _CHUser.m in Sources */ = {isa = PBXBuildFile; fileRef = AABD89F8199EAA6B002962A4 /* _CHUser.m */; };
 		AABD8A05199EAA6B002962A4 /* CHGroup.m in Sources */ = {isa = PBXBuildFile; fileRef = AABD89FA199EAA6B002962A4 /* CHGroup.m */; };
 		AABD8A06199EAA6B002962A4 /* CHMessage.m in Sources */ = {isa = PBXBuildFile; fileRef = AABD89FC199EAA6B002962A4 /* CHMessage.m */; };
@@ -202,8 +201,6 @@
 		AABD89F2199EAA6B002962A4 /* _CHGroup.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = _CHGroup.m; sourceTree = "<group>"; };
 		AABD89F3199EAA6B002962A4 /* _CHMessage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = _CHMessage.h; sourceTree = "<group>"; };
 		AABD89F4199EAA6B002962A4 /* _CHMessage.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = _CHMessage.m; sourceTree = "<group>"; };
-		AABD89F5199EAA6B002962A4 /* _CHModel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = _CHModel.h; sourceTree = "<group>"; };
-		AABD89F6199EAA6B002962A4 /* _CHModel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = _CHModel.m; sourceTree = "<group>"; };
 		AABD89F7199EAA6B002962A4 /* _CHUser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = _CHUser.h; sourceTree = "<group>"; };
 		AABD89F8199EAA6B002962A4 /* _CHUser.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = _CHUser.m; sourceTree = "<group>"; };
 		AABD89F9199EAA6B002962A4 /* CHGroup.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CHGroup.h; sourceTree = "<group>"; };
@@ -214,6 +211,7 @@
 		AABD89FE199EAA6B002962A4 /* CHModel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CHModel.m; sourceTree = "<group>"; };
 		AABD89FF199EAA6B002962A4 /* CHUser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CHUser.h; sourceTree = "<group>"; };
 		AABD8A00199EAA6B002962A4 /* CHUser.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CHUser.m; sourceTree = "<group>"; };
+		AAC3C0B41A740A3300F3198E /* FastChat-0.7.2.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = "FastChat-0.7.2.xcdatamodel"; sourceTree = "<group>"; };
 		AAC681A119B7E1EB00878CF9 /* CHBackgroundContext.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CHBackgroundContext.h; sourceTree = "<group>"; };
 		AAC681A219B7E1EB00878CF9 /* CHBackgroundContext.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CHBackgroundContext.m; sourceTree = "<group>"; };
 		AACE34CF19BCC11500136440 /* CHProgressView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CHProgressView.h; sourceTree = "<group>"; };
@@ -572,8 +570,6 @@
 		AA9CD704199EACED007931D5 /* Private */ = {
 			isa = PBXGroup;
 			children = (
-				AABD89F5199EAA6B002962A4 /* _CHModel.h */,
-				AABD89F6199EAA6B002962A4 /* _CHModel.m */,
 				AABD89F7199EAA6B002962A4 /* _CHUser.h */,
 				AABD89F8199EAA6B002962A4 /* _CHUser.m */,
 				AABD89F1199EAA6B002962A4 /* _CHGroup.h */,
@@ -811,7 +807,6 @@
 				2769B06518F479CC00CCE470 /* CHMTLGroup.m in Sources */,
 				AABD8A01199EAA6B002962A4 /* _CHGroup.m in Sources */,
 				AA8DDA931936DABD007F0196 /* HPGrowingTextView.m in Sources */,
-				AABD8A03199EAA6B002962A4 /* _CHModel.m in Sources */,
 				2768EAA818D8C90B006D14BB /* CHNetworkManager.m in Sources */,
 				AA27A0CC19D7798A00E35DC9 /* CHMessageDetailTableViewController.m in Sources */,
 				AA7759F318D54D3000E4E7AB /* CHLoginViewController.m in Sources */,
@@ -947,7 +942,7 @@
 				INFOPLIST_FILE = "Chat/Chat-Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE = "0f7c149a-b571-4d5d-8c47-947c04da2164";
+				PROVISIONING_PROFILE = "";
 				TARGETED_DEVICE_FAMILY = "1,2";
 				WRAPPER_EXTENSION = app;
 			};
@@ -1024,9 +1019,10 @@
 		AA7C691C19986636005DFFF5 /* FastChat.xcdatamodeld */ = {
 			isa = XCVersionGroup;
 			children = (
+				AAC3C0B41A740A3300F3198E /* FastChat-0.7.2.xcdatamodel */,
 				AA7C691D19986636005DFFF5 /* FastChat.xcdatamodel */,
 			);
-			currentVersion = AA7C691D19986636005DFFF5 /* FastChat.xcdatamodel */;
+			currentVersion = AAC3C0B41A740A3300F3198E /* FastChat-0.7.2.xcdatamodel */;
 			path = FastChat.xcdatamodeld;
 			sourceTree = "<group>";
 			versionGroupType = wrapper.xcdatamodel;
